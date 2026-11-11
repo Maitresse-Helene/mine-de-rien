@@ -43,11 +43,13 @@ et la mise à jour arrive sur les tablettes à la connexion suivante.
 - **Les bons points ne suivent pas** : ils sont gardés par le navigateur, site par site.
   Les élèves repartent de zéro dans l'appli, et gardent leurs bons points dans les anciens liens.
 
-## Mettre l'appli en ligne
+## L'appli en ligne
 
-1. Créez un compte gratuit sur github.com.
-2. Claude crée un « dépôt » (le dossier en ligne) et y dépose l'appli.
-3. On active GitHub Pages : l'appli sera à l'adresse `https://maitresse-helene.github.io/mine-de-rien/`.
+L'appli est publiée par GitHub à l'adresse **https://maitresse-helene.github.io/mine-de-rien/**
+(dépôt `Maitresse-Helene/mine-de-rien`). À chaque ajout de jeu, Claude met à jour le dépôt,
+et le site suit en une ou deux minutes.
+
+Si vous changez le portail dans Claude (nom, mascotte, domaines…), demandez à Claude de le reporter dans l'appli.
 
 ## À régler avant de vendre l'appli
 

@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Mine de rien</title><meta name="description" content="Mine de rien : des jeux bien taillés pour le CM1-CM2."><meta name="theme-color" content="#2b45c8"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone.svg" type="image/svg+xml"><link rel="icon" href="icones/icone-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mine de rien"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Mine de rien – Des jeux bien taillés pour le CM1-CM2</title><meta name="description" content="Mine de rien : des jeux bien taillés pour le CM1-CM2."><meta name="theme-color" content="#2b45c8"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone.svg" type="image/svg+xml"><link rel="icon" href="icones/icone-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mine de rien"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
 <!-- Le code de la classe et le code commun à toutes les pages sont dans commun/ : ne pas modifier à la main, demander à Claude. -->
 <link rel="stylesheet" href="commun/commun.css"><script src="commun/commun.js"></script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -62,7 +62,6 @@ body{
 .top{display:flex;flex-direction:column;gap:6px}
 .eyebrow{margin:0;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
 .title{margin:0;font-family:var(--font-title);font-weight:400;font-size:clamp(1.7rem, 6vw, 2.4rem);line-height:1.5;color:var(--pen);text-wrap:balance}
-.subtitle{margin:-6px 0 2px;font-family:var(--font-num);font-weight:700;font-size:clamp(1.05rem, 3.4vw, 1.25rem);line-height:1.3;color:var(--ink-soft);text-wrap:balance}
 .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.95rem;min-height:1.5em}
 .crumbs a{color:var(--pen);font-weight:600;text-underline-offset:3px}
 .crumbs span{color:var(--ink-soft)}
@@ -123,15 +122,88 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
 .seasons{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .seasons button{border:1.5px solid var(--key-edge);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 .88rem var(--font-body);cursor:pointer}
 .seasons button[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:var(--sheet)}
+/* En-tête « Mine de rien » et la mascotte : un crayon HB maladroit qui trébuche quand on le touche */
+.brand{display:flex;align-items:flex-end;gap:12px}
+.brandtext{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;flex:0 1 auto}
+.title::after{content:"";display:block;height:.3em;margin-top:-.32em;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M3 6 Q 28 1 55 5 T 105 5 T 152 4 T 197 6' fill='none' stroke='%237b8199' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 0 0/100% 100%}
+.tagline{margin:0;font-family:var(--font-num);font-weight:700;font-size:1.15rem;line-height:1.3;color:var(--ink)}
+.bubble{position:relative;margin:6px 12px 0 0;padding:6px 12px;max-width:30em;background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:14px;box-shadow:0 2px 0 var(--key-shadow);font-size:.95rem;line-height:1.4;color:var(--ink)}
+.bubble::after{content:"";position:absolute;right:-8.5px;bottom:12px;width:13px;height:13px;background:var(--sheet);border-right:1.5px solid var(--key-edge);border-bottom:1.5px solid var(--key-edge);border-radius:0 0 4px 0;transform:rotate(-45deg)}
+.mascot{flex:none;width:118px;margin:0 -4px 0 0;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mascot svg{display:block;width:100%;height:auto;overflow:visible}
+.mascot:focus-visible{outline:3px solid var(--pen);outline-offset:3px;border-radius:14px}
+.mascot g{transform-box:view-box}
+.mx-sway{transform-origin:60px 163px;animation:mx-sway 3.2s ease-in-out infinite alternate}
+.mx-trip{transform-origin:60px 163px}
+.mascot.tripping .mx-trip{animation:mx-trip 1.3s ease-in-out}
+.mx-wave{transform-origin:79px 90px;animation:mx-wave 4.5s ease-in-out infinite}
+.mx-eyes{transform-origin:60px 64px;animation:mx-blink 4.2s infinite}
+.mascot .mx-doll{transform-box:fill-box;transform-origin:50% 0;animation:mx-doll 1.7s ease-in-out infinite alternate}
+.mascot .d2{animation-delay:-.5s}.mascot .d3{animation-delay:-1s}.mascot .d4{animation-delay:-1.4s}
+@keyframes mx-sway{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+@keyframes mx-wave{0%,55%,100%{transform:rotate(0)}65%{transform:rotate(-22deg)}75%{transform:rotate(4deg)}85%{transform:rotate(-22deg)}}
+@keyframes mx-blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes mx-doll{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+@keyframes mx-trip{0%{transform:rotate(0)}14%{transform:rotate(9deg)}38%{transform:translateX(-4px) rotate(-64deg)}48%{transform:translateX(-4px) rotate(-56deg)}58%{transform:translateX(-4px) rotate(-64deg)}78%{transform:rotate(6deg)}90%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+@media (max-width:420px){.mascot{width:84px}.tagline{font-size:1rem}}
+@media (prefers-reduced-motion: reduce){.mx-sway,.mx-wave,.mx-eyes,.mascot .mx-doll,.mascot.tripping .mx-trip{animation:none}}
 @media (prefers-reduced-motion: reduce){.card,.game{transition:none}.card:hover,.game:hover{transform:none}}
 @media (max-width:420px){.game{flex-wrap:wrap}.play{margin-left:auto}}
 </style>
 
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow" id="eyebrow">CM1 · CM2</p>
-    <h1 class="title">Mine de rien</h1>
-    <p class="subtitle">Des jeux bien taillés pour le CM1-CM2</p>
+    <div class="brand">
+      <div class="brandtext">
+        <p class="eyebrow" id="eyebrow">CM1 · CM2</p>
+        <h1 class="title">Mine de rien</h1>
+        <p class="tagline">Des jeux bien taillés pour le CM1-CM2</p>
+        <p class="bubble" id="bubble" aria-live="polite">Salut ! Choisis un jeu… et touche-moi si tu oses !</p>
+      </div>
+      <button class="mascot" id="mascot" type="button" aria-label="La mascotte, un crayon maladroit : touche-la !" aria-controls="bubble">
+        <svg viewBox="0 0 120 172" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="mx-body" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#ffd95a"/><stop offset=".333" stop-color="#ffd95a"/><stop offset=".333" stop-color="#f5c518"/><stop offset=".667" stop-color="#f5c518"/><stop offset=".667" stop-color="#e0a80c"/><stop offset="1" stop-color="#e0a80c"/></linearGradient>
+            <linearGradient id="mx-wood" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#f8dcb4"/><stop offset=".55" stop-color="#efc28c"/><stop offset="1" stop-color="#d9a066"/></linearGradient>
+          </defs>
+          <ellipse cx="60" cy="165" rx="27" ry="4.5" fill="#1a2358" opacity=".14"/>
+          <g class="mx-trip"><g class="mx-sway">
+            <path d="M53 145 L49.5 159 M67 145 L71 159" stroke="#1a2358" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+            <ellipse cx="45.5" cy="161.5" rx="8.5" ry="4.4" fill="#c2365e"/>
+            <ellipse cx="75" cy="161.5" rx="8.5" ry="4.4" fill="#c2365e"/>
+            <path d="M77 158.5 q5 -3 6.5 1.5 M77 158.5 q3 5 9 4.5" stroke="#1a2358" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+            <path d="M40 131 H80 V140 a7 7 0 0 1 -7 7 H47 a7 7 0 0 1 -7 -7 Z" fill="#f49ab4"/>
+            <rect x="38.5" y="119" width="43" height="13" rx="2.5" fill="#c4cbd9"/>
+            <path d="M38.5 123.5 H81.5 M38.5 127.5 H81.5" stroke="#98a2b8" stroke-width="1.2"/>
+            <path d="M41 93 Q31 98 28.5 107" stroke="#1a2358" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+            <circle cx="28" cy="109.5" r="3.8" fill="#1a2358"/>
+            <g class="mx-wave"><path d="M79 90 Q90 85 93.5 73" stroke="#1a2358" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="94" cy="70.5" r="3.8" fill="#1a2358"/></g>
+            <rect x="40" y="44" width="40" height="76" fill="url(#mx-body)"/>
+            <path d="M60 4 L40 44 Q46.67 52 53.33 44 Q60 52 66.67 44 Q73.33 52 80 44 Z" fill="url(#mx-wood)"/>
+            <path d="M60 4 L54.5 15 Q60 17.5 65.5 15 Z" fill="#3b3e4c"/>
+            <path d="M58.6 8.5 L57 12" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+            <path d="M46.5 56 q4.5 -3.5 9 -1.2 M64.5 53.2 q4.5 -1.6 9 1.6" stroke="#1a2358" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+            <g class="mx-eyes">
+              <ellipse cx="51.5" cy="64" rx="5.3" ry="6.2" fill="#ffffff" stroke="#1a2358" stroke-width="1.2"/>
+              <ellipse cx="68.5" cy="64" rx="5.3" ry="6.2" fill="#ffffff" stroke="#1a2358" stroke-width="1.2"/>
+              <circle cx="53" cy="65.2" r="2.7" fill="#1a2358"/><circle cx="67" cy="65.2" r="2.7" fill="#1a2358"/>
+              <circle cx="53.8" cy="64.2" r=".9" fill="#ffffff"/><circle cx="67.8" cy="64.2" r=".9" fill="#ffffff"/>
+            </g>
+            <ellipse cx="46" cy="73" rx="3.3" ry="2.1" fill="#ff7f9c" opacity=".75"/>
+            <ellipse cx="74" cy="73" rx="3.3" ry="2.1" fill="#ff7f9c" opacity=".75"/>
+            <path d="M53.5 72 Q60 81.5 66.5 72 Z" fill="#1a2358"/>
+            <ellipse cx="60" cy="75" rx="2.7" ry="1.3" fill="#ff8fa3"/>
+            <path d="M41 80 Q60 96 79 80" stroke="#8a6d1f" stroke-width="1" fill="none"/>
+            <g transform="translate(48.6 85.1)"><g class="mx-doll d1"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#f1c7a3"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#7a4a26"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#2b45c8"/></g></g>
+            <g transform="translate(56.2 87.7)"><g class="mx-doll d2"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#e0ac7e"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#1a2358"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#2fa84f"/></g></g>
+            <g transform="translate(63.8 87.7)"><g class="mx-doll d3"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#f1c7a3"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#e8a33c"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#8e4ec6"/></g></g>
+            <g transform="translate(71.4 85.1)"><g class="mx-doll d4"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#b67a52"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#3a2a18"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#f76b15"/></g></g>
+            <g transform="translate(72.5 104) rotate(-32)"><rect x="-6.5" y="-2.4" width="13" height="4.8" rx="2.4" fill="#f6d2ae" stroke="#d6a274" stroke-width=".6"/><rect x="-2.2" y="-2.4" width="4.4" height="4.8" fill="#ecb98a"/></g>
+            <text x="60" y="115" text-anchor="middle" font-family="'Baloo 2','Arial Rounded MT Bold',sans-serif" font-weight="800" font-size="9.5" fill="#1a2358">HB</text>
+          </g></g>
+        </svg>
+      </button>
+    </div>
     <nav class="crumbs" id="crumbs" aria-label="Où je suis"></nav>
   </header>
   <main id="view" aria-live="polite"></main>
@@ -688,6 +760,23 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     seasonButtons(); setEyebrow();
     LIVE.forEach(it => { it.parts = makeParts(SEA(), it.cv.closest('.banner') ? 22 : 12); paint(it); });
   });
+  /* ---------- La mascotte : un crayon HB maladroit ---------- */
+  const MX_LINES = [
+    'Oups ! J\'ai encore trébuché…',
+    'Pas de bêtises, sinon je te taille en pointe !',
+    'Mon collier ? Ce sont d\'anciens élèves… Ils sèchent dans mon grenier.',
+    'Attention, je tire les oreilles jusqu\'à la gare !',
+    'Je suis un crayon HB : ni trop dur, ni trop tendre.',
+    'Mine de rien, tu progresses à chaque jeu !'
+  ];
+  let mxLine = -1;
+  $('mascot').addEventListener('click', () => {
+    const m = $('mascot');
+    mxLine = (mxLine + 1) % MX_LINES.length;
+    $('bubble').textContent = MX_LINES[mxLine];
+    m.classList.remove('tripping'); void m.getBoundingClientRect(); m.classList.add('tripping');
+  });
+  $('mascot').addEventListener('animationend', e => { if (e.animationName === 'mx-trip') $('mascot').classList.remove('tripping'); });
   window.addEventListener('hashchange', render);
   seasonButtons(); setEyebrow(); render();
 })();

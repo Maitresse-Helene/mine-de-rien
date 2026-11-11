@@ -33,6 +33,23 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 4. Nouveau domaine : ajoute-le dans `SUBJECTS[...].domains` et `DOMAINS` de `index.html`
    (avec un univers dans `SCENES`), avant d'intégrer le jeu.
 
+## Mettre à jour le portail
+
+Le portail existe aussi en artefact (https://claude.ai/artifact/YYHnbnw3vLakiZD2wGVPvF) : l'enseignante le fait
+évoluer dans Claude (nom, mascotte, domaines, univers). Pour reporter ses changements, récupère son HTML
+comme un jeu (étape 1 ci-dessus), puis :
+```
+python3 outils/integrer_portail.py <portail.html>
+```
+Le script réécrit `index.html` (ne le modifie donc pas à la main) et liste les jeux du portail absents de
+l'appli (`À INTÉGRER`) : intègre-les ensuite avec `integrer_jeu.py`, puis teste.
+
+## Publier
+
+Dépôt GitHub `Maitresse-Helene/mine-de-rien`, publié par GitHub Pages depuis la branche `main` (racine) :
+https://maitresse-helene.github.io/mine-de-rien/. Après les tests, commit et push sur `main` : le site se met à
+jour en une ou deux minutes. Garde aussi à jour le dossier de l'enseignante sur son Mac (Documents/jeux web).
+
 ## Règles
 
 - Rien d'externe : pas de CDN ni de Google Fonts. Ajoute toute nouvelle bibliothèque dans `commun/vendor/`
