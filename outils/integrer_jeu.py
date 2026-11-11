@@ -25,6 +25,7 @@ import argparse
 import datetime as dt
 import json
 import re
+import subprocess
 import sys
 import unicodedata
 from pathlib import Path
@@ -36,6 +37,8 @@ PORTAIL = RACINE / "index.html"
 
 LIENS_COMMUNS = ('<link rel="stylesheet" href="../../commun/commun.css">'
                  '<script src="../../commun/commun.js"></script>')
+LIENS_ENSEIGNANTE = ('<link rel="stylesheet" href="../../commun/enseignante.css">'
+                     '<script src="../../commun/enseignante.js"></script>')
 LIEN_POLICES = '<link rel="stylesheet" href="../../commun/polices/polices.css">'
 POLICES_DISPONIBLES = {"Baloo 2", "Lexend", "Playwrite FR Moderne"}
 BIBLIOTHEQUES = {
@@ -45,7 +48,8 @@ EXTERNES_AUTORISES = ("https://docs.google.com/forms/", "http://www.w3.org/")
 
 ENTETE_JEUX_JS = """/* La liste des jeux de l'appli : une ligne par jeu, dans l'ordre d'affichage de chaque domaine.
    slug : le dossier du jeu dans jeux/ ; domaine : la clé du domaine dans index.html ;
-   ajoute : la date d'ajout (le badge « Nouveau » s'affiche 14 jours).
+   ajoute : la date d'ajout (le badge « Nouveau » s'affiche 14 jours) ;
+   stockage, cle, sel, profilNeuf : les bons points du jeu (pour l'outil « Ajouter des bons points »).
    Ne pas modifier à la main : demander à Claude (outils/integrer_jeu.py). */
 window.JEUX = [
 """
@@ -87,6 +91,40 @@ def domaines_du_portail():
     s = PORTAIL.read_text(encoding="utf8")
     m = re.search(r"const DOMAINS = \{(.*?)\n  \};", s, re.S)
     return set(re.findall(r"'([a-z0-9-]+)': \{ name:", m.group(1))) if m else set()
+
+
+# ---------- Bons points : ce que l'outil « Ajouter des bons points » doit savoir de chaque jeu ----------
+# stockage : la clé localStorage ; cle : la façon dont le prénom devient la clé du profil (std ou apos) ;
+# sel : le « sel » du code de carte ; profilNeuf : le profil créé par le jeu pour un nouvel élève.
+def corps_fonction(html, nom):
+    m = re.search(r"function %s\(s\)\{([^\n]*)\}" % nom, html) or re.search(r"const %s = s => ([^\n;]*);" % nom, html)
+    return m.group(1) if m else ""
+def utilise_apos(html, nom, vus=None):
+    vus = vus or set()
+    if nom in vus: return False
+    vus.add(nom)
+    corps = corps_fonction(html, nom)
+    if "’" in corps or "\\u2019" in corps: return True
+    return any(utilise_apos(html, f, vus) for f in re.findall(r"\b(norm|key|bare)\(", corps) if f != nom)
+def extraire_infos(html):
+    infos = {}
+    m = re.search(r"const STORE_KEY = '([^']+)'", html)
+    if m: infos["stockage"] = m.group(1)
+    m = re.search(r"function setName\([^)]*\)\s*\{(.*?)\n  \}", html, re.S)
+    corps = m.group(1) if m else ""
+    f = re.search(r"const (?:key|k) = (\w+)\(", corps)
+    fn = f.group(1) if f else "norm"
+    infos["cle"] = "apos" if utilise_apos(html, fn) else "std"
+    m = re.search(r"function cardCode\(name, k\)\{\s*let h = fnv\(\w+\(name\) \+ '\|' \+ k \+ '\|([^']+)'\);", html)
+    if m: infos["sel"] = m.group(1)
+    m = re.search(r"store\.profiles\[(?:key|k)\] = (\{.*?\});", corps, re.S)
+    if m:
+        js = "const clean='__NOM__', S={parcours:'jaune'}, PARC0='jaune'; process.stdout.write(JSON.stringify(%s))" % m.group(1)
+        try:
+            r = subprocess.run(["node", "-e", js], capture_output=True, text=True, timeout=10)
+            if r.returncode == 0: infos["profilNeuf"] = json.loads(r.stdout)
+        except Exception: pass
+    return infos
 
 
 def preparer_page(html, domaine, artefacts, alertes):
@@ -159,6 +197,10 @@ def integrer_outil(a, html, titre, slug):
         artefacts[ident] = "enseignante/" + slug
     alertes = []
     page = preparer_page(html, "", artefacts, alertes)
+    if "commun/enseignante.js" not in page:
+        page = page.replace(LIENS_COMMUNS, LIENS_COMMUNS + LIENS_ENSEIGNANTE, 1)
+        if "commun/enseignante.js" not in page:
+            alertes.append("porte « Code de la maîtresse » non ajoutée : à vérifier")
     dossier = RACINE / "enseignante" / slug
     dossier.mkdir(parents=True, exist_ok=True)
     (dossier / "index.html").write_text(page, encoding="utf8")
@@ -214,6 +256,12 @@ def main():
     entree = {"slug": slug, "domaine": a.domaine, "titre": titre, "desc": a.desc, "ajoute": ajoute}
     if ident:
         entree["artefact"] = ident
+    infos = extraire_infos(html)
+    entree.update(infos)
+    manque = [c for c in ("stockage", "sel", "profilNeuf") if c not in infos]
+    if manque:
+        alertes.append("bons points non reconnus (" + ", ".join(manque) + ") : l'outil « Ajouter des bons points » "
+                       "et la vérification des cartes risquent de ne pas connaître ce jeu")
     if ancien:
         jeux[jeux.index(ancien)] = entree
     else:

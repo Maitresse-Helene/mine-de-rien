@@ -19,6 +19,10 @@ shutil.copytree(RACINE, COPIE, ignore=shutil.ignore_patterns(".git", "outils"))
 cjs = COPIE / "commun" / "commun.js"
 cjs.write_text(cjs.read_text(encoding="utf8").replace(
     "window.CMG_CODES = [\n", 'window.CMG_CODES = [\n  { from: "2000-01-01", to: "9999-12-31", h: "25tsvmh4xsg" },\n', 1), encoding="utf8")
+# code de la maîtresse de test : TEST-ENS (empreinte de "cm1cm2-ens|TESTENS")
+ejs = COPIE / "commun" / "enseignante.js"
+if ejs.exists():
+    ejs.write_text(ejs.read_text(encoding="utf8").replace('window.ENS_CODES = [', 'window.ENS_CODES = ["1558pk3wljr", ', 1), encoding="utf8")
 with socket.socket() as so:
     so.bind(("127.0.0.1", 0)); PORT = so.getsockname()[1]
 class CommeCloudflare(http.server.SimpleHTTPRequestHandler):
@@ -115,20 +119,90 @@ with sync_playwright() as p:
 
     outils = sorted(d.name for d in (COPIE / "enseignante").glob("*") if (d / "index.html").exists()) if (COPIE / "enseignante").exists() else []
     if outils:
-        print("4b. Outils de l'enseignante")
+        print("4b. Outils de l'enseignante (code de la maîtresse)")
         page.goto(BASE + "index.html")
+        ok(page.locator(".ens-outils a").count() == len(outils), f"{len(outils)} outil(s) dans l'Espace enseignante")
         for slug in outils:
-            ok(page.locator(f'.ens-outils a[href="enseignante/{slug}/index.html"]').count() == 1, f"lien vers {slug} dans l'Espace enseignante")
             errs = []
             pg = ctx.new_page()
             pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
             pg.on("console", lambda m, errs=errs: errs.append("console: " + m.text) if m.type == "error" else None)
             pg.goto(BASE + "enseignante/" + slug + "/index.html")
             pg.wait_for_load_state("networkidle")
-            gate = pg.locator("#cmg-gate").count()
+            porte = pg.locator("#ens-gate").is_visible()
+            pg.fill("#ens-input", "MAUVAIS-CODE"); pg.click("#ens-gate button")
+            refus = pg.locator("#ens-gate").count() == 1 and pg.inner_text("#ens-error").strip() != ""
+            pg.fill("#ens-input", "test-ens"); pg.click("#ens-gate button")
+            ouvert = pg.locator("#ens-gate").count() == 0 and pg.locator("#ens-lock").count() == 1
             back = pg.get_attribute("#allgames a", "href")
-            ok(gate == 0 and back == "../../index.html" and not errs, f"{slug:<45} porte={gate} retour={back} erreurs={errs[:2]}")
+            ok(porte and refus and ouvert and back == "../../index.html" and not errs,
+               f"{slug:<45} porte={porte} refus={refus} ouvert={ouvert} retour={back} erreurs={errs[:2]}")
             pg.close()
+
+        if "ajouter-des-bons-points" in outils and "verifier-une-carte-de-bons-points" in outils:
+            print("4c. Ajouter des bons points, puis vérifier les cartes")
+            errs = []
+            pg = ctx.new_page()
+            pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
+            pg.goto(BASE + "enseignante/ajouter-des-bons-points/index.html")
+            pg.fill("#ens-input", "test-ens"); pg.click("#ens-gate button")
+            pg.fill("#nom", "Léa Test")
+            essais = [j for j in jeux if j.get("sel")]
+            choix = [essais[0]] + [j for j in essais if j.get("cle") == "apos"][:1]
+            for j in choix:
+                pg.fill("#aj-" + j["slug"], "12")
+            pg.click("#enregistrer")
+            bilan = pg.inner_text("#bilan")
+            ok(f"{12 * len(choix)} bons points ajoutés" in bilan, "enregistrement : " + bilan)
+            for j in choix:
+                ligne = pg.locator(f'.jeu[data-slug="{j["slug"]}"]')
+                code = re.search(r"n°1 \(code ([A-Z0-9]{4})\)", ligne.inner_text())
+                ok(bool(code) and "12 bons points ici" in ligne.inner_text(), f"{j['slug']} : 12 bons points, carte n°1 " + (code.group(1) if code else "sans code"))
+                if code:
+                    pg.goto(BASE + "enseignante/verifier-une-carte-de-bons-points/index.html")
+                    pg.fill("#tName", "Léa Test"); pg.fill("#tCard", "1"); pg.fill("#tCode", code.group(1))
+                    pg.click("button[type=submit]"); pg.wait_for_timeout(300)
+                    ok("Carte valide" in pg.inner_text("#result"), f"{j['slug']} : la vérification reconnaît le code {code.group(1)}")
+                    pg.goto(BASE + "jeux/" + j["slug"] + "/index.html"); pg.wait_for_load_state("networkidle")
+                    texte = pg.inner_text("body")
+                    ok("NaN" not in texte and "undefined" not in texte, f"{j['slug']} : le jeu affiche les bons points sans erreur")
+                    pg.goto(BASE + "enseignante/ajouter-des-bons-points/index.html")
+                    pg.fill("#nom", "Léa Test")
+            pg.click("[data-retirer]")
+            ok("retiré" in pg.inner_text("#bilan"), "« Retirer mes ajouts » : " + pg.inner_text("#bilan"))
+            pg.click("#ens-lock"); pg.wait_for_load_state("load")
+            ok(pg.locator("#ens-gate").count() == 1, "« Verrouiller » referme l'espace")
+            ok(not errs, "aucune erreur dans les outils " + str(errs[:2]))
+            pg.close()
+
+    print("4d. Chaque jeu accepte les bons points ajoutés par l'enseignante")
+    import unicodedata
+    def cle_profil(j, nom):
+        if j.get("cle") == "apos":
+            nom = nom.replace("’", "'").replace("`", "'")
+        nom = "".join(c for c in unicodedata.normalize("NFD", nom) if not unicodedata.combining(c))
+        return re.sub(r"\s+", " ", nom.lower()).strip()
+    POINT = {"at": 1794400000000, "ms": 60000, "level": 0, "score": "reporté", "parcours": "jaune", "parc": "jaune", "enseignante": True}
+    pbs = []
+    for j in jeux:
+        if not j.get("profilNeuf"):
+            pbs.append(j["slug"] + " (profil inconnu)"); continue
+        prof = json.loads(json.dumps(j["profilNeuf"]).replace("__NOM__", "Zoé Essai"))
+        prof["points"] = [POINT] * 12
+        k = cle_profil(j, "Zoé Essai")
+        errs = []
+        pg = ctx.new_page()
+        pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
+        pg.goto(BASE + "jeux/" + j["slug"] + "/index.html")
+        avant = pg.evaluate("key => localStorage.getItem(key)", j["stockage"])
+        pg.evaluate("([key, st]) => localStorage.setItem(key, JSON.stringify(st))", [j["stockage"], {"current": k, "profiles": {k: prof}}])
+        pg.reload(); pg.wait_for_load_state("networkidle")
+        texte = pg.inner_text("body")
+        if errs or "NaN" in texte or "undefined" in texte:
+            pbs.append(j["slug"] + " " + str(errs[:1]) + (" NaN" if "NaN" in texte else "") + (" undefined" if "undefined" in texte else ""))
+        pg.evaluate("([key, v]) => v === null ? localStorage.removeItem(key) : localStorage.setItem(key, v)", [j["stockage"], avant])
+        pg.close()
+    ok(not pbs, f"{len(jeux) - len(pbs)} / {len(jeux)} jeux affichent les bons points ajoutés" + ("" if not pbs else " ; problèmes : " + "; ".join(pbs[:5])))
 
     print("5. Ressources")
     ok(not external, "aucune requête vers l'extérieur" + ("" if not external else " : " + ", ".join(sorted(set(external))[:5])))

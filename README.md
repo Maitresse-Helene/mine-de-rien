@@ -20,7 +20,7 @@ L'installation sur tablette et le jeu sans connexion ne marchent qu'une fois l'a
 | `index.html` | Le portail (accueil, matières, domaines, univers peints). |
 | `jeux.js` | La liste des jeux : titre, phrase de présentation, domaine, date d'ajout. |
 | `jeux/` | Un dossier par jeu. |
-| `enseignante/` | Vos outils, ouverts depuis l'« Espace enseignante » du portail : vérifier une carte de bons points. |
+| `enseignante/` | Vos outils, ouverts depuis l'« Espace enseignante » du portail avec le code de la maîtresse : vérifier une carte de bons points, ajouter des bons points. |
 | `commun/` | Ce qui sert à toutes les pages : le code de la classe, les polices, la bibliothèque 3D du jeu des solides. |
 | `icones/`, `manifest.webmanifest` | L'icône et le nom de l'appli quand on l'installe sur une tablette. |
 | `sw.js` | Garde l'appli sur la tablette pour jouer sans connexion. |

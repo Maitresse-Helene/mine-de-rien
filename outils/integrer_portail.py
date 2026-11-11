@@ -115,6 +115,18 @@ def main():
     else:
         alertes.append("espace enseignante : mode d'emploi pour installer l'appli non ajouté")
 
+    # noms des domaines, pour les outils de l'enseignante : commun/domaines.js
+    m = re.search(r"const DOMAINS = \{(.*?)\n  \};", s, re.S)
+    if m:
+        noms = dict(re.findall(r"'([a-z0-9-]+)': \{ name: '((?:[^'\\]|\\.)*)'", m.group(1)))
+        noms = {k: v.replace("\\'", "'") for k, v in noms.items()}
+        (RACINE / "commun" / "domaines.js").write_text(
+            "/* Noms des domaines du portail, pour les outils de l'enseignante. "
+            "Généré par outils/integrer_portail.py : ne pas modifier à la main. */\n"
+            "window.DOMAINES = " + json.dumps(noms, ensure_ascii=False, indent=1) + ";\n", encoding="utf8")
+    else:
+        alertes.append("noms des domaines introuvables : commun/domaines.js non mis à jour")
+
     # outils de l'enseignante (enseignante/<slug>/index.html) : liens dans l'Espace enseignante
     outils = []
     for f in sorted((RACINE / "enseignante").glob("*/index.html")):

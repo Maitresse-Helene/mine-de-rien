@@ -7,11 +7,14 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 ## Structure
 
 - `index.html` : le portail. Matières (`SUBJECTS`), domaines et univers peints (`DOMAINS`, `SCENES`), saisons.
-- `jeux.js` : `window.JEUX`, une ligne JSON par jeu (`slug`, `domaine`, `titre`, `desc`, `ajoute`, `artefact`).
+- `jeux.js` : `window.JEUX`, une ligne JSON par jeu (`slug`, `domaine`, `titre`, `desc`, `ajoute`, `artefact`,
+  et pour les bons points : `stockage`, `cle`, `sel`, `profilNeuf`, extraits du jeu par `integrer_jeu.py`).
   L'ordre des lignes est l'ordre d'affichage dans chaque domaine.
 - `jeux/<slug>/index.html` : un jeu = une page HTML autonome.
-- `enseignante/<slug>/index.html` : les outils de l'enseignante (ex. vérifier une carte de bons points), liés depuis
-  l'« Espace enseignante » du portail, hors liste des jeux. Protégés seulement par le code de la classe.
+- `enseignante/<slug>/index.html` : les outils de l'enseignante, liés depuis l'« Espace enseignante » du portail, hors
+  liste des jeux, protégés par le code de la maîtresse (`commun/enseignante.js` + `.css`) en plus du code de la classe :
+  « Vérifier une carte de bons points » (artefact intégré) et « Ajouter des bons points » (page écrite ici, pas d'artefact).
+- `commun/domaines.js` : noms des domaines, généré par `integrer_portail.py` pour les outils.
 - `commun/commun.js` + `commun/commun.css` : la porte « Code de la classe », le laissez-passer
   portail → jeux, et le bouton « ← Tous les jeux ». Chaque page les charge (`../../commun/...` pour les jeux).
 - `commun/polices/` : Baloo 2, Lexend, Playwrite FR Moderne en local (pas de Google Fonts).
@@ -45,6 +48,15 @@ puis relance `integrer_portail.py` (avec le HTML du portail) pour que le lien ap
 et teste. Outil actuel : « Vérifier une carte de bons points » (https://claude.ai/artifact/4BB6KY5aFoYuA8X29MVsF2).
 Il contient le « sel » de chaque jeu (liste `GAMES`) : quand un jeu qui donne des cartes est ajouté, il faut aussi
 mettre à jour cet outil dans Claude, puis le réintégrer ici.
+
+## « Ajouter des bons points »
+
+`enseignante/ajouter-des-bons-points/index.html` : sur l'appareil d'un élève, la maîtresse reporte les bons points gagnés
+ailleurs (les anciens liens Claude). Il lit `jeux.js` (`stockage`, `cle`, `sel`, `profilNeuf`) et ajoute dans
+`localStorage[stockage].profiles[clé du prénom].points` des bons points `{ at: hier, ms, level: 0, score: 'reporté',
+parcours, parc, enseignante: true }`. Le niveau 0 n'existe dans aucun jeu : il ne compte donc pour aucun niveau, et
+« Retirer mes ajouts » n'efface que les points `enseignante: true`. `tester.py` (étape 4d) vérifie que chaque jeu affiche
+ces points sans erreur : si un nouveau jeu échoue, adapte l'outil plutôt que le jeu.
 
 ## Mettre à jour le portail
 
@@ -87,3 +99,9 @@ seulement. Empreinte d'un code :
 node -e 'const c=process.argv[1].normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"");const h=t=>{let n=-559038744,a=1103547984;for(let o=0;o<t.length;o++){const e=t.charCodeAt(o);n=Math.imul(n^e,2654435761);a=Math.imul(a^e,1597334677)}n=Math.imul(n^n>>>16,2246822507);n^=Math.imul(a^a>>>13,3266489909);a=Math.imul(a^a>>>16,2246822507);a^=Math.imul(n^n>>>13,3266489909);return(4294967296*(2097151&a)+(n>>>0)).toString(36)};console.log(h("cm1cm2|"+c))' MONCODE
 ```
 La dernière ligne (2000-01-01 → 9999-12-31) est un code permanent : ne la supprime pas sans l'accord de l'enseignante.
+
+## Le code de la maîtresse
+
+`window.ENS_CODES` dans `commun/enseignante.js` : les empreintes du code de la maîtresse, même calcul que ci-dessus mais
+avec le préfixe `cm1cm2-ens|` au lieu de `cm1cm2|`. Jamais le code en clair dans le dépôt (il est public). Le code n'est
+retenu que dans l'onglet (sessionStorage), 20 minutes après la dernière action, et le bouton « Verrouiller » referme.

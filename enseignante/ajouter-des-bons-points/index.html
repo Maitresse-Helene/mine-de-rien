@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ajouter des bons points</title>
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Outil de l'enseignante : reporter, sur l'appareil d'un élève, les bons points gagnés ailleurs (anciens liens). */
+:root{
+  --paper:#f6f7fd; --sheet:#ffffff; --ink:#1a2358; --ink-soft:#5a628f; --rule:#e4e8f7; --rule-strong:#cad1ef;
+  --pen:#2b45c8; --key-edge:#ccd3f0; --key-shadow:#b5bee6; --chip:#eceef6; --ok:#1f8a4c; --warn:#b02a50;
+  --font-title:"Playwrite FR Moderne","Segoe Print","Bradley Hand",cursive;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab; --rule:#1c2925; --rule-strong:#283a35;
+    --pen:#97abff; --key-edge:#3a4d46; --key-shadow:#0e1513; --chip:#25302c; --ok:#6fd89a; --warn:#ff8fb1; color-scheme:dark; }
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5;
+  background-image:linear-gradient(to bottom,var(--rule-strong) 1px,transparent 1px),linear-gradient(to right,var(--rule-strong) 1px,transparent 1px),linear-gradient(to bottom,var(--rule) 1px,transparent 1px);
+  background-size:100% 32px,32px 100%,100% 8px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 96px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{margin:0;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+h1{margin:0;font-family:var(--font-num);font-weight:800;font-size:clamp(1.6rem,5vw,2.1rem);line-height:1.2}
+.lead{margin:0;color:var(--ink-soft)}
+.fiche{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:18px;box-shadow:0 4px 0 var(--key-shadow);padding:16px}
+label.titre{display:block;font-family:var(--font-num);font-weight:800;font-size:1.1rem;margin-bottom:6px}
+input[type=text],input[type=number]{font:600 1.1rem var(--font-body);color:var(--ink);background:var(--sheet);border:2px solid var(--key-edge);border-radius:12px;padding:8px 12px;outline:none}
+input:focus{border-color:var(--pen);box-shadow:0 0 0 3px rgba(43,69,200,.2)}
+#nom{width:100%;max-width:360px}
+.aide{margin:8px 0 0;font-size:.9rem;color:var(--ink-soft)}
+.noms{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.noms button,.petit{border:1.5px solid var(--key-edge);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 .9rem var(--font-body);cursor:pointer}
+.noms button[aria-pressed=true]{background:var(--pen);border-color:var(--pen);color:var(--sheet)}
+h2{margin:6px 0 0;font-family:var(--font-num);font-weight:800;font-size:1.25rem}
+.jeu{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1.5px dashed var(--key-edge)}
+.jeu:first-of-type{border-top:0}
+.jt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 260px}
+.jt b{font-family:var(--font-num);font-size:1.08rem;line-height:1.25}
+.etat{font-size:.9rem;color:var(--ink-soft)}
+.cartes{font-size:.85rem;color:var(--ok)}
+.ajout{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ajout label{font-weight:600;font-size:.9rem}
+.ajout input{width:5.2em;text-align:center}
+.apres{font-size:.85rem;color:var(--pen);min-width:9em}
+.barre{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin:0 -16px;background:var(--paper);border-top:1.5px solid var(--key-edge)}
+.btn{border:0;border-radius:999px;background:var(--pen);color:var(--sheet);font:800 1.1rem var(--font-num);padding:10px 22px;cursor:pointer;box-shadow:0 3px 0 var(--key-shadow)}
+.btn:disabled{opacity:.45;cursor:default}
+#bilan{margin:0;font-weight:600;color:var(--ok)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<link rel="stylesheet" href="../../commun/enseignante.css"><script src="../../commun/enseignante.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Espace enseignante · Mine de rien</p>
+    <h1>Ajouter des bons points</h1>
+  </header>
+  <p class="lead">Pour reporter dans l'appli les bons points gagnés dans les anciens liens. À faire <strong>sur l'appareil de l'élève</strong> : chaque appareil garde ses propres bons points.</p>
+
+  <section class="fiche">
+    <label class="titre" for="nom">Prénom de l'élève</label>
+    <input id="nom" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="30" placeholder="Par exemple : Léa">
+    <p class="aide">Écrivez-le comme l'élève le tape dans les jeux : les cartes et leurs codes en dépendent. Les accents et les majuscules ne comptent pas.</p>
+    <div class="noms" id="noms" aria-label="Prénoms déjà connus sur cet appareil"></div>
+  </section>
+
+  <section class="fiche" id="liste" hidden aria-live="polite"></section>
+
+  <p class="aide" id="note" hidden>Les bons points ajoutés portent la date d'hier. Sur les cartes, ils apparaissent au « niveau 0 » (Chantier 0, Île 0…) et, dans les défis chrono, avec le meilleur temps de l'élève sur cet appareil (1 min s'il n'a pas encore joué). Ils ne changent rien aux niveaux à réussir. « Retirer mes ajouts » n'efface que les bons points ajoutés ici, jamais ceux gagnés en jouant.</p>
+
+  <div class="barre" id="barre" hidden>
+    <button class="btn" id="enregistrer" type="button" disabled>Enregistrer les bons points</button>
+    <p id="bilan" role="status"></p>
+  </div>
+</main>
+
+<script src="../../jeux.js"></script>
+<script src="../../commun/domaines.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const JEUX = (window.JEUX || []).filter(j => j.stockage);
+  const DOMAINES = window.DOMAINES || {};
+  const ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* Un bon point ajouté : niveau 0 (aucun jeu n'a de niveau 0, il ne compte donc pour aucun niveau), date d'hier
+     (« Je me teste » ne donne qu'un point par jour), et un temps pour les défis chrono. Vérifié sur les 38 jeux.
+     Comme dans les jeux : le prénom devient la clé du profil, et le code d'une carte vient du prénom, du numéro et du « sel » du jeu. */
+  const cleStd = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const cleApos = s => String(s || '').replace(/[’`]/g, "'").toLowerCase().replace(/\s+/g, ' ').trim().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const cle = (j, s) => j.cle === 'apos' ? cleApos(s) : cleStd(s);
+  const propre = s => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 30);
+  function fnv(str){ let h = 0x811c9dc5; for (let k = 0; k < str.length; k++){ h ^= str.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; }
+  function codeCarte(j, nom, k){ let h = fnv(cle(j, nom) + '|' + k + '|' + j.sel), c = ''; for (let i = 0; i < 4; i++){ c += ALPHA[h % ALPHA.length]; h = Math.floor(h / ALPHA.length); } return c; }
+
+  function lire(j){
+    try { const v = JSON.parse(localStorage.getItem(j.stockage)); if (v && typeof v === 'object' && v.profiles && typeof v.profiles === 'object') return v; } catch (e) {}
+    return { current: null, profiles: {} };
+  }
+  function ecrire(j, v){ localStorage.setItem(j.stockage, JSON.stringify(v)); }
+  function profilNeuf(j, nom){
+    const remplir = x => typeof x === 'string' ? x.replace('__NOM__', nom) : Array.isArray(x) ? x.map(remplir)
+      : (x && typeof x === 'object') ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, remplir(v)])) : x;
+    const p = j.profilNeuf ? remplir(j.profilNeuf) : { name: nom, points: [] };
+    if (!Array.isArray(p.points)) p.points = [];
+    return p;
+  }
+  function meilleurTemps(p){
+    const t = [];
+    if (p.records && typeof p.records === 'object') Object.values(p.records).forEach(v => { if (typeof v === 'number') t.push(v); });
+    ['record', 'recordO'].forEach(k => { if (typeof p[k] === 'number') t.push(p[k]); });
+    return t.length ? Math.min.apply(null, t) : 60000;
+  }
+  function hier(){ const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() - 60000; }
+
+  /* Prénoms déjà connus sur cet appareil (tous jeux confondus) */
+  function nomsConnus(){
+    const m = new Map();
+    JEUX.forEach(j => { const st = lire(j); Object.values(st.profiles).forEach(p => { if (p && p.name){ const k = cleStd(p.name); if (!m.has(k)) m.set(k, p.name); } }); });
+    return [...m.values()].sort((a, b) => a.localeCompare(b, 'fr'));
+  }
+  function afficherNoms(){
+    const actuel = cleStd($('nom').value);
+    $('noms').innerHTML = nomsConnus().map(n => '<button type="button" data-nom="' + esc(n) + '" aria-pressed="' + (cleStd(n) === actuel) + '">' + esc(n) + '</button>').join('')
+      || '<span class="aide" style="margin:0">Aucun élève n\'a encore joué sur cet appareil.</span>';
+  }
+
+  function etatJeu(j, nom){
+    const st = lire(j), p = st.profiles[cle(j, nom)];
+    const n = p && Array.isArray(p.points) ? p.points.length : 0;
+    const miens = p && Array.isArray(p.points) ? p.points.filter(x => x && x.enseignante).length : 0;
+    return { n, miens, existe: !!p };
+  }
+  function texteEtat(j, nom, n){
+    const pleines = Math.floor(n / 10), reste = n % 10;
+    let t = n === 0 ? 'Aucun bon point ici' : n + ' bon' + (n > 1 ? 's' : '') + ' point' + (n > 1 ? 's' : '') + ' ici';
+    t += ' · carte n°' + (pleines + 1) + ' : ' + reste + '/10';
+    return t;
+  }
+  function texteCartes(j, nom, n){
+    const pleines = Math.floor(n / 10);
+    if (!pleines || !j.sel) return '';
+    const l = []; for (let k = 1; k <= pleines; k++) l.push('n°' + k + ' (code ' + codeCarte(j, nom, k) + ')');
+    return 'Carte' + (pleines > 1 ? 's' : '') + ' complète' + (pleines > 1 ? 's' : '') + ' : ' + l.join(', ');
+  }
+
+  function afficherListe(){
+    const nom = propre($('nom').value);
+    const vide = !cleStd(nom);
+    $('liste').hidden = $('barre').hidden = $('note').hidden = vide;
+    afficherNoms();
+    if (vide) return;
+    const groupes = {};
+    JEUX.forEach(j => { (groupes[j.domaine] = groupes[j.domaine] || []).push(j); });
+    let h = '';
+    Object.keys(groupes).forEach(d => {
+      h += '<h2>' + esc(DOMAINES[d] || d) + '</h2>';
+      groupes[d].forEach(j => {
+        const e = etatJeu(j, nom);
+        h += '<div class="jeu" data-slug="' + esc(j.slug) + '"><div class="jt"><b>' + esc(j.titre) + '</b>' +
+          '<span class="etat">' + esc(texteEtat(j, nom, e.n)) + '</span>' +
+          '<span class="cartes">' + esc(texteCartes(j, nom, e.n)) + '</span></div>' +
+          '<div class="ajout"><label for="aj-' + esc(j.slug) + '">Ajouter</label>' +
+          '<input id="aj-' + esc(j.slug) + '" type="number" min="0" max="300" step="1" inputmode="numeric" placeholder="0" data-slug="' + esc(j.slug) + '">' +
+          '<span class="apres" aria-live="polite"></span>' +
+          (e.miens ? '<button class="petit" type="button" data-retirer="' + esc(j.slug) + '">Retirer mes ajouts (' + e.miens + ')</button>' : '') +
+          '</div></div>';
+      });
+    });
+    $('liste').innerHTML = h;
+    majBouton();
+  }
+
+  function nombre(input){ const v = Math.floor(Number(input.value)); return Number.isFinite(v) && v > 0 ? Math.min(v, 300) : 0; }
+  function majBouton(){
+    const nom = propre($('nom').value);
+    let total = 0;
+    $('liste').querySelectorAll('input[data-slug]').forEach(i => {
+      const j = JEUX.find(x => x.slug === i.dataset.slug), a = nombre(i), sortie = i.parentNode.querySelector('.apres');
+      total += a;
+      if (a){ const n = etatJeu(j, nom).n + a; sortie.textContent = '→ ' + n + ' en tout, carte n°' + (Math.floor(n / 10) + 1) + ' : ' + (n % 10) + '/10'; }
+      else sortie.textContent = '';
+    });
+    $('enregistrer').disabled = total === 0;
+    $('enregistrer').textContent = total ? 'Enregistrer ' + total + ' bon' + (total > 1 ? 's' : '') + ' point' + (total > 1 ? 's' : '') : 'Enregistrer les bons points';
+  }
+
+  function enregistrer(){
+    const nom = propre($('nom').value);
+    if (!cleStd(nom)) return;
+    let total = 0, jeux = 0, echecs = 0;
+    $('liste').querySelectorAll('input[data-slug]').forEach(i => {
+      const a = nombre(i); if (!a) return;
+      const j = JEUX.find(x => x.slug === i.dataset.slug), st = lire(j), k = cle(j, nom);
+      const p = st.profiles[k] || (st.profiles[k] = profilNeuf(j, nom));
+      if (!Array.isArray(p.points)) p.points = [];
+      const parc = p.parcours === 'orange' ? 'orange' : 'jaune', ms = meilleurTemps(p), at = hier();
+      for (let n = 0; n < a; n++) p.points.push({ at, ms, level: 0, score: 'reporté', parcours: parc, parc, enseignante: true });
+      if (!st.current) st.current = k;
+      try { ecrire(j, st); total += a; jeux++; } catch (e) { echecs++; }
+    });
+    afficherListe();
+    $('bilan').style.color = echecs ? 'var(--warn)' : '';
+    $('bilan').textContent = echecs ? 'Attention : ' + echecs + ' jeu(x) n\'ont pas pu être enregistrés sur cet appareil.'
+      : total + ' bon' + (total > 1 ? 's' : '') + ' point' + (total > 1 ? 's' : '') + ' ajouté' + (total > 1 ? 's' : '') + ' pour ' + nom + ' dans ' + jeux + ' jeu' + (jeux > 1 ? 'x' : '') + '.';
+  }
+
+  function retirer(slug){
+    const nom = propre($('nom').value), j = JEUX.find(x => x.slug === slug), st = lire(j), p = st.profiles[cle(j, nom)];
+    if (!p || !Array.isArray(p.points)) return;
+    const avant = p.points.length;
+    p.points = p.points.filter(x => !(x && x.enseignante));
+    try { ecrire(j, st); } catch (e) {}
+    afficherListe();
+    $('bilan').style.color = '';
+    $('bilan').textContent = (avant - p.points.length) + ' bon(s) point(s) retiré(s) dans « ' + j.titre + ' ».';
+  }
+
+  $('nom').addEventListener('input', () => { $('bilan').textContent = ''; afficherListe(); });
+  $('noms').addEventListener('click', e => { const b = e.target.closest('[data-nom]'); if (!b) return; $('nom').value = b.dataset.nom; $('bilan').textContent = ''; afficherListe(); });
+  $('liste').addEventListener('input', e => { if (e.target.matches('input[data-slug]')) majBouton(); });
+  $('liste').addEventListener('click', e => { const b = e.target.closest('[data-retirer]'); if (b) retirer(b.dataset.retirer); });
+  $('enregistrer').addEventListener('click', enregistrer);
+  afficherListe();
+})();
+</script>
+</body>
+</html>
