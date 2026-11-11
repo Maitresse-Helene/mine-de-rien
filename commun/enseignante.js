@@ -5,7 +5,7 @@
    Le code n'est retenu que dans cet onglet (sessionStorage), et 20 minutes après la dernière action :
    la maîtresse peut donc s'en servir sur la tablette d'un élève sans que l'élève y ait accès ensuite.
    Le bouton « Verrouiller » referme l'espace tout de suite. */
-window.ENS_CODES = ["21efdsvojmg"];
+window.ENS_CODES = ["1qpuhkkjl3o"];
 
 (function () {
   var CLE = "cm1cm2-ens", DUREE = 20 * 60 * 1000;
