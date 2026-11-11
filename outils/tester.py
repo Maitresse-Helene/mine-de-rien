@@ -113,6 +113,23 @@ with sync_playwright() as p:
         ok(good, f"{j['slug']:<45} porte={gate} retour={back} polices={fonts} texte={visible} erreurs={errs[:2]}")
         pg.close()
 
+    outils = sorted(d.name for d in (COPIE / "enseignante").glob("*") if (d / "index.html").exists()) if (COPIE / "enseignante").exists() else []
+    if outils:
+        print("4b. Outils de l'enseignante")
+        page.goto(BASE + "index.html")
+        for slug in outils:
+            ok(page.locator(f'.ens-outils a[href="enseignante/{slug}/index.html"]').count() == 1, f"lien vers {slug} dans l'Espace enseignante")
+            errs = []
+            pg = ctx.new_page()
+            pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
+            pg.on("console", lambda m, errs=errs: errs.append("console: " + m.text) if m.type == "error" else None)
+            pg.goto(BASE + "enseignante/" + slug + "/index.html")
+            pg.wait_for_load_state("networkidle")
+            gate = pg.locator("#cmg-gate").count()
+            back = pg.get_attribute("#allgames a", "href")
+            ok(gate == 0 and back == "../../index.html" and not errs, f"{slug:<45} porte={gate} retour={back} erreurs={errs[:2]}")
+            pg.close()
+
     print("5. Ressources")
     ok(not external, "aucune requête vers l'extérieur" + ("" if not external else " : " + ", ".join(sorted(set(external))[:5])))
     ok(not failed, "aucune ressource manquante" + ("" if not failed else " : " + ", ".join(sorted(set(failed))[:5])))

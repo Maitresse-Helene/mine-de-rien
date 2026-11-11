@@ -10,6 +10,8 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 - `jeux.js` : `window.JEUX`, une ligne JSON par jeu (`slug`, `domaine`, `titre`, `desc`, `ajoute`, `artefact`).
   L'ordre des lignes est l'ordre d'affichage dans chaque domaine.
 - `jeux/<slug>/index.html` : un jeu = une page HTML autonome.
+- `enseignante/<slug>/index.html` : les outils de l'enseignante (ex. vérifier une carte de bons points), liés depuis
+  l'« Espace enseignante » du portail, hors liste des jeux. Protégés seulement par le code de la classe.
 - `commun/commun.js` + `commun/commun.css` : la porte « Code de la classe », le laissez-passer
   portail → jeux, et le bouton « ← Tous les jeux ». Chaque page les charge (`../../commun/...` pour les jeux).
 - `commun/polices/` : Baloo 2, Lexend, Playwrite FR Moderne en local (pas de Google Fonts).
@@ -32,6 +34,17 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 3. Teste : `python3 outils/tester.py` (Playwright + Chrome). Tout doit être « ok ».
 4. Nouveau domaine : ajoute-le dans `SUBJECTS[...].domains` et `DOMAINS` de `index.html`
    (avec un univers dans `SCENES`), avant d'intégrer le jeu.
+
+## Ajouter ou mettre à jour un outil de l'enseignante
+
+Même chose qu'un jeu, avec `--outil` (ni `--domaine` ni `--desc`) :
+```
+python3 outils/integrer_jeu.py <fichier.html> --outil --artefact <lien>
+```
+puis relance `integrer_portail.py` (avec le HTML du portail) pour que le lien apparaisse dans l'Espace enseignante,
+et teste. Outil actuel : « Vérifier une carte de bons points » (https://claude.ai/artifact/4BB6KY5aFoYuA8X29MVsF2).
+Il contient le « sel » de chaque jeu (liste `GAMES`) : quand un jeu qui donne des cartes est ajouté, il faut aussi
+mettre à jour cet outil dans Claude, puis le réintégrer ici.
 
 ## Mettre à jour le portail
 

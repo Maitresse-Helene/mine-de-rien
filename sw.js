@@ -1,6 +1,6 @@
 /* Mine de rien : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-11-225936';
+const VERSION = '2026-11-11-231723';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -21,6 +21,7 @@ const FICHIERS = [
   "commun/polices/playwrite-fr-moderne-latin-400-normal.woff2",
   "commun/polices/polices.css",
   "commun/vendor/three.min.js",
+  "enseignante/verifier-une-carte-de-bons-points/index.html",
   "icones/apple-touch-icon.png",
   "icones/icone-192.png",
   "icones/icone-512.png",

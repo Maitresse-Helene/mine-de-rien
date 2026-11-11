@@ -1,0 +1,300 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Vérifier une carte de bons points</title>
+<!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Mise en page : une colonne de fiches sur papier quadrillé, comme les jeux ; la fiche « résultat » porte le code en 4 cases */
+:root{
+  --paper:#f6f7fd; --grid:#dfe3f5; --grid-strong:#cad1ef;
+  --sheet:#ffffff; --edge:#ccd3f0; --edge-shadow:#b5bee6;
+  --ink:#1a2358; --ink-soft:#5a628f; --pen:#2b45c8; --pen-soft:#eef1fd; --on-pen:#ffffff;
+  --good:#17733f; --good-bg:#e4f5ea; --bad:#b4233a; --bad-bg:#fdecee; --warn:#8a5300; --warn-bg:#fff3dc;
+  --font-display:"Baloo 2", "Lexend", system-ui, sans-serif;
+  --font-body:"Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11142a; --grid:#1a1f3c; --grid-strong:#232a4f;
+  --sheet:#1b2040; --edge:#343b6a; --edge-shadow:#0b0d1e;
+  --ink:#e7eaff; --ink-soft:#a6aed8; --pen:#9aabff; --pen-soft:#252c57; --on-pen:#0f1330;
+  --good:#7ad8a0; --good-bg:#16352a; --bad:#ff9aa8; --bad-bg:#3d1a24; --warn:#ffc46b; --warn-bg:#3a2c12;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#11142a; --grid:#1a1f3c; --grid-strong:#232a4f;
+  --sheet:#1b2040; --edge:#343b6a; --edge-shadow:#0b0d1e;
+  --ink:#e7eaff; --ink-soft:#a6aed8; --pen:#9aabff; --pen-soft:#252c57; --on-pen:#0f1330;
+  --good:#7ad8a0; --good-bg:#16352a; --bad:#ff9aa8; --bad-bg:#3d1a24; --warn:#ffc46b; --warn-bg:#3a2c12;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(to bottom,var(--grid-strong) 1px,transparent 1px),linear-gradient(to right,var(--grid-strong) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);
+  background-size:100% 32px,32px 100%,100% 8px;
+  color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5;
+}
+.wrap{max-width:640px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+h1{margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(1.8rem, 6vw, 2.4rem);line-height:1.1;color:var(--pen);text-wrap:balance}
+h2{margin:0;font-family:var(--font-display);font-weight:700;font-size:1.3rem;line-height:1.2;text-wrap:balance}
+.lead{margin:0;color:var(--ink-soft);max-width:60ch}
+.fiche{background:var(--sheet);border:1.5px solid var(--edge);border-radius:20px;box-shadow:0 4px 0 var(--edge-shadow);padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+label{font-weight:600;font-size:.92rem}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.hint{font-size:.82rem;color:var(--ink-soft);margin:0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--sheet);border:1.5px solid var(--edge);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:92px;resize:vertical;line-height:1.45}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.row{display:grid;grid-template-columns:1.4fr .8fr 1fr;gap:12px}
+@media (max-width:520px){.row{grid-template-columns:1fr 1fr}.row .f-name{grid-column:1 / -1}}
+#tCode{text-transform:uppercase;letter-spacing:.3em;font-weight:600;font-variant-numeric:tabular-nums}
+#tCard{font-variant-numeric:tabular-nums}
+.or{display:flex;align-items:center;gap:10px;color:var(--ink-soft);font-size:.85rem}
+.or::before,.or::after{content:"";flex:1;border-top:1.5px dashed var(--edge)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:14px;padding:11px 18px;font-weight:600}
+.btn-primary{background:var(--pen);color:var(--on-pen);border:0;box-shadow:0 3px 0 var(--edge-shadow);font-size:1.02rem}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 1px 0 var(--edge-shadow)}
+.btn-ghost{background:transparent;color:var(--pen);border:1.5px solid var(--edge)}
+.btn-ghost:hover{background:var(--pen-soft)}
+.btn-small{padding:7px 12px;font-size:.88rem;border-radius:10px}
+
+/* Résultat */
+.result{border-width:2px}
+.result.ok{border-color:var(--good);background:linear-gradient(var(--good-bg),var(--good-bg)) padding-box}
+.result.ko{border-color:var(--bad);background:linear-gradient(var(--bad-bg),var(--bad-bg)) padding-box}
+.verdict{display:flex;align-items:center;gap:12px}
+.stamp{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--on-pen);font-family:var(--font-display);font-weight:800;font-size:1.5rem}
+.ok .stamp{background:var(--good)} .ko .stamp{background:var(--bad)}
+.ok h2{color:var(--good)} .ko h2{color:var(--bad)}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+.facts dt{color:var(--ink-soft);font-size:.88rem}
+.facts dd{margin:0;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.code{display:inline-flex;gap:6px}
+.code span{width:2em;height:2.3em;display:grid;place-items:center;border:1.5px solid var(--edge);border-radius:8px;background:var(--sheet);font-weight:700;font-variant-numeric:tabular-nums}
+.note{margin:0;padding:10px 12px;border-radius:12px;font-size:.92rem;line-height:1.45}
+.note.warn{background:var(--warn-bg);color:var(--warn)}
+.note.info{background:var(--pen-soft);color:var(--ink)}
+.result p{margin:0}
+
+/* Cartes déjà vérifiées */
+.hist-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.hist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
+.hist li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;border-top:1.5px dashed var(--edge)}
+.hist li:first-child{border-top:0}
+.h-who{font-weight:600}
+.h-game{grid-column:1;color:var(--ink-soft);font-size:.88rem;min-width:0}
+.h-date{grid-row:1 / span 2;grid-column:2;align-self:center;font-size:.85rem;color:var(--ink-soft);font-variant-numeric:tabular-nums;text-align:right}
+.empty{margin:0;color:var(--ink-soft);font-size:.92rem}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem}
+details summary{cursor:pointer;font-weight:600;color:var(--pen)}
+.games{margin:10px 0 0;padding:0;list-style:none;columns:2 220px;column-gap:20px;font-size:.88rem}
+.games li{break-inside:avoid;padding:2px 0}
+.games .dom{display:block;margin-top:8px;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.games li:first-child .dom{margin-top:0}
+footer{font-size:.85rem;color:var(--ink-soft);display:flex;flex-direction:column;gap:6px}
+footer p{margin:0;max-width:65ch}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Espace enseignante · Les jeux du CM1-CM2</span>
+    <h1>Vérifier une carte de bons points</h1>
+    <p class="lead">Une carte complète vaut une récompense. Collez le message envoyé par la famille, ou recopiez le prénom, le numéro de la carte et son code : la page retrouve le jeu toute seule.</p>
+  </header>
+
+  <form class="fiche" id="checkForm" autocomplete="off" novalidate>
+    <div class="field">
+      <label for="tMsg">Le message reçu</label>
+      <textarea id="tMsg" placeholder="Exemple : Bonjour, Léa a complété sa carte n°2 de 10 bons points au jeu « Les doubles » (…). Code de vérification : K7PM."></textarea>
+      <p class="hint">Le prénom, le numéro, le jeu et le code se remplissent tout seuls.</p>
+    </div>
+    <div class="or">ou</div>
+    <div class="row">
+      <div class="field f-name"><label for="tName">Prénom de l'élève</label><input id="tName" type="text" placeholder="Léa"></div>
+      <div class="field"><label for="tCard">N° de carte</label><input id="tCard" type="number" inputmode="numeric" min="1" max="999" placeholder="1"></div>
+      <div class="field"><label for="tCode">Code</label><input id="tCode" type="text" maxlength="6" placeholder="K7PM" spellcheck="false" autocapitalize="characters"></div>
+    </div>
+    <div class="field">
+      <label for="tGame">Jeu</label>
+      <select id="tGame"></select>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" type="submit">Vérifier la carte</button>
+      <button class="btn-ghost" type="button" id="clearBtn">Effacer</button>
+    </div>
+  </form>
+
+  <section class="fiche result" id="result" hidden aria-live="polite"></section>
+
+  <section class="fiche" aria-labelledby="histTitle">
+    <div class="hist-head">
+      <h2 id="histTitle">Cartes déjà vérifiées</h2>
+      <button class="btn-ghost btn-small" type="button" id="histClear" hidden>Vider la liste</button>
+    </div>
+    <div class="confirm" id="histConfirm" hidden>
+      <span>Vider toute la liste ?</span>
+      <button class="btn-ghost btn-small" type="button" id="histYes">Oui, vider</button>
+      <button class="btn-ghost btn-small" type="button" id="histNo">Non</button>
+    </div>
+    <ol class="hist" id="hist"></ol>
+    <p class="empty" id="histEmpty">Chaque carte valide s'inscrit ici, avec la date. Si la même carte revient, la page vous prévient. Cette liste reste sur cet appareil seulement.</p>
+  </section>
+
+  <footer>
+    <p>Chaque carte a un code de 4 caractères, propre au jeu, au prénom et au numéro de la carte. Majuscules, accents et espaces ne comptent pas, mais le prénom doit être écrit comme l'élève l'a tapé dans le jeu.</p>
+    <details>
+      <summary>Les jeux reconnus (<span id="nGames"></span>)</summary>
+      <ul class="games" id="gameList"></ul>
+    </details>
+  </footer>
+</div>
+
+<script>
+(function(){
+  /* Les jeux et le « sel » de leur code de carte (repris de chaque jeu en ligne). v : 'apos' = le présent, qui remplace aussi ’ par ' dans le prénom. */
+  const GAMES = [{"id": "6oArnJvU3CPZqxbQjhSxwJ", "domain": "Calcul mental", "title": "Je me teste", "name": "Je me teste", "salt": "cm00-je-me-teste-bons-points", "v": "std"}, {"id": "FoYCR8nSgWuNVkRyNHM7WS", "domain": "Calcul mental", "title": "Les tables d'addition", "name": "Les tables d'addition", "salt": "cm01-tables-addition-bons-points", "v": "std"}, {"id": "JirGWnT5T9PDctxbfnsdeb", "domain": "Calcul mental", "title": "Les doubles", "name": "Les doubles", "salt": "cm02-doubles-bons-points", "v": "std"}, {"id": "JwLQyra5jCu7keNMUPpjdu", "domain": "Calcul mental", "title": "Multiplier par 10, 100, 1 000", "name": "Multiplier par 10, 100, 1 000", "salt": "cm03-multiplier-10-100-1000-bons-points", "v": "std"}, {"id": "TwyXBsBSfkpNoXPR2czVwz", "domain": "Calcul mental", "title": "Additionner deux nombres", "name": "Additionner deux nombres", "salt": "cm04-additionner-deux-nombres-bons-points", "v": "std"}, {"id": "3zuWtfshPJqowHJCVjgA1S", "domain": "Calcul mental", "title": "Les tables de multiplication", "name": "Les tables de multiplication", "salt": "cm05-tables-multiplication-bons-points", "v": "std"}, {"id": "25hZvUxiM4Jd8gyCJrstSk", "domain": "Calcul mental", "title": "Les moitiés", "name": "Les moitiés", "salt": "cm06-moities-bons-points", "v": "std"}, {"id": "77EAKzjUCRBfJmcwHBqmvx", "domain": "Calcul mental", "title": "Soustractions de tête", "name": "Soustractions de tête", "salt": "soustractions-bons-points-ce2", "v": "std"}, {"id": "H2UBUP9YEkyGYKcHAyqA5q", "domain": "Calcul mental", "title": "Les nombres terminés par 8 ou 9", "name": "Les nombres terminés par 8 ou 9", "salt": "cm08-nombres-8-9-bons-points", "v": "std"}, {"id": "MEMWCA9w41gZR8ZL4S1zQ8", "domain": "Calcul mental", "title": "Passer la centaine", "name": "Passer la centaine", "salt": "cm08b-passer-la-centaine-bons-points", "v": "std"}, {"id": "JdZ1hpgL93m524FAKsvpti", "domain": "Calcul mental", "title": "Multiplier par 4, par 8", "name": "Multiplier par 4, par 8", "salt": "cm09-multiplier-4-8-bons-points", "v": "std"}, {"id": "AGdnnqeBCGcFMciewQkejs", "domain": "Problèmes", "title": "Les problèmes de parties-tout", "name": "Les problèmes de parties-tout", "salt": "p01-parties-tout-schema-a-b", "v": "std"}, {"id": "2Vf9CFEV8KF4zn6oxVsRhK", "domain": "Problèmes", "title": "Les problèmes de comparaison", "name": "Les problèmes de comparaison", "salt": "p02-comparaison-ecart-ou-fois", "v": "std"}, {"id": "8Wtqvb8t5uT4ZJ8BgwD57G", "domain": "Problèmes", "title": "Les problèmes à étapes", "name": "Les problèmes à étapes", "salt": "p03-problemes-a-etapes-ligne-du-temps", "v": "std"}, {"id": "JmpCLrVfzadqXvsKbotVh7", "domain": "Problèmes", "title": "Les problèmes de proportionnalité", "name": "Les problèmes de proportionnalité", "salt": "p04-proportionnalite-fois-plus-fois-moins", "v": "std"}, {"id": "Bk3b8Q3qhC8eWvfeDCdY2M", "domain": "Grandeurs et mesures", "title": "Le périmètre", "name": "Le périmètre (gâteaux)", "salt": "gm04-perimetre-gateaux", "v": "std"}, {"id": "AmZtTXeaKAgJePfFeaRkbH", "domain": "Espace et géométrie", "title": "Les cubes, les pavés et les prismes droits", "name": "Les cubes, les pavés et les prismes droits", "salt": "g04-cubes-paves-prismes-points-de-vue", "v": "std"}, {"id": "ARuV4ubLb8Sfpf9BFhCegg", "domain": "Données", "title": "Les probabilités", "name": "Les probabilités (fête foraine)", "salt": "d04-probabilites-foire", "v": "std"}, {"id": "Az9VaKJAGmJYw2cPJGGbpv", "domain": "Conjugaison", "title": "Le présent des trois groupes", "name": "Le présent des trois groupes", "salt": "c03-present-trois-groupes", "v": "apos"}, {"id": "2JQUYW8kTjiK6oigwudgrP", "domain": "Orthographe", "title": "Le son [e]", "name": "Le son [e] (plongée)", "salt": "o07-son-e-plongee", "v": "std"}, {"id": "TLKJsj7mxfSajte1C98QPE", "domain": "Vocabulaire", "title": "Le dictionnaire : l'ordre alphabétique", "name": "Le dictionnaire : l'ordre alphabétique (jardin)", "salt": "v01-dictionnaire-ordre-jardin", "v": "std"}, {"id": "Vqq8Vg7ZtJtWCbxwCWUApu", "domain": "Vocabulaire", "title": "Le dictionnaire : lire un article", "name": "Le dictionnaire : lire un article (jardin)", "salt": "v02-dictionnaire-article-jardin", "v": "std"}, {"id": "RmnnJivwM7u7AjsvaCmkEQ", "domain": "Vocabulaire", "title": "La polysémie", "name": "La polysémie (jardin)", "salt": "v03-polysemie-jardin", "v": "std"}, {"id": "WEcHRPDyPLSQuVwGg3aiMM", "domain": "Vocabulaire", "title": "Les familles de mots", "name": "Les familles de mots (jardin)", "salt": "v05-familles-mots-jardin", "v": "std"}, {"id": "3oPS7dixiNuLppaFG4DfJG", "domain": "Orthographe", "title": "Le son [ʒ]", "name": "Le son [ʒ] (plongée)", "salt": "o08-son-j-plongee", "v": "std"}, {"id": "AJ42qFx9BS6m1KAQvYVMN1", "domain": "Grammaire", "title": "La phrase et ses constituants", "name": "La phrase et ses constituants (château)", "salt": "g01-phrase-chateau", "v": "std"}, {"id": "4pLdQ7yPRhj4TfoV4rMpk4", "domain": "Grammaire", "title": "Le verbe", "name": "Le verbe (château)", "salt": "g02-verbe-chateau", "v": "std"}, {"id": "9cSgcwDfs8USY7eeRLEDJ8", "domain": "Grammaire", "title": "Le sujet", "name": "Le sujet (château)", "salt": "g03-sujet-chateau", "v": "std"}, {"id": "EWKKVaVvt6MPhfiQtohK3D", "domain": "Grammaire", "title": "Le nom et le groupe nominal", "name": "Le nom et le groupe nominal (château)", "salt": "g04-groupe-nominal-chateau", "v": "std"}, {"id": "LmhnF6UCVdwSnUJTSrqLmA", "domain": "Grammaire", "title": "Les déterminants", "name": "Les déterminants (château)", "salt": "g05-determinants-chateau", "v": "std"}, {"id": "R5Rhxk9KXpvsZfo6nVUxRm", "domain": "Vocabulaire", "title": "Les préfixes", "name": "Les préfixes (jardin)", "salt": "v06-prefixes-jardin", "v": "std"}, {"id": "HhSZ9wAKwR4BwL3ZNxkWVQ", "domain": "Calcul", "title": "Les parenthèses", "name": "Les parenthèses (chantier)", "salt": "c01-parentheses-chantier", "v": "std"}, {"id": "MyAQeGBri74yw7ojqYudW5", "domain": "Calcul", "title": "L'addition et la soustraction posées", "name": "L'addition et la soustraction posées (chantier)", "salt": "c02-addition-soustraction-chantier", "v": "std"}, {"id": "HHe38UWPnJutr6aMHLmxBC", "domain": "Calcul", "title": "Estimer un résultat", "name": "Estimer un résultat (chantier)", "salt": "c03-estimer-chantier", "v": "std"}, {"id": "J4nquMYh21cpRZS3xyGtV7", "domain": "Calcul", "title": "La multiplication posée", "name": "La multiplication posée (chantier)", "salt": "c04-multiplication-chantier", "v": "std"}, {"id": "Bp3eZr8oYF6MqRzcPGbdgx", "domain": "Calcul", "title": "La multiplication par trois chiffres", "name": "La multiplication par trois chiffres (chantier)", "salt": "c05-multiplication-3-chiffres-chantier", "v": "std"}, {"id": "PbBBfovKzVZrHSQaveqryv", "domain": "Calcul", "title": "La division", "name": "La division (chantier)", "salt": "c06-division-chantier", "v": "std"}, {"id": "QdoQfiZroDERJ7PCdXcD7H", "domain": "Numération", "title": "Les fractions décimales", "name": "Les fractions décimales (train)", "salt": "n04-fractions-decimales-train", "v": "std"}];
+  const $ = id => document.getElementById(id);
+  const ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  function fnv(str){
+    let h = 0x811c9dc5;
+    for (let k = 0; k < str.length; k++){ h ^= str.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  const stripAcc = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  function nameKey(s, v){
+    let t = String(s || '');
+    if (v === 'apos') t = t.replace(/[’`]/g, "'");
+    return stripAcc(t).toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  function cardCode(g, name, k){
+    let h = fnv(nameKey(name, g.v) + '|' + k + '|' + g.salt);
+    let c = '';
+    for (let j = 0; j < 4; j++){ c += ALPHA[h % ALPHA.length]; h = Math.floor(h / ALPHA.length); }
+    return c;
+  }
+  const cleanCode = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const looseName = s => stripAcc(String(s || '')).toLowerCase().replace(/[’`]/g, "'").replace(/\s+/g, ' ').trim();
+
+  /* ---------- Liste des jeux ---------- */
+  const sel = $('tGame');
+  sel.innerHTML = '<option value="">Je ne sais pas : chercher dans tous les jeux</option>';
+  const doms = [];
+  GAMES.forEach(g => { if (!doms.includes(g.domain)) doms.push(g.domain); });
+  doms.forEach(d => {
+    const og = document.createElement('optgroup'); og.label = d;
+    GAMES.forEach((g, i) => { if (g.domain === d){ const o = document.createElement('option'); o.value = String(i); o.textContent = g.title; og.appendChild(o); } });
+    sel.appendChild(og);
+  });
+  $('nGames').textContent = GAMES.length;
+  $('gameList').innerHTML = doms.map(d => GAMES.filter(g => g.domain === d).map((g, j) =>
+    '<li>' + (j === 0 ? '<span class="dom">' + esc(d) + '</span>' : '') + esc(g.title) + '</li>').join('')).join('');
+
+  /* ---------- Le message collé ---------- */
+  function readMessage(){
+    const t = $('tMsg').value;
+    if (!t.trim()) return false;
+    const name = /Bonjour,?\s*(.+?)\s+a compl[ée]t[ée] sa carte/i.exec(t);
+    const card = /carte\s*n\s*[°o]?\s*(\d+)/i.exec(t);
+    const game = /au (?:jeu|d[ée]fi)\s*«\s*([^»]+?)\s*»/i.exec(t);
+    const code = /code(?: de v[ée]rification)?\s*:?\s*([A-Za-z0-9]{4})\b/i.exec(t);
+    if (name) $('tName').value = name[1];
+    if (card) $('tCard').value = card[1];
+    if (code) $('tCode').value = code[1].toUpperCase();
+    if (game){
+      const want = looseName(game[1]);
+      const i = GAMES.findIndex(g => looseName(g.name) === want || looseName(g.title) === want);
+      sel.value = i >= 0 ? String(i) : '';
+    }
+    return !!(name && card && code);
+  }
+  let pasteTimer = null;
+  $('tMsg').addEventListener('input', () => {
+    clearTimeout(pasteTimer);
+    pasteTimer = setTimeout(() => { if (readMessage()) verify(); }, 350);
+  });
+
+  /* ---------- Vérifier ---------- */
+  function verify(){
+    const name = $('tName').value, k = parseInt($('tCard').value, 10), code = cleanCode($('tCode').value);
+    const out = $('result');
+    out.hidden = false;
+    if (!nameKey(name) || !(k >= 1) || code.length !== 4){
+      out.className = 'fiche result ko';
+      out.innerHTML = verdict('?', 'Il manque quelque chose') +
+        '<p>Remplissez le prénom, le numéro de la carte et le code à 4 caractères (ou collez le message reçu).</p>';
+      return;
+    }
+    const chosen = sel.value === '' ? null : GAMES[+sel.value];
+    const hits = GAMES.filter(g => cardCode(g, name, k) === code);
+    if (chosen && hits.includes(chosen)) return showOk(chosen, name, k, code);
+    if (hits.length === 1) return showOk(hits[0], name, k, code, chosen);
+    if (hits.length > 1){
+      out.className = 'fiche result ok';
+      out.innerHTML = verdict('✓', 'Carte valide') +
+        '<p>Ce code est juste pour plusieurs jeux : ' + hits.map(g => '« ' + esc(g.title) + ' »').join(', ') + '. Choisissez le jeu dans la liste pour l\'inscrire.</p>';
+      return;
+    }
+    // Rien ne correspond : chercher l'erreur la plus probable
+    let near = null;
+    for (const g of (chosen ? [chosen] : GAMES)){
+      for (let j = 1; j <= 60 && !near; j++) if (j !== k && cardCode(g, name, j) === code) near = { g, j };
+      if (near) break;
+    }
+    out.className = 'fiche result ko';
+    out.innerHTML = verdict('✗', 'Ce code ne correspond pas') +
+      '<dl class="facts"><dt>Prénom</dt><dd>' + esc(name.trim()) + '</dd><dt>Carte</dt><dd>n°' + k + '</dd><dt>Code</dt><dd>' + codeBoxes(code) + '</dd>' +
+      (chosen ? '<dt>Jeu</dt><dd>' + esc(chosen.title) + '</dd>' : '') + '</dl>' +
+      (near ? '<p class="note info">Ce code est celui de la <b>carte n°' + near.j + '</b> ' + deName(name.trim()) + ' au jeu « ' + esc(near.g.title) + ' ». Vérifiez le numéro de la carte.</p>'
+            : '<p>Vérifiez l\'orthographe du prénom (comme l\'élève l\'a tapé dans le jeu), le numéro de la carte et le code. Les lettres I, L, O et les chiffres 0 et 1 ne sont jamais utilisés dans les codes.</p>');
+  }
+  const deName = n => (/^[aeiouyhàâäéèêëîïôöûüœ]/i.test(n) ? 'd\'' : 'de ') + esc(n);
+  function verdict(sym, title){ return '<div class="verdict"><span class="stamp" aria-hidden="true">' + sym + '</span><h2>' + title + '</h2></div>'; }
+  function codeBoxes(c){ return '<span class="code" aria-label="' + c.split('').join(' ') + '">' + c.split('').map(x => '<span>' + esc(x) + '</span>').join('') + '</span>'; }
+  function showOk(g, name, k, code, chosenOther){
+    const out = $('result');
+    const id = g.salt + '|' + nameKey(name, g.v) + '|' + k;
+    const hist = loadHist();
+    const before = hist.find(h => h.id === id);
+    out.className = 'fiche result ok';
+    out.innerHTML = verdict('✓', 'Carte valide, la récompense est méritée !') +
+      '<dl class="facts"><dt>Prénom</dt><dd>' + esc(name.trim()) + '</dd><dt>Carte</dt><dd>n°' + k + ' (10 bons points)</dd><dt>Jeu</dt><dd>' + esc(g.title) + '</dd><dt>Code</dt><dd>' + codeBoxes(code) + '</dd></dl>' +
+      (chosenOther ? '<p class="note info">Ce code est celui du jeu « ' + esc(g.title) + ' », pas de « ' + esc(chosenOther.title) + ' ».</p>' : '') +
+      (before ? '<p class="note warn">Attention : cette carte a déjà été vérifiée sur cet appareil le ' + fmtDate(before.t) + '.</p>' : '');
+    if (!before){ hist.unshift({ id, name: name.trim(), k, game: g.title, t: Date.now() }); saveHist(hist.slice(0, 200)); renderHist(); }
+  }
+
+  /* ---------- Cartes déjà vérifiées (sur cet appareil) ---------- */
+  const HKEY = 'cm1cm2-cartes-verifiees';
+  function loadHist(){ try { const v = JSON.parse(localStorage.getItem(HKEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return memHist; } }
+  let memHist = [];
+  function saveHist(h){ memHist = h; try { localStorage.setItem(HKEY, JSON.stringify(h)); } catch (e) {} }
+  function fmtDate(t){
+    try { return new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ''; }
+  }
+  function renderHist(){
+    const h = loadHist();
+    $('hist').innerHTML = h.slice(0, 50).map(x => '<li><span class="h-who">' + esc(x.name) + ' · carte n°' + x.k + '</span><span class="h-date">' + fmtDate(x.t) + '</span><span class="h-game">' + esc(x.game) + '</span></li>').join('');
+    $('histEmpty').hidden = h.length > 0;
+    $('histClear').hidden = h.length === 0;
+  }
+  $('histClear').addEventListener('click', () => { $('histConfirm').hidden = false; $('histClear').hidden = true; });
+  $('histNo').addEventListener('click', () => { $('histConfirm').hidden = true; renderHist(); });
+  $('histYes').addEventListener('click', () => { saveHist([]); $('histConfirm').hidden = true; renderHist(); });
+
+  $('checkForm').addEventListener('submit', e => { e.preventDefault(); verify(); });
+  $('clearBtn').addEventListener('click', () => { ['tMsg', 'tName', 'tCard', 'tCode'].forEach(id => { $(id).value = ''; }); sel.value = ''; $('result').hidden = true; $('tMsg').focus(); });
+  $('tCode').addEventListener('input', e => { const v = cleanCode(e.target.value).slice(0, 4); if (v !== e.target.value) e.target.value = v; });
+  renderHist();
+  window.__verif = { GAMES, cardCode };
+})();
+</script>
+
+</body></html>

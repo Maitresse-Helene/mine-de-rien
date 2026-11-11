@@ -28,7 +28,11 @@ TETE = ('<meta name="description" content="{desc}"><meta name="theme-color" cont
         '<link rel="icon" href="icones/icone-192.png" sizes="192x192" type="image/png">'
         '<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">'
         '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">'
-        '<meta name="apple-mobile-web-app-title" content="{nom}"><meta name="apple-mobile-web-app-status-bar-style" content="default">')
+        '<meta name="apple-mobile-web-app-title" content="{nom}"><meta name="apple-mobile-web-app-status-bar-style" content="default">'
+        '<style>.ens-outils{{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}}'
+        '.ens-lien{{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--pen);'
+        'color:var(--sheet);font-family:var(--font-num);font-weight:800;font-size:1rem;text-decoration:none}}'
+        '.ens-lien:focus-visible{{outline:3px solid var(--pen);outline-offset:3px}}</style>')
 
 LISTE_JEUX = """  /* ---------- Les jeux : la liste est dans jeux.js (un dossier par jeu dans jeux/) ---------- */
   const GAMES = (window.JEUX || []).map(j => ({ domain: j.domaine, title: j.titre, desc: j.desc, url: 'jeux/' + j.slug + '/index.html', added: j.ajoute }));
@@ -110,6 +114,18 @@ def main():
         s = s[:m.end()] + "\n      " + INSTALLER + s[m.end():]
     else:
         alertes.append("espace enseignante : mode d'emploi pour installer l'appli non ajouté")
+
+    # outils de l'enseignante (enseignante/<slug>/index.html) : liens dans l'Espace enseignante
+    outils = []
+    for f in sorted((RACINE / "enseignante").glob("*/index.html")):
+        t = re.search(r"<title>([^<]*)</title>", f.read_text(encoding="utf8"))
+        outils.append((f.parent.name, t.group(1).strip() if t else f.parent.name))
+    if outils:
+        liens = "".join(f'<a class="ens-lien" href="enseignante/{slug}/index.html"><span aria-hidden="true">✓</span> {nom}</a>'
+                        for slug, nom in outils)
+        remplacer("<summary>Espace enseignante</summary>",
+                  '<summary>Espace enseignante</summary>\n      <div class="ens-outils">' + liens + "</div>",
+                  "liens vers les outils de l'enseignante")
 
     # scripts : jeux.js avant le script principal, service worker à la fin
     i = s.rfind("<script>\n(() => {")

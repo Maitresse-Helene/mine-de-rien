@@ -13,6 +13,9 @@ Ce que fait le script :
   4. Retient l'identifiant de l'artefact d'origine dans outils/artefacts.json.
   5. Met à jour la liste des fichiers hors ligne (sw.js).
 
+Pour un outil de l'enseignante (pas un jeu : il n'apparaît pas dans la liste des jeux, mais dans
+l'« Espace enseignante » du portail), ajoute --outil : la page va dans enseignante/<slug>/index.html.
+
 Exemple :
   python3 outils/integrer_jeu.py jeu.html --domaine orthographe \\
       --desc "Écrire le son [s] avec s, ss, c, ç…, en plongée dans les fonds marins." \\
@@ -129,7 +132,9 @@ def preparer_page(html, domaine, artefacts, alertes):
         ident = m.group(1)
         cible = artefacts.get(ident)
         if cible == "portail":
-            return "../../index.html#" + domaine
+            return "../../index.html" + ("#" + domaine if domaine else "")
+        if cible and cible.startswith("enseignante/"):
+            return "../../" + cible + "/index.html"
         if cible:
             return "../" + cible + "/index.html"
         alertes.append("lien vers un artefact inconnu laissé tel quel : " + ident)
@@ -147,11 +152,33 @@ def preparer_page(html, domaine, artefacts, alertes):
     return html
 
 
+def integrer_outil(a, html, titre, slug):
+    artefacts = lire_artefacts()
+    ident = id_artefact(a.artefact)
+    if ident:
+        artefacts[ident] = "enseignante/" + slug
+    alertes = []
+    page = preparer_page(html, "", artefacts, alertes)
+    dossier = RACINE / "enseignante" / slug
+    dossier.mkdir(parents=True, exist_ok=True)
+    (dossier / "index.html").write_text(page, encoding="utf8")
+    ARTEFACTS.write_text(json.dumps(artefacts, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
+    if not a.sans_sw:
+        sys.path.insert(0, str(Path(__file__).parent))
+        import mettre_a_jour_sw
+        mettre_a_jour_sw.main()
+    print(f"Outil de l'enseignante : {titre} -> enseignante/{slug}/")
+    print("  Pense à relancer integrer_portail.py pour mettre le lien dans l'Espace enseignante.")
+    for al in alertes:
+        print("  ATTENTION :", al)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("fichier", help="la page HTML du jeu")
-    p.add_argument("--domaine", required=True, help="clé du domaine (ex. calcul-mental, orthographe)")
-    p.add_argument("--desc", required=True, help="la phrase qui décrit le jeu dans le portail")
+    p.add_argument("--domaine", help="clé du domaine (ex. calcul-mental, orthographe) ; obligatoire pour un jeu")
+    p.add_argument("--desc", help="la phrase qui décrit le jeu dans le portail ; obligatoire pour un jeu")
+    p.add_argument("--outil", action="store_true", help="outil de l'enseignante : enseignante/<slug>/, hors liste des jeux")
     p.add_argument("--titre", help="titre du jeu (par défaut : la balise <title> de la page)")
     p.add_argument("--slug", help="nom du dossier (par défaut : le titre sans accents)")
     p.add_argument("--ajoute", help="date d'ajout AAAA-MM-JJTHH:MM (par défaut : maintenant)")
@@ -162,6 +189,10 @@ def main():
     html = Path(a.fichier).read_text(encoding="utf8")
     titre = a.titre or re.search(r"<title>([^<]*)</title>", html).group(1).strip()
     slug = a.slug or slugifier(titre)
+    if a.outil:
+        return integrer_outil(a, html, titre, slug)
+    if not a.domaine or not a.desc:
+        sys.exit("Pour un jeu, --domaine et --desc sont obligatoires (ou --outil pour un outil de l'enseignante).")
     domaines = domaines_du_portail()
     if domaines and a.domaine not in domaines:
         sys.exit(f"Domaine inconnu : {a.domaine}. Domaines du portail : {', '.join(sorted(domaines))}")
