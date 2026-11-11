@@ -46,9 +46,12 @@ l'appli (`À INTÉGRER`) : intègre-les ensuite avec `integrer_jeu.py`, puis tes
 
 ## Publier
 
-Dépôt GitHub `Maitresse-Helene/mine-de-rien`, publié par GitHub Pages depuis la branche `main` (racine) :
-https://maitresse-helene.github.io/mine-de-rien/. Après les tests, commit et push sur `main` : le site se met à
-jour en une ou deux minutes. Garde aussi à jour le dossier de l'enseignante sur son Mac (Documents/jeux web).
+Dépôt GitHub `Maitresse-Helene/mine-de-rien`, publié par Cloudflare Pages (projet `mine-de-rien`, branche `main`,
+sans commande de construction, racine) : https://mine-de-rien.pages.dev. Après les tests, commit et push sur `main` :
+le site se met à jour tout seul. Garde aussi à jour le dossier de l'enseignante sur son Mac (Documents/jeux web).
+Cloudflare redirige « .../index.html » vers « .../ » : le service worker suit lui-même ces redirections pour les pages
+(voir `outils/mettre_a_jour_sw.py`), et `outils/tester.py` sert l'appli de la même façon. (GitHub Pages a aussi été
+activé sur le dépôt, mais ses publications restaient bloquées : compte trop récent.)
 
 ## Règles
 

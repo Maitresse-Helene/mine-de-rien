@@ -21,10 +21,20 @@ cjs.write_text(cjs.read_text(encoding="utf8").replace(
     "window.CMG_CODES = [\n", 'window.CMG_CODES = [\n  { from: "2000-01-01", to: "9999-12-31", h: "25tsvmh4xsg" },\n', 1), encoding="utf8")
 with socket.socket() as so:
     so.bind(("127.0.0.1", 0)); PORT = so.getsockname()[1]
-class Silencieux(http.server.SimpleHTTPRequestHandler):
+class CommeCloudflare(http.server.SimpleHTTPRequestHandler):
+    """Sert l'appli comme Cloudflare Pages : « .../index.html » est redirigé vers « .../ »."""
     def log_message(self, *a):
         pass
-Handler = functools.partial(Silencieux, directory=str(COPIE))
+
+    def do_GET(self):
+        chemin, _, requete = self.path.partition("?")
+        if chemin.endswith("/index.html"):
+            self.send_response(308)
+            self.send_header("Location", chemin[:-len("index.html")] + ("?" + requete if requete else ""))
+            self.end_headers()
+            return
+        return super().do_GET()
+Handler = functools.partial(CommeCloudflare, directory=str(COPIE))
 srv = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 
@@ -77,7 +87,7 @@ with sync_playwright() as p:
     with page.expect_navigation():
         page.click("#allgames a")
     page.wait_for_selector("a.game")
-    ok(page.url.endswith("index.html#calcul-mental") and page.locator("a.game").count() == n, "« Tous les jeux » ramène au domaine")
+    ok(page.url.endswith("#calcul-mental") and page.locator("a.game").count() == n, "« Tous les jeux » ramène au domaine")
     ok(len(ctx.pages) == 1, "pas de nouvel onglet")
 
     print("3. Liens internes en target=_blank : même fenêtre")
@@ -121,6 +131,8 @@ with sync_playwright() as p:
     pg = ctx.new_page()
     pg.goto(BASE + "jeux/" + jeux[-1]["slug"] + "/index.html")
     ok(pg.title() == jeux[-1]["titre"], "un jeu jamais ouvert se charge hors ligne")
+    pg.goto(BASE + "jeux/" + jeux[0]["slug"] + "/")
+    ok(pg.title() == jeux[0]["titre"], "un jeu se charge hors ligne par son adresse courte")
     pg.goto(BASE + "index.html#francais")
     ok(pg.locator("a.card").count() >= 1, "le portail marche hors ligne")
     ctx.set_offline(False)

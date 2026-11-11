@@ -45,9 +45,9 @@ et la mise à jour arrive sur les tablettes à la connexion suivante.
 
 ## L'appli en ligne
 
-L'appli est publiée par GitHub à l'adresse **https://maitresse-helene.github.io/mine-de-rien/**
-(dépôt `Maitresse-Helene/mine-de-rien`). À chaque ajout de jeu, Claude met à jour le dépôt,
-et le site suit en une ou deux minutes.
+L'appli est en ligne à l'adresse **https://mine-de-rien.pages.dev** (hébergement gratuit Cloudflare Pages,
+branché sur le dépôt GitHub `Maitresse-Helene/mine-de-rien`). À chaque ajout de jeu, Claude met à jour le dépôt,
+et le site suit tout seul en moins d'une minute.
 
 Si vous changez le portail dans Claude (nom, mascotte, domaines…), demandez à Claude de le reporter dans l'appli.
 
