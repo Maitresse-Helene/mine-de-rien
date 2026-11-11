@@ -1,0 +1,703 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Mine de rien</title><meta name="description" content="Mine de rien : des jeux bien taillés pour le CM1-CM2."><meta name="theme-color" content="#2b45c8"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone.svg" type="image/svg+xml"><link rel="icon" href="icones/icone-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mine de rien"><meta name="apple-mobile-web-app-status-bar-style" content="default"></head><body>
+<!-- Le code de la classe et le code commun à toutes les pages sont dans commun/ : ne pas modifier à la main, demander à Claude. -->
+<link rel="stylesheet" href="commun/commun.css"><script src="commun/commun.js"></script>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="commun/polices/polices.css">
+<style>
+/* Mise en page : une colonne posée sur un cahier Seyès, comme les jeux.
+   Accueil : deux portes (Maths, Français). Puis les domaines, chacun avec son univers peint.
+   Le décor des univers suit la saison (date du jour). */
+:root{
+  --paper:#f6f7fd;
+  --sheet:#ffffff;
+  --ink:#1a2358;
+  --ink-soft:#5a628f;
+  --rule:#e4e8f7;
+  --rule-strong:#cad1ef;
+  --pen:#2b45c8;
+  --key-edge:#ccd3f0;
+  --key-shadow:#b5bee6;
+  --chip:#eceef6;
+  --new:#c2365e;
+  --font-title:"Playwrite FR Moderne","Segoe Print","Bradley Hand",cursive;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+    --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff;
+    --key-edge:#3a4d46; --key-shadow:#0e1513; --chip:#25302c; --new:#ff8fb1;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+  --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff;
+  --key-edge:#3a4d46; --key-shadow:#0e1513; --chip:#25302c; --new:#ff8fb1;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to bottom, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to right, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+  background-size:100% 32px, 32px 100%, 100% 8px;
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.5;
+}
+.wrap{
+  max-width:760px;margin:0 auto;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:20px 40px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.top{display:flex;flex-direction:column;gap:6px}
+.eyebrow{margin:0;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.title{margin:0;font-family:var(--font-title);font-weight:400;font-size:clamp(1.7rem, 6vw, 2.4rem);line-height:1.5;color:var(--pen);text-wrap:balance}
+.subtitle{margin:-6px 0 2px;font-family:var(--font-num);font-weight:700;font-size:clamp(1.05rem, 3.4vw, 1.25rem);line-height:1.3;color:var(--ink-soft);text-wrap:balance}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.95rem;min-height:1.5em}
+.crumbs a{color:var(--pen);font-weight:600;text-underline-offset:3px}
+.crumbs span{color:var(--ink-soft)}
+.lead{margin:0;font-size:1.05rem;color:var(--ink-soft)}
+h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;line-height:1.2}
+.world{margin:0;color:var(--ink-soft);font-size:.92rem}
+
+.card{
+  display:flex;flex-direction:column;
+  background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:20px;overflow:hidden;
+  box-shadow:0 4px 0 var(--key-shadow);color:var(--ink);text-decoration:none;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--key-shadow)}
+.card:active{transform:translateY(2px);box-shadow:0 2px 0 var(--key-shadow)}
+.card:focus-visible,.game:focus-visible,.crumbs a:focus-visible,.seasons button:focus-visible,summary:focus-visible{outline:3px solid var(--pen);outline-offset:3px}
+.pic{line-height:0;background:#cfe6f7}
+.pic canvas{display:block;width:100%;height:auto}
+
+.subjects{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:16px}
+.sbody{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+.sbody h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.6rem;line-height:1.15}
+.sbody p{margin:2px 0 0;color:var(--ink-soft);font-size:.9rem}
+.go{flex:none;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:var(--c);color:#ffffff;font-family:var(--font-num);font-weight:800;font-size:1.05rem}
+
+.domains{display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:12px}
+.dbody{display:flex;flex-direction:column;gap:4px;padding:10px 12px 12px;flex:1}
+.dbody h3{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.12rem;line-height:1.2}
+.dbody .world{font-size:.82rem;line-height:1.35}
+.count{align-self:flex-start;margin-top:auto;padding:2px 10px;border-radius:999px;background:var(--c);color:#ffffff;font-family:var(--font-num);font-weight:700;font-size:.9rem}
+.count.soon{background:var(--chip);color:var(--ink-soft)}
+.dbody .badge-new{align-self:flex-start;margin-left:0}
+.badge-new{display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;background:var(--new);color:#ffffff;font-family:var(--font-num);font-weight:800;font-size:.78rem;vertical-align:middle}
+
+.banner{border-radius:20px;overflow:hidden;border:1.5px solid var(--key-edge);line-height:0;background:#cfe6f7}
+.banner canvas{display:block;width:100%;height:auto}
+.dhead{display:flex;flex-direction:column;gap:2px}
+.games{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.game{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;
+  background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:18px;box-shadow:0 4px 0 var(--key-shadow);
+  color:var(--ink);text-decoration:none;transition:transform .15s ease, box-shadow .15s ease;
+}
+.game:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--key-shadow)}
+.gtext{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.gtitle{font-family:var(--font-num);font-weight:800;font-size:1.2rem;line-height:1.25}
+.gdesc{color:var(--ink-soft);font-size:.92rem;line-height:1.4}
+.play{flex:none;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:var(--c);color:#ffffff;font-family:var(--font-num);font-weight:800;font-size:1.05rem}
+.play svg{width:14px;height:14px}
+.empty{padding:18px;border-radius:18px;background:var(--sheet);border:1.5px dashed var(--key-edge);text-align:center;color:var(--ink-soft)}
+.empty b{display:block;color:var(--ink);font-family:var(--font-num);font-size:1.2rem}
+
+.foot{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.note{margin:0;font-size:.88rem;color:var(--ink-soft)}
+.teacher{border:1.5px solid var(--key-edge);border-radius:14px;background:var(--sheet);padding:10px 14px}
+.teacher summary{cursor:pointer;font-weight:600;color:var(--pen)}
+.teacher p{margin:8px 0 0;font-size:.9rem;color:var(--ink-soft)}
+.seasons{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.seasons button{border:1.5px solid var(--key-edge);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 .88rem var(--font-body);cursor:pointer}
+.seasons button[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:var(--sheet)}
+@media (prefers-reduced-motion: reduce){.card,.game{transition:none}.card:hover,.game:hover{transform:none}}
+@media (max-width:420px){.game{flex-wrap:wrap}.play{margin-left:auto}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow" id="eyebrow">CM1 · CM2</p>
+    <h1 class="title">Mine de rien</h1>
+    <p class="subtitle">Des jeux bien taillés pour le CM1-CM2</p>
+    <nav class="crumbs" id="crumbs" aria-label="Où je suis"></nav>
+  </header>
+  <main id="view" aria-live="polite"></main>
+  <footer class="foot">
+    <p class="note"><strong>Ces jeux sont réservés aux élèves de la classe : merci de ne partager ni le lien ni le code.</strong></p>
+    <p class="note">Pour revenir ici depuis un jeu, touche « ← Tous les jeux », en haut de l'écran. Au début de chaque jeu, tu choisis ton parcours : jaune ou orange. Tes bons points restent gardés dans chaque jeu, sur cet appareil.</p>
+    <details class="teacher">
+      <summary>Espace enseignante</summary>
+      <p>Le décor des univers change tout seul avec la saison. Pour voir les autres saisons sur cet appareil :</p>
+      <div class="seasons" id="seasonBtns" role="group" aria-label="Choisir la saison affichée"></div>
+      <p>Pour ajouter un jeu, un domaine ou changer un univers, il suffit de le demander à Claude : le lien de cette page reste le même.</p>
+      <p>Le code de la classe change tout seul à chaque période. Pour le changer plus tôt, par exemple s'il circule, il suffit aussi de le demander à Claude.</p>
+      <p>Pour installer l'appli sur une tablette ou un téléphone : sur iPad ou iPhone, ouvrez cette page dans Safari, touchez le bouton Partager puis « Sur l'écran d'accueil ». Sur Android, ouvrez-la dans Chrome, puis menu ⋮ et « Installer l'application ». Une fois ouverte une première fois, l'appli marche aussi sans connexion.</p>
+    </details>
+  </footer>
+</div>
+
+<script src="jeux.js"></script>
+<script>
+(() => {
+  /* ---------- Les matières, les domaines et leurs univers ---------- */
+  const SUBJECTS = {
+    maths: { name: 'Mathématiques', color: '#2b45c8', scene: 'cover-maths', domains: ['calcul-mental', 'calcul', 'problemes', 'numeration', 'grandeurs-et-mesures', 'espace-et-geometrie', 'donnees'] },
+    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'scrabble'] }
+  };
+  const DOMAINS = {
+    'calcul-mental': { name: 'Calcul mental', world: 'La station de ski', scene: 'ski' },
+    'calcul': { name: 'Calcul', world: 'Le chantier', scene: 'chantier' },
+    'problemes': { name: 'Problèmes', world: "L'île au trésor", scene: 'ile' },
+    'numeration': { name: 'Numération', world: 'Le train des nombres', scene: 'train' },
+    'grandeurs-et-mesures': { name: 'Grandeurs et mesures', world: 'La pâtisserie', scene: 'patisserie' },
+    'espace-et-geometrie': { name: 'Espace et géométrie', world: "L'atelier des robots", scene: 'atelier' },
+    'donnees': { name: 'Données', world: 'La fête foraine', scene: 'fete' },
+    'grammaire': { name: 'Grammaire', world: 'Le château fort', scene: 'chateau' },
+    'conjugaison': { name: 'Conjugaison', world: 'La montagne', scene: 'montagne' },
+    'orthographe': { name: 'Orthographe', world: 'Les fonds marins', scene: 'mer' },
+    'vocabulaire': { name: 'Vocabulaire', world: 'Le jardin des mots', scene: 'jardin' },
+    'scrabble': { name: 'Scrabble scolaire', world: 'Le plateau des lettres', scene: 'lettres' }
+  };
+  Object.keys(SUBJECTS).forEach(s => SUBJECTS[s].domains.forEach(d => DOMAINS[d].subject = s));
+
+  /* ---------- Les jeux : la liste est dans jeux.js (un dossier par jeu dans jeux/) ---------- */
+  const GAMES = (window.JEUX || []).map(j => ({ domain: j.domaine, title: j.titre, desc: j.desc, url: 'jeux/' + j.slug + '/index.html', added: j.ajoute }));
+  const LAUNCH = '2026-11-06T12:00', NEW_DAYS = 14;
+  const isNew = gm => { if (gm.added <= LAUNCH) return false; const d = (Date.now() - new Date(gm.added.length > 10 ? gm.added : gm.added + 'T00:00:00').getTime()) / 86400000; return d >= -1 && d <= NEW_DAYS; };
+  const gamesOf = d => GAMES.filter(gm => gm.domain === d);
+  const plural = (n, a, b) => n + ' ' + (n > 1 ? b : a);
+
+  /* ---------- Les saisons ---------- */
+  const SEASONS = {
+    automne: { id: 'automne', name: 'Automne', sky: ['#ffcf9e', '#fff3e3'], far: '#d9b79a', ground: '#cfa95f', ground2: '#b58c48', canopy: ['#e8762b', '#d9452f', '#f2b134'], parts: ['#e8762b', '#d9452f', '#f2b134', '#b5651d'], kind: 'leaf' },
+    hiver: { id: 'hiver', name: 'Hiver', sky: ['#b9d3ee', '#eef5fc'], far: '#c7d5e8', ground: '#f6f9fd', ground2: '#d6e3f2', canopy: [], parts: ['#ffffff'], kind: 'snow' },
+    printemps: { id: 'printemps', name: 'Printemps', sky: ['#a9dcff', '#ebf8ff'], far: '#b5d8c2', ground: '#86cf63', ground2: '#6dbb4c', canopy: ['#8fd16a', '#7cc96a', '#9be07a'], parts: ['#ffb3cf', '#ffd1e3', '#ffffff'], kind: 'petal' },
+    ete: { id: 'ete', name: 'Été', sky: ['#6cc4ff', '#d7f0ff'], far: '#a5cfb3', ground: '#58b346', ground2: '#469c37', canopy: ['#3f9a3a', '#57b847', '#2f8a33'], parts: ['#f5c518', '#e5484d', '#8e4ec6', '#f76b15'], kind: 'fly' }
+  };
+  function seasonByDate(d){
+    const md = (d.getMonth() + 1) * 100 + d.getDate();
+    if (md >= 1221 || md < 320) return 'hiver';
+    if (md < 621) return 'printemps';
+    if (md < 922) return 'ete';
+    return 'automne';
+  }
+  let forced = null;
+  const SEA = () => SEASONS[forced || seasonByDate(new Date())];
+
+  /* ---------- Outils de dessin ---------- */
+  const W = 320, H = 150, TAU = Math.PI * 2, FONT = '"Baloo 2", "Arial Rounded MT Bold", Arial, sans-serif';
+  let REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  const circ = (g, x, y, r) => { g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); };
+  const ell = (g, x, y, rx, ry, a) => { g.beginPath(); g.ellipse(x, y, rx, ry, a || 0, 0, TAU); g.fill(); };
+  const seg = (g, a, b, c, d) => { g.beginPath(); g.moveTo(a, b); g.lineTo(c, d); g.stroke(); };
+  const poly = (g, pts, f) => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); if (f) g.fillStyle = f; g.fill(); };
+  const rr = (g, x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const lerp = (a, b, k) => a + (b - a) * k;
+  function sky(g, S){ const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, S.sky[0]); gr.addColorStop(1, S.sky[1]); g.fillStyle = gr; g.fillRect(0, 0, W, H); }
+  function sun(g, S, x, y, t){
+    if (S.id === 'hiver'){ g.fillStyle = 'rgba(255,255,255,.9)'; circ(g, x, y, 10); return; }
+    const col = S.id === 'automne' ? '#ffb347' : '#ffd93b';
+    const gr = g.createRadialGradient(x, y, 4, x, y, 26); gr.addColorStop(0, 'rgba(255,236,150,.85)'); gr.addColorStop(1, 'rgba(255,236,150,0)'); g.fillStyle = gr; circ(g, x, y, 26);
+    if (S.id === 'ete'){ g.strokeStyle = 'rgba(255,200,40,.8)'; g.lineWidth = 2; g.lineCap = 'round'; for (let k = 0; k < 10; k++){ const a = t * 0.3 + k * TAU / 10; seg(g, x + Math.cos(a) * 14, y + Math.sin(a) * 14, x + Math.cos(a) * 19, y + Math.sin(a) * 19); } }
+    g.fillStyle = col; circ(g, x, y, 10);
+  }
+  function cloud(g, x, y, s, a){ g.fillStyle = 'rgba(255,255,255,' + (a || 0.85) + ')'; g.beginPath(); g.arc(x, y, 7 * s, 0, TAU); g.arc(x + 9 * s, y - 4 * s, 9 * s, 0, TAU); g.arc(x + 20 * s, y, 7.5 * s, 0, TAU); g.rect(x, y - s, 20 * s, 7.5 * s); g.fill(); }
+  const drift = (t, x0, sp) => ((x0 + t * sp) % (W + 60)) - 30;
+  function hill(g, y0, amp, col, ph, fr){ g.fillStyle = col; g.beginPath(); g.moveTo(0, H); for (let x = 0; x <= W; x += 8) g.lineTo(x, y0 - Math.sin(x * (fr || 0.02) + ph) * amp); g.lineTo(W, H); g.closePath(); g.fill(); }
+  function ground(g, S, y){ g.fillStyle = S.ground; g.fillRect(0, y, W, H - y); g.fillStyle = S.ground2; g.fillRect(0, y, W, 3); }
+  function tree(g, S, x, y, s){
+    g.save(); g.translate(x, y); g.scale(s, s);
+    g.fillStyle = '#7a4a26'; g.fillRect(-2.5, -22, 5, 22);
+    if (S.id === 'hiver'){
+      g.strokeStyle = '#6b4a2e'; g.lineWidth = 2; g.lineCap = 'round';
+      seg(g, 0, -18, -10, -32); seg(g, 0, -20, 9, -34); seg(g, 0, -22, 0, -40); seg(g, -5, -26, -12, -27); seg(g, 5, -28, 12, -30);
+      g.fillStyle = '#ffffff'; [[-10, -33], [9, -35], [0, -41], [-12, -28], [12, -31]].forEach(p => ell(g, p[0], p[1], 3, 1.6));
+    } else {
+      const c = S.canopy;
+      [[-8, -28, 10], [8, -29, 10], [0, -38, 12], [0, -27, 11]].forEach((b, i) => { g.fillStyle = c[i % c.length]; circ(g, b[0], b[1], b[2]); });
+      if (S.id === 'printemps'){ [[-9, -32], [6, -36], [-2, -42], [9, -26], [-5, -24], [2, -31]].forEach((p, i) => { g.fillStyle = i % 2 ? '#ffffff' : '#ff9cc2'; circ(g, p[0], p[1], 2.2); }); }
+      if (S.id === 'ete'){ g.fillStyle = '#e5484d'; [[-6, -30], [7, -34], [3, -24]].forEach(p => circ(g, p[0], p[1], 1.8)); }
+    }
+    g.restore();
+  }
+  function fir(g, x, y, s, snowy){
+    g.save(); g.translate(x, y); g.scale(s, s);
+    g.fillStyle = '#6b4a2e'; g.fillRect(-2, -6, 4, 6);
+    [[0, -16, 12], [0, -26, 10], [0, -35, 8]].forEach((l, i) => {
+      poly(g, [[-l[2], l[1] + 10], [l[2], l[1] + 10], [0, l[1] - 4]], i % 2 ? '#3b7d5c' : '#2f6b4f');
+      if (snowy) poly(g, [[-l[2] * 0.5, l[1] + 3], [l[2] * 0.5, l[1] + 3], [0, l[1] - 4]], '#ffffff');
+    });
+    g.restore();
+  }
+  function snowCap(g, S, x, y, w){ if (S.id !== 'hiver') return; g.fillStyle = '#ffffff'; rr(g, x - 1, y - 3, w + 2, 5, 2.5); g.fill(); }
+
+  /* ---------- Les univers ---------- */
+  const SCENES = {};
+  SCENES['cover-maths'] = (g, S, t) => cover(g, S, t, '#2b45c8', '1 2 3', '+ ×');
+  SCENES['cover-fr'] = (g, S, t) => cover(g, S, t, '#c2365e', 'A b c', 'é è');
+  function balloon(g, x, y, r, col, label){
+    g.strokeStyle = 'rgba(26,35,88,.6)'; g.lineWidth = 0.9; seg(g, x - r * 0.55, y + r * 0.8, x - 6, y + r + 14); seg(g, x + r * 0.55, y + r * 0.8, x + 6, y + r + 14);
+    g.fillStyle = '#a0622d'; rr(g, x - 7, y + r + 13, 14, 9, 2); g.fill();
+    g.save(); g.beginPath(); g.arc(x, y, r, 0, TAU); g.clip();
+    g.fillStyle = col; g.fillRect(x - r, y - r, 2 * r, 2 * r);
+    g.fillStyle = 'rgba(255,255,255,.9)'; for (let k = -2; k <= 2; k += 2) g.fillRect(x + k * r * 0.25 - r * 0.12, y - r, r * 0.24, 2 * r);
+    g.fillStyle = col; g.fillRect(x - r, y - 9, 2 * r, 18);
+    g.restore();
+    g.fillStyle = '#ffffff'; g.font = '800 15px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(label, x, y + 1); g.textBaseline = 'alphabetic';
+  }
+  function cover(g, S, t, col, label, small){
+    sky(g, S); sun(g, S, 272, 30, t);
+    cloud(g, drift(t, 30, 5), 26, 1, 0.8); cloud(g, drift(t, 200, 3), 50, 0.7, 0.7);
+    hill(g, 112, 8, S.far, 0.5, 0.025); hill(g, 126, 6, S.ground2, 2, 0.03); ground(g, S, 132);
+    tree(g, S, 30, 128, 0.9); tree(g, S, 62, 132, 0.7); tree(g, S, 292, 130, 1);
+    if (S.id === 'hiver'){ fir(g, 255, 134, 0.8, true); }
+    balloon(g, 222 + Math.sin(t * 0.4) * 6, 92 + Math.sin(t * 0.9 + 1) * 3, 13, col === '#2b45c8' ? '#f76b15' : '#12a594', small);
+    balloon(g, 150 + Math.sin(t * 0.3) * 14, 56 + Math.sin(t * 0.8) * 5, 30, col, label);
+  }
+  SCENES.ski = (g, S, t) => {
+    sky(g, S); sun(g, S, 280, 26, t); cloud(g, drift(t, 40, 4), 22, 1);
+    g.fillStyle = '#b8c6db'; poly(g, [[0, 100], [38, 62], [70, 86], [112, 52], [150, 150], [0, 150]]);
+    g.fillStyle = '#ffffff'; poly(g, [[0, 100], [38, 62], [24, 82], [12, 88]]);
+    g.fillStyle = '#ffffff'; poly(g, [[20, 150], [160, 24], [320, 150]]);
+    g.fillStyle = '#dbe6f3'; poly(g, [[160, 24], [320, 150], [215, 150], [190, 92]]);
+    g.fillStyle = '#8a94a8'; poly(g, [[160, 24], [168, 38], [160, 34], [152, 42]]);
+    g.strokeStyle = '#2b45c8'; g.lineWidth = 2; g.setLineDash([5, 4]); g.beginPath(); g.moveTo(160, 32); g.bezierCurveTo(120, 64, 112, 86, 150, 100); g.bezierCurveTo(196, 116, 186, 132, 160, 150); g.stroke(); g.setLineDash([]);
+    [[128, 66, '#e5484d'], [150, 96, '#2b45c8'], [178, 120, '#e5484d']].forEach(f => { g.strokeStyle = '#1a2358'; g.lineWidth = 1; seg(g, f[0], f[1], f[0], f[1] - 12); poly(g, [[f[0], f[1] - 12], [f[0] + 7, f[1] - 9], [f[0], f[1] - 6]], f[2]); });
+    const A = [30, 138], B = [246, 44];
+    g.strokeStyle = '#4a5470'; g.lineWidth = 1.2; seg(g, A[0], A[1], B[0], B[1]);
+    [0.3, 0.68].forEach(u => { const x = lerp(A[0], B[0], u), y = lerp(A[1], B[1], u); g.lineWidth = 2.5; seg(g, x, y, x, y + 30); });
+    for (let k = 0; k < 4; k++){
+      const u = ((REDUCED ? 0 : t * 0.03) + k / 4) % 1, x = lerp(A[0], B[0], u), y = lerp(A[1], B[1], u);
+      g.strokeStyle = '#4a5470'; g.lineWidth = 1; seg(g, x, y, x, y + 9);
+      g.fillStyle = ['#e5484d', '#f5c518', '#12a594', '#8e4ec6'][k]; rr(g, x - 6, y + 9, 12, 5, 2); g.fill();
+      g.fillStyle = '#f1c7a3'; circ(g, x, y + 6.5, 2.6);
+    }
+    fir(g, 16, 150, 1.1, true); fir(g, 38, 150, 0.85, true); fir(g, 288, 150, 1, true); fir(g, 308, 150, 1.2, true);
+    g.fillStyle = '#ffffff'; g.fillRect(0, 146, W, 4);
+  };
+  function block(g, x, y, w, h, col, label, rot){
+    g.save(); g.translate(x + w / 2, y + h / 2); g.rotate(rot || 0);
+    g.fillStyle = col; rr(g, -w / 2, -h / 2, w, h, 3); g.fill();
+    g.strokeStyle = 'rgba(0,0,0,.2)'; g.lineWidth = 1; g.stroke();
+    g.fillStyle = '#ffffff'; g.font = '800 ' + Math.round(h * 0.75) + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(label, 0, 1); g.textBaseline = 'alphabetic';
+    g.restore();
+  }
+  SCENES.chantier = (g, S, t) => {
+    sky(g, S); sun(g, S, 40, 28, t); cloud(g, drift(t, 120, 4), 30, 0.9);
+    hill(g, 114, 6, S.far, 1, 0.02); ground(g, S, 126);
+    tree(g, S, 26, 126, 0.9); tree(g, S, 68, 126, 0.7);
+    g.fillStyle = '#9aa3b5'; [140, 172, 204].forEach(x => g.fillRect(x, 70, 6, 56));
+    g.fillStyle = '#f76b15'; g.fillRect(134, 68, 82, 5); g.fillRect(134, 96, 82, 5);
+    snowCap(g, S, 134, 68, 82);
+    block(g, 92, 108, 20, 18, '#2b45c8', '+'); block(g, 112, 108, 20, 18, '#e5484d', '−'); block(g, 102, 90, 20, 18, '#2fa84f', '×');
+    block(g, 226, 108, 20, 18, '#8e4ec6', '÷');
+    g.fillStyle = '#f5c518'; g.fillRect(262, 20, 9, 106);
+    g.strokeStyle = '#c99a00'; g.lineWidth = 1; for (let y = 24; y < 124; y += 10){ seg(g, 262, y, 271, y + 10); }
+    g.fillStyle = '#f5c518'; g.fillRect(150, 18, 160, 6);
+    g.strokeStyle = '#c99a00'; for (let x = 154; x < 308; x += 10) seg(g, x, 18, x + 5, 24);
+    g.fillStyle = '#6b7280'; g.fillRect(290, 24, 18, 12);
+    g.fillStyle = '#2b45c8'; rr(g, 254, 30, 24, 16, 3); g.fill(); g.fillStyle = '#cfe6f7'; g.fillRect(258, 33, 10, 7);
+    const tx = 200 + (REDUCED ? 0 : Math.sin(t * 0.5) * 32), cy = 62 + (REDUCED ? 0 : Math.sin(t * 0.5 + 1) * 6);
+    g.fillStyle = '#4a5470'; g.fillRect(tx - 5, 23, 10, 4);
+    g.strokeStyle = '#4a5470'; g.lineWidth = 1; seg(g, tx, 27, tx, cy);
+    block(g, tx - 15, cy, 30, 18, '#f76b15', '7×8', REDUCED ? 0 : Math.sin(t * 1.3) * 0.06);
+  };
+  SCENES.ile = (g, S, t) => {
+    sky(g, S); sun(g, S, 252, 28, t); cloud(g, drift(t, 60, 4), 24, 0.9); cloud(g, drift(t, 220, 2.5), 44, 0.6, 0.7);
+    const sea = g.createLinearGradient(0, 88, 0, H); sea.addColorStop(0, '#4fb3e8'); sea.addColorStop(1, '#1f7fc4'); g.fillStyle = sea; g.fillRect(0, 88, W, H - 88);
+    g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 1.2;
+    for (let r = 0; r < 3; r++){ const y = 98 + r * 17; g.beginPath(); for (let x = 0; x <= W; x += 6){ const yy = y + Math.sin(x * 0.08 + t * 1.2 + r) * 1.6; x ? g.lineTo(x, yy) : g.moveTo(x, yy); } g.stroke(); }
+    g.fillStyle = S.id === 'hiver' ? '#f6f9fd' : '#f3d38f'; ell(g, 128, 114, 84, 16);
+    g.fillStyle = S.id === 'hiver' ? '#d6e3f2' : '#e2bd6d'; ell(g, 128, 120, 76, 9);
+    if (S.id === 'printemps'){ [[80, 110], [96, 116], [170, 112], [186, 116], [60, 116]].forEach((p, i) => { g.fillStyle = i % 2 ? '#ff6f9c' : '#ffffff'; circ(g, p[0], p[1], 2.2); }); }
+    g.strokeStyle = '#8b5a2b'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(110, 112); g.quadraticCurveTo(108, 80, 126, 56); g.stroke();
+    const sw = REDUCED ? 0 : Math.sin(t * 1.3) * 0.08;
+    [-2.6, -1.9, -1.2, -0.5, 0.2].forEach((a, i) => {
+      g.save(); g.translate(126, 56); g.rotate(a + sw);
+      g.fillStyle = S.id === 'automne' && i % 2 ? '#7fae3a' : '#2f9a4a'; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(18, -10, 34, 6); g.quadraticCurveTo(18, -2, 0, 4); g.closePath(); g.fill();
+      if (S.id === 'hiver'){ g.fillStyle = '#ffffff'; g.beginPath(); g.moveTo(4, -2); g.quadraticCurveTo(18, -10, 30, 2); g.quadraticCurveTo(18, -6, 4, 0); g.closePath(); g.fill(); }
+      g.restore();
+    });
+    g.fillStyle = '#7a4a26'; circ(g, 122, 60, 3); circ(g, 129, 61, 3);
+    g.strokeStyle = '#d8343c'; g.lineWidth = 3; seg(g, 86, 106, 96, 116); seg(g, 96, 106, 86, 116);
+    g.fillStyle = '#8b5a2b'; rr(g, 150, 100, 24, 14, 2); g.fill(); g.fillStyle = '#6b3f1d'; rr(g, 150, 94, 24, 8, 3); g.fill();
+    g.fillStyle = '#f5c518'; g.fillRect(160, 100, 4, 6); circ(g, 155, 95, 2); circ(g, 168, 94, 2);
+    const bx = 262 + (REDUCED ? 0 : Math.sin(t * 0.5) * 8), by = 106 + (REDUCED ? 0 : Math.sin(t * 1.6) * 1.8);
+    poly(g, [[bx - 22, by], [bx + 22, by], [bx + 15, by + 10], [bx - 15, by + 10]], '#8b5a2b');
+    g.strokeStyle = '#5b3a1d'; g.lineWidth = 2; seg(g, bx, by, bx, by - 34);
+    poly(g, [[bx + 2, by - 32], [bx + 20, by - 6], [bx + 2, by - 6]], '#ffffff'); poly(g, [[bx - 2, by - 28], [bx - 16, by - 6], [bx - 2, by - 6]], '#f3f0e6');
+    poly(g, [[bx, by - 34], [bx - 10, by - 31], [bx, by - 28]], '#d8343c');
+  };
+  SCENES.train = (g, S, t) => {
+    sky(g, S); sun(g, S, 272, 26, t);
+    const sc = REDUCED ? 0 : t;
+    cloud(g, ((240 - sc * 6) % (W + 60) + W + 60) % (W + 60) - 30, 26, 0.9);
+    hill(g, 98, 10, S.far, sc * 0.08, 0.02); hill(g, 112, 7, S.ground2, sc * 0.25, 0.035); ground(g, S, 116);
+    for (let k = 0; k < 6; k++){ const x = ((k * 70 - sc * 26) % 420 + 420) % 420 - 40; if (k % 3 === 2) fir(g, x, 116, 0.8, S.id === 'hiver'); else tree(g, S, x, 116, 0.75); }
+    g.fillStyle = '#8b6a4a'; for (let x = ((-sc * 40) % 12 + 12) % 12 - 12; x < W; x += 12) g.fillRect(x, 131, 7, 3);
+    g.strokeStyle = '#6b5a4a'; g.lineWidth = 1.6; seg(g, 0, 130, W, 130); seg(g, 0, 133, W, 133);
+    const cols = ['#8e4ec6', '#2b45c8', '#2fa84f', '#f76b15'], labs = ['M', 'C', 'D', 'U'], x0 = 30, bob = REDUCED ? 0 : Math.abs(Math.sin(t * 6)) * 0.8;
+    const wheel = (x, y) => { g.fillStyle = '#1a2358'; circ(g, x, y, 5); g.strokeStyle = '#cfd5ea'; g.lineWidth = 1; const a = REDUCED ? 0 : t * 6; seg(g, x + Math.cos(a) * 4, y + Math.sin(a) * 4, x - Math.cos(a) * 4, y - Math.sin(a) * 4); };
+    labs.forEach((l, i) => {
+      const x = x0 + i * 44;
+      g.fillStyle = '#4a5470'; g.fillRect(x + 38, 120, 6, 3);
+      g.fillStyle = cols[i]; rr(g, x, 100 - bob, 38, 22, 4); g.fill();
+      g.fillStyle = '#ffffff'; g.font = '800 17px ' + FONT; g.textAlign = 'center'; g.fillText(l, x + 19, 117 - bob);
+      if (S.id === 'hiver') { g.fillStyle = '#ffffff'; rr(g, x, 98 - bob, 38, 4, 2); g.fill(); }
+      wheel(x + 9, 126); wheel(x + 29, 126);
+    });
+    const lx = x0 + 4 * 44;
+    g.fillStyle = '#d8343c'; rr(g, lx, 98 - bob, 52, 24, 4); g.fill();
+    g.fillStyle = '#1a2358'; rr(g, lx + 30, 84 - bob, 22, 18, 3); g.fill(); g.fillStyle = '#cfe6f7'; g.fillRect(lx + 35, 88 - bob, 12, 8);
+    g.fillStyle = '#1a2358'; g.fillRect(lx + 8, 84 - bob, 8, 14); poly(g, [[lx + 54, 122], [lx + 62, 122], [lx + 52, 112]], '#4a5470');
+    wheel(lx + 10, 126); wheel(lx + 28, 126); wheel(lx + 44, 126);
+    for (let k = 0; k < 4; k++){ const u = ((REDUCED ? 0.3 : t * 0.7) + k / 4) % 1; g.fillStyle = 'rgba(255,255,255,' + (0.85 * (1 - u)).toFixed(2) + ')'; circ(g, lx + 12 - u * 40, 80 - bob - u * 34, 4 + u * 7); }
+  };
+  SCENES.patisserie = (g, S, t) => {
+    sky(g, S); sun(g, S, 290, 22, t); cloud(g, drift(t, 10, 3), 18, 0.8);
+    ground(g, S, 130); g.fillStyle = S.id === 'hiver' ? '#eef3fa' : '#ddd2c4'; g.fillRect(0, 128, W, 10);
+    tree(g, S, 34, 130, 1); tree(g, S, 288, 130, 1.05);
+    g.fillStyle = '#f9c9d8'; g.fillRect(72, 36, 176, 94);
+    g.fillStyle = '#e5487a'; rr(g, 66, 30, 188, 9, 3); g.fill(); snowCap(g, S, 66, 30, 188);
+    g.fillStyle = '#ffffff'; rr(g, 112, 40, 96, 15, 4); g.fill();
+    g.fillStyle = '#e5487a'; g.font = '800 11px ' + FONT; g.textAlign = 'center'; g.fillText('PÂTISSERIE', 160, 51.5);
+    g.fillStyle = '#fff8e8'; g.fillRect(72, 58, 176, 5);
+    g.strokeStyle = '#1a2358'; g.lineWidth = 0.7; for (let x = 74, i = 0; x < 248; x += 4, i++) seg(g, x, 58, x, 58 + (i % 5 === 0 ? 4 : 2));
+    const n = 11, w = 176 / n;
+    for (let i = 0; i < n; i++){ g.fillStyle = i % 2 ? '#ffffff' : '#ff6f9c'; g.beginPath(); g.moveTo(72 + i * w, 63); g.lineTo(72 + (i + 1) * w, 63); g.lineTo(72 + (i + 1) * w, 72); g.arc(72 + i * w + w / 2, 72, w / 2, 0, Math.PI); g.closePath(); g.fill(); }
+    snowCap(g, S, 72, 63, 176);
+    g.fillStyle = '#ffffff'; rr(g, 84, 82, 96, 44, 4); g.fill(); g.fillStyle = '#d8eefc'; g.fillRect(88, 86, 88, 36);
+    g.fillStyle = '#c9a77a'; g.fillRect(88, 104, 88, 3);
+    const cake = (x, y, c1, c2) => { g.fillStyle = c1; rr(g, x - 9, y - 12, 18, 12, 2); g.fill(); g.fillStyle = c2; rr(g, x - 9, y - 14, 18, 4, 2); g.fill(); g.fillStyle = '#e5484d'; circ(g, x, y - 16, 2); };
+    cake(102, 104, '#8b5a2b', '#ffffff'); cake(132, 104, '#ffd1dc', '#ffffff'); cake(160, 104, '#fde68a', '#ffffff');
+    cake(116, 122, '#f2c48a', '#e5484d'); cake(150, 122, '#7a4a26', '#f7ead7');
+    g.fillStyle = '#b04a6a'; rr(g, 196, 84, 38, 46, 3); g.fill(); g.fillStyle = '#d8eefc'; g.fillRect(203, 90, 24, 16);
+    g.fillStyle = '#f5c518'; circ(g, 228, 110, 2);
+  };
+  function gear(g, x, y, r, n, a, col){
+    g.save(); g.translate(x, y); g.rotate(a); g.fillStyle = col;
+    for (let k = 0; k < n; k++){ g.save(); g.rotate(k * TAU / n); g.fillRect(-r * 0.18, -r - 3, r * 0.36, 6); g.restore(); }
+    circ(g, 0, 0, r); g.fillStyle = 'rgba(0,0,0,.25)'; circ(g, 0, 0, r * 0.35); g.restore();
+  }
+  SCENES.atelier = (g, S, t) => {
+    sky(g, S); sun(g, S, 290, 24, t); cloud(g, drift(t, 100, 3.5), 22, 0.8);
+    ground(g, S, 128);
+    tree(g, S, 30, 128, 1);
+    g.fillStyle = '#7b8aa8'; g.fillRect(64, 58, 192, 70);
+    poly(g, [[56, 60], [160, 26], [264, 60]], '#4a5675');
+    if (S.id === 'hiver') poly(g, [[60, 58], [160, 25], [260, 58], [160, 31]], '#ffffff');
+    g.fillStyle = '#2b3248'; g.fillRect(118, 76, 92, 52); g.fillStyle = '#3a4360'; g.fillRect(118, 118, 92, 10);
+    const a = REDUCED ? 0 : t;
+    gear(g, 90, 88, 11, 8, a, '#f5c518'); gear(g, 103, 108, 7, 6, -a * 1.5, '#cfd5ea');
+    const wave = REDUCED ? -0.6 : -0.6 + Math.sin(t * 4) * 0.6;
+    g.fillStyle = '#c0c8d8'; rr(g, 150, 98, 30, 22, 4); g.fill();
+    g.fillStyle = '#1a2358'; g.fillRect(156, 120, 6, 6); g.fillRect(168, 120, 6, 6);
+    g.save(); g.translate(180, 102); g.rotate(wave); g.fillStyle = '#c0c8d8'; rr(g, 0, -3, 16, 6, 3); g.fill(); g.restore();
+    g.save(); g.translate(150, 102); g.rotate(0.9); g.fillStyle = '#c0c8d8'; rr(g, -16, -3, 16, 6, 3); g.fill(); g.restore();
+    g.fillStyle = '#d6dce8'; rr(g, 153, 80, 24, 17, 4); g.fill();
+    const blink = !REDUCED && (t % 3.2) < 0.14;
+    g.fillStyle = '#3ad6e8'; if (blink){ g.fillRect(158, 88, 5, 1.5); g.fillRect(167, 88, 5, 1.5); } else { circ(g, 160.5, 88, 2.4); circ(g, 169.5, 88, 2.4); }
+    g.strokeStyle = '#8a94a8'; g.lineWidth = 1.5; seg(g, 165, 80, 165, 73);
+    g.fillStyle = (!REDUCED && Math.sin(t * 5) > 0) ? '#ff5a5a' : '#c03a3a'; circ(g, 165, 72, 2.6);
+    g.fillStyle = '#f1f1f7'; g.fillRect(236, 112, 16, 16); poly(g, [[236, 112], [244, 106], [260, 106], [252, 112]], '#ffffff'); poly(g, [[252, 112], [260, 106], [260, 122], [252, 128]], '#c7cde0');
+    g.strokeStyle = '#4a5675'; g.lineWidth = 0.8; g.strokeRect(236, 112, 16, 16);
+    poly(g, [[272, 128], [298, 128], [285, 104]], '#f5c518'); poly(g, [[285, 104], [298, 128], [306, 122]], '#d9a400');
+    g.fillStyle = '#e5484d'; g.fillRect(10, 112, 16, 16); ell(g, 18, 112, 8, 3); g.fillStyle = '#c23a3e'; ell(g, 18, 128, 8, 3);
+  };
+  SCENES.fete = (g, S, t) => {
+    sky(g, S); cloud(g, drift(t, 230, 3), 18, 0.8);
+    ground(g, S, 126);
+    const cx = 86, cy = 70, R = 46, rot = REDUCED ? 0 : t * 0.25;
+    g.strokeStyle = '#8e4ec6'; g.lineWidth = 3; g.lineCap = 'round'; seg(g, cx, cy, cx - 26, 126); seg(g, cx, cy, cx + 26, 126);
+    g.lineWidth = 1; for (let k = 0; k < 12; k++){ const a = rot + k * TAU / 12; seg(g, cx, cy, cx + Math.cos(a) * R, cy + Math.sin(a) * R); }
+    g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.stroke();
+    const cols = ['#e5484d', '#2f6fd6', '#2fa84f', '#f5c518', '#f76b15', '#e93d82', '#12a594', '#8e4ec6'];
+    for (let k = 0; k < 8; k++){ const a = rot + k * TAU / 8, x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R; g.strokeStyle = '#8e4ec6'; g.lineWidth = 1; seg(g, x, y, x, y + 4); g.fillStyle = cols[k]; rr(g, x - 6, y + 4, 12, 8, 2.5); g.fill(); }
+    for (let k = 0; k < 16; k++){ const a = rot + k * TAU / 16, on = (k + Math.floor((REDUCED ? 0 : t) * 4)) % 3 === 0; g.fillStyle = on ? '#fff6c8' : '#ffd166'; circ(g, cx + Math.cos(a) * R, cy + Math.sin(a) * R, on ? 2.2 : 1.4); }
+    g.fillStyle = '#ffd93b'; circ(g, cx, cy, 4);
+    const tx = 196, tw = 62;
+    g.fillStyle = '#ffffff'; g.fillRect(tx - tw / 2, 94, tw, 32); g.fillStyle = '#e5484d'; for (let i = 0; i < 4; i += 2) g.fillRect(tx - tw / 2 + i * tw / 4, 94, tw / 4, 32);
+    for (let i = 0; i < 6; i++){ const a = tx - tw / 2 - 4 + i * (tw + 8) / 6, b = a + (tw + 8) / 6; poly(g, [[tx, 66], [a, 94], [b, 94]], i % 2 ? '#ffffff' : '#e5484d'); }
+    g.fillStyle = '#1a2358'; g.fillRect(tx - 6, 106, 12, 20);
+    if (S.id === 'hiver') poly(g, [[tx, 66], [tx - 16, 80], [tx + 16, 80]], '#ffffff');
+    g.strokeStyle = '#4a5470'; g.lineWidth = 1.5; seg(g, 282, 108, 282, 126);
+    g.fillStyle = '#ffffff'; rr(g, 256, 66, 54, 42, 4); g.fill(); g.strokeStyle = '#1a2358'; g.lineWidth = 1.2; g.stroke();
+    g.strokeStyle = '#1a2358'; g.lineWidth = 0.8; seg(g, 262, 100, 304, 100); seg(g, 262, 100, 262, 72);
+    [[16, '#e5484d'], [24, '#2f6fd6'], [10, '#2fa84f'], [20, '#f5c518']].forEach((b, i) => { g.fillStyle = b[1]; g.fillRect(266 + i * 9, 100 - b[0], 6, b[0]); });
+    g.strokeStyle = 'rgba(26,35,88,.45)'; g.lineWidth = 0.8; g.beginPath();
+    for (let x = 140; x <= W; x += 10){ const u = (x - 140) / 180, y = 22 + Math.sin(Math.PI * u) * 10; x === 140 ? g.moveTo(x, y) : g.lineTo(x, y); } g.stroke();
+    for (let x = 145, i = 0; x < W; x += 15, i++){ const u = (x - 140) / 180, y = 24 + Math.sin(Math.PI * u) * 10, on = (i + Math.floor((REDUCED ? 0 : t) * 3)) % 3 === 0; g.fillStyle = on ? '#fff6c8' : cols[i % 8]; circ(g, x, y + 1, on ? 2.6 : 2); }
+  };
+  SCENES.chateau = (g, S, t) => {
+    sky(g, S); sun(g, S, 280, 28, t); cloud(g, drift(t, 20, 4), 26, 0.9);
+    hill(g, 104, 8, S.far, 1.5, 0.02); ground(g, S, 124);
+    tree(g, S, 26, 124, 1); tree(g, S, 58, 126, 0.75); tree(g, S, 294, 124, 1);
+    g.fillStyle = '#4fa6e0'; g.fillRect(70, 122, 180, 7);
+    g.fillStyle = '#b9bccb'; g.fillRect(104, 72, 112, 50);
+    for (let x = 104; x < 216; x += 12){ g.fillRect(x, 66, 7, 7); if (S.id === 'hiver'){ g.fillStyle = '#ffffff'; g.fillRect(x, 64, 7, 3); g.fillStyle = '#b9bccb'; } }
+    g.fillStyle = '#c6c9d6'; g.fillRect(140, 44, 40, 30);
+    poly(g, [[136, 44], [160, 18], [184, 44]], '#d8343c'); if (S.id === 'hiver') poly(g, [[152, 27], [160, 18], [168, 27], [160, 25]], '#ffffff');
+    [[86, '#2b45c8'], [210, '#2b45c8']].forEach(tw => {
+      const x = tw[0]; g.fillStyle = '#a9adbf'; g.fillRect(x, 50, 24, 72);
+      poly(g, [[x - 4, 50], [x + 12, 22], [x + 28, 50]], tw[1]); if (S.id === 'hiver') poly(g, [[x + 4, 36], [x + 12, 22], [x + 20, 36], [x + 12, 33]], '#ffffff');
+      g.fillStyle = '#3a3550'; rr(g, x + 9, 64, 6, 10, 3); g.fill();
+      g.strokeStyle = '#4a5470'; g.lineWidth = 1; seg(g, x + 12, 22, x + 12, 10);
+      g.fillStyle = '#f5c518'; g.beginPath(); g.moveTo(x + 12, 10); for (let k = 0; k <= 10; k++){ const xx = x + 12 + k * 1.4; g.lineTo(xx, 10 + Math.sin(k * 0.7 - (REDUCED ? 0 : t) * 5) * 1.2); } for (let k = 10; k >= 0; k--){ const xx = x + 12 + k * 1.4; g.lineTo(xx, 16 + Math.sin(k * 0.7 - (REDUCED ? 0 : t) * 5) * 1.2); } g.closePath(); g.fill();
+    });
+    g.fillStyle = '#3a3550'; g.beginPath(); g.moveTo(150, 122); g.lineTo(150, 102); g.arc(160, 102, 10, Math.PI, 0); g.lineTo(170, 122); g.closePath(); g.fill();
+    g.fillStyle = '#8b5a2b'; g.fillRect(150, 122, 20, 7);
+    [[124, 'S', '#d8343c'], [196, 'V', '#2b45c8']].forEach(sh => { g.fillStyle = sh[2]; g.beginPath(); g.moveTo(sh[0] - 8, 82); g.lineTo(sh[0] + 8, 82); g.lineTo(sh[0] + 8, 92); g.quadraticCurveTo(sh[0], 100, sh[0] - 8, 92); g.closePath(); g.fill(); g.fillStyle = '#ffffff'; g.font = '800 11px ' + FONT; g.textAlign = 'center'; g.fillText(sh[1], sh[0], 93); });
+  };
+  SCENES.montagne = (g, S, t) => {
+    sky(g, S); sun(g, S, 46, 28, t); cloud(g, drift(t, 160, 3), 30, 0.8);
+    g.fillStyle = '#b4abc2'; poly(g, [[0, 150], [0, 90], [40, 62], [90, 110], [90, 150]]);
+    g.fillStyle = '#9c8d80'; poly(g, [[20, 150], [86, 58], [170, 150]]);
+    g.fillStyle = '#8f7f72'; poly(g, [[96, 150], [206, 20], [320, 150]]);
+    g.fillStyle = '#76685c'; poly(g, [[206, 20], [320, 150], [250, 150], [228, 84]]);
+    const big = S.id === 'hiver';
+    poly(g, big ? [[206, 20], [176, 56], [190, 52], [200, 62], [214, 50], [228, 60], [240, 50]] : [[206, 20], [190, 40], [200, 38], [208, 44], [218, 36], [224, 40]], '#ffffff');
+    poly(g, big ? [[86, 58], [66, 86], [78, 82], [90, 90], [102, 78]] : [[86, 58], [76, 72], [86, 70], [96, 74]], '#ffffff');
+    const path = [[118, 142], [150, 118], [176, 100], [166, 78], [192, 52], [206, 24]];
+    g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = 1.6; g.setLineDash([4, 3]); g.beginPath(); path.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); g.setLineDash([]);
+    const u = REDUCED ? 0.55 : (t * 0.025) % 1, seg5 = u * 5, i0 = Math.min(4, Math.floor(seg5)), f = seg5 - i0;
+    const cxp = lerp(path[i0][0], path[i0 + 1][0], f), cyp = lerp(path[i0][1], path[i0 + 1][1], f);
+    g.fillStyle = '#f76b15'; rr(g, cxp - 3, cyp - 9, 6, 8, 2); g.fill(); g.fillStyle = '#f1c7a3'; circ(g, cxp, cyp - 11, 2.6); g.fillStyle = '#e5484d'; ell(g, cxp, cyp - 13, 3, 1.5);
+    g.strokeStyle = '#4a5470'; g.lineWidth = 1.2; seg(g, 206, 20, 206, 4);
+    g.fillStyle = '#e5484d'; g.beginPath(); g.moveTo(206, 4); for (let k = 0; k <= 8; k++) g.lineTo(206 + k * 2, 4 + Math.sin(k * 0.8 - (REDUCED ? 0 : t) * 5) * 1.3); for (let k = 8; k >= 0; k--) g.lineTo(206 + k * 2, 11 + Math.sin(k * 0.8 - (REDUCED ? 0 : t) * 5) * 1.3); g.closePath(); g.fill();
+    ground(g, S, 140);
+    poly(g, [[34, 140], [56, 140], [45, 122]], '#f76b15'); poly(g, [[45, 122], [56, 140], [60, 140]], '#c9530f'); g.fillStyle = '#7a3a10'; poly(g, [[42, 140], [48, 140], [45, 130]]);
+    g.fillStyle = '#7a4a26'; g.fillRect(90, 112, 3, 28);
+    [['1er', 112, '#2b45c8'], ['2e', 121, '#2fa84f'], ['3e', 130, '#d8343c']].forEach((b, i) => { const dir = i % 2 ? -1 : 1, x = 91.5; g.fillStyle = b[2]; poly(g, dir > 0 ? [[x, b[1] - 4], [x + 22, b[1] - 4], [x + 27, b[1]], [x + 22, b[1] + 4], [x, b[1] + 4]] : [[x, b[1] - 4], [x - 22, b[1] - 4], [x - 27, b[1]], [x - 22, b[1] + 4], [x, b[1] + 4]]); g.fillStyle = '#ffffff'; g.font = '800 7.5px ' + FONT; g.textAlign = 'center'; g.fillText(b[0], x + dir * 12, b[1] + 2.8); });
+  };
+  SCENES.mer = (g, S, t) => {
+    const wat = g.createLinearGradient(0, 0, 0, H); wat.addColorStop(0, '#3aa0e0'); wat.addColorStop(1, '#0b3d75'); g.fillStyle = wat; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(0, 0, W, 8);
+    const tt = REDUCED ? 0 : t;
+    g.save(); g.globalAlpha = 0.12; g.fillStyle = '#ffffff';
+    for (let k = 0; k < 4; k++){ const x = 40 + k * 80 + Math.sin(tt * 0.4 + k) * 10; poly(g, [[x - 8, 0], [x + 8, 0], [x + 40, 130], [x + 14, 130]]); }
+    g.restore();
+    if (S.id === 'hiver'){ g.fillStyle = '#f2f7fd'; [[10, 60], [100, 46], [190, 70], [280, 40]].forEach(p => { rr(g, p[0], -4, p[1], 11, 4); g.fill(); }); }
+    if (S.id === 'automne'){ [[30, '#e8762b'], [130, '#d9452f'], [210, '#f2b134'], [290, '#e8762b']].forEach((l, i) => { g.fillStyle = l[1]; ell(g, (l[0] + tt * 6) % W, 5, 6, 2.6, Math.sin(tt + i) * 0.3); }); }
+    if (S.id === 'printemps'){ [[40, '#ffb3cf'], [120, '#ffffff'], [200, '#ffb3cf'], [270, '#ffd1e3']].forEach((l, i) => { g.fillStyle = l[1]; ell(g, (l[0] + tt * 5) % W, 5, 3.5, 2, i); }); }
+    if (S.id === 'ete'){ for (let k = 0; k < 14; k++){ const x = (k * 23 + tt * 8) % W; g.fillStyle = 'rgba(255,255,255,' + (0.4 + 0.4 * Math.sin(tt * 3 + k)).toFixed(2) + ')'; ell(g, x, 6, 4, 1.2); } }
+    g.fillStyle = '#e8d39a'; g.beginPath(); g.moveTo(0, H); for (let x = 0; x <= W; x += 10) g.lineTo(x, 132 - Math.sin(x * 0.03) * 5); g.lineTo(W, H); g.closePath(); g.fill();
+    [[30, 3], [70, 2], [250, 3], [292, 2]].forEach((s, i) => { g.strokeStyle = i % 2 ? '#2fa84f' : '#3fbf6a'; g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.moveTo(s[0], 134); for (let k = 1; k <= 6; k++) g.lineTo(s[0] + Math.sin(tt * 1.4 + k * 0.7 + i) * (2 + k * 0.8), 134 - k * 10); g.stroke(); });
+    g.fillStyle = '#ff7b8a'; [[160, 128], [168, 120], [176, 126], [184, 116]].forEach(p => { g.strokeStyle = '#ff7b8a'; g.lineWidth = 3; seg(g, 172, 134, p[0], p[1]); circ(g, p[0], p[1], 2.2); });
+    g.fillStyle = '#f7d2c4'; ell(g, 120, 136, 6, 4); g.fillStyle = '#ffe9a8'; ell(g, 214, 138, 5, 3.5);
+    const fish = (x, y, col, s, dir) => { g.save(); g.translate(x, y); g.scale(dir * s, s); g.fillStyle = col; ell(g, 0, 0, 12, 7); poly(g, [[-10, 0], [-19, -7], [-19, 7]], col); g.fillStyle = '#ffffff'; circ(g, 6, -2, 2.4); g.fillStyle = '#1a2358'; circ(g, 6.6, -2, 1.2); g.restore(); };
+    fish(((tt * 22) % (W + 60)) - 30, 50 + Math.sin(tt) * 4, '#f76b15', 1, 1);
+    fish(W + 30 - ((tt * 16 + 120) % (W + 60)), 82 + Math.sin(tt * 1.3) * 3, '#f5c518', 0.85, -1);
+    fish(((tt * 12 + 200) % (W + 60)) - 30, 104 + Math.sin(tt * 0.9) * 3, '#e93d82', 0.7, 1);
+    const L = ['é', 'à', 'ç', 'ê', 'ù', 'è'];
+    for (let k = 0; k < 9; k++){
+      const x = 24 + k * 34 + Math.sin(tt * 1.5 + k) * 3, y = H - ((tt * 14 + k * 37) % (H + 20)), r = k % 3 === 0 ? 8 : 3 + (k % 2);
+      g.strokeStyle = 'rgba(255,255,255,.75)'; g.lineWidth = 1; g.beginPath(); g.arc(x, y, r, 0, TAU); g.stroke();
+      if (r === 8){ g.fillStyle = 'rgba(255,255,255,.95)'; g.font = '800 11px ' + FONT; g.textAlign = 'center'; g.fillText(L[k % 6], x, y + 3.8); }
+    }
+  };
+  SCENES.jardin = (g, S, t) => {
+    sky(g, S); sun(g, S, 268, 26, t); cloud(g, drift(t, 90, 3.5), 24, 0.85);
+    ground(g, S, 112);
+    tree(g, S, 300, 112, 1.1);
+    g.fillStyle = '#d9a76a';
+    for (let x = 8; x < 250; x += 18){ g.fillRect(x, 88, 6, 26); poly(g, [[x, 88], [x + 3, 84], [x + 6, 88]], '#d9a76a'); if (S.id === 'hiver'){ g.fillStyle = '#ffffff'; ell(g, x + 3, 85, 4, 1.8); g.fillStyle = '#d9a76a'; } }
+    g.fillRect(4, 94, 246, 4); g.fillRect(4, 105, 246, 4);
+    g.fillStyle = S.id === 'hiver' ? '#f6f9fd' : '#8b5a2b'; rr(g, 20, 120, 210, 18, 4); g.fill();
+    const sw = REDUCED ? 0 : Math.sin(t * 1.5) * 1.5;
+    if (S.id === 'printemps'){ for (let i = 0; i < 12; i++){ const x = 30 + i * 17; g.strokeStyle = '#3f9a3a'; g.lineWidth = 1.6; seg(g, x, 124, x + sw * 0.5, 106); g.fillStyle = ['#e5484d', '#f5c518', '#ff6f9c', '#8e4ec6'][i % 4]; g.beginPath(); g.moveTo(x - 4 + sw * 0.5, 106); g.lineTo(x - 4 + sw * 0.5, 99); g.lineTo(x - 1.5 + sw * 0.5, 102); g.lineTo(x + sw * 0.5, 98); g.lineTo(x + 1.5 + sw * 0.5, 102); g.lineTo(x + 4 + sw * 0.5, 99); g.lineTo(x + 4 + sw * 0.5, 106); g.closePath(); g.fill(); } }
+    if (S.id === 'ete'){ for (let i = 0; i < 6; i++){ const x = 36 + i * 36, top = 66 + (i % 2) * 8; g.strokeStyle = '#3f9a3a'; g.lineWidth = 2.2; seg(g, x, 124, x + sw, top); g.fillStyle = '#3f9a3a'; ell(g, x - 6, 104, 6, 3, -0.4); g.fillStyle = '#f5c518'; for (let k = 0; k < 10; k++){ const a = k * TAU / 10; ell(g, x + sw + Math.cos(a) * 7, top + Math.sin(a) * 7, 3.6, 2, a); } g.fillStyle = '#7a4a26'; circ(g, x + sw, top, 5); } }
+    if (S.id === 'automne'){ [[60, 1], [112, 0.8], [168, 1.15], [210, 0.75]].forEach(p => { g.save(); g.translate(p[0], 124); g.scale(p[1], p[1]); g.fillStyle = '#f76b15'; ell(g, -6, -8, 7, 8); ell(g, 6, -8, 7, 8); g.fillStyle = '#ff8c2e'; ell(g, 0, -8, 7, 9); g.fillStyle = '#4f7a2a'; g.fillRect(-1.5, -20, 3, 5); g.restore(); }); }
+    if (S.id === 'hiver'){ g.fillStyle = '#ffffff'; circ(g, 130, 122, 14); circ(g, 130, 100, 10); circ(g, 130, 84, 7.5); g.fillStyle = '#1a2358'; circ(g, 127.5, 83, 1); circ(g, 132.5, 83, 1); circ(g, 130, 98, 1.2); circ(g, 130, 104, 1.2); g.fillStyle = '#f76b15'; poly(g, [[130, 85], [139, 86.5], [130, 87.5]]); g.fillStyle = '#1a2358'; g.fillRect(123, 74, 14, 3); g.fillRect(125.5, 64, 9, 10); g.fillStyle = '#e5484d'; g.fillRect(122, 90, 16, 3.5); }
+    g.fillStyle = '#7a4a26'; g.fillRect(258, 100, 4, 22);
+    g.fillStyle = '#e8c08a'; rr(g, 240, 84, 40, 20, 3); g.fill(); g.strokeStyle = '#7a4a26'; g.lineWidth = 1.2; g.stroke();
+    g.fillStyle = '#1a2358'; g.font = '800 12px ' + FONT; g.textAlign = 'center'; g.fillText('ABC', 260, 98.5);
+    if (S.id === 'hiver'){ g.fillStyle = '#ffffff'; rr(g, 240, 82, 40, 4, 2); g.fill(); }
+  };
+  function tuile(g, x, y, s, l, pts){
+    g.fillStyle = 'rgba(60,40,20,.25)'; rr(g, x + 0.8, y + 1, s, s, 1.8); g.fill();
+    g.fillStyle = '#f6e7c4'; rr(g, x, y, s, s, 1.8); g.fill();
+    g.strokeStyle = '#d8bf8c'; g.lineWidth = 0.6; rr(g, x, y, s, s, 1.8); g.stroke();
+    g.fillStyle = '#3a2a18'; g.font = '800 ' + Math.round(s * 0.66) + 'px ' + FONT; g.textAlign = 'center'; g.fillText(l, x + s * 0.45, y + s * 0.74);
+    if (pts !== undefined){ g.font = '700 ' + Math.max(4, Math.round(s * 0.28)) + 'px ' + FONT; g.textAlign = 'right'; g.fillText(String(pts), x + s - 1.2, y + s - 1.4); }
+  }
+  SCENES.lettres = (g, S, t) => {
+    sky(g, S); sun(g, S, 36, 26, t); cloud(g, drift(t, 200, 3), 22, 0.8);
+    hill(g, 110, 6, S.far, 0.5, 0.02); ground(g, S, 126);
+    tree(g, S, 28, 126, 1.1); tree(g, S, 296, 126, 1.05); tree(g, S, 62, 128, 0.7);
+    // le plateau de jeu, posé sur un chevalet
+    const X0 = 94, Y0 = 18, C = 11, NC = 12, NR = 8;
+    g.strokeStyle = '#7a4a26'; g.lineWidth = 3; g.lineCap = 'round'; seg(g, 110, 104, 100, 128); seg(g, 214, 104, 224, 128);
+    g.fillStyle = '#8b5a2b'; rr(g, X0 - 5, Y0 - 5, NC * C + 10, NR * C + 10, 4); g.fill();
+    if (S.id === 'hiver'){ g.fillStyle = '#ffffff'; rr(g, X0 - 6, Y0 - 8, NC * C + 12, 5, 2.5); g.fill(); }
+    const bonus = { '0,0': '#d8343c', '11,0': '#d8343c', '0,7': '#d8343c', '11,7': '#d8343c', '3,1': '#9fd3ef', '8,1': '#9fd3ef', '2,4': '#f4a6b8', '9,4': '#f4a6b8', '6,6': '#2f6fd6', '1,2': '#f4a6b8', '10,6': '#9fd3ef', '7,3': '#f4a6b8' };
+    for (let r = 0; r < NR; r++) for (let c = 0; c < NC; c++){ g.fillStyle = bonus[c + ',' + r] || '#2e8b62'; g.fillRect(X0 + c * C + 0.5, Y0 + r * C + 0.5, C - 1, C - 1); }
+    // deux mots croisés : MOTS et ÉCOLE (sans accent sur les jetons)
+    [['M', 2], ['O', 1], ['T', 1], ['S', 1]].forEach((p, k) => tuile(g, X0 + (4 + k) * C, Y0 + 3 * C, C - 0.6, p[0], p[1]));
+    [['E', 1], ['C', 3], null, ['L', 1], ['E', 1]].forEach((p, k) => { if (p) tuile(g, X0 + 5 * C, Y0 + (1 + k) * C, C - 0.6, p[0], p[1]); });
+    // le chevalet de jetons, au premier plan
+    g.fillStyle = '#a0622d'; rr(g, 112, 132, 96, 9, 2.5); g.fill(); g.fillStyle = '#7a4a26'; g.fillRect(112, 139, 96, 3);
+    const hop = REDUCED ? 0 : Math.max(0, Math.sin(t * 2.4)) * 5;
+    [['J', 8], ['E', 1], ['U', 1], ['X', 10]].forEach((p, k) => tuile(g, 122 + k * 20, 117 - (k === Math.floor(t / 1.3) % 4 ? hop : 0), 15, p[0], p[1]));
+  };
+  const INSIDE = { mer: true };
+
+  /* ---------- Les particules de saison ---------- */
+  function makeParts(S, n){
+    if (S.kind === 'fly') return Array.from({ length: 3 }, (_, i) => ({ x: Math.random() * W, y: 30 + Math.random() * 70, ph: Math.random() * 6, vx: (Math.random() < 0.5 ? -1 : 1) * (8 + Math.random() * 8), col: S.parts[i % S.parts.length] }));
+    return Array.from({ length: n }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, vy: S.kind === 'snow' ? 10 + Math.random() * 12 : 12 + Math.random() * 10, ph: Math.random() * 6, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 4, r: S.kind === 'snow' ? 0.8 + Math.random() * 1.6 : 2.5 + Math.random() * 1.8, col: S.parts[i % S.parts.length] }));
+  }
+  function stepParts(ps, S, dt, t){
+    if (S.kind === 'fly'){ ps.forEach(p => { p.x += p.vx * dt; p.y += Math.sin(t * 2 + p.ph) * 10 * dt; if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10; }); return; }
+    ps.forEach(p => { p.y += p.vy * dt; p.x += Math.sin(t * 1.3 + p.ph) * 12 * dt; p.rot += p.vr * dt; if (p.y > H + 6){ p.y = -6; p.x = Math.random() * W; } });
+  }
+  function drawParts(g, ps, S, t){
+    ps.forEach(p => {
+      if (S.kind === 'snow'){ g.fillStyle = 'rgba(255,255,255,.95)'; circ(g, p.x, p.y, p.r); return; }
+      if (S.kind === 'fly'){
+        const f = Math.abs(Math.sin(t * 12 + p.ph));
+        g.save(); g.translate(p.x, p.y); g.fillStyle = p.col;
+        ell(g, -3 * f, -2, 3.4 * f + 0.6, 3); ell(g, 3 * f, -2, 3.4 * f + 0.6, 3); ell(g, -2.4 * f, 2, 2.4 * f + 0.5, 2); ell(g, 2.4 * f, 2, 2.4 * f + 0.5, 2);
+        g.fillStyle = '#1a2358'; ell(g, 0, 0, 0.9, 3.2); g.restore(); return;
+      }
+      g.save(); g.translate(p.x, p.y); g.rotate(p.rot); g.fillStyle = p.col;
+      if (S.kind === 'leaf'){ ell(g, 0, 0, p.r * 1.5, p.r * 0.8); g.strokeStyle = 'rgba(90,40,10,.4)'; g.lineWidth = 0.6; seg(g, -p.r * 1.4, 0, p.r * 1.4, 0); }
+      else { ell(g, 0, 0, p.r, p.r * 0.6); }
+      g.restore();
+    });
+  }
+
+  /* ---------- Le moteur : un seul rafraîchissement pour toutes les images ---------- */
+  const LIVE = [];
+  let raf = 0, last = 0, T = 3;
+  function fitC(it){
+    const w = Math.max(100, Math.round(it.cv.parentNode.clientWidth || 300)), d = Math.min(2, window.devicePixelRatio || 1);
+    it.cv.width = Math.round(w * d); it.cv.height = Math.round(w * d * H / W); it.k = w * d / W; it.w = w;
+  }
+  function register(cv){
+    const g = cv.getContext('2d'); if (!g) return;
+    const it = { cv, g, scene: cv.getAttribute('data-scene'), k: 1, w: 0 };
+    fitC(it); it.parts = makeParts(SEA(), cv.closest('.banner') ? 22 : 12);
+    LIVE.push(it); paint(it);
+  }
+  function paint(it){
+    const g = it.g, S = SEA();
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, it.cv.width, it.cv.height);
+    g.setTransform(it.k, 0, 0, it.k, 0, 0);
+    g.lineCap = 'butt'; g.textAlign = 'left';
+    SCENES[it.scene](g, S, T);
+    if (!INSIDE[it.scene]) drawParts(g, it.parts, S, T);
+  }
+  function frame(now){
+    raf = 0;
+    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now; T += dt;
+    const S = SEA();
+    for (let i = LIVE.length - 1; i >= 0; i--){
+      const it = LIVE[i];
+      if (!it.cv.isConnected){ LIVE.splice(i, 1); continue; }
+      if (Math.abs((it.cv.parentNode.clientWidth || 0) - it.w) > 2) fitC(it);
+      stepParts(it.parts, S, dt, T);
+      paint(it);
+    }
+    kick();
+  }
+  function kick(){ if (!raf && !REDUCED && LIVE.length && !document.hidden){ last = performance.now(); raf = requestAnimationFrame(frame); } }
+  document.addEventListener('visibilitychange', kick);
+  window.addEventListener('resize', () => { if (REDUCED) LIVE.forEach(it => { fitC(it); paint(it); }); });
+  try { document.fonts && document.fonts.ready.then(() => LIVE.forEach(paint)); } catch (e) {}
+
+  /* ---------- Les pages ---------- */
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const PLAY_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5 L12 7 L3 12.5 Z" fill="currentColor"/></svg>';
+  function viewHome(){
+    let h = '<p class="lead">Choisis une matière.</p><div class="subjects">';
+    Object.keys(SUBJECTS).forEach(id => {
+      const s = SUBJECTS[id], n = s.domains.reduce((a, d) => a + gamesOf(d).length, 0);
+      h += '<a class="card" href="#' + id + '" style="--c:' + s.color + '"><div class="pic"><canvas data-scene="' + s.scene + '" role="img" aria-label="Une montgolfière au-dessus d\'un paysage"></canvas></div>' +
+        '<div class="sbody"><div><h2>' + s.name + '</h2><p>' + plural(s.domains.length, 'domaine', 'domaines') + ' · ' + plural(n, 'jeu', 'jeux') + '</p></div><span class="go">Entrer</span></div></a>';
+    });
+    return h + '</div>';
+  }
+  function viewSubject(id){
+    const s = SUBJECTS[id];
+    let h = '<h2 class="vtitle">' + s.name + '</h2><p class="lead">Choisis un domaine.</p><div class="domains">';
+    s.domains.forEach(d => {
+      const D = DOMAINS[d], gs = gamesOf(d), nw = gs.some(isNew);
+      h += '<a class="card" href="#' + d + '" style="--c:' + s.color + '"><div class="pic"><canvas data-scene="' + D.scene + '" role="img" aria-label="' + esc(D.world) + '"></canvas></div>' +
+        '<div class="dbody"><h3>' + D.name + '</h3><p class="world">' + D.world + '</p><span class="count' + (gs.length ? '' : ' soon') + '">' + (gs.length ? plural(gs.length, 'jeu', 'jeux') : 'Bientôt') + '</span>' + (nw ? '<span class="badge-new">Nouveau</span>' : '') + '</div></a>';
+    });
+    return h + '</div>';
+  }
+  function viewDomain(d){
+    const D = DOMAINS[d], s = SUBJECTS[D.subject], gs = gamesOf(d);
+    let h = '<div class="banner"><canvas data-scene="' + D.scene + '" role="img" aria-label="' + esc(D.world) + '"></canvas></div>' +
+      '<div class="dhead"><h2 class="vtitle">' + D.name + '</h2><p class="world">' + D.world + '</p></div>';
+    if (!gs.length) return h + '<div class="empty"><b>Bientôt !</b>Il n\'y a pas encore de jeu ici. La maîtresse en prépare un.</div>';
+    h += '<ul class="games">';
+    gs.forEach(gm => {
+      h += '<li><a class="game" href="' + esc(gm.url) + '" style="--c:' + s.color + '"><span class="gtext"><span class="gtitle">' + esc(gm.title) + (isNew(gm) ? '<span class="badge-new">Nouveau</span>' : '') + '</span><span class="gdesc">' + esc(gm.desc) + '</span></span><span class="play">' + PLAY_ICON + 'Jouer</span></a></li>';
+    });
+    return h + '</ul>';
+  }
+  function crumbs(route){
+    if (route.type === 'home') return '';
+    let h = '<a href="#accueil">Accueil</a>';
+    if (route.type === 'domain'){ const sid = DOMAINS[route.id].subject; h += '<span aria-hidden="true">›</span><a href="#' + sid + '">' + SUBJECTS[sid].name + '</a>'; }
+    return h;
+  }
+  function parse(){
+    let id = '';
+    try { id = decodeURIComponent((location.hash || '').slice(1)); } catch (e) {}
+    if (SUBJECTS[id]) return { type: 'subject', id };
+    if (DOMAINS[id]) return { type: 'domain', id };
+    return { type: 'home' };
+  }
+  let current = '';
+  function render(){
+    const route = parse(), key = route.type + ':' + (route.id || '');
+    if (key === current) return;
+    const first = !current; current = key;
+    $('view').innerHTML = route.type === 'home' ? viewHome() : (route.type === 'subject' ? viewSubject(route.id) : viewDomain(route.id));
+    $('crumbs').innerHTML = crumbs(route);
+    $('view').querySelectorAll('canvas[data-scene]').forEach(register);
+    kick();
+    if (!first){ try { window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' }); } catch (e) { window.scrollTo(0, 0); } }
+  }
+  function setEyebrow(){ $('eyebrow').textContent = 'CM1 · CM2 · ' + SEA().name; }
+  function seasonButtons(){
+    const opts = [['', 'Selon la date']].concat(Object.keys(SEASONS).map(k => [k, SEASONS[k].name]));
+    $('seasonBtns').innerHTML = opts.map(o => '<button type="button" data-season="' + o[0] + '" aria-pressed="' + String((forced || '') === o[0]) + '">' + o[1] + '</button>').join('');
+  }
+  $('seasonBtns').addEventListener('click', e => {
+    const b = e.target.closest('[data-season]'); if (!b) return;
+    forced = b.getAttribute('data-season') || null;
+    seasonButtons(); setEyebrow();
+    LIVE.forEach(it => { it.parts = makeParts(SEA(), it.cv.closest('.banner') ? 22 : 12); paint(it); });
+  });
+  window.addEventListener('hashchange', render);
+  seasonButtons(); setEyebrow(); render();
+})();
+</script>
+
+
+<script>
+/* L'appli reste sur l'appareil pour jouer hors ligne (seulement quand elle est en ligne, pas en fichier local). */
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+</script>
+</body></html>

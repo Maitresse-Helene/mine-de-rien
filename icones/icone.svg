@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#2b45c8"/>
+  <g stroke="#ffffff" stroke-opacity=".10" stroke-width="3">
+    <path d="M0 96H512M0 192H512M0 288H512M0 384H512M96 0V512M192 0V512M288 0V512M384 0V512"/>
+  </g>
+  <g transform="translate(256 256) scale(0.92) translate(-256 -270)">
+  <g id="ballon">
+    <defs><clipPath id="env"><path d="M256 92c-78 0-138 58-138 132 0 58 44 104 86 140 18 15 30 30 36 44h32c6-14 18-29 36-44 42-36 86-82 86-140 0-74-60-132-138-132z"/></clipPath></defs>
+    <path d="M256 92c-78 0-138 58-138 132 0 58 44 104 86 140 18 15 30 30 36 44h32c6-14 18-29 36-44 42-36 86-82 86-140 0-74-60-132-138-132z" fill="#f76b15"/>
+    <g clip-path="url(#env)" fill="#ffffff">
+      <rect x="167" y="80" width="30" height="340"/><rect x="241" y="80" width="30" height="340"/><rect x="315" y="80" width="30" height="340"/>
+    </g>
+    <g clip-path="url(#env)"><rect x="100" y="206" width="312" height="40" fill="#f76b15"/></g>
+    <g stroke="#1a2358" stroke-opacity=".55" stroke-width="5" stroke-linecap="round"><path d="M240 408l-8 34M272 408l8 34"/></g>
+    <rect x="222" y="440" width="68" height="40" rx="8" fill="#a0622d"/>
+    <rect x="222" y="440" width="68" height="10" rx="5" fill="#7a4a26"/>
+    <circle cx="368" cy="122" r="26" fill="#ffd93b"/>
+  </g>
+  </g>
+</svg>

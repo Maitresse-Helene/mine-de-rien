@@ -1,0 +1,2707 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Les cubes, les pavés et les prismes droits</title>
+<!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html#espace-et-geometrie"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Mise en page : une seule colonne posée sur un cahier Seyès, comme les autres jeux.
+   Une petite scène 3D montre le solide ; il tourne aux niveaux 1 et 2, il est immobile ensuite.
+   Les vues sont dessinées à plat, case par case, comme sur le cahier. */
+:root{
+  --paper:#f6f7fd;
+  --sheet:#ffffff;
+  --ink:#1a2358;
+  --ink-soft:#5a628f;
+  --rule:#e4e8f7;
+  --rule-strong:#cad1ef;
+  --pen:#2b45c8;
+  --pen-deep:#1a2d92;
+  --pen-ink:#ffffff;
+  --pen-soft:#e7ebfb;
+  --stage:#eef1fb;
+  --stage-edge:#d5dbf3;
+  --fig-line:#1a2358;
+  --fig-fill:#ffffff;
+  --fig-grid:#d5dbf3;
+  --base:#f59e4c;
+  --lat:#8cc8f0;
+  --stamp:#7a36c2;
+  --stamp-bg:#f3ecfb;
+  --red:#cf2f46;
+  --red-bg:#fdebee;
+  --good:#157a45;
+  --good-bg:#e3f4ea;
+  --key:#ffffff;
+  --key-edge:#ccd3f0;
+  --key-shadow:#b5bee6;
+  --font-title:"Playwrite FR Moderne","Segoe Print","Bradley Hand",cursive;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+    --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff; --pen-deep:#5c74e0; --pen-ink:#0f1638; --pen-soft:#25314a;
+    --stage:#e9edf7; --stage-edge:#3a4d46; --fig-line:#edf3ee; --fig-fill:#2b3b36; --fig-grid:#33463f;
+    --stamp:#cfa8ff; --stamp-bg:#2c2540;
+    --red:#ff8894; --red-bg:#3b2128; --good:#63d49a; --good-bg:#1a3729;
+    --key:#283833; --key-edge:#3a4d46; --key-shadow:#0e1513;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+  --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff; --pen-deep:#5c74e0; --pen-ink:#0f1638; --pen-soft:#25314a;
+  --stage:#e9edf7; --stage-edge:#3a4d46; --fig-line:#edf3ee; --fig-fill:#2b3b36; --fig-grid:#33463f;
+  --stamp:#cfa8ff; --stamp-bg:#2c2540;
+  --red:#ff8894; --red-bg:#3b2128; --good:#63d49a; --good-bg:#1a3729;
+  --key:#283833; --key-edge:#3a4d46; --key-shadow:#0e1513;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to bottom, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to right, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+  background-size:100% 32px, 32px 100%, 100% 8px;
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-offset:3px}
+
+.app{
+  min-height:100%;
+  max-width:32rem;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:16px 20px;
+}
+.screen{flex:1;display:flex;flex-direction:column;gap:16px}
+.n{font-family:var(--font-num);font-weight:700;font-variant-numeric:tabular-nums}
+
+.title{
+  font-family:var(--font-title);
+  font-weight:400;
+  font-size:clamp(1.5rem, 6.2vw, 2.2rem);
+  line-height:1.6;
+  color:var(--pen);
+  margin:0;
+  text-wrap:balance;
+}
+.title-block{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.lead{margin:0;font-size:1.05rem;line-height:1.55;color:var(--ink-soft);max-width:40ch}
+
+.fiche{
+  background:var(--sheet);
+  border:1.5px solid var(--key-edge);
+  border-radius:20px;
+  box-shadow:0 3px 0 var(--key-shadow);
+  padding:20px;
+}
+.eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* Boutons */
+.btn-primary,.btn-secondary{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;border-radius:18px;cursor:pointer;text-align:center;
+  font-family:var(--font-num);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.btn-primary{
+  min-height:58px;border:0;
+  background:var(--pen);color:var(--pen-ink);
+  font-weight:800;font-size:1.35rem;line-height:1.2;padding:8px 16px;
+  box-shadow:0 4px 0 var(--pen-deep);
+}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--pen-deep)}
+.btn-secondary{
+  min-height:52px;border:1.5px solid var(--key-edge);
+  background:var(--sheet);color:var(--pen);
+  font-weight:700;font-size:1.15rem;line-height:1.2;padding:8px 16px;
+  box-shadow:0 3px 0 var(--key-shadow);
+}
+.btn-secondary:active{transform:translateY(2px);box-shadow:0 1px 0 var(--key-shadow)}
+.btn-inline{width:auto;flex:none;min-height:50px;padding:6px 18px;font-size:1.1rem}
+.btn-ghost{
+  border:0;background:none;cursor:pointer;padding:6px 4px;
+  color:var(--ink-soft);font-weight:600;font-size:.95rem;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.push-bottom{margin-top:auto}
+.send-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--sheet);border:1.5px dashed var(--pen)}
+.send-btn{text-decoration:none}
+.send-btn svg{width:22px;height:22px;flex:none}
+.send-note{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
+.stack{display:flex;flex-direction:column;gap:10px}
+
+/* Champs */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.9rem;font-weight:600}
+.input{
+  width:100%;min-width:0;height:52px;padding:0 14px;
+  border:1.5px solid var(--key-edge);border-radius:14px;
+  background:var(--sheet);color:var(--ink);font-size:1.15rem;
+}
+.input::placeholder{color:var(--ink-soft);opacity:.7}
+.name-row{display:flex;gap:8px;align-items:stretch}
+.name-row .input{flex:1}
+.form-msg{margin:0;font-size:.92rem;color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+.chip{
+  border:1.5px solid var(--key-edge);background:var(--paper);border-radius:999px;
+  padding:4px 12px;font-weight:600;font-size:.95rem;color:var(--pen);cursor:pointer;
+}
+.hello{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hello p{margin:0;font-size:1.15rem}
+.hello b{font-family:var(--font-num);font-weight:800;font-size:1.35rem;color:var(--pen)}
+
+/* Accueil */
+.step-card{display:flex;flex-direction:column;gap:12px}
+.step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.step-card h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.45rem;line-height:1.2}
+.step-card > p{margin:0;line-height:1.5;color:var(--ink-soft)}
+.done-chip{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;font-weight:600;color:var(--good);background:var(--good-bg);border-radius:999px;padding:2px 10px 2px 8px}
+.done-chip svg{width:14px;height:14px}
+.teacher-link{align-self:center}
+.totals{margin:0;font-size:.95rem;color:var(--ink-soft);line-height:1.5}
+.totals b{color:var(--ink);font-family:var(--font-num);font-weight:800}
+
+.levels{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.lvl{
+  display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;
+  width:100%;text-align:left;padding:12px;cursor:pointer;
+  border:1.5px solid var(--key-edge);border-radius:16px;background:var(--sheet);
+  box-shadow:0 2px 0 var(--key-shadow);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.lvl:active{transform:translateY(2px);box-shadow:none}
+.lvl:disabled{cursor:not-allowed;box-shadow:none;background:var(--paper)}
+.lvl:disabled .lvl-name,.lvl:disabled .lvl-desc{color:var(--ink-soft)}
+.lvl-num{width:40px;height:40px;border-radius:12px;background:var(--pen-soft);color:var(--pen);display:flex;align-items:center;justify-content:center;font-family:var(--font-num);font-weight:800;font-size:1.3rem}
+.lvl.ok .lvl-num{background:var(--good-bg);color:var(--good)}
+.lvl:disabled .lvl-num{background:var(--sheet);color:var(--ink-soft)}
+.lvl-num svg{width:20px;height:20px}
+.lvl-body{display:flex;flex-direction:column;gap:1px;min-width:0}
+.lvl-name{font-family:var(--font-num);font-weight:800;font-size:1.12rem;line-height:1.25}
+.lvl-desc{font-size:.86rem;line-height:1.4;color:var(--ink-soft)}
+.lvl-tag{display:inline-block;margin-top:3px;font-size:.72rem;font-weight:600;color:var(--pen);background:var(--pen-soft);border-radius:999px;padding:1px 8px;width:max-content}
+.lvl-score{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.lvl-score b{font-family:var(--font-num);font-weight:800;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.lvl-score span{font-size:.74rem;color:var(--ink-soft);white-space:nowrap}
+.lvl.ok .lvl-score b{color:var(--good)}
+
+/* Carte de bons points */
+.bp{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--paper);border:1.5px solid var(--key-edge)}
+.bp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bp-head h3{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem;line-height:1.2}
+.bp-count{font-family:var(--font-num);font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.slots{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5, minmax(0,1fr));gap:8px}
+.slot{
+  aspect-ratio:1 / 1.12;max-width:100%;
+  border:2px dashed var(--rule-strong);border-radius:14px;background:var(--sheet);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  color:var(--ink-soft);font-family:var(--font-num);font-weight:700;font-size:1rem;
+}
+.slot.on{border-style:solid;border-color:var(--stamp);background:var(--stamp-bg);color:var(--stamp)}
+.slot svg{width:62%;height:auto;transform:rotate(-9deg)}
+.slot .t{font-size:.74rem;line-height:1}
+.slot.new svg{animation:stampIn .55s cubic-bezier(.2,1.4,.4,1) both}
+.bp-note{margin:0;font-size:.82rem;color:var(--ink-soft);line-height:1.5}
+.done-cards{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+
+/* En-tête commun */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar-title{display:flex;flex-direction:column;min-width:0}
+.bar-title b{font-family:var(--font-num);font-weight:800;font-size:1.2rem;line-height:1.2}
+.track{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.track li{height:8px;border-radius:4px;background:var(--rule-strong);transition:background-color .25s}
+.track li.done{background:var(--good)}
+.track li.miss{background:var(--red)}
+.track li.current{background:var(--pen)}
+.tally{display:flex;gap:14px;font-size:.95rem;color:var(--ink-soft)}
+.tally b{font-family:var(--font-num);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
+.tally .ok b{color:var(--good)}
+.tally .ko b{color:var(--red)}
+
+/* La scène 3D */
+.viewer{display:flex;flex-direction:column;gap:8px}
+.vbox{position:relative;width:100%;border-radius:16px;background:var(--stage);border:1.5px solid var(--stage-edge);overflow:hidden}
+.v3d{display:block;width:100%;touch-action:none;cursor:grab}
+.v3d.locked{cursor:default;touch-action:auto}
+.vbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vbtn{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;
+  padding:6px 14px;font-weight:600;font-size:.95rem;color:var(--pen);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.vbtn svg{width:16px;height:16px}
+.vbtn.on{background:var(--pen);border-color:var(--pen);color:var(--pen-ink)}
+.vtip{font-size:.85rem;line-height:1.4;color:var(--ink-soft);flex:1 1 12rem;min-width:0}
+.v-fallback{margin:0;padding:14px;border-radius:14px;background:var(--red-bg);color:var(--red);line-height:1.5}
+.snaps{display:flex;flex-wrap:wrap;gap:8px}
+.lview{display:flex;align-items:center;gap:12px;min-height:40px;flex-wrap:wrap}
+
+/* Dessins plats : vues et faces */
+.vfig{display:block;max-width:100%;height:auto}
+.vfig .cf{stroke:var(--fig-line);stroke-width:1.5}
+.vfig .mf{fill:var(--fig-fill)}
+.vfig .ml{stroke:var(--fig-line);stroke-width:2.2;stroke-linecap:round}
+.ffig{display:block;max-width:100%;height:auto}
+.ffig .gl{stroke:var(--fig-grid);stroke-width:1}
+.ffig .fp{fill:var(--fig-fill);stroke:var(--fig-line);stroke-width:2.2;stroke-linejoin:round}
+.views-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:flex-end}
+.vcap{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--ink-soft)}
+.fig-q{display:flex;justify-content:center;padding:8px 0 2px}
+img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10px;background:var(--stage)}
+
+/* Fiches de leçon */
+#learn{gap:12px}
+.lesson{display:flex;flex-direction:column;gap:12px}
+.lesson h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.4rem;line-height:1.25;color:var(--pen)}
+.lesson p{margin:0;line-height:1.6}
+.tip{padding:10px 12px;border-radius:12px;background:var(--pen-soft);color:var(--ink)}
+.sw-b{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--base);vertical-align:-1px}
+.sw-l{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--lat);vertical-align:-1px}
+.check{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1.5px dashed var(--rule-strong)}
+.check-q{margin:0;font-weight:600;font-size:1.08rem;line-height:1.5}
+.choices{display:grid;gap:8px}
+.choices.figs{grid-template-columns:repeat(auto-fit, minmax(92px, 1fr))}
+.choice{
+  width:100%;min-height:50px;padding:10px 14px;text-align:left;cursor:pointer;
+  border:1.5px solid var(--key-edge);border-radius:14px;background:var(--sheet);
+  font-family:var(--font-num);font-weight:700;font-size:1.12rem;line-height:1.35;
+  box-shadow:0 2px 0 var(--key-shadow);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.choice:active{transform:translateY(2px);box-shadow:none}
+.choice:disabled{cursor:default}
+.choice.fig{display:flex;align-items:center;justify-content:center;min-height:92px;padding:10px}
+.choice.right{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.choice.wrong{background:var(--red-bg);border-color:var(--red);color:var(--red);box-shadow:none}
+.choice.wrong .vfig,.choice.wrong .ffig,.choice.wrong img{opacity:.45}
+.why{margin:0;padding:10px 12px;border-radius:12px;line-height:1.5}
+.why.good{background:var(--good-bg);color:var(--good)}
+.why.bad{background:var(--red-bg);color:var(--red)}
+
+/* Jeu */
+#play{gap:12px}
+.task{display:flex;flex-direction:column;gap:14px;padding:16px}
+.lead-q{margin:0;font-size:1.05rem;line-height:1.5}
+.steps{display:flex;flex-direction:column;gap:10px}
+.srow{display:flex;flex-direction:column;gap:8px}
+.srow.active{padding-top:12px;border-top:1.5px dashed var(--rule-strong)}
+.srow.done{gap:4px;padding:8px 12px;border-radius:12px;background:var(--good-bg)}
+.srow.done.fixed{background:var(--red-bg)}
+.sq{font-weight:600;font-size:.92rem;line-height:1.4;color:var(--ink-soft)}
+.srow.active .sq{font-size:1.06rem;color:var(--ink)}
+.sa{display:flex;gap:8px;align-items:center;font-family:var(--font-num);font-weight:700;color:var(--good);line-height:1.4}
+.sa .ico svg{width:18px;height:18px;display:block}
+.fixed .sa{color:var(--red)}
+.sa .vfig,.sa .ffig{max-height:64px;width:auto}
+.sa img.thumb{width:90px}
+.sex{display:flex;align-items:center;flex-wrap:wrap;gap:.3em;font-family:var(--font-num);font-weight:800;font-size:clamp(1.5rem, 7vw, 2rem);line-height:1.3;font-variant-numeric:tabular-nums}
+.srow.done .sex{font-size:1.2rem;color:var(--good)}
+.srow.done.fixed .sex{color:var(--red)}
+.abox{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:2.6ch;padding:0 .3em;border:2.5px dashed var(--rule-strong);border-radius:14px;color:var(--pen);
+}
+.abox.bad{border-style:solid;border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.abox.bad .caret{display:none}
+.abox.shake{animation:shake .38s ease}
+.caret{display:inline-block;width:3px;height:.85em;background:currentColor;border-radius:2px;margin-left:2px;animation:blink 1.05s steps(1) infinite}
+.feedback{margin:0;min-height:1.5em;font-weight:600;font-size:1.05rem;line-height:1.5}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--red)}
+.feedback.info{color:var(--ink-soft);font-weight:500}
+.hint{margin:0;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px dashed var(--rule-strong);font-size:1rem;line-height:1.6}
+.endbox{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px solid var(--key-edge);font-size:1.02rem;line-height:1.6}
+.endbox b{font-family:var(--font-num);font-weight:800}
+
+.pad{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px}
+.key{
+  height:clamp(48px, 7.4vh, 62px);
+  border:1.5px solid var(--key-edge);border-radius:16px;
+  background:var(--key);color:var(--ink);
+  font-family:var(--font-num);font-weight:700;font-size:1.8rem;line-height:1;
+  box-shadow:0 3px 0 var(--key-shadow);cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.key:active{transform:translateY(2px);box-shadow:0 1px 0 var(--key-shadow)}
+.key.del{color:var(--ink-soft)}
+.key.del svg{width:30px;height:30px}
+.key.ok{background:var(--pen);border-color:var(--pen-deep);color:var(--pen-ink);box-shadow:0 3px 0 var(--pen-deep);font-size:1.25rem;font-weight:800}
+.key.ok:active{box-shadow:0 1px 0 var(--pen-deep)}
+
+/* Résultat */
+.result{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.score{font-family:var(--font-num);font-weight:800;font-size:clamp(3rem, 15vw, 4.2rem);line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:.45em;color:var(--ink-soft)}
+.stamp{
+  margin-top:8px;display:inline-block;padding:2px 14px;
+  border:2.5px solid var(--stamp);border-radius:10px;color:var(--stamp);
+  font-family:var(--font-title);font-size:1.05rem;line-height:1.9;
+  transform:rotate(-4deg);
+}
+.outcome{margin:8px 0 0;font-size:1.02rem;line-height:1.5;max-width:34ch}
+.outcome.win{color:var(--stamp);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px;margin:0}
+.stats div{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:16px;padding:10px 8px;text-align:center;min-width:0}
+.stats dt{font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+.stats dd{margin:2px 0 0;font-family:var(--font-num);font-weight:800;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.det-title{margin:0 0 10px;font-family:var(--font-num);font-weight:800;font-size:1.15rem}
+.det{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.det li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;line-height:1.5}
+.det svg{width:20px;height:20px;margin-top:2px}
+.det .ok{color:var(--good)}
+.det .ko{color:var(--red)}
+.det .tries{font-size:.85rem;color:var(--ink-soft)}
+
+/* Carte complète */
+.card-sheet{display:flex;flex-direction:column;gap:14px}
+.card-who{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card-who b{font-family:var(--font-num);font-weight:800;font-size:1.5rem;color:var(--pen)}
+.card-date{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.code-box{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px;border:2.5px solid var(--stamp);border-radius:16px;background:var(--stamp-bg)}
+.code{font-family:var(--font-num);font-weight:800;font-size:2.4rem;line-height:1.1;letter-spacing:.2em;padding-left:.2em;color:var(--stamp)}
+.msg{margin:0;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px dashed var(--rule-strong);line-height:1.55;-webkit-user-select:all;user-select:all}
+.copy-status{margin:0;font-size:.92rem;color:var(--good);min-height:1.4em}
+
+/* Espace enseignante */
+.form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.check-result{margin:0;padding:12px 14px;border-radius:14px;line-height:1.5;font-weight:500}
+.check-result.ok{background:var(--good-bg);color:var(--good)}
+.check-result.ko{background:var(--red-bg);color:var(--red)}
+.howto{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;line-height:1.5;color:var(--ink-soft)}
+
+@keyframes blink{50%{opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes stampIn{0%{transform:rotate(-9deg) scale(1.9);opacity:0}100%{transform:rotate(-9deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .caret{animation:none}
+  .abox.shake,.slot.new svg{animation:none}
+  .track li{transition:none}
+}
+/* Robot à assembler */
+.lvl-num.theme{border-radius:12px;border:2.5px solid rgba(0,0,0,.2);color:#ffffff}
+.lvl:disabled .lvl-num.theme{opacity:.45}
+.runbox{border-radius:14px;overflow:hidden;border:1.5px solid var(--key-edge);background:#dfe8f5;line-height:0}
+.runbox canvas,.scene canvas{display:block;width:100%;height:auto}
+.scene{border-radius:18px;overflow:hidden;border:1.5px solid var(--key-edge);background:var(--sheet)}
+.scene-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px}
+.cheer{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem;line-height:1.3;color:var(--ink)}
+.sound-btn{border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:600;color:var(--pen);cursor:pointer}
+.pbtns{display:flex;flex-wrap:wrap;gap:8px}
+.pbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;padding:6px 12px;font-weight:600;color:var(--ink);cursor:pointer}
+.pdot{width:14px;height:14px;border-radius:4px;border:2px solid var(--ink-soft);flex:none}
+.head-btns{display:flex;align-items:center;gap:6px}
+.prev-title{margin:0;font-family:var(--font-num);font-size:1.2rem;color:var(--ink)}
+
+/* Parcours jaune / orange */
+:root{--jaune:#f2b200;--jaune-ink:#3b2b00;--orange:#ea7417;--orange-ink:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--jaune:#e8ab00;--jaune-ink:#2a1f00;--orange:#f08a3a;--orange-ink:#1f1004}}
+:root[data-theme="dark"]{--jaune:#e8ab00;--jaune-ink:#2a1f00;--orange:#f08a3a;--orange-ink:#1f1004}
+.parcours{display:flex;flex-direction:column;gap:10px;padding:16px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg-btn{min-height:50px;border-radius:14px;cursor:pointer;font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1.2;background:var(--sheet);color:var(--ink);border:2.5px solid var(--key-edge);display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.seg-btn i{width:12px;height:12px;border-radius:50%;flex:none}
+.seg-btn.jaune i{background:var(--jaune)}
+.seg-btn.orange i{background:var(--orange)}
+.seg-btn.jaune[aria-pressed="true"]{background:var(--jaune);border-color:var(--jaune);color:var(--jaune-ink)}
+.seg-btn.orange[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.seg-btn[aria-pressed="true"] i{background:currentColor}
+.seg-btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.seg-note{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.pchip{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:600;line-height:1.6}
+.pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
+.pchip.orange{background:var(--orange);color:var(--orange-ink)}
+.bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+</style>
+
+<div class="app">
+
+  <!-- Accueil -->
+  <section id="start" class="screen" aria-labelledby="startTitle">
+    <div class="title-block">
+      <span class="eyebrow">Espace et géométrie · Chapitre 4</span>
+      <h1 class="title" id="startTitle">Les cubes, les pavés et les prismes droits</h1>
+    </div>
+
+    <form class="fiche stack" id="nameForm" novalidate>
+      <div class="field">
+        <label for="nameInput">Ton prénom</label>
+        <div class="name-row">
+          <input class="input" id="nameInput" name="prenom" type="text" autocomplete="given-name" maxlength="30" placeholder="Par exemple : Léa">
+          <button class="btn-secondary btn-inline" type="submit">Valider</button>
+        </div>
+      </div>
+      <p class="form-msg" id="nameMsg" hidden></p>
+      <div class="chips" id="knownNames" hidden></div>
+    </form>
+
+    <div class="hello" id="hello" hidden>
+      <p>Bonjour <b id="helloName"></b> !</p>
+      <button class="btn-ghost" id="changeName" type="button">Ce n'est pas moi</button>
+    </div>
+
+    <div class="fiche parcours">
+      <span class="eyebrow">Ton parcours</span>
+      <div class="seg" role="group" aria-label="Choisis ton parcours">
+        <button class="seg-btn jaune" type="button" data-parcours="jaune" aria-pressed="true"><i aria-hidden="true"></i>Jaune</button>
+        <button class="seg-btn orange" type="button" data-parcours="orange" aria-pressed="false"><i aria-hidden="true"></i>Orange</button>
+      </div>
+      <p class="seg-note" id="parcoursNote"></p>
+    </div>
+
+    <div class="fiche step-card">
+      <div class="step-head">
+        <span class="eyebrow">Étape 1</span>
+        <span class="done-chip" id="learnDoneChip" hidden>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Déjà fait
+        </span>
+      </div>
+      <h2>Comprendre la leçon</h2>
+      <p>4 fiches avec des solides que tu peux faire tourner : le prisme droit, le pavé et le cube, les faces, arêtes et sommets, puis les points de vue.</p>
+      <button class="btn-primary" id="learnBtn" type="button">Commencer l'étape 1</button>
+    </div>
+
+    <div class="fiche step-card">
+      <span class="eyebrow">Étape 2</span>
+      <h2>Construis ton robot en 5 niveaux</h2>
+      <p>Chaque niveau construit une pièce de ton robot : les jambes, le corps, les bras, la tête, puis l'antenne. Chaque réponse pose un bloc ; à chaque erreur, un bloc tombe ! Aux niveaux 1 et 2, le solide fait des tours complets pour que tu voies toutes ses faces. Ensuite, il ne tourne plus. Avec 7 réussites sur 8, tu valides le niveau et tu ouvres le suivant.</p>
+      <ol class="levels" id="levelList"></ol>
+      <p class="totals" id="totals"></p>
+      <div class="bp" id="startCard"></div>
+      <p class="bp-note">Chaque niveau peut te rapporter 3 bons points : 1 quand tu le valides (7 sur 8), et 2 de plus pour un sans-faute (8 sur 8). Avec 10 bons points, tu as une récompense en classe ! Tes bons points sont gardés sur cet appareil.</p>
+      <div class="done-cards" id="doneCards" hidden></div>
+    </div>
+
+    <button class="btn-ghost teacher-link" id="teacherLink" type="button">Espace enseignante : vérifier une carte</button>
+  </section>
+
+  <!-- Étape 1 : fiches -->
+  <section id="learn" class="screen" hidden aria-label="Comprendre la leçon">
+    <header class="bar">
+      <div class="bar-title"><span class="eyebrow" id="learnCount">Fiche 1 sur 4</span></div>
+      <button class="btn-ghost" id="learnHome" type="button">Accueil</button>
+    </header>
+    <ol class="track" id="ltrack" aria-hidden="true"></ol>
+    <div class="fiche lesson">
+      <div class="lesson" id="lessonTop"></div>
+      <div id="lessonSlot"></div>
+      <div class="lesson" id="lessonCtrl"></div>
+      <div id="lessonCheck"></div>
+    </div>
+  </section>
+
+  <!-- Étape 1 : bilan -->
+  <section id="learnEnd" class="screen" hidden aria-labelledby="learnEndTitle">
+    <h1 class="title" id="learnEndTitle">Bien joué !</h1>
+    <p class="lead" id="learnScore"></p>
+    <div class="fiche lesson">
+      <h2>À retenir</h2>
+      <p>Un <b>prisme droit</b> a 2 bases identiques. Ses autres faces, les <b>faces latérales</b>, sont des rectangles.</p>
+      <p>Le <b>pavé droit</b> a 6 faces rectangulaires. Le <b>cube</b> a 6 faces carrées.</p>
+      <p class="tip">Faces d'un prisme droit = 2 bases + 1 face latérale par côté de la base.</p>
+      <p>Pour une <b>vue</b>, je me place du côté indiqué et je dessine ce que je vois. Pour la vue de dessus, le devant est en bas du dessin.</p>
+    </div>
+    <div class="stack push-bottom">
+      <button class="btn-primary" id="toGameBtn" type="button">Passer au jeu</button>
+      <button class="btn-secondary" id="learnAgainBtn" type="button">Revoir les fiches</button>
+    </div>
+  </section>
+
+  <!-- Étape 2 : un niveau -->
+  <section id="play" class="screen" hidden aria-label="Jeu">
+    <header class="bar">
+      <div class="bar-title"><span class="bar-eyebrow"><span class="eyebrow" id="playLevel">Niveau 1 sur 5</span><span class="pchip jaune" id="playParcours">Jaune</span></span><b id="playName"></b></div>
+      <div class="head-btns"><button class="btn-ghost" id="soundBtn" type="button" data-sound>Son : activé</button><button class="btn-ghost" id="playHome" type="button">Accueil</button></div>
+    </header>
+    <div class="bar">
+      <span class="eyebrow" id="playCount">Question 1 sur 8</span>
+      <div class="tally" aria-live="polite"><span class="ok">Réussites <b id="tOk">0</b></span><span class="ko">Erreurs <b id="tErr">0</b></span></div>
+    </div>
+    <ol class="track" id="ptrack" aria-hidden="true" hidden></ol>
+    <div class="runbox" id="runbox" aria-hidden="true"></div>
+
+    <div class="fiche task">
+      <div id="playSlot"></div>
+      <div id="stmt"></div>
+      <div class="steps" id="steps" aria-live="polite"></div>
+    </div>
+
+    <p class="feedback" id="feedback" aria-live="assertive"></p>
+    <p class="hint" id="hint" hidden></p>
+    <div class="endbox" id="endBox" hidden></div>
+    <button class="btn-primary" id="contBtn" type="button" hidden>Continuer</button>
+    <button class="btn-primary" id="nextBtn" type="button" hidden>Question suivante</button>
+    <div class="pad push-bottom" id="pad"></div>
+  </section>
+
+  <!-- Résultat d'un niveau -->
+  <section id="result" class="screen" hidden aria-labelledby="resultTitle">
+    <h1 class="title" id="resultTitle">Niveau terminé !</h1>
+    <div class="scene" id="resScene" hidden></div>
+    <div class="fiche result">
+      <span class="eyebrow" id="resLevel"></span>
+      <div class="score" id="resScore"></div>
+      <span class="eyebrow">réussites du premier coup</span>
+      <span class="stamp" id="resStamp" hidden></span>
+      <p class="outcome" id="resOutcome"></p>
+    </div>
+    <div class="bp" id="resCard" hidden></div>
+    <button class="btn-primary" id="seeCardBtn" type="button" hidden>Voir ma carte complète</button>
+    <dl class="stats">
+      <div><dt>Réussites</dt><dd id="resOk">0</dd></div>
+      <div><dt>Erreurs</dt><dd id="resErr">0</dd></div>
+      <div><dt>Pour valider</dt><dd id="resNeed">7</dd></div>
+    </dl>
+    <div class="fiche">
+      <h2 class="det-title">Le détail</h2>
+      <ul class="det" id="resDetail"></ul>
+    </div>
+    <div class="send-box" id="sendBox">
+      <a class="btn-secondary send-btn" id="sendLink" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M4 7.5l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Envoyer mon score à la maîtresse
+      </a>
+      <p class="send-note">Un formulaire s'ouvre avec ton score déjà écrit. Appuie sur « Envoyer » pour que ta maîtresse le reçoive.</p>
+    </div>
+
+    <div class="stack push-bottom">
+      <button class="btn-primary" id="nextLevelBtn" type="button" hidden>Niveau suivant</button>
+      <button class="btn-secondary" id="replayBtn" type="button">Rejouer ce niveau</button>
+      <button class="btn-ghost" id="resHome" type="button" style="align-self:center">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- Carte de 10 bons points complète -->
+  <section id="card" class="screen" hidden aria-labelledby="cardTitle">
+    <h1 class="title" id="cardTitle">Carte complète !</h1>
+    <div class="fiche card-sheet">
+      <div class="card-who"><b id="cardWho"></b><span class="eyebrow" id="cardNum"></span></div>
+      <div class="bp" id="cardFull"></div>
+      <p class="card-date" id="cardDate"></p>
+      <div class="code-box">
+        <span class="eyebrow">Code de vérification</span>
+        <span class="code" id="cardCode"></span>
+      </div>
+    </div>
+    <p class="lead">Montre cette carte à ta maîtresse. Un adulte peut aussi lui envoyer ce message :</p>
+    <p class="msg" id="cardMsg"></p>
+    <button class="btn-secondary" id="copyBtn" type="button">Copier le message</button>
+    <p class="copy-status" id="copyStatus" aria-live="polite"></p>
+    <button class="btn-primary push-bottom" id="cardBack" type="button">Retour à l'accueil</button>
+  </section>
+
+  <!-- Espace enseignante -->
+  <section id="teacher" class="screen" hidden aria-labelledby="teacherTitle">
+    <h1 class="title" id="teacherTitle">Vérifier une carte</h1>
+    <p class="lead">Saisissez le prénom, le numéro de carte et le code envoyés par la famille.</p>
+    <form class="fiche form" id="checkForm" novalidate>
+      <div class="field">
+        <label for="tName">Prénom de l'élève</label>
+        <input class="input" id="tName" type="text" autocomplete="off" maxlength="30">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="tCard">N° de carte</label>
+          <input class="input" id="tCard" type="text" inputmode="numeric" value="1" maxlength="3">
+        </div>
+        <div class="field">
+          <label for="tCode">Code</label>
+          <input class="input" id="tCode" type="text" autocapitalize="characters" autocomplete="off" maxlength="6" placeholder="K7P3">
+        </div>
+      </div>
+      <button class="btn-primary" type="submit">Vérifier</button>
+      <p class="check-result" id="checkResult" hidden></p>
+    </form>
+    <div class="fiche">
+      <ul class="howto">
+        <li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Il peut prendre un parcours différent d'un jeu à l'autre. Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte, et le parcours est écrit dans le score envoyé.</li>
+        <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
+        <li>Niveaux 1 et 2 : le solide fait des tours complets (on peut aussi l'arrêter ou le tourner au doigt). Niveaux 3 à 5 : il est immobile ; après une erreur, l'élève peut le faire tourner pour s'aider, mais la question compte comme ratée.</li>
+        <li>Une question est réussie quand toutes ses étapes sont justes du premier coup. Une erreur donne un indice ; après deux erreurs (ou une seule quand il n'y a que deux choix), la correction s'affiche.</li>
+        <li>Chaque niveau compte 8 questions et se valide avec 7 réussites. Bons points : 1 à la validation, 2 de plus pour le sans-faute, soit 15 en tout.</li>
+        <li>Chaque niveau construit une pièce du robot (jambes, corps, bras, tête, antenne) en cubes, pavés et prismes : chaque réponse pose un bloc, et un bloc tombe à chaque erreur. Quand l'élève gagne un bon point, la pièce se fixe sur le robot et de petits robots applaudissent, un de plus à chaque niveau. Le niveau 5 validé pour la première fois fait décoller le robot terminé.</li>
+        <li>Vues : celle de dessus se dessine avec le devant en bas ; les vues de côté sont celles qu'on voit en se plaçant à l'étiquette (devant, droite, gauche, derrière). La vue de dessous n'est pas demandée.</li>
+        <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
+      </ul>
+    </div>
+    <div class="fiche stack">
+      <h2 class="prev-title">Aperçu du robot</h2>
+      <p class="send-note">Ce que voit l'élève quand il gagne un bon point à chaque niveau, et quand il valide le niveau 5 pour la première fois (fin du jeu).</p>
+      <div class="pbtns" id="previewBtns">
+        <button class="pbtn" type="button" data-prev="0"><span class="pdot" style="background:#3b7ddd"></span>Jambes</button>
+        <button class="pbtn" type="button" data-prev="1"><span class="pdot" style="background:#f08c1a"></span>Corps</button>
+        <button class="pbtn" type="button" data-prev="2"><span class="pdot" style="background:#2fa84f"></span>Bras</button>
+        <button class="pbtn" type="button" data-prev="3"><span class="pdot" style="background:#12a594"></span>Tête</button>
+        <button class="pbtn" type="button" data-prev="4"><span class="pdot" style="background:#c98a00"></span>Antenne</button>
+        <button class="pbtn" type="button" data-prev="fin"><span class="pdot" style="background:#ff5fa2"></span>Décollage</button>
+      </div>
+      <div class="scene" id="previewScene" hidden></div>
+    </div>
+    <button class="btn-secondary push-bottom" id="teacherBack" type="button">Retour à l'accueil</button>
+  </section>
+
+</div>
+
+<!-- La scène 3D, déplacée là où on en a besoin -->
+<div class="viewer" id="viewer" hidden>
+  <div class="vbox" id="vCanvasBox"></div>
+  <div class="vbar">
+    <button class="vbtn" id="spinBtn" type="button"></button>
+    <span class="vtip" id="vTip"></span>
+  </div>
+</div>
+<p class="v-fallback" id="vFallback" hidden>Les solides en 3D ne s'affichent pas sur cet appareil. Essaie avec un autre navigateur, par exemple Chrome, Safari ou Firefox à jour.</p>
+
+<script src="../../commun/vendor/three.min.js"></script>
+<script>
+(function(){
+  const STORE_KEY = 'solides-points-de-vue-bons-points';
+  const LEARN_KEY = 'solides-points-de-vue-lecon-faite';
+  const GAME_NAME = 'Les cubes, les pavés et les prismes droits';
+  const $ = id => document.getElementById(id);
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSde3BnaU_vGD6JeeCqP3mgcxNhnm5z15fbf38R3D-ihhwOscQ/viewform';
+  const FORM_IDS = ['1488044105', '165270319', '1824034822', '454882096']; // Prénom, Jeu, Niveau, Score
+  const formLink = vals => FORM_URL + '?usp=pp_url' + FORM_IDS.map((id, i) => '&entry.' + id + '=' + encodeURIComponent(vals[i] || '')).join('');
+  const nErr = n => n + (n > 1 ? ' erreurs' : ' erreur');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+  const range = n => Array.from({ length: n }, (_, i) => i);
+  function shuffle(arr){
+    const c = arr.slice();
+    for (let k = c.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); const t = c[k]; c[k] = c[j]; c[j] = t; }
+    return c;
+  }
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const fmt1 = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
+  function key(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+  let REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  /* ---------- Les solides ---------- */
+  const CUBE_COLORS = [
+    { hex: '#e5484d', name: 'rouge' }, { hex: '#3b9ae1', name: 'bleu' }, { hex: '#46a758', name: 'vert' },
+    { hex: '#f5c518', name: 'jaune' }, { hex: '#8e4ec6', name: 'violet' }, { hex: '#f76b15', name: 'orange' }
+  ];
+  const SOLID_COLOR = '#a9c9f0', BASE_COLOR = '#f59e4c', LAT_COLOR = '#8cc8f0', LINE_COLOR = '#1a2358';
+  const HEX = range(6).map(k => { const t = Math.PI / 6 + k * Math.PI / 3; return [+(1.6 * Math.cos(t) + 1.6).toFixed(3), +(1.6 * Math.sin(t) + 1.6).toFixed(3)]; });
+  const PENT = range(5).map(k => { const t = Math.PI / 2 + k * 2 * Math.PI / 5; return [+(1.7 * Math.cos(t) + 1.7).toFixed(3), +(1.7 * Math.sin(t) + 1.7).toFixed(3)]; });
+  const PRISMS = {
+    cube: { pts: [[0,0],[2,0],[2,2],[0,2]], d: 2, n: 4, name: 'un cube', lp: [1,1] },
+    pave: { pts: [[0,0],[3,0],[3,2],[0,2]], d: 4, n: 4, name: 'un pavé droit', lp: [1.5,1] },
+    tri:  { pts: [[0,0],[3,0],[0,2]], d: 4, n: 3, name: 'un prisme droit à base triangulaire', base: 'des triangles', lp: [0.9,0.6] },
+    pent: { pts: [[0,0],[4,0],[4,2],[2,3.5],[0,2]], d: 3, n: 5, name: 'un prisme droit à base pentagonale', base: 'des pentagones (5 côtés)', lp: [2,1.5] },
+    hex:  { pts: HEX, d: 3, n: 6, name: 'un prisme droit à base hexagonale', base: 'des hexagones (6 côtés)', lp: [1.6,1.6] },
+    L:    { pts: [[0,0],[3,0],[3,1],[1,1],[1,3],[0,3]], d: 2, n: 6, name: 'un prisme droit dont la base a 6 côtés (en forme de L)', lp: [0.5,0.5] },
+    trap: { pts: [[0,0],[4,0],[3,2],[1,2]], d: 3, n: 4, name: 'un prisme droit dont la base a 4 côtés (un trapèze)', lp: [2,1] },
+    /* Variantes : même famille, autres dimensions */
+    pave2: { kind: 'pave', pts: [[0,0],[4,0],[4,1.5],[0,1.5]], d: 2, n: 4, name: 'un pavé droit', lp: [2,0.75] },
+    pave3: { kind: 'pave', pts: [[0,0],[2,0],[2,2],[0,2]], d: 4, n: 4, name: 'un pavé droit', lp: [1,1] },
+    tri2: { kind: 'tri', pts: [[0,0],[3,0],[1.5,2.6]], d: 3.5, n: 3, name: 'un prisme droit à base triangulaire', base: 'des triangles', lp: [1.5,0.87] },
+    tri3: { kind: 'tri', pts: [[0,0],[4,0],[2,1.5]], d: 3, n: 3, name: 'un prisme droit à base triangulaire', base: 'des triangles', lp: [2,0.5] },
+    pent2: { kind: 'pent', pts: PENT, d: 3, n: 5, name: 'un prisme droit à base pentagonale', base: 'des pentagones (5 côtés)', lp: [1.7,1.7] },
+    hex2: { kind: 'hex', pts: [[1,0],[3,0],[4,1.2],[3,2.4],[1,2.4],[0,1.2]], d: 2.5, n: 6, name: 'un prisme droit à base hexagonale', base: 'des hexagones (6 côtés)', lp: [2,1.2] },
+    L2: { pts: [[0,0],[4,0],[4,1],[1,1],[1,2],[0,2]], d: 2, n: 6, name: 'un prisme droit dont la base a 6 côtés (en forme de L)', lp: [0.5,0.5] },
+    trap2: { pts: [[0,0],[4,0],[4,2],[1,2]], d: 3, n: 4, name: 'un prisme droit dont la base a 4 côtés (un trapèze)', lp: [2.5,1] },
+    los: { pts: [[0,1.2],[1.6,0],[3.2,1.2],[1.6,2.4]], d: 3, n: 4, name: 'un prisme droit dont la base a 4 côtés (un losange)', lp: [1.6,1.2] },
+    T: { pts: [[0,0],[3,0],[3,1],[2,1],[2,3],[1,3],[1,1],[0,1]], d: 2, n: 8, name: 'un prisme droit dont la base a 8 côtés (en forme de T)', lp: [1.5,0.5] }
+  };
+  const POSE = { stand: 'posé sur une base', lie: 'couché', side: 'de côté' };
+  const NAME_SET = ['cube', 'pave', 'tri', 'pent', 'hex'];
+  const BASE_SET = ['des triangles', 'des rectangles', 'des pentagones (5 côtés)', 'des hexagones (6 côtés)'];
+
+  // Les vues : u vers la droite du dessin, v vers le haut, d = proximité de l'observateur.
+  const DIRS = {
+    dessus:   { label: 'de dessus',   uv: (x, y, z) => [x, -z], dep: (x, y, z) => y,  cam: [0, 1.5] },
+    devant:   { label: 'de devant',   uv: (x, y, z) => [x, y],  dep: (x, y, z) => z,  cam: [0, 0] },
+    droite:   { label: 'de droite',   uv: (x, y, z) => [-z, y], dep: (x, y, z) => x,  cam: [Math.PI / 2, 0] },
+    gauche:   { label: 'de gauche',   uv: (x, y, z) => [z, y],  dep: (x, y, z) => -x, cam: [-Math.PI / 2, 0] },
+    derriere: { label: 'de derrière', uv: (x, y, z) => [-x, y], dep: (x, y, z) => -z, cam: [Math.PI, 0] }
+  };
+  const DIR4 = ['dessus', 'devant', 'droite', 'gauche'], DIR5 = DIR4.concat(['derriere']);
+  const VIEW_HINT = {
+    dessus: "Imagine que tu regardes le solide d'en haut. Le devant est en bas du dessin.",
+    devant: "Place-toi à l'étiquette « devant » et regarde le solide droit devant toi.",
+    droite: "Place-toi à l'étiquette « droite ». Le devant du solide est alors à ta gauche.",
+    gauche: "Place-toi à l'étiquette « gauche ». Le devant du solide est alors à ta droite.",
+    derriere: "Place-toi à l'étiquette « derrière ». La droite du solide est alors à ta gauche."
+  };
+
+  function voxCells(cubes, dir){
+    const D = DIRS[dir], m = {};
+    cubes.forEach(c => { const uv = D.uv(c[0], c[1], c[2]), d = D.dep(c[0], c[1], c[2]), k = uv[0] + ',' + uv[1]; if (!m[k] || m[k].d < d) m[k] = { u: uv[0], v: uv[1], d, ci: c[3] }; });
+    return Object.values(m);
+  }
+  function normCells(cells){
+    const u0 = Math.min(...cells.map(c => c.u)), v0 = Math.min(...cells.map(c => c.v));
+    return cells.map(c => ({ u: c.u - u0, v: c.v - v0, d: c.d, ci: c.ci }));
+  }
+  const mirrorCells = cells => cells.map(c => ({ u: -c.u, v: c.v, d: c.d, ci: c.ci }));
+  function sigCells(cells, merged){
+    const n = normCells(cells), at = {};
+    n.forEach(c => { at[c.u + ',' + c.v] = c; });
+    const parts = n.map(c => c.u + ':' + c.v + (merged ? '' : ':' + c.ci));
+    if (merged) n.forEach(c => {
+      const r = at[(c.u + 1) + ',' + c.v], up = at[c.u + ',' + (c.v + 1)];
+      if (r && r.d !== c.d) parts.push('R' + c.u + ':' + c.v);
+      if (up && up.d !== c.d) parts.push('U' + c.u + ':' + c.v);
+    });
+    return parts.sort().join('|');
+  }
+  function cellsSVG(cells, merged, s){
+    s = s || 24;
+    const p = 3, n = normCells(cells), at = {};
+    n.forEach(c => { at[c.u + ',' + c.v] = c; });
+    const W = Math.max(...n.map(c => c.u)) + 1, H = Math.max(...n.map(c => c.v)) + 1;
+    const X = u => p + u * s, Y = v => p + (H - 1 - v) * s;
+    const w = W * s + 2 * p, h = H * s + 2 * p;
+    const seg = (a, b, c, d) => '<line class="ml" x1="' + a + '" y1="' + b + '" x2="' + c + '" y2="' + d + '"/>';
+    let o = '<svg class="vfig" xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">';
+    n.forEach(c => {
+      o += '<rect x="' + X(c.u) + '" y="' + Y(c.v) + '" width="' + s + '" height="' + s + '" ' + (merged ? 'class="mf"' : 'class="cf" style="fill:' + CUBE_COLORS[c.ci].hex + '"') + '/>';
+    });
+    if (merged) n.forEach(c => {
+      const x = X(c.u), y = Y(c.v);
+      const R = at[(c.u + 1) + ',' + c.v], L = at[(c.u - 1) + ',' + c.v], U = at[c.u + ',' + (c.v + 1)], D = at[c.u + ',' + (c.v - 1)];
+      if (!R || R.d !== c.d) o += seg(x + s, y, x + s, y + s);
+      if (!L) o += seg(x, y, x, y + s);
+      if (!U || U.d !== c.d) o += seg(x, y, x + s, y);
+      if (!D) o += seg(x, y + s, x + s, y + s);
+    });
+    return o + '</svg>';
+  }
+  function faceSVG(pts, u){
+    u = u || 13;
+    const m = 6, xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const W = Math.ceil(x1 - x0 - 1e-6), H = Math.ceil(y1 - y0 - 1e-6), w = W * u + 2 * m, h = H * u + 2 * m;
+    let o = '<svg class="ffig" xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">';
+    for (let i = 0; i <= W; i++) o += '<line class="gl" x1="' + (m + i * u) + '" y1="' + m + '" x2="' + (m + i * u) + '" y2="' + (m + H * u) + '"/>';
+    for (let j = 0; j <= H; j++) o += '<line class="gl" x1="' + m + '" y1="' + (m + j * u) + '" x2="' + (m + W * u) + '" y2="' + (m + j * u) + '"/>';
+    o += '<polygon class="fp" points="' + pts.map(q => (m + (q[0] - x0) * u).toFixed(1) + ',' + (m + (y1 - q[1]) * u).toFixed(1)).join(' ') + '"/>';
+    return o + '</svg>';
+  }
+
+  // Assemblages de cubes posés sur la table, tous de couleurs différentes.
+  function genAssembly(nCubes, bx, bz, by){
+    for (let tries = 0; tries < 200; tries++){
+      const set = new Map();
+      const add = (x, y, z) => set.set(x + ',' + y + ',' + z, [x, y, z]);
+      add(rand(0, bx - 1), 0, rand(0, bz - 1));
+      let guard = 0;
+      while (set.size < nCubes && guard++ < 300){
+        const c = pick([...set.values()]);
+        const d = pick([[1,0,0],[-1,0,0],[0,0,1],[0,0,-1],[0,1,0],[1,0,0],[0,0,1]]);
+        const x = c[0] + d[0], y = c[1] + d[1], z = c[2] + d[2];
+        if (x < 0 || x >= bx || z < 0 || z >= bz || y < 0 || y >= by) continue;
+        if (set.has(x + ',' + y + ',' + z)) continue;
+        if (y > 0 && !set.has(x + ',' + (y - 1) + ',' + z)) continue;
+        add(x, y, z);
+      }
+      if (set.size < nCubes) continue;
+      const list = [...set.values()];
+      const x0 = Math.min(...list.map(c => c[0])), z0 = Math.min(...list.map(c => c[2]));
+      const cols = shuffle(range(6));
+      return list.map((c, i) => [c[0] - x0, c[1], c[2] - z0, cols[i % 6]]);
+    }
+    return [[0,0,0,0],[1,0,0,1],[0,1,0,2],[1,0,1,3]];
+  }
+  // Prismes faits de cubes collés : un profil extrudé.
+  const SHAPES = [
+    { prof: [[0,0],[1,0],[0,1]], d: 2 },
+    { prof: [[0,0],[1,0],[2,0],[0,1],[1,1],[0,2]], d: 1 },
+    { prof: [[0,0],[1,0],[2,0],[1,1]], d: 2 },
+    { prof: [[0,0],[1,0],[2,0],[0,1],[2,1]], d: 1 },
+    { prof: [[0,0],[1,0],[2,0],[2,1]], d: 2 },
+    { prof: [[0,0],[2,0],[0,1],[1,1],[2,1]], d: 2 },
+    { prof: [[0,0],[1,0],[0,1],[0,2]], d: 2 },
+    { prof: [[0,0],[1,0],[2,0],[0,1],[1,1]], d: 2 }
+  ];
+  const shapeVariant = () => ({ s: rand(0, SHAPES.length - 1), ax: pick(['z', 'x']), f: rand(0, 1) });
+  function shapeCubes(v){
+    const sh = SHAPES[v.s], maxA = Math.max(...sh.prof.map(q => q[0])), out = [];
+    sh.prof.forEach(q => { const a = v.f ? maxA - q[0] : q[0]; for (let k = 0; k < sh.d; k++) out.push(v.ax === 'z' ? [a, q[1], k, 0] : [k, q[1], a, 0]); });
+    return out;
+  }
+
+  // Faces d'un prisme : 2 bases + 1 rectangle par côté.
+  function prismFaces(P){
+    const f = [{ id: 'b1', kind: 'base', n: [0, 0, 1], pts: P.pts }, { id: 'b0', kind: 'base', n: [0, 0, -1], pts: P.pts }];
+    P.pts.forEach((a, i) => {
+      const b = P.pts[(i + 1) % P.pts.length], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy);
+      f.push({ id: 'l' + i, kind: 'lat', n: [dy / len, -dx / len, 0], len, mid: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], pts: [[0,0],[len,0],[len,P.d],[0,P.d]] });
+    });
+    return f;
+  }
+  const r5 = v => Math.round(v * 2) / 2;
+  const faceKey = (F, P) => F.kind === 'base' ? 'B' : 'R' + [r5(F.len), r5(P.d)].sort((a, b) => a - b).join('x');
+  function rotN(o, v){
+    if (o === 'stand') return [v[0], v[2], -v[1]];
+    if (o === 'side') return [v[2], v[1], -v[0]];
+    return v;
+  }
+  const STATIC = { yaw: 0.62, elev: 0.45 };
+  const CAMDIR = [Math.cos(STATIC.elev) * Math.sin(STATIC.yaw), Math.sin(STATIC.elev), Math.cos(STATIC.elev) * Math.cos(STATIC.yaw)];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+
+  /* ---------- Moteur 3D (three.js) ---------- */
+  const T3 = window.THREE;
+  const HAS3D = (function(){
+    if (!T3) return false;
+    try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('experimental-webgl')); } catch (e) { return false; }
+  })();
+  let TUBE_GEOM = null, TUBE_MAT = null;
+  const TEX = {};
+  function tubeParts(){
+    if (!TUBE_GEOM){ TUBE_GEOM = new T3.CylinderGeometry(1, 1, 1, 8); TUBE_MAT = new T3.MeshBasicMaterial({ color: LINE_COLOR }); }
+    return [TUBE_GEOM, TUBE_MAT];
+  }
+  function tubes(eg, r){
+    const parts = tubeParts(), g = new T3.Group(), a = eg.attributes.position.array, up = new T3.Vector3(0, 1, 0);
+    for (let i = 0; i < a.length; i += 6){
+      const p = new T3.Vector3(a[i], a[i + 1], a[i + 2]), q = new T3.Vector3(a[i + 3], a[i + 4], a[i + 5]);
+      const d = q.clone().sub(p), len = d.length();
+      if (len < 1e-6) continue;
+      const m = new T3.Mesh(parts[0], parts[1]);
+      m.position.copy(p).add(q).multiplyScalar(0.5);
+      m.quaternion.setFromUnitVectors(up, d.normalize());
+      m.scale.set(r, len, r);
+      g.add(m);
+    }
+    return g;
+  }
+  function labelTex(text, kind){
+    const k = kind + ':' + text;
+    if (TEX[k]) return TEX[k];
+    const c = document.createElement('canvas');
+    const ctx = c.getContext('2d');
+    if (kind === 'letter'){
+      c.width = 128; c.height = 128;
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = LINE_COLOR; ctx.lineWidth = 8;
+      ctx.beginPath(); ctx.arc(64, 64, 52, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = LINE_COLOR; ctx.font = 'bold 72px Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, 64, 68);
+    } else {
+      c.width = 320; c.height = 96;
+      const front = text === 'devant';
+      ctx.fillStyle = front ? '#2b45c8' : '#ffffff'; ctx.strokeStyle = front ? '#2b45c8' : LINE_COLOR; ctx.lineWidth = 6;
+      const r = 40, x = 6, y = 8, w = 308, h = 80;
+      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = front ? '#ffffff' : LINE_COLOR; ctx.font = 'bold 54px Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, 160, 50);
+    }
+    const t = new T3.CanvasTexture(c);
+    t.minFilter = T3.LinearFilter;
+    TEX[k] = t;
+    return t;
+  }
+  function sprite(text, kind, sx, sy, disp){
+    const mat = new T3.SpriteMaterial({ map: labelTex(text, kind), transparent: true });
+    disp.push(mat);
+    const s = new T3.Sprite(mat);
+    s.scale.set(sx, sy, 1);
+    return s;
+  }
+  const lambert = (col, disp) => { const m = new T3.MeshLambertMaterial({ color: col }); disp.push(m); return m; };
+
+  function buildPrism(spec, disp){
+    const P = PRISMS[spec.p];
+    const shape = new T3.Shape(P.pts.map(q => new T3.Vector2(q[0], q[1])));
+    const geom = new T3.ExtrudeGeometry(shape, { depth: P.d, bevelEnabled: false, steps: 1 });
+    const xs = P.pts.map(q => q[0]), ys = P.pts.map(q => q[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, cz = P.d / 2;
+    geom.translate(-cx, -cy, -cz);
+    disp.push(geom);
+    const inner = new T3.Group();
+    inner.add(new T3.Mesh(geom, [lambert(spec.cb ? BASE_COLOR : SOLID_COLOR, disp), lambert(spec.cb ? LAT_COLOR : SOLID_COLOR, disp)]));
+    const eg = new T3.EdgesGeometry(geom, 12);
+    disp.push(eg);
+    inner.add(tubes(eg, 0.035));
+    if (spec.dots){
+      const sg = new T3.SphereGeometry(0.13, 14, 10), sm = new T3.MeshBasicMaterial({ color: 0xe5484d });
+      disp.push(sg, sm);
+      P.pts.forEach(q => [0, P.d].forEach(z => { const m = new T3.Mesh(sg, sm); m.position.set(q[0] - cx, q[1] - cy, z - cz); inner.add(m); }));
+    }
+    if (spec.labs){
+      const faces = prismFaces(P);
+      spec.labs.forEach(L => {
+        const F = faces.find(f => f.id === L.f);
+        if (!F) return;
+        let pos;
+        if (F.kind === 'base') pos = [P.lp[0], P.lp[1], F.id === 'b1' ? P.d + 0.38 : -0.38];
+        else pos = [F.mid[0] + F.n[0] * 0.38, F.mid[1] + F.n[1] * 0.38, P.d / 2];
+        const s = sprite(L.t, 'letter', 0.7, 0.7, disp);
+        s.position.set(pos[0] - cx, pos[1] - cy, pos[2] - cz);
+        inner.add(s);
+      });
+    }
+    if (spec.o === 'stand') inner.rotation.x = -Math.PI / 2;
+    else if (spec.o === 'side') inner.rotation.y = Math.PI / 2;
+    const w = x1 - x0, h = y1 - y0;
+    const size = spec.o === 'stand' ? [w, P.d, h] : spec.o === 'side' ? [P.d, h, w] : [w, h, P.d];
+    return { obj: inner, rad: 0.5 * Math.hypot(size[0], size[1], size[2]) + (spec.labs ? 0.5 : 0.1) };
+  }
+  const FACES6 = [
+    { n: [1,0,0],  v: [[1,0,0],[1,1,0],[1,1,1],[1,0,1]] },
+    { n: [-1,0,0], v: [[0,0,0],[0,0,1],[0,1,1],[0,1,0]] },
+    { n: [0,1,0],  v: [[0,1,0],[0,1,1],[1,1,1],[1,1,0]] },
+    { n: [0,-1,0], v: [[0,0,0],[1,0,0],[1,0,1],[0,0,1]] },
+    { n: [0,0,1],  v: [[0,0,1],[1,0,1],[1,1,1],[0,1,1]] },
+    { n: [0,0,-1], v: [[0,0,0],[0,1,0],[1,1,0],[1,0,0]] }
+  ];
+  function buildVox(spec, disp){
+    const cubes = spec.c;
+    const xs = cubes.map(c => c[0]), ys = cubes.map(c => c[1]), zs = cubes.map(c => c[2]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs) + 1, y0 = Math.min(...ys), y1 = Math.max(...ys) + 1, z0 = Math.min(...zs), z1 = Math.max(...zs) + 1;
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, cz = (z0 + z1) / 2;
+    const g = new T3.Group();
+    if (!spec.m){
+      const box = new T3.BoxGeometry(1, 1, 1), eg = new T3.EdgesGeometry(box);
+      disp.push(box, eg);
+      const mats = {};
+      cubes.forEach(c => {
+        if (!mats[c[3]]) mats[c[3]] = lambert(CUBE_COLORS[c[3]].hex, disp);
+        const m = new T3.Mesh(box, mats[c[3]]);
+        m.position.set(c[0] + 0.5 - cx, c[1] + 0.5 - cy, c[2] + 0.5 - cz);
+        g.add(m);
+        const t = tubes(eg, 0.03);
+        t.position.copy(m.position);
+        g.add(t);
+      });
+    } else {
+      const set = new Set(cubes.map(c => c[0] + ',' + c[1] + ',' + c[2])), pos = [];
+      cubes.forEach(c => FACES6.forEach(F => {
+        if (set.has((c[0] + F.n[0]) + ',' + (c[1] + F.n[1]) + ',' + (c[2] + F.n[2]))) return;
+        const q = F.v.map(v => [c[0] + v[0] - cx, c[1] + v[1] - cy, c[2] + v[2] - cz]);
+        [0, 1, 2, 0, 2, 3].forEach(i => pos.push(q[i][0], q[i][1], q[i][2]));
+      }));
+      const geom = new T3.BufferGeometry();
+      geom.setAttribute('position', new T3.Float32BufferAttribute(pos, 3));
+      geom.computeVertexNormals();
+      disp.push(geom);
+      g.add(new T3.Mesh(geom, lambert(SOLID_COLOR, disp)));
+      const eg = new T3.EdgesGeometry(geom, 12);
+      disp.push(eg);
+      g.add(tubes(eg, 0.03));
+    }
+    const sx = x1 - x0, sy = y1 - y0, sz = z1 - z0, yb = -sy / 2 - 0.3;
+    let rad = 0.5 * Math.hypot(sx, sy, sz) + 0.1;
+    if (spec.lab){
+      // Étiquettes posées sous le niveau de la table : elles ne cachent jamais le solide.
+      const put = (t, x, z) => { const s = sprite(t, 'dir', 1.6, 0.48, disp); s.position.set(x, yb, z); g.add(s); };
+      put('devant', 0, sz / 2 + 0.55);
+      put('droite', sx / 2 + 0.85, 0);
+      if (spec.lab === 'all'){ put('derrière', 0, -sz / 2 - 0.55); put('gauche', -sx / 2 - 0.85, 0); }
+      rad = Math.max(rad, Math.hypot(Math.max(sx / 2 + 0.85, sz / 2 + 0.55) + 0.8, sy / 2 + 0.6));
+    }
+    return { obj: g, rad };
+  }
+  function buildSolid(spec, disp){ return spec.k === 'prism' ? buildPrism(spec, disp) : buildVox(spec, disp); }
+  function camSet(cam, yaw, elev, rad, w, h){
+    const R = 60;
+    cam.position.set(R * Math.cos(elev) * Math.sin(yaw), R * Math.sin(elev), R * Math.cos(elev) * Math.cos(yaw));
+    cam.up.set(0, 1, 0);
+    cam.lookAt(0, 0, 0);
+    const a = w / h, half = rad * 1.03;
+    if (a >= 1){ cam.left = -half * a; cam.right = half * a; cam.top = half; cam.bottom = -half; }
+    else { cam.left = -half; cam.right = half; cam.top = half / a; cam.bottom = -half / a; }
+    cam.near = 0.1; cam.far = 200;
+    cam.updateProjectionMatrix();
+  }
+  function addLights(scene, cam){
+    scene.add(new T3.AmbientLight(0xffffff, 0.62));
+    const dl = new T3.DirectionalLight(0xffffff, 0.55);
+    dl.position.set(0.6, 1, 0.8);
+    cam.add(dl);
+  }
+  const disposeAll = list => list.forEach(x => { try { x.dispose(); } catch (e) {} });
+
+  const VW = { ok: false, tried: false, r: null, scene: null, cam: null, root: null, disp: [], rad: 3, yaw: STATIC.yaw, elev: STATIC.elev,
+               spin: false, phase: 0.2, raf: 0, last: 0, tween: null, key: '', w: 0, h: 0, drag: null, canDrag: false, canvas: null };
+  function vwInit(){
+    if (VW.tried) return VW.ok;
+    VW.tried = true;
+    if (!HAS3D) return false;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.className = 'v3d';
+      canvas.setAttribute('role', 'img');
+      canvas.setAttribute('aria-label', 'Le solide en 3D');
+      $('vCanvasBox').appendChild(canvas);
+      VW.canvas = canvas;
+      VW.r = new T3.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      VW.r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+      VW.scene = new T3.Scene();
+      VW.cam = new T3.OrthographicCamera(-1, 1, 1, -1, 0.1, 200);
+      VW.scene.add(VW.cam);
+      addLights(VW.scene, VW.cam);
+      canvas.addEventListener('pointerdown', e => {
+        if (!VW.canDrag) return;
+        VW.drag = { x: e.clientX, y: e.clientY, yaw: VW.yaw, elev: VW.elev };
+        VW.spin = false; VW.tween = null;
+        updateSpinBtn();
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+      canvas.addEventListener('pointermove', e => {
+        if (!VW.drag) return;
+        VW.yaw = VW.drag.yaw - (e.clientX - VW.drag.x) * 0.012;
+        VW.elev = Math.max(-1.45, Math.min(1.45, VW.drag.elev + (e.clientY - VW.drag.y) * 0.012));
+        vwRender();
+      });
+      const end = () => { VW.drag = null; };
+      canvas.addEventListener('pointerup', end);
+      canvas.addEventListener('pointercancel', end);
+      VW.ok = true;
+    } catch (e) { VW.ok = false; }
+    return VW.ok;
+  }
+  function vwResize(){
+    const box = $('vCanvasBox');
+    const w = Math.round(box.clientWidth || 320), h = Math.round(Math.max(220, Math.min(340, w * 0.8)));
+    if (w !== VW.w || h !== VW.h){ VW.w = w; VW.h = h; VW.r.setSize(w, h); }
+  }
+  function vwRender(){
+    if (!VW.ok || !VW.root) return;
+    camSet(VW.cam, VW.yaw, VW.elev, VW.rad, VW.w, VW.h);
+    VW.r.render(VW.scene, VW.cam);
+  }
+  function vwLoop(t){
+    VW.raf = 0;
+    const v = $('viewer');
+    if (v.hidden || !v.offsetParent){ VW.last = 0; return; }
+    const dt = VW.last ? Math.min(0.05, (t - VW.last) / 1000) : 0;
+    VW.last = t;
+    let moving = false;
+    if (VW.tween){
+      const tw = VW.tween, k = Math.min(1, (t - tw.t0) / tw.dur), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      VW.yaw = tw.y0 + (tw.y1 - tw.y0) * e;
+      VW.elev = tw.e0 + (tw.e1 - tw.e0) * e;
+      if (k >= 1) VW.tween = null; else moving = true;
+    } else if (VW.spin){
+      VW.yaw += dt * 2 * Math.PI / 8;
+      VW.phase += dt * 2 * Math.PI / 16;
+      VW.elev = 0.3 + 0.75 * Math.sin(VW.phase);
+      moving = true;
+    }
+    vwRender();
+    if (moving) VW.raf = requestAnimationFrame(vwLoop); else VW.last = 0;
+  }
+  function vwKick(){ if (VW.ok && !VW.raf) VW.raf = requestAnimationFrame(vwLoop); }
+  const TIP_SPIN = 'Le solide fait des tours complets. Tu peux aussi l\'arrêter et le tourner avec ton doigt.';
+  const TIP_HELP = 'Tu peux faire tourner le solide pour t\'aider.';
+  function updateSpinBtn(){
+    const b = $('spinBtn');
+    b.innerHTML = VW.spin
+      ? '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="3.5" height="11" rx="1" fill="currentColor"/><rect x="9.5" y="2.5" width="3.5" height="11" rx="1" fill="currentColor"/></svg>Arrêter'
+      : '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Faire tourner';
+    b.classList.toggle('on', VW.spin);
+  }
+  function vwShow(slot, spec, o){
+    const v = $('viewer'), fb = $('vFallback');
+    if (!vwInit()){
+      if (fb.parentNode !== slot) slot.appendChild(fb);
+      fb.hidden = false; v.hidden = true;
+      return;
+    }
+    fb.hidden = true;
+    if (v.parentNode !== slot) slot.appendChild(v);
+    v.hidden = false;
+    vwResize();
+    const k = o.key + '|' + JSON.stringify(spec);
+    if (k !== VW.key){
+      VW.key = k;
+      if (VW.root){ VW.scene.remove(VW.root); disposeAll(VW.disp); }
+      VW.disp = [];
+      const b = buildSolid(spec, VW.disp);
+      VW.root = b.obj; VW.rad = b.rad;
+      VW.scene.add(VW.root);
+      VW.yaw = STATIC.yaw; VW.elev = STATIC.elev; VW.phase = 0.2; VW.tween = null;
+      VW.spin = !!o.spin && !REDUCED;
+    }
+    VW.canDrag = !!o.drag;
+    VW.canvas.classList.toggle('locked', !VW.canDrag);
+    $('spinBtn').hidden = !o.showSpin;
+    $('vTip').textContent = o.tip || '';
+    $('vTip').hidden = !o.tip;
+    updateSpinBtn();
+    vwRender();
+    vwKick();
+  }
+  function vwHide(){ $('viewer').hidden = true; $('vFallback').hidden = true; }
+  function vwSnap(dir){
+    if (!VW.ok) return;
+    const c = DIRS[dir].cam;
+    let dy = ((c[0] - VW.yaw) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+    VW.spin = false;
+    VW.tween = { y0: VW.yaw, y1: VW.yaw + dy, e0: VW.elev, e1: c[1], t0: performance.now(), dur: 800 };
+    updateSpinBtn();
+    vwKick();
+  }
+  $('spinBtn').addEventListener('click', () => { VW.spin = !VW.spin; VW.tween = null; if (VW.spin) VW.canDrag = true; updateSpinBtn(); vwKick(); });
+  window.addEventListener('resize', () => { if (VW.ok && !$('viewer').hidden){ vwResize(); vwRender(); } });
+
+  // Petites images des solides (pour les choix du niveau 5).
+  const TH = { r: null, scene: null, cam: null, cache: {} };
+  function thumb(spec){
+    const k = JSON.stringify(spec);
+    if (TH.cache[k]) return TH.cache[k];
+    if (!HAS3D) return '';
+    try {
+      if (!TH.r){
+        const c = document.createElement('canvas');
+        TH.r = new T3.WebGLRenderer({ canvas: c, antialias: true, alpha: true, preserveDrawingBuffer: true });
+        TH.r.setPixelRatio(1);
+        TH.r.setSize(300, 240, false);
+        TH.scene = new T3.Scene();
+        TH.cam = new T3.OrthographicCamera(-1, 1, 1, -1, 0.1, 200);
+        TH.scene.add(TH.cam);
+        addLights(TH.scene, TH.cam);
+      }
+      const disp = [], b = buildSolid(spec, disp);
+      TH.scene.add(b.obj);
+      camSet(TH.cam, STATIC.yaw, STATIC.elev, b.rad, 300, 240);
+      TH.r.render(TH.scene, TH.cam);
+      const url = TH.r.domElement.toDataURL('image/png');
+      TH.scene.remove(b.obj);
+      disposeAll(disp);
+      TH.cache[k] = url;
+      return url;
+    } catch (e) { return ''; }
+  }
+  function fillThumbs(root){
+    root.querySelectorAll('img[data-spec]').forEach(img => {
+      if (img.getAttribute('src')) return;
+      try { const u = thumb(JSON.parse(img.getAttribute('data-spec'))); if (u) img.setAttribute('src', u); } catch (e) {}
+    });
+  }
+
+  /* ---------- Les questions ---------- */
+  const mkChoice = (q, opts, o) => Object.assign({ kind: 'choice', q, opts, hint: '', okFb: '', why: '' }, o || {});
+  const mkNum = (q, expr, a, o) => Object.assign({ kind: 'num', q, expr, a, hint: '', okFb: '' }, o || {});
+  const FACE_HINT = "Compte les côtés d'une base. Un prisme droit a 2 bases et une face latérale par côté. N'oublie pas les faces cachées !";
+  const ARETE_HINT = "Compte les arêtes d'une base et double (il y a 2 bases). Ajoute les arêtes qui relient les bases : une par sommet d'une base.";
+  const SOMMET_HINT = "Compte les sommets d'une base, puis double : il y a 2 bases.";
+
+  function viewOpts(cubes, merged, dir, pool){
+    const right = voxCells(cubes, dir), rs = sigCells(right, merged);
+    const out = [{ h: cellsSVG(right, merged), ok: true, s: rs }];
+    const mir = mirrorCells(right), ms = sigCells(mir, merged);
+    if (ms !== rs) out.push({ h: cellsSVG(mir, merged), ok: false, s: ms, fb: "Attention : ce dessin est à l'envers, la gauche et la droite sont échangées." });
+    shuffle(pool.filter(d => d !== dir)).forEach(d => {
+      if (out.length >= 3) return;
+      const c = voxCells(cubes, d), s = sigCells(c, merged);
+      if (out.some(x => x.s === s)) return;
+      out.push({ h: cellsSVG(c, merged), ok: false, s, fb: 'Non : ce dessin est la vue ' + DIRS[d].label + '.' });
+    });
+    return out.length >= 3 ? shuffle(out) : null;
+  }
+  const viewStep = (dir, opts) => mkChoice('Quelle est la vue ' + DIRS[dir].label + ' ?', opts, { figs: true, hint: VIEW_HINT[dir], okFb: "Oui, c'est bien la vue " + DIRS[dir].label + '.' });
+  function viewsRow(cubes, merged, dirs, s){
+    return '<div class="views-row">' + dirs.map(d => '<span class="vcap">Vue ' + DIRS[d].label + cellsSVG(voxCells(cubes, d), merged, s || 20) + '</span>').join('') + '</div>';
+  }
+
+  // Niveau 1 : le solide tourne, on le nomme et on compte.
+  const L1_POOL = [['cube','stand'],['cube','lie'],['pave','stand'],['pave','lie'],['pave','side'],['pave2','lie'],['pave2','stand'],['pave2','side'],['pave3','stand'],['pave3','lie'],
+    ['tri','lie'],['tri','stand'],['tri','side'],['tri2','stand'],['tri2','lie'],['tri2','side'],['tri3','lie'],['tri3','stand'],
+    ['pent','lie'],['pent','side'],['pent','stand'],['pent2','stand'],['pent2','lie'],['pent2','side'],
+    ['hex','stand'],['hex','lie'],['hex','side'],['hex2','lie'],['hex2','stand'],['hex2','side']];
+  /* Une série variée : chaque famille de solides revient, dans une pose et une taille différentes */
+  function pickL1(nb){
+    const fam = {}; L1_POOL.forEach(x => { const k = PRISMS[x[0]].kind || x[0]; (fam[k] = fam[k] || []).push(x); });
+    let keys = shuffle(Object.keys(fam));
+    if (HARD) keys = keys.filter(k => k !== 'cube').concat(['cube']);
+    Object.keys(fam).forEach(k => { fam[k] = shuffle(fam[k]); });
+    const out = [];
+    for (let r = 0; out.length < nb && r < 10; r++) keys.forEach(k => { if (out.length < nb && fam[k].length && !(k === 'cube' && r > 0)) out.push(fam[k].pop()); });
+    return shuffle(out);
+  }
+  function itemL1(p0, o, t){
+    const P = PRISMS[p0], p = P.kind || p0, n = P.n, isBox = p === 'cube' || p === 'pave';
+    const names = shuffle([p].concat(shuffle(NAME_SET.filter(x => x !== p)).slice(0, 3))).map(x => ({ h: cap(PRISMS[x].name), ok: x === p, fb: x === 'cube' ? 'Non : toutes les faces d\'un cube sont des carrés.' : '' }));
+    const nameHint = p === 'cube' ? 'Regarde bien toutes les faces : sont-elles toutes des carrés ?' : p === 'pave' ? 'Ses 6 faces sont des rectangles. Sont-elles toutes des carrés ?' : 'Regarde les deux bases en orange : combien ont-elles de côtés ?';
+    const steps = [
+      mkChoice('Quel est son nom le plus précis ?', names, { hint: nameHint, okFb: "Oui, c'est " + P.name + '.' }),
+      mkNum('Combien de faces a-t-il ?', '□ faces', n + 2, { hint: isBox ? 'Compte les faces de devant, de derrière, de gauche, de droite, du dessus et du dessous.' : FACE_HINT })
+    ];
+    let extra = '';
+    if (isBox){
+      const c = ['des carrés', 'des rectangles qui ne sont pas tous des carrés', 'des triangles'];
+      const right = p === 'cube' ? 0 : 1;
+      steps.push(mkChoice('Toutes ses faces sont…', c.map((h, i) => ({ h: cap(h), ok: i === right })), { hint: 'Regarde les faces pendant que le solide tourne : leurs côtés sont-ils tous de la même longueur ?' }));
+      extra = p === 'cube' ? ' Ses 6 faces sont des carrés.' : ' Ses 6 faces sont des rectangles.';
+    } else if (HARD){
+      steps.push(mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT }));
+      steps.push(mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }));
+      extra = ' Il a ' + 2 * n + ' sommets et ' + 3 * n + ' arêtes.';
+    } else {
+      const type = ['base', 'sommets', 'aretes'][t % 3];
+      if (type === 'base'){
+        steps.push(mkChoice('Ses deux bases sont…', BASE_SET.map(h => ({ h: cap(h), ok: h === P.base })), { hint: 'Les bases sont les deux faces orange. Compte leurs côtés.' }));
+        extra = ' Ses deux bases sont ' + P.base + '.';
+      } else if (type === 'sommets'){
+        steps.push(mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT }));
+        extra = ' Il a ' + 2 * n + ' sommets.';
+      } else {
+        steps.push(mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }));
+        extra = ' Il a ' + 3 * n + ' arêtes.';
+      }
+    }
+    return {
+      solid: { k: 'prism', p: p0, o, cb: isBox ? 0 : 1 }, spin: true,
+      stmt: '<p class="lead-q">Observe le solide pendant qu\'il tourne.</p>',
+      steps,
+      end: "C'est <b>" + P.name + '</b>. Il a ' + (n + 2) + ' faces : 2 bases et ' + n + ' faces latérales.' + extra,
+      sum: cap(P.name) + ' (' + POSE[o] + ') : <b>' + (n + 2) + ' faces</b>' + (isBox ? (p === 'cube' ? ' carrées' : ' rectangulaires') : extra.replace(/^ Il a /, ', ').replace(/^ Ses deux bases sont /, ', bases : ').replace(/\.$/, ''))
+    };
+  }
+
+  // Niveau 2 : assemblage de cubes qui tourne, deux vues à trouver.
+  function itemL2(){
+    for (let t = 0; t < 300; t++){
+      const cubes = HARD ? genAssembly(rand(6, 7), 3, 3, 2) : genAssembly(rand(4, 5), 3, 2, 2), DD = HARD ? DIR5 : DIR4;
+      const dirs = shuffle(DD.filter(d => voxCells(cubes, d).length >= 2));
+      if (dirs.length < 2) continue;
+      const o1 = viewOpts(cubes, 0, dirs[0], DD), o2 = viewOpts(cubes, 0, dirs[1], DD);
+      if (!o1 || !o2) continue;
+      return {
+        solid: { k: 'vox', c: cubes, m: 0, lab: 'all' }, spin: true,
+        stmt: '<p class="lead-q">Observe l\'assemblage pendant qu\'il tourne. Les étiquettes montrent le devant, la droite, la gauche et le derrière.</p>',
+        steps: [viewStep(dirs[0], o1), viewStep(dirs[1], o2)],
+        end: viewsRow(cubes, 0, [dirs[0], dirs[1]]),
+        sum: 'Assemblage de ' + cubes.length + ' cubes : vues <b>' + DIRS[dirs[0]].label + '</b> et <b>' + DIRS[dirs[1]].label + '</b>'
+      };
+    }
+    return null;
+  }
+
+  // Niveau 3 : solide immobile, associer les faces A et B à leur figure plane.
+  const L3_POOL = [['pave','stand'],['pave','lie'],['pave','side'],['pave2','lie'],['pave2','stand'],['pave3','lie'],['pave3','stand'],
+    ['tri','lie'],['tri','stand'],['tri','side'],['tri2','lie'],['tri2','stand'],['tri3','lie'],['tri3','side'],
+    ['pent','lie'],['pent','stand'],['pent2','lie'],['pent2','stand'],['L','lie'],['L','stand'],['L2','lie'],['L2','stand'],
+    ['trap','lie'],['trap','stand'],['trap2','lie'],['trap2','stand'],['hex','stand'],['hex','lie'],['hex2','stand'],['hex2','lie'],
+    ['los','lie'],['los','stand'],['T','lie'],['T','stand']];
+  function itemL3(p, o){
+    const P = PRISMS[p], faces = prismFaces(P);
+    const vis = faces.filter(F => dot(rotN(o, F.n), CAMDIR) > 0.3);
+    const bases = shuffle(vis.filter(F => F.kind === 'base')), lats = shuffle(vis.filter(F => F.kind === 'lat'));
+    let chosen = [];
+    if (bases.length && lats.length) chosen = [bases[0], lats[0]];
+    else if (lats.length >= 2){ const b = lats.find(F => faceKey(F, P) !== faceKey(lats[0], P)); chosen = b ? [lats[0], b] : [lats[0]]; }
+    else chosen = vis.slice(0, 1);
+    if (chosen.length === 2 && faceKey(chosen[0], P) === faceKey(chosen[1], P)) chosen = chosen.slice(0, 1);
+    if (HARD){ const third = vis.find(F => !chosen.includes(F) && chosen.every(C => faceKey(C, P) !== faceKey(F, P))); if (third) chosen.push(third); }
+    chosen = shuffle(chosen);
+    const letters = ['A', 'B', 'C'];
+    const pool = [];
+    const seen = new Set();
+    faces.forEach(F => { const k = faceKey(F, P); if (!seen.has(k)){ seen.add(k); pool.push({ k, pts: F.pts }); } });
+    const sq = [[0,0],[P.d,0],[P.d,P.d],[0,P.d]], kq = 'R' + r5(P.d) + 'x' + r5(P.d);
+    if (!seen.has(kq)){ seen.add(kq); pool.push({ k: kq, pts: sq }); }
+    const big = Math.max(...faces.filter(F => F.kind === 'lat').map(F => F.len)) + 1, kb = 'R' + [r5(big), r5(P.d)].sort((a, b) => a - b).join('x');
+    if (!seen.has(kb)){ seen.add(kb); pool.push({ k: kb, pts: [[0,0],[big,0],[big,P.d],[0,P.d]] }); }
+    const steps = chosen.map((F, i) => {
+      const k = faceKey(F, P);
+      const others = shuffle(pool.filter(x => x.k !== k)).slice(0, 3);
+      const opts = shuffle([{ k, pts: F.pts }].concat(others)).map(x => ({
+        h: faceSVG(x.pts), ok: x.k === k,
+        fb: x.k === 'B' ? "Non : cette figure est une base. La face " + letters[i] + ' est une face latérale.' : (k === 'B' && p !== 'pave' ? 'Non : la face ' + letters[i] + ' est une base du prisme, pas un rectangle.' : 'Non : compare bien la longueur et la largeur de la face.')
+      }));
+      return mkChoice('La face ' + letters[i] + ' correspond à quelle figure ?', opts, {
+        figs: true,
+        hint: F.kind === 'base' ? 'La face ' + letters[i] + ' est une base : elle a la même forme que la face opposée. Compte ses côtés.' : 'La face ' + letters[i] + ' est une face latérale : c\'est un rectangle. Une de ses dimensions est la longueur des arêtes qui relient les deux bases.'
+      });
+    });
+    return {
+      solid: { k: 'prism', p, o, cb: 0, labs: chosen.map((F, i) => ({ t: letters[i], f: F.id })) }, spin: false,
+      stmt: '<p class="lead-q">Le solide ne tourne pas. Regarde bien ' + (chosen.length > 2 ? 'les faces A, B et C.' : chosen.length > 1 ? 'la face A et la face B.' : 'la face A.') + '</p>',
+      steps,
+      end: '<div class="views-row">' + chosen.map((F, i) => '<span class="vcap">Face ' + letters[i] + faceSVG(F.pts) + '</span>').join('') + '</div>',
+      sum: cap(P.name) + ' (' + POSE[o] + ') : ' + (chosen.length > 2 ? 'faces A, B et C' : chosen.length > 1 ? 'faces A et B' : 'face A') + ' (' + chosen.map(F => F.kind === 'base' ? 'base' : 'rectangle ' + fmt1(F.len) + ' × ' + fmt1(P.d)).join(', ') + ')'
+    };
+  }
+
+  // Niveau 4 : assemblage immobile, une vue à trouver et une vue à reconnaître.
+  function reverseStep(cubes, merged, dir, sigs){
+    const others = shuffle(DIR5.filter(d => d !== dir && sigs[d] !== sigs[dir])).slice(0, 3);
+    const opts = shuffle([dir].concat(others)).map(d => ({ h: cap('la vue ' + DIRS[d].label), ok: d === dir, fb: d === dir ? '' : 'Non : en regardant ' + DIRS[d].label + ', on ne voit pas ce dessin.' }));
+    return mkChoice('Ce dessin est…<span class="fig-q">' + cellsSVG(voxCells(cubes, dir), merged) + '</span>', opts, {
+      hint: "Place-toi à chaque étiquette et cherche d'où on voit exactement ce dessin. Pour la vue de dessus, le devant est en bas.",
+      okFb: "Oui : c'est la vue " + DIRS[dir].label + '.'
+    });
+  }
+  function itemL4(merged){
+    for (let t = 0; t < 300; t++){
+      const cubes = merged ? shapeCubes(shapeVariant()) : genAssembly(HARD ? rand(7, 8) : rand(5, 6), 3, 3, HARD ? 3 : 2);
+      const sigs = {};
+      DIR5.forEach(d => { sigs[d] = sigCells(voxCells(cubes, d), merged); });
+      const uniq = DIR5.filter(d => DIR5.filter(e => sigs[e] === sigs[d]).length === 1 && voxCells(cubes, d).length >= 2);
+      if (uniq.length < 2) continue;
+      const d1 = pick(uniq), o1 = viewOpts(cubes, merged, d1, DIR5);
+      if (!o1) continue;
+      const d2 = pick(uniq.filter(d => d !== d1));
+      return {
+        solid: { k: 'vox', c: cubes, m: merged ? 1 : 0, lab: 'all' }, spin: false,
+        stmt: '<p class="lead-q">Le solide ne tourne pas. Aide-toi des étiquettes.</p>',
+        steps: [viewStep(d1, o1), reverseStep(cubes, merged, d2, sigs)],
+        end: viewsRow(cubes, merged, [d1, d2]),
+        sum: (merged ? 'Prisme de cubes collés' : 'Assemblage de ' + cubes.length + ' cubes') + ' : vues <b>' + DIRS[d1].label + '</b> et <b>' + DIRS[d2].label + '</b>'
+      };
+    }
+    return null;
+  }
+
+  // Niveau 5 : compter avec les faces cachées, retrouver un solide à partir de ses vues.
+  const L5_COUNT = [['tri','stand'],['tri','side'],['tri2','lie'],['tri3','stand'],['pent','lie'],['pent','side'],['pent2','stand'],['pent2','side'],
+    ['hex','lie'],['hex','side'],['hex2','lie'],['hex2','stand'],['L','stand'],['L','lie'],['L2','lie'],['L2','side'],
+    ['trap','lie'],['trap2','side'],['trap2','stand'],['los','lie'],['los','side'],['T','lie'],['T','stand'],['T','side']];
+  function itemCount(p, o, i){
+    const P = PRISMS[p], n = P.n, ar = i % 2 === 1;
+    return {
+      solid: { k: 'prism', p, o, cb: 0 }, spin: false,
+      stmt: '<p class="lead-q">Le solide ne tourne pas : pense aussi aux faces que tu ne vois pas.</p>',
+      steps: HARD ? [
+        mkNum('Combien de faces a ce solide ?', '□ faces', n + 2, { hint: FACE_HINT }),
+        mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }),
+        mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT })
+      ] : [
+        mkNum('Combien de faces a ce solide ?', '□ faces', n + 2, { hint: FACE_HINT }),
+        ar ? mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }) : mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT })
+      ],
+      end: "C'est " + P.name + '. Sa base a ' + n + ' côtés : <b>' + (n + 2) + ' faces</b> (2 bases + ' + n + ' faces latérales), <b>' + 3 * n + ' arêtes</b> et <b>' + 2 * n + ' sommets</b>.',
+      sum: cap(P.name) + ' (' + POSE[o] + ') : ' + (n + 2) + ' faces, ' + (HARD ? 3 * n + ' arêtes, ' + 2 * n + ' sommets' : (ar ? 3 * n + ' arêtes' : 2 * n + ' sommets'))
+    };
+  }
+  function itemMatch(){
+    const three = ['dessus', 'devant', 'droite'];
+    const sig3 = c => three.map(d => sigCells(voxCells(c, d), 1)).join('#');
+    for (let t = 0; t < 300; t++){
+      const cubes = shapeCubes(shapeVariant()), s0 = sig3(cubes);
+      if (three.some(d => voxCells(cubes, d).length < 2)) continue;
+      const others = [], seen = new Set([s0]);
+      const need = HARD ? 3 : 2;
+      for (let k = 0; k < 120 && others.length < need; k++){
+        const c = shapeCubes(shapeVariant()), s = sig3(c);
+        if (seen.has(s)) continue;
+        seen.add(s);
+        others.push(c);
+      }
+      if (others.length < need) continue;
+      const opt = (c, ok) => ({ h: '<img class="thumb" alt="Un solide" data-spec="' + esc(JSON.stringify({ k: 'vox', c, m: 1, lab: 'dr' })) + '">', ok, fb: ok ? '' : 'Non : une des trois vues ne correspond pas à ce solide.' });
+      return {
+        solid: null, spin: false,
+        stmt: '<p class="lead-q">Voici trois vues d\'un solide.</p>' + viewsRow(cubes, 1, three, 20),
+        steps: [mkChoice('Quel solide a ces trois vues ?', shuffle([opt(cubes, true)].concat(others.map(c => opt(c, false)))), { figs: true, hint: "Vérifie une vue à la fois : d'abord la vue de dessus, puis celle de devant, puis celle de droite. Les étiquettes montrent le devant et la droite." })],
+        end: "C'est le seul solide qui donne exactement ces trois vues.",
+        sum: 'Retrouver un solide de ' + cubes.length + ' cubes grâce à ses vues'
+      };
+    }
+    return null;
+  }
+
+  const LEVELS = [
+    { id: 1, n: 8, name: 'Le solide tourne', desc: 'Le solide fait des tours complets : trouve son nom et compte ses faces.', tag: 'Rotation complète' },
+    { id: 2, n: 8, name: 'Les vues, le solide tourne', desc: 'Trouve les vues de dessus, de devant, de droite et de gauche.', tag: 'Rotation complète' },
+    { id: 3, n: 8, name: 'Les faces du solide', desc: 'Le solide est immobile : trouve la figure plane de chaque face.' },
+    { id: 4, n: 8, name: 'Les vues, sans tourner', desc: "Trouve les vues et dis d'où l'on regarde, même de derrière." },
+    { id: 5, n: 8, name: 'Le grand défi', desc: 'Pense aux faces cachées et retrouve un solide grâce à ses vues.' }
+  ];
+  function buildItems(id){
+    let items = [];
+    if (id === 1){ const off = rand(0, 2); items = pickL1(8).map((x, i) => itemL1(x[0], x[1], i + off)); }
+    else if (id === 2) items = range(8).map(itemL2);
+    else if (id === 3) items = shuffle(L3_POOL).slice(0, 8).map(x => itemL3(x[0], x[1]));
+    else if (id === 4) items = shuffle(HARD ? [0, 0, 0, 1, 1, 1, 1, 1] : [0, 0, 0, 0, 0, 1, 1, 1]).map(m => itemL4(!!m));
+    else items = shuffle(shuffle(L5_COUNT).slice(0, 4).map((x, i) => itemCount(x[0], x[1], i)).concat(range(4).map(itemMatch)));
+    return items.filter(Boolean);
+  }
+
+  /* ---------- Étape 1 : les fiches ---------- */
+  const F4 = { k: 'vox', c: [[0,0,0,1],[1,0,0,2],[1,1,0,5],[1,0,1,0],[2,0,1,3]], m: 0, lab: 'all' };
+  function buildLearn(){
+    const v = viewOpts(F4.c, 0, 'dessus', DIR4) || [];
+    return [
+      {
+        title: 'Le prisme droit',
+        html: '<p>Un <b>prisme droit</b> a <b>deux bases identiques</b> et superposables <span class="sw-b"></span> (en orange). Ses autres faces s\'appellent les <b>faces latérales</b> <span class="sw-l"></span> (en bleu) : ce sont toujours des <b>rectangles</b>.</p><p>Fais tourner le solide pour voir toutes ses faces, puis change de prisme.</p>',
+        solid: { k: 'prism', p: 'tri', o: 'lie', cb: 1 },
+        swaps: [['Base à 3 côtés', { p: 'tri', o: 'lie' }], ['Base à 5 côtés', { p: 'pent', o: 'lie' }], ['Base à 6 côtés', { p: 'hex', o: 'stand' }]],
+        checks: [
+          { q: 'Combien de bases a un prisme droit ?', c: ['1', '2', '3'], a: 1, why: 'Un prisme droit a toujours <b>2 bases</b> identiques.' },
+          { q: "Les faces latérales d'un prisme droit sont…", c: ['Des triangles', 'Des rectangles', 'Des cercles'], a: 1, why: 'Les faces latérales sont toujours des <b>rectangles</b>.' }
+        ]
+      },
+      {
+        title: 'Le pavé droit et le cube',
+        html: "<p>Le <b>pavé droit</b> et le <b>cube</b> sont des prismes droits particuliers. Ils ont <b>6 faces</b>.</p><p>Les 6 faces d'un pavé droit sont des <b>rectangles</b>. Les 6 faces d'un cube sont des <b>carrés</b> identiques.</p>",
+        solid: { k: 'prism', p: 'pave', o: 'stand', cb: 0 },
+        swaps: [['Pavé droit', { p: 'pave', o: 'stand' }], ['Cube', { p: 'cube', o: 'stand' }]],
+        checks: [
+          { q: 'Combien de faces a un pavé droit ?', c: ['4', '6', '8'], a: 1, why: 'Devant, derrière, gauche, droite, dessus et dessous : <b>6 faces</b>.' },
+          { q: "Les faces d'un cube sont…", c: ['Des carrés', 'Des triangles', 'Des rectangles qui ne sont pas des carrés'], a: 0, why: "Les 6 faces d'un cube sont des <b>carrés</b> identiques." }
+        ]
+      },
+      {
+        title: 'Faces, arêtes et sommets',
+        html: '<p>Une <b>face</b> est une surface plate du solide. Une <b>arête</b> est un trait où deux faces se touchent. Un <b>sommet</b> est un point où des arêtes se rejoignent : ici, ce sont les points rouges.</p><p class="tip">Faces d\'un prisme droit = <b>2 bases</b> + <b>1 face latérale par côté</b> de la base. Ici, la base a 5 côtés : 2 + 5 = <b>7 faces</b>.</p>',
+        solid: { k: 'prism', p: 'pent', o: 'stand', cb: 1, dots: 1 },
+        checks: [
+          { q: "La base d'un prisme droit a 6 côtés. Combien de faces a ce prisme ?", c: ['6', '8', '12'], a: 1, why: '2 bases + 6 faces latérales = <b>8 faces</b>.' },
+          { q: 'Combien de sommets a le prisme de la fiche (base à 5 côtés) ?', c: ['5', '7', '10'], a: 2, why: '5 sommets sur chaque base, et il y a 2 bases : <b>10 sommets</b>.' }
+        ]
+      },
+      {
+        title: 'Les points de vue',
+        html: "<p>Selon l'endroit d'où on regarde, on ne voit pas les mêmes faces. Touche un bouton : le solide se tourne et le dessin de la vue s'affiche.</p><p class=\"tip\">Pour la vue de dessus, on dessine <b>le devant en bas</b>. Pour une vue de côté, on se place à l'étiquette et on dessine ce qu'on voit.</p>",
+        solid: F4, snaps: true,
+        checks: [
+          { q: 'Quelle est la vue de dessus de cet assemblage ?', figs: true, c: v.map(o => o.h), a: Math.max(0, v.findIndex(o => o.ok)), why: 'On regarde d\'en haut, <b>le devant en bas</b> du dessin.' }
+        ]
+      }
+    ];
+  }
+  let LEARN = buildLearn();
+
+  /* ---------- Élèves, scores et bons points ---------- */
+  function loadStore(){
+    try {
+      const v = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (v && typeof v === 'object' && v.profiles && typeof v.profiles === 'object') return v;
+    } catch (e) {}
+    return { current: null, profiles: {} };
+  }
+  let store = loadStore();
+  let PARC0 = 'jaune', HARD = false;
+  const PARC_NOTE = { jaune: 'Des solides simples : on compte et on observe pas à pas.', orange: 'Plus de cubes, la vue de derrière, des faces cachées et plus de questions par solide.' };
+  const pOf = p => (p && p.parcours === 'orange') ? 'orange' : 'jaune';
+  function curParc(){ const p = store.current && store.profiles[store.current]; return p ? pOf(p) : PARC0; }
+  function levelsOf(prof){ if (pOf(prof) === 'orange'){ if (!prof.levelsO) prof.levelsO = {}; return prof.levelsO; } if (!prof.levels) prof.levels = {}; return prof.levels; }
+  function validList(prof){ const f = m => Object.keys(m || {}).filter(id => m[id].validated).sort().join(', '); const a = f(prof.levels), b = f(prof.levelsO); return [a ? 'jaune ' + a : '', b ? 'orange ' + b : ''].filter(Boolean).join(' / '); }
+  function setParc(v){ v = v === 'orange' ? 'orange' : 'jaune'; PARC0 = v; const p = store.current && store.profiles[store.current]; if (p){ p.parcours = v; saveStore(); } render(); }
+  function syncParcUI(){
+    const v = curParc();
+    document.querySelectorAll('[data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.getAttribute('data-parcours') === v)));
+    const n = document.getElementById('parcoursNote'); if (n) n.textContent = PARC_NOTE[v];
+    const c = document.getElementById('playParcours'); if (c){ c.className = 'pchip ' + v; c.textContent = v === 'orange' ? 'Orange' : 'Jaune'; }
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-parcours]'); if (b) setParc(b.getAttribute('data-parcours')); });
+  function saveStore(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
+  function profile(){
+    const p = (store.current && store.profiles[store.current]) || null;
+    if (p){
+      if (!p.levels) p.levels = {};
+      if (!p.points) p.points = [];
+      if (!p.totals) p.totals = { ok: 0, err: 0 };
+    }
+    return p;
+  }
+  function lvlStat(prof, id){
+    if (!levelsOf(prof)[id]) levelsOf(prof)[id] = { best: null, validated: false, plays: 0 };
+    return levelsOf(prof)[id];
+  }
+  const needFor = total => Math.ceil(total * 0.8);
+  function tier(ok, total){
+    if (!total || ok === null || ok === undefined) return 0;
+    if (ok >= total) return 3;
+    if (ok * 10 >= total * 9) return 2;
+    if (ok * 10 >= total * 8) return 1;
+    return 0;
+  }
+  function award(prof, id){
+    const st = lvlStat(prof, id), n = LEVELS[id - 1].n;
+    const owed = tier(st.best, n), have = prof.points.filter(p => +p.level === +id && (p.parc || 'jaune') === pOf(prof)).length, g = Math.max(0, owed - have);
+    for (let k = 0; k < g; k++) prof.points.push({ at: Date.now(), level: +id, parc: pOf(prof), score: st.best + '/' + n });
+    return g;
+  }
+  function unlocked(prof, id){ return id === 1 || (!!prof && lvlStat(prof, id - 1).validated); }
+  function setName(raw){
+    const clean = String(raw || '').replace(/\s+/g, ' ').trim().slice(0, 30);
+    const k = key(clean);
+    if (!k) return false;
+    if (!store.profiles[k]) store.profiles[k] = { name: clean, levels: {}, points: [], totals: { ok: 0, err: 0 } };
+    store.current = k;
+    if (!store.profiles[k].parcours) store.profiles[k].parcours = PARC0;
+    saveStore();
+    return true;
+  }
+  function learnDone(){ try { return localStorage.getItem(LEARN_KEY) === '1'; } catch (e) { return false; } }
+  function setLearnDone(){ try { localStorage.setItem(LEARN_KEY, '1'); } catch (e) {} }
+
+  const ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  function fnv(str){
+    let h = 0x811c9dc5;
+    for (let k = 0; k < str.length; k++){ h ^= str.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  function cardCode(name, k){
+    let h = fnv(key(name) + '|' + k + '|g04-cubes-paves-prismes-points-de-vue');
+    let c = '';
+    for (let j = 0; j < 4; j++){ c += ALPHA[h % ALPHA.length]; h = Math.floor(h / ALPHA.length); }
+    return c;
+  }
+  const STAR = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1.8"/><path transform="translate(4 4.3)" d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor"/></svg>';
+  function cardHTML(points, k, hlFrom, hlTo){
+    const start = (k - 1) * 10;
+    const count = Math.max(0, Math.min(10, points.length - start));
+    let h = '<div class="bp-head"><h3>Carte n°' + k + '</h3><span class="bp-count">' + count + ' / 10 bons points</span></div><ol class="slots">';
+    for (let j = 0; j < 10; j++){
+      const idx = start + j, p = points[idx];
+      const isNew = hlFrom !== undefined && hlTo !== undefined && idx >= hlFrom && idx < hlTo;
+      if (p) h += '<li class="slot on' + (isNew ? ' new' : '') + '" aria-label="Bon point ' + (j + 1) + ', niveau ' + p.level + ', ' + p.score + '">' + STAR + '<span class="t">Niv. ' + p.level + '</span></li>';
+      else h += '<li class="slot" aria-label="Case ' + (j + 1) + ' vide">' + (j + 1) + '</li>';
+    }
+    return h + '</ol>';
+  }
+
+  /* ---------- État ---------- */
+  const S = {
+    phase: 'start',   // start | learn | learnEnd | play | result | card | teacher
+    askName: false,
+    cardView: 1,
+    Lr: { card: 0, check: 0, picked: [], solved: false, first: 0, total: 0, sw: 0, drawn: -1 },
+    R: null,
+    res: null
+  };
+  const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
+  const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
+  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
+  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, helpSpin: false }, stepState());
+
+  /* ---------- Étape 1 : déroulé ---------- */
+  function learnStart(){
+    LEARN = buildLearn();
+    S.Lr = { card: 0, check: 0, picked: [], solved: false, first: 0, total: 0, sw: 0, drawn: -1 };
+    S.phase = 'learn';
+    render();
+  }
+  function learnPick(idx){
+    const L = S.Lr, ch = LEARN[L.card].checks[L.check];
+    if (L.solved || L.picked.includes(idx)) return;
+    L.picked.push(idx);
+    if (idx === ch.a){ L.solved = true; L.total++; if (L.picked.length === 1) L.first++; }
+    renderLearn();
+  }
+  function learnNext(){
+    const L = S.Lr;
+    if (L.check < LEARN[L.card].checks.length - 1) L.check++;
+    else if (L.card < LEARN.length - 1){ L.card++; L.check = 0; L.sw = 0; window.scrollTo(0, 0); }
+    else { setLearnDone(); S.phase = 'learnEnd'; render(); return; }
+    L.picked = [];
+    L.solved = false;
+    renderLearn();
+  }
+
+  /* ---------- Étape 2 : déroulé ---------- */
+  function askForName(message){
+    S.phase = 'start';
+    S.askName = true;
+    render();
+    const msg = $('nameMsg');
+    msg.textContent = message;
+    msg.hidden = false;
+    $('nameInput').focus();
+  }
+  /* Les questions jamais vues (sur cet appareil) passent en premier */
+  function freshItems(id){
+    const k = STORE_KEY + '-vues-' + (HARD ? 'orange' : 'jaune') + '-' + id;
+    let seen = []; try { seen = JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) {}
+    const S0 = new Set(seen), key = it => String(it.sum || '') + '|' + String(it.stmt || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 120);
+    let best = null, bs = Infinity;
+    for (let t = 0; t < 12; t++){ const its = buildItems(id), sc = its.filter(it => S0.has(key(it))).length; if (sc < bs){ best = its; bs = sc; } if (!sc) break; }
+    try { localStorage.setItem(k, JSON.stringify(seen.concat(best.map(key)).slice(-150))); } catch (e) {}
+    return best;
+  }
+  function startLevel(id){
+    const prof = profile();
+    HARD = curParc() === 'orange';
+    if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
+    if (!unlocked(prof, id)) return;
+    const items = freshItems(id);
+    S.R = Object.assign({ level: id, uid: Date.now().toString(36), items, total: items.length, i: 0, results: [], ok: 0, err: 0 }, itemState());
+    S.phase = 'play';
+    render();
+  }
+  const curItem = () => S.R.items[S.R.i];
+  const curStep = () => curItem().steps[S.R.si];
+  function markError(){
+    const R = S.R, it = curItem();
+    R.err++; R.itemErr++; R.tries++;
+    runFall();
+    if (it.solid && !it.spin) R.helpSpin = true;
+  }
+  function pickOpt(idx){
+    const R = S.R, st = curStep();
+    if (!st || st.kind !== 'choice' || R.locked || R.revealed || R.itemDone || R.vals[R.si]) return;
+    if (R.picked.includes(idx)) return;
+    const o = st.opts[idx];
+    if (o.ok){ solveStep(false, o.h, st.okFb, '', ''); return; }
+    markError();
+    R.picked.push(idx);
+    if (st.opts.length === 2 || R.tries >= 2){
+      const right = st.opts.find(x => x.ok);
+      solveStep(true, right.h, '', o.fb || '', st.why || '');
+    } else {
+      R.fb = { kind: 'bad', html: o.fb || BAD[0] };
+      R.hint = st.hint || null;
+      renderPlay();
+    }
+  }
+  function numPress(k){
+    const R = S.R, st = curStep();
+    if (!st || st.kind !== 'num' || R.locked || R.revealed || R.itemDone || R.vals[R.si]) return;
+    if (k === 'ok'){ numSubmit(); return; }
+    if (k === 'del'){
+      R.input = R.wrong ? '' : R.input.slice(0, -1);
+      R.wrong = false;
+      if (R.fb && R.fb.kind !== 'good') R.fb = null;
+      renderPlay();
+      return;
+    }
+    if (R.wrong){ R.input = ''; R.wrong = false; R.fb = null; }
+    if (R.input.length >= 3) return;
+    if (R.input === '' && k === '0') return;
+    R.input += k;
+    renderPlay();
+  }
+  function numSubmit(){
+    const R = S.R, st = curStep();
+    if (R.input === ''){ R.fb = { kind: 'info', html: "Tape d'abord ta réponse." }; renderPlay(); return; }
+    if (R.wrong) return;
+    const v = parseInt(R.input, 10);
+    if (v === st.a){ solveStep(false, String(st.a), st.okFb, '', ''); return; }
+    markError();
+    R.wrong = true; R.shake = true;
+    if (R.tries >= 2) solveStep(true, String(st.a), '', "Ce n'est pas " + v + '.', '');
+    else { R.fb = { kind: 'bad', html: pick(BAD) + " Lis l'indice et réessaie." }; R.hint = st.hint || null; renderPlay(); }
+  }
+  function solveStep(fixed, val, okFb, pickFb, why){
+    const R = S.R, it = curItem(), last = R.si === it.steps.length - 1;
+    R.vals[R.si] = { h: val, fixed: fixed };
+    R.hint = null;
+    if (last){
+      R.fb = fixed ? { kind: 'bad', html: (pickFb ? pickFb + ' ' : '') + 'Regarde la correction.' } : { kind: 'good', html: okFb || pick(GOOD) };
+      endItem();
+      return;
+    }
+    if (fixed){
+      R.revealed = true;
+      R.fb = { kind: 'bad', html: [pickFb, why, 'La bonne réponse est affichée : continue.'].filter(Boolean).join(' ') };
+      renderPlay();
+      return;
+    }
+    R.locked = true;
+    R.fb = { kind: 'good', html: okFb || pick(GOOD) };
+    renderPlay();
+    setTimeout(nextStep, okFb ? 1300 : 700);
+  }
+  function nextStep(){
+    const R = S.R;
+    if (!R || R.itemDone || S.phase !== 'play') return;
+    if (R.si >= curItem().steps.length - 1) return;
+    R.si++;
+    Object.assign(R, stepState());
+    renderPlay();
+  }
+  function endItem(){
+    const R = S.R, it = curItem(), ok = R.itemErr === 0;
+    R.itemDone = true;
+    R.locked = false;
+    R.revealed = false;
+    if (ok) R.ok++;
+    R.results.push({ ok, html: it.sum });
+    renderPlay();
+    try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
+  }
+  function nextItem(){
+    const R = S.R;
+    if (!R || !R.itemDone) return;
+    R.i++;
+    if (R.i >= R.total){ finishRound(); return; }
+    Object.assign(R, itemState());
+    renderPlay();
+    window.scrollTo(0, 0);
+  }
+  function finishRound(){
+    const R = S.R, prof = profile(), id = R.level, st = lvlStat(prof, id), total = R.total, need = needFor(total);
+    const prevBest = st.best;
+    const firstValid = !st.validated && R.ok >= need;
+    st.best = (prevBest === null || prevBest === undefined) ? R.ok : Math.max(prevBest, R.ok);
+    st.plays++;
+    if (R.ok >= need) st.validated = true;
+    prof.totals.ok += R.ok;
+    prof.totals.err += R.err;
+    const before = prof.points.length;
+    const gained = award(prof, id);
+    const after = prof.points.length;
+    saveStore();
+    let outcome = 'notyet';
+    if (gained > 0) outcome = firstValid ? 'validate' : 'record';
+    else if (R.ok >= need) outcome = 'same';
+    S.res = { id, finale: id === 5 && firstValid, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: st.best, from: before, to: after, results: R.results,
+              card: Math.floor(before / 10) < Math.floor(after / 10) ? Math.floor(after / 10) : 0 };
+    S.phase = 'result';
+    render();
+  }
+
+  /* ---------- Animations et bruitages (communs) ---------- */
+  const SND_KEY = 'jeu-son';
+  function soundOn(){ try { return localStorage.getItem(SND_KEY) !== '0'; } catch (e) { return true; } }
+  function setSound(on){ try { localStorage.setItem(SND_KEY, on ? '1' : '0'); } catch (e) {} }
+  const soundLabel = () => soundOn() ? 'Son : activé' : 'Son : coupé';
+
+  // Petits bruitages fabriqués sur place (aucun fichier à charger).
+  let AC = null, NOISE = null;
+  function ac(){
+    if (!soundOn()) return null;
+    try {
+      if (!AC){ const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+      if (AC.state === 'suspended') AC.resume();
+      return AC;
+    } catch (e) { return null; }
+  }
+  function noiseBuf(a){
+    if (NOISE) return NOISE;
+    const b = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return (NOISE = b);
+  }
+  function nz(a, t, dur, type, freq, q, peak, attack){
+    const s = a.createBufferSource();
+    s.buffer = noiseBuf(a);
+    const f = a.createBiquadFilter();
+    f.type = type;
+    f.frequency.setValueAtTime(freq, t);
+    if (q) f.Q.value = q;
+    const g = a.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(Math.max(0.0002, peak), t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(a.destination);
+    s.start(t, Math.random(), dur + 0.05);
+    return f;
+  }
+  function sndWhoosh(sec){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, f = nz(a, t, sec, 'bandpass', 300, 0.8, 0.07, sec * 0.6);
+    f.frequency.linearRampToValueAtTime(1500, t + sec);
+  }
+  function sndClaps(n, dur){
+    const a = ac(); if (!a) return;
+    const t0 = a.currentTime + 0.03, people = Math.min(n, 14), base = n > 10 ? 0.55 : 0.75;
+    for (let p = 0; p < people; p++){
+      const rate = 3.4 + Math.random() * 1.8;
+      let t = t0 + Math.random() * 0.3;
+      while (t < t0 + dur){
+        const fade = t > t0 + dur - 0.8 ? Math.max(0.15, (t0 + dur - t) / 0.8) : 1;
+        nz(a, t, 0.06, 'bandpass', 1000 + Math.random() * 1600, 1.1, base / Math.sqrt(people) * (0.6 + Math.random() * 0.4) * fade, 0.004);
+        t += (1 / rate) * (0.85 + Math.random() * 0.3);
+      }
+    }
+    if (n > 10){
+      nz(a, t0, dur + 0.6, 'lowpass', 900, 0, 0.12, dur * 0.4);
+      [0.5, 1.4].forEach(dt => {
+        const o = a.createOscillator(), g = a.createGain(), s = t0 + dt;
+        o.type = 'sine';
+        o.frequency.setValueAtTime(1900, s); o.frequency.linearRampToValueAtTime(2500, s + 0.18); o.frequency.linearRampToValueAtTime(2100, s + 0.35);
+        g.gain.setValueAtTime(0.0001, s); g.gain.linearRampToValueAtTime(0.05, s + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, s + 0.4);
+        o.connect(g); g.connect(a.destination); o.start(s); o.stop(s + 0.45);
+      });
+    }
+  }
+  function sndThump(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.25);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.25, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 0.32);
+    nz(a, t, 0.25, 'lowpass', 1200, 0, 0.08, 0.005);
+  }
+  function sndRoll(sec){ const a = ac(); if (!a) return; nz(a, a.currentTime, sec, 'lowpass', 320, 0, 0.14, 0.1); }
+  function sndPop(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime;
+    nz(a, t, 0.5, 'lowpass', 600, 0, 0.18, 0.005);
+    nz(a, t + 0.05, 0.9, 'highpass', 2500, 0, 0.05, 0.02);
+  }
+
+  /* ---- Outils de dessin ---- */
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const clamp01 = k => Math.max(0, Math.min(1, k));
+  const easeOut = k => 1 - Math.pow(1 - k, 3);
+  const easeSine = k => 0.5 - 0.5 * Math.cos(Math.PI * k);
+  const easeOutBack = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const FONT = '"Baloo 2", "Arial Rounded MT Bold", Arial, sans-serif';
+  function makeTrack(segs){
+    const pts = [];
+    segs.forEach(sg => {
+      const n = sg[0] === 'C' ? 180 : 30;
+      for (let i = pts.length ? 1 : 0; i <= n; i++){
+        const t = i / n, u = 1 - t;
+        if (sg[0] === 'C'){
+          const a = sg[1], b = sg[2], c = sg[3], d = sg[4];
+          pts.push([u*u*u*a[0] + 3*u*u*t*b[0] + 3*u*t*t*c[0] + t*t*t*d[0], u*u*u*a[1] + 3*u*u*t*b[1] + 3*u*t*t*c[1] + t*t*t*d[1]]);
+        } else pts.push([lerp(sg[1][0], sg[2][0], t), lerp(sg[1][1], sg[2][1], t)]);
+      }
+    });
+    const cum = [0];
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const L = cum[cum.length - 1];
+    const pos = s => {
+      s = Math.max(0, Math.min(L, s));
+      let lo = 0, hi = cum.length - 1;
+      while (hi - lo > 1){ const m = (lo + hi) >> 1; if (cum[m] <= s) lo = m; else hi = m; }
+      const k = (s - cum[lo]) / ((cum[hi] - cum[lo]) || 1);
+      return [lerp(pts[lo][0], pts[hi][0], k), lerp(pts[lo][1], pts[hi][1], k)];
+    };
+    const at = s => { const p = pos(s), a = pos(s - 3), b = pos(s + 3); return { x: p[0], y: p[1], a: Math.atan2(b[1] - a[1], b[0] - a[0]) }; };
+    return { L, at, pos };
+  }
+  function fitCanvas(cv, W, H){
+    const cssW = Math.max(200, Math.round(cv.parentNode.clientWidth || 340)), d = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(cssW * d);
+    cv.height = Math.round(cssW * d * H / W);
+    return { k: cssW * d / W, cssW, w: cv.width, h: cv.height };
+  }
+  function rrect(g, x, y, w, h, r){
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+  function seg(g, x1, y1, x2, y2){ g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); }
+  function circ(g, x, y, r){ g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+  function poly(g, pts, fill){ g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.closePath(); g.fillStyle = fill; g.fill(); }
+
+  // Le skieur vu de profil, les pieds à l'origine. c = flexion, w = bras levés, tk = groupé (saut).
+  function star(g, x, y, r){
+    g.beginPath();
+    for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    g.closePath(); g.fill();
+  }
+  // Gerbes de neige
+  function spray(list, x, y, n, dirX, speed){
+    for (let i = 0; i < n; i++) list.push({ x: x + rnd(-2, 2), y: y + rnd(-1, 1), vx: dirX * rnd(0.3, 1) * speed + rnd(-12, 12), vy: -rnd(18, 70), life: 0, max: rnd(0.35, 0.85), r: rnd(0.9, 2.4) });
+  }
+  function stepSpray(list, dt){
+    for (let i = list.length - 1; i >= 0; i--){
+      const p = list[i];
+      p.vy += 170 * dt; p.vx *= 1 - 1.5 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt;
+      if (p.life > p.max) list.splice(i, 1);
+    }
+  }
+  function drawSpray(g, list){
+    g.lineWidth = 0.6;
+    list.forEach(p => {
+      const a = 1 - p.life / p.max;
+      g.fillStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')';
+      g.strokeStyle = 'rgba(150,175,215,' + (a * 0.8).toFixed(2) + ')';
+      g.beginPath(); g.arc(p.x, p.y, p.r, 0, Math.PI * 2); g.fill(); g.stroke();
+    });
+  }
+  function makeFlakes(n){ return Array.from({ length: n }, () => ({ x: rnd(0, 360), y: rnd(0, 240), r: rnd(0.6, 1.6), vy: rnd(8, 18), ph: rnd(0, 6.3) })); }
+  function stepFlakes(list, dt, t, H){ list.forEach(f => { f.y += f.vy * dt; f.x += Math.sin(t * 0.8 + f.ph) * 6 * dt; if (f.y > H + 3){ f.y = -3; f.x = rnd(0, 360); } }); }
+  function drawFlakes(g, list){ g.fillStyle = 'rgba(255,255,255,.9)'; list.forEach(f => circ(g, f.x, f.y, f.r)); }
+  const mix2 = (p, q, k) => [lerp(p[0], q[0], k), lerp(p[1], q[1], k)];
+  const tri = x => { x = ((x % 1) + 1) % 1; return x < 0.5 ? x * 2 : 2 - x * 2; };
+  function rng(seed){ let v = seed % 2147483647; if (v <= 0) v += 2147483646; return () => { v = v * 16807 % 2147483647; return (v - 1) / 2147483646; }; }
+  function tone(a, t, f0, dur, type, peak, f1){
+    const o = a.createOscillator(), gn = a.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(f0, t);
+    if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    gn.gain.setValueAtTime(0.0001, t); gn.gain.linearRampToValueAtTime(peak, t + 0.012); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(gn); gn.connect(a.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  function sndFanfare(big){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime + 0.05, notes = big ? [[523,0,.16],[659,.15,.16],[784,.3,.16],[1047,.45,.3],[784,.75,.14],[1047,.9,.8]] : [[523,0,.16],[659,.15,.16],[784,.3,.16],[1047,.45,.55]];
+    notes.forEach(n => { tone(a, t + n[1], n[0], n[2] + 0.1, 'triangle', 0.11); tone(a, t + n[1], n[0] * 2, n[2], 'sine', 0.025); });
+  }
+  function syncSound(){
+    document.querySelectorAll('[data-sound]').forEach(x => {
+      x.setAttribute('aria-pressed', String(soundOn()));
+      if (x.getAttribute('data-sound') === 'icon'){ x.setAttribute('aria-label', soundLabel()); x.title = soundLabel(); x.classList.toggle('off', !soundOn()); }
+      else x.textContent = soundLabel();
+    });
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-sound]');
+    if (!b) return;
+    setSound(!soundOn());
+    syncSound();
+  });
+  function drawCloud(g, x, y, s, alpha){
+    g.save(); g.globalAlpha = alpha === undefined ? 0.92 : alpha; g.fillStyle = '#ffffff';
+    g.beginPath(); g.arc(x, y, 7 * s, 0, 6.283); g.arc(x + 9 * s, y - 4 * s, 9 * s, 0, 6.283); g.arc(x + 20 * s, y, 7.5 * s, 0, 6.283); g.rect(x, y - 1 * s, 20 * s, 7.5 * s); g.fill();
+    g.restore();
+  }
+  function makeConfetti(n, colors){ return Array.from({ length: n }, (_, i) => ({ x: rnd(0, 360), y: rnd(-260, -10), vy: rnd(26, 46), ph: rnd(0, 6.3), rot: rnd(0, 6.3), vr: rnd(-6, 6), col: colors[i % colors.length] })); }
+  function stepConfetti(list, dt, t){ list.forEach(c => { c.y += c.vy * dt; c.x += Math.sin(t * 2 + c.ph) * 14 * dt; c.rot += c.vr * dt; if (c.y > 250){ c.y = -10; c.x = rnd(0, 360); } }); }
+  function drawConfetti(g, list){ list.forEach(c => { g.save(); g.translate(c.x, c.y); g.rotate(c.rot); g.scale(1, Math.abs(Math.cos(c.rot * 1.3)) + 0.15); g.fillStyle = c.col; g.fillRect(-1.8, -3, 3.6, 6); g.restore(); }); }
+  const CONF_COLORS = ['#e5484d', '#3b9ae1', '#46a758', '#f5c518', '#8e4ec6', '#f76b15', '#e93d82', '#12a594'];
+  // Lance une animation sur un canevas : step(dt, t) puis draw(). S'arrête quand la boîte change ou disparaît.
+  function animate(box, cv, tok, W, H, layers, step, draw){
+    let fit = fitCanvas(cv, W, H);
+    const st = { fit, layers: layers(fit) };
+    let last = performance.now();
+    const frame = now => {
+      if (box.getAttribute('data-tok') !== String(tok) || !cv.isConnected || !cv.offsetParent) return;
+      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+      last = now;
+      if (Math.abs((cv.parentNode.clientWidth || 0) - st.fit.cssW) > 2){ st.fit = fitCanvas(cv, W, H); st.layers = layers(st.fit); }
+      step(dt);
+      draw(st);
+      requestAnimationFrame(frame);
+    };
+    return { st, start(){ draw(st); requestAnimationFrame(frame); } };
+  }
+  function layer(fit, paint){
+    const b = document.createElement('canvas');
+    b.width = fit.w; b.height = fit.h;
+    const g = b.getContext('2d'); g.setTransform(fit.k, 0, 0, fit.k, 0, 0); paint(g);
+    return b;
+  }
+
+  /* ---------- Le robot à assembler : une pièce par niveau ---------- */
+  const PARTS = [
+    { name: 'les jambes',  short: 'Jambes',  color: '#3b7ddd', cheer: 'Les jambes de ton robot font des claquettes !' },
+    { name: 'le corps',    short: 'Corps',   color: '#f08c1a', cheer: 'Ton robot tient debout et sautille !' },
+    { name: 'les bras',    short: 'Bras',    color: '#2fa84f', cheer: 'Ton robot te fait coucou !' },
+    { name: 'la tête',     short: 'Tête',    color: '#12a594', cheer: 'Ton robot ouvre les yeux : « Bip bip, bravo ! »' },
+    { name: "l'antenne",   short: 'Antenne', color: '#c98a00', cheer: 'Ton robot danse de joie !' }
+  ];
+  const partOf = id => PARTS[Math.max(0, Math.min(4, id - 1))];
+  // Les 8 blocs de chaque pièce : [x, y, largeur, hauteur, forme, groupe] (pieds du robot en 0,0 ; y vers le haut négatif)
+  const BLOCKS = [
+    [[-26, -8, 18, 8, 'box', 'L'], [8, -8, 18, 8, 'box', 'R'], [-22, -16, 10, 8, 'box', 'L'], [12, -16, 10, 8, 'box', 'R'], [-22, -24, 10, 8, 'box', 'L'], [12, -24, 10, 8, 'box', 'R'], [-22, -32, 10, 8, 'box', 'L'], [12, -32, 10, 8, 'box', 'R']],
+    [[-30, -48, 15, 16, 'box', 'B'], [-15, -48, 15, 16, 'box', 'B'], [0, -48, 15, 16, 'box', 'B'], [15, -48, 15, 16, 'box', 'B'], [-30, -64, 15, 16, 'box', 'B'], [-15, -64, 15, 16, 'box', 'B'], [0, -64, 15, 16, 'box', 'B'], [15, -64, 15, 16, 'box', 'B']],
+    [[-44, -64, 14, 8, 'box', 'AL'], [30, -64, 14, 8, 'box', 'AR'], [-42, -56, 10, 8, 'box', 'AL'], [32, -56, 10, 8, 'box', 'AR'], [-42, -48, 10, 8, 'box', 'AL'], [32, -48, 10, 8, 'box', 'AR'], [-45, -40, 16, 8, 'down', 'AL'], [29, -40, 16, 8, 'down', 'AR']],
+    [[-18, -76, 9, 12, 'box', 'H'], [-9, -76, 9, 12, 'box', 'H'], [0, -76, 9, 12, 'box', 'H'], [9, -76, 9, 12, 'box', 'H'], [-18, -88, 9, 12, 'box', 'H'], [-9, -88, 9, 12, 'box', 'H'], [0, -88, 9, 12, 'box', 'H'], [9, -88, 9, 12, 'box', 'H']],
+    [[-30, -36, 60, 4, 'box', 'B'], [-10, -60, 6, 5, 'box', 'B'], [4, -60, 6, 5, 'box', 'B'], [-48, -70, 20, 6, 'prism', 'AL'], [28, -70, 20, 6, 'prism', 'AR'], [-2.5, -94, 5, 6, 'box', 'H'], [-2.5, -100, 5, 6, 'box', 'H'], [-4.5, -107, 9, 7, 'prism', 'H']]
+  ];
+  function shade(hex, f){
+    const n = parseInt(hex.slice(1), 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255;
+    const m = v => Math.round(f >= 0 ? v + (255 - v) * f : v * (1 + f));
+    return 'rgb(' + m(r) + ',' + m(gg) + ',' + m(b) + ')';
+  }
+  function drawBlock(g, x, y, w, h, col, kind, alpha){
+    const d = Math.min(4, Math.max(2, w * 0.22));
+    g.save(); if (alpha !== undefined) g.globalAlpha = alpha;
+    g.strokeStyle = 'rgba(20,25,50,.35)'; g.lineWidth = 0.6; g.lineJoin = 'round';
+    if (kind === 'prism' || kind === 'down'){
+      const up = kind === 'prism';
+      const A = up ? [x, y + h] : [x, y], B = up ? [x + w / 2, y] : [x + w / 2, y + h], C = up ? [x + w, y + h] : [x + w, y];
+      g.fillStyle = shade(col, -0.25); g.beginPath(); g.moveTo(B[0], B[1]); g.lineTo(B[0] + d, B[1] - d); g.lineTo(C[0] + d, C[1] - d); g.lineTo(C[0], C[1]); g.closePath(); g.fill(); g.stroke();
+      if (!up){ g.fillStyle = shade(col, 0.3); g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(A[0] + d, A[1] - d); g.lineTo(C[0] + d, C[1] - d); g.lineTo(C[0], C[1]); g.closePath(); g.fill(); g.stroke(); }
+      g.fillStyle = col; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.lineTo(C[0], C[1]); g.closePath(); g.fill(); g.stroke();
+    } else {
+      g.fillStyle = shade(col, 0.3); g.beginPath(); g.moveTo(x, y); g.lineTo(x + d, y - d); g.lineTo(x + w + d, y - d); g.lineTo(x + w, y); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = shade(col, -0.25); g.beginPath(); g.moveTo(x + w, y); g.lineTo(x + w + d, y - d); g.lineTo(x + w + d, y + h - d); g.lineTo(x + w, y + h); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = col; g.fillRect(x, y, w, h); g.strokeRect(x, y, w, h);
+      g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(x + 1, y + 1, w - 2, Math.min(2, h / 4));
+    }
+    g.restore();
+  }
+  // Dessine le robot. o.done = pièces finies (0 à 5) ; o.part = {lvl, n, dy} pièce en cours ; animations : tap, wave, tilt, bob, eyes, blink, lights.
+  function drawRobot(g, x, y, sc, o){
+    g.save(); g.translate(x, y); g.scale(sc, sc); if (o.rot) g.rotate(o.rot);
+    if (o.bob) g.translate(0, -o.bob);
+    const list = [];
+    for (let L = 0; L < 5; L++){
+      const n = L < (o.done || 0) ? 8 : (o.part && o.part.lvl === L ? o.part.n : 0);
+      const dy = o.part && o.part.lvl === L && L >= (o.done || 0) ? (o.part.dy || 0) : 0;
+      for (let k = 0; k < n; k++){ const b = BLOCKS[L][k]; list.push({ b, col: PARTS[L].color, dy }); }
+    }
+    list.sort((p, q) => (q.b[1] + q.b[3]) - (p.b[1] + p.b[3]) || p.b[0] - q.b[0]);
+    const tap = o.tap || 0, wave = o.wave || 0, tilt = o.tilt || 0;
+    const grpT = (gr, fn) => {
+      g.save();
+      if (gr === 'L') g.translate(0, -Math.max(0, Math.sin(tap)) * 4);
+      else if (gr === 'R') g.translate(0, -Math.max(0, -Math.sin(tap)) * 4);
+      else if (gr === 'AL'){ g.translate(-37, -64); g.rotate(wave); g.translate(37, 64); }
+      else if (gr === 'AR'){ g.translate(37, -64); g.rotate(-wave); g.translate(-37, 64); }
+      else if (gr === 'H'){ g.translate(0, -64); g.rotate(tilt); g.translate(0, 64); }
+      fn(); g.restore();
+    };
+    list.forEach(p => grpT(p.b[5], () => drawBlock(g, p.b[0], p.b[1] + p.dy, p.b[2], p.b[3], p.col, p.b[4])));
+    const headDone = (o.done || 0) >= 4 || (o.part && o.part.lvl === 3 && o.part.n >= 8 && !o.part.dy);
+    if (headDone){
+      grpT('H', () => {
+        const e = o.eyes === undefined ? 1 : o.eyes;
+        g.fillStyle = '#ffffff'; g.beginPath(); g.ellipse(-8, -79, 4, 4 * Math.max(0.1, e), 0, 0, 6.283); g.ellipse(8, -79, 4, 4 * Math.max(0.1, e), 0, 0, 6.283); g.fill();
+        if (e > 0.3){ g.fillStyle = '#1a2358'; circ(g, -7, -79, 1.9); circ(g, 9, -79, 1.9); g.fillStyle = '#ffffff'; circ(g, -6.3, -79.8, 0.6); circ(g, 9.7, -79.8, 0.6); }
+        g.strokeStyle = '#1a2358'; g.lineWidth = 1.4; g.lineCap = 'round'; g.beginPath(); g.arc(0, -73, 4, 0.25, Math.PI - 0.25); g.stroke();
+        if ((o.done || 0) >= 5){ g.fillStyle = o.blink ? '#ff4d4d' : '#ffb3b3'; circ(g, 0, -109, 2.6); if (o.blink){ g.fillStyle = 'rgba(255,80,80,.35)'; circ(g, 0, -109, 6); } }
+      });
+    }
+    if ((o.done || 0) >= 2 && o.lights !== undefined){
+      [-22, -8, 8, 22].forEach((lx, i) => { const on = Math.floor(o.lights * 4 + i) % 2 === 0; g.fillStyle = on ? ['#ffd93b', '#5ec8ff', '#ff5fa2', '#7dff8a'][i] : 'rgba(255,255,255,.4)'; circ(g, lx, -42, 2.2); });
+    }
+    g.restore();
+  }
+
+  function sndClank(){ const a = ac(); if (!a) return; const t = a.currentTime; tone(a, t, 620, 0.25, 'triangle', 0.08, 560); tone(a, t, 1470, 0.18, 'sine', 0.04); nz(a, t, 0.08, 'highpass', 2500, 0, 0.06, 0.003); }
+  function sndClick(){ const a = ac(); if (!a) return; const t = a.currentTime; tone(a, t, 1200, 0.06, 'square', 0.03, 900); tone(a, t + 0.06, 1800, 0.12, 'triangle', 0.04); }
+  function sndBonk(){ const a = ac(); if (!a) return; const t = a.currentTime; tone(a, t, 240, 0.3, 'triangle', 0.14, 120); nz(a, t, 0.15, 'bandpass', 700, 1, 0.1, 0.003); tone(a, t + 0.22, 200, 0.2, 'triangle', 0.06, 110); }
+  function sndBip(){ const a = ac(); if (!a) return; const t = a.currentTime + 0.05; [[880, 0], [1320, 0.12], [990, 0.24], [1760, 0.4]].forEach(n => tone(a, t + n[1], n[0], 0.1, 'square', 0.03)); }
+  function sndJet(sec){ const a = ac(); if (!a) return; const t = a.currentTime, f = nz(a, t, sec, 'lowpass', 300, 0, 0.18, sec * 0.3); f.frequency.linearRampToValueAtTime(1800, t + sec); }
+  function badge(g, x, y, col, label){
+    g.font = '800 9px ' + FONT; g.textAlign = 'left';
+    const w = g.measureText(label).width + 26;
+    g.fillStyle = 'rgba(255,255,255,.95)'; rrect(g, x, y, w, 16, 8); g.fill(); g.strokeStyle = '#1a2358'; g.lineWidth = 1.1; g.stroke();
+    g.fillStyle = col; circ(g, x + 10, y + 8, 4.6); g.strokeStyle = '#1a2358'; g.lineWidth = 1; g.beginPath(); g.arc(x + 10, y + 8, 4.6, 0, 6.283); g.stroke();
+    g.fillStyle = '#1a2358'; g.fillText(label, x + 18, y + 11.4);
+  }
+  function drawCrate(g, x, y, col){
+    g.fillStyle = '#a0703f'; rrect(g, x - 20, y - 16, 40, 16, 2); g.fill();
+    g.strokeStyle = '#7a5230'; g.lineWidth = 1; g.strokeRect(x - 20, y - 16, 40, 16); seg(g, x - 20, y - 8, x + 20, y - 8);
+    drawBlock(g, x - 14, y - 22, 8, 6, col, 'box'); drawBlock(g, x - 3, y - 23, 8, 7, shade(col, 0.2), 'box'); drawBlock(g, x + 7, y - 22, 9, 6, col, 'prism');
+  }
+  function drawHelper(g, x, y, col, t, cheer, ph){
+    const hop = cheer ? Math.abs(Math.sin(t * 7 + ph)) * 3 : 0;
+    g.save(); g.translate(x, y - hop);
+    g.strokeStyle = '#5a628f'; g.lineWidth = 1.2; seg(g, 0, -22, 0, -27); g.fillStyle = '#ff5fa2'; circ(g, 0, -28, 1.8);
+    g.fillStyle = col; rrect(g, -8, -22, 16, 13, 4); g.fill();
+    g.fillStyle = '#ffffff'; circ(g, -3.5, -16, 2.6); circ(g, 3.5, -16, 2.6); g.fillStyle = '#1a2358'; circ(g, -3, -16, 1.2); circ(g, 4, -16, 1.2);
+    g.fillStyle = shade(col, -0.2); rrect(g, -7, -9, 14, 8, 3); g.fill();
+    const c = cheer ? Math.sin(t * 13 + ph) : 0;
+    g.strokeStyle = shade(col, -0.2); g.lineWidth = 2; g.lineCap = 'round';
+    seg(g, -7, -7, cheer ? -3 + 2 * c : -10, cheer ? -24 : -2); seg(g, 7, -7, cheer ? 3 - 2 * c : 10, cheer ? -24 : -2);
+    g.fillStyle = '#3a3f5a'; circ(g, -4, 0, 2.2); circ(g, 4, 0, 2.2);
+    g.restore();
+  }
+
+  /* ---- L'atelier pendant le jeu ---- */
+  const RH = 114, GY = 110, RX = 282, CRATE = 156;
+  const RUN = { uid: '', cv: null, g: null, k: 1, cssW: 0, bg: null, lvl: 0, total: 8, placed: 0, queue: [], act: null, crane: { x: CRATE, y: 30 }, wob: 9, sparks: [], marks: [], t: 0, raf: 0, last: 0 };
+  function runFit(){
+    const f = fitCanvas(RUN.cv, 360, RH); RUN.k = f.k; RUN.cssW = f.cssW;
+    RUN.bg = layer(f, g => {
+      const wall = g.createLinearGradient(0, 0, 0, GY); wall.addColorStop(0, '#dfe8f5'); wall.addColorStop(1, '#c7d4e8');
+      g.fillStyle = wall; g.fillRect(0, 0, 360, GY);
+      g.strokeStyle = 'rgba(90,110,150,.18)'; g.lineWidth = 1; for (let x = 0; x < 360; x += 40) seg(g, x, 0, x, GY);
+      g.fillStyle = '#2b5fa8'; rrect(g, 14, 44, 70, 58, 4); g.fill();
+      g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 0.6; for (let x = 18; x < 84; x += 8) seg(g, x, 46, x, 100); for (let y = 48; y < 102; y += 8) seg(g, 16, y, 82, y);
+      g.save(); g.translate(49, 98); g.scale(0.5, 0.5); g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = 1.6;
+      BLOCKS.forEach(P => P.forEach(b => { if (b[4] === 'box') g.strokeRect(b[0], b[1], b[2], b[3]); else { g.beginPath(); const up = b[4] === 'prism'; g.moveTo(b[0], up ? b[1] + b[3] : b[1]); g.lineTo(b[0] + b[2] / 2, up ? b[1] : b[1] + b[3]); g.lineTo(b[0] + b[2], up ? b[1] + b[3] : b[1]); g.closePath(); g.stroke(); } }));
+      g.restore();
+      g.fillStyle = '#ffffff'; g.font = '700 6px ' + FONT; g.textAlign = 'center'; g.fillText('PLAN DU ROBOT', 49, 52);
+      g.fillStyle = '#9aa6b8'; g.fillRect(0, GY, 360, RH - GY);
+      g.fillStyle = '#5a628f'; g.fillRect(110, 7, 244, 4);
+      g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(RX, GY, 40, 3, 0, 0, 6.283); g.fill();
+      drawCrate(g, CRATE, GY, PARTS[RUN.lvl].color);
+      badge(g, 6, 5, PARTS[RUN.lvl].color, 'Niveau ' + (RUN.lvl + 1) + ' · ' + cap(PARTS[RUN.lvl].name));
+    });
+  }
+  function runSetup(R){
+    if (RUN.uid === R.uid && RUN.cv && RUN.cv.isConnected) return true;
+    const box = $('runbox');
+    box.innerHTML = '<canvas aria-hidden="true"></canvas>';
+    RUN.cv = box.querySelector('canvas');
+    RUN.g = RUN.cv.getContext('2d');
+    if (!RUN.g) return false;
+    RUN.uid = R.uid; RUN.lvl = Math.max(0, Math.min(4, R.level - 1)); RUN.total = R.total;
+    runFit();
+    RUN.placed = Math.min(8, R.results.length); RUN.queue = []; RUN.act = null; RUN.crane = { x: CRATE, y: 30 }; RUN.wob = 9; RUN.sparks = [];
+    RUN.marks = R.results.map(r => ({ ok: r.ok, t0: -10 }));
+    return true;
+  }
+  function runUpdate(R){
+    syncSound();
+    if (!runSetup(R)) return;
+    R.results.forEach((r, k) => {
+      if (RUN.marks[k]) return;
+      RUN.marks[k] = { ok: r.ok, t0: RUN.t };
+      if (k < 8) RUN.queue.push({ type: 'place', k });
+    });
+    if (REDUCED){ RUN.placed = Math.min(8, R.results.length); RUN.queue = []; runDraw(); return; }
+    runKick();
+  }
+  function runKick(){ if (!RUN.raf){ RUN.last = performance.now(); RUN.raf = requestAnimationFrame(runFrame); } }
+  function runFrame(now){
+    RUN.raf = 0;
+    if (!RUN.cv || !RUN.cv.isConnected || !RUN.cv.offsetParent) return;
+    const dt = Math.min(0.05, Math.max(0, (now - RUN.last) / 1000));
+    RUN.last = now; RUN.t += dt;
+    if (Math.abs((RUN.cv.parentNode.clientWidth || 0) - RUN.cssW) > 2) runFit();
+    runStep(dt);
+    runDraw();
+    RUN.raf = requestAnimationFrame(runFrame);
+  }
+  function runFall(){
+    if (!S.R || !RUN.cv || !RUN.cv.isConnected) return;
+    if (REDUCED){ sndBonk(); return; }
+    if (RUN.queue.some(q => q.type === 'fall') || (RUN.act && RUN.act.type === 'fall')) return;
+    RUN.queue.unshift({ type: 'fall' });
+    runKick();
+  }
+  const blockTarget = k => { const b = BLOCKS[RUN.lvl][k]; return { x: RX + b[0] + b[2] / 2, y: GY + b[1] }; };
+  function runStep(dt){
+    if (!RUN.act && RUN.queue.length){
+      RUN.act = RUN.queue.shift(); RUN.act.t = 0;
+      if (RUN.act.type === 'place'){ const tg = blockTarget(RUN.act.k); RUN.act.tx = tg.x; RUN.act.ty = tg.y; }
+      else { RUN.act.tx = lerp(CRATE, RX, 0.55); RUN.act.ty = 30; RUN.act.k = Math.min(7, RUN.placed); }
+    }
+    const A = RUN.act;
+    if (A){
+      A.t += dt;
+      const t = A.t, c = RUN.crane;
+      if (A.type === 'place'){
+        if (t < 0.25){ c.x = CRATE; c.y = lerp(GY - 22, 22, easeSine(t / 0.25)); }
+        else if (t < 0.7){ c.x = lerp(CRATE, A.tx, easeSine((t - 0.25) / 0.45)); c.y = 22; }
+        else if (t < 1){ c.x = A.tx; c.y = lerp(22, A.ty, easeSine((t - 0.7) / 0.3)); }
+        else {
+          if (!A.done){ A.done = true; RUN.placed = Math.max(RUN.placed, A.k + 1); sndClick(); for (let i = 0; i < 12; i++){ const a = rnd(0, 6.283), sp = rnd(20, 50); RUN.sparks.push({ x: A.tx, y: A.ty, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: rnd(0.3, 0.6), col: '#ffd93b' }); } }
+          c.y = lerp(A.ty, 30, easeSine(clamp01((t - 1) / 0.3)));
+          if (t > 1.3) RUN.act = null;
+        }
+      } else {
+        if (t < 0.25){ c.x = CRATE; c.y = lerp(GY - 22, 22, easeSine(t / 0.25)); }
+        else if (t < 0.6){ c.x = lerp(CRATE, A.tx, easeSine((t - 0.25) / 0.35)); c.y = 22; }
+        else {
+          if (!A.drop){ A.drop = { x: A.tx, y: 26, vx: 30, vy: 0, rot: 0, vr: 5, bounce: 0 }; }
+          const d = A.drop;
+          d.vy += 400 * dt; d.x += d.vx * dt; d.y += d.vy * dt; d.rot += d.vr * dt;
+          if (d.y > GY - 4 && d.vy > 0){ d.y = GY - 4; d.vy *= -0.4; d.vx *= 0.6; d.vr *= 0.5; d.bounce++; if (d.bounce === 1){ sndBonk(); RUN.wob = 0; for (let i = 0; i < 10; i++){ const a = rnd(-Math.PI, 0), sp = rnd(25, 60); RUN.sparks.push({ x: d.x, y: d.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: rnd(0.3, 0.6), col: '#ff9a3b' }); } } }
+          c.x = A.tx; c.y = 22 + Math.sin(t * 20) * 0.6;
+          if (t > 1.7) RUN.act = null;
+        }
+      }
+    } else { RUN.crane.x = lerp(RUN.crane.x, CRATE, 1 - Math.exp(-dt * 4)); RUN.crane.y = lerp(RUN.crane.y, 30, 1 - Math.exp(-dt * 4)); }
+    RUN.wob += dt;
+    for (let i = RUN.sparks.length - 1; i >= 0; i--){ const p = RUN.sparks[i]; p.vy += 120 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt; if (p.life > p.max) RUN.sparks.splice(i, 1); }
+  }
+  function runDraw(){
+    const g = RUN.g, t = RUN.t, col = PARTS[RUN.lvl].color;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(RUN.bg, 0, 0);
+    g.setTransform(RUN.k, 0, 0, RUN.k, 0, 0);
+    for (let k = 0; k < 8; k++){
+      const m = RUN.marks[k], x = 12 + k * 13, y = 32;
+      if (!m){ g.strokeStyle = 'rgba(90,98,143,.5)'; g.lineWidth = 1.2; g.beginPath(); g.arc(x, y, 4.5, 0, 6.283); g.stroke(); continue; }
+      const sc = easeOutBack(clamp01((t - m.t0) / 0.35));
+      if (sc <= 0.01) continue;
+      g.save(); g.translate(x, y); g.scale(sc, sc);
+      g.fillStyle = m.ok ? '#157a45' : '#cf2f46'; circ(g, 0, 0, 5);
+      g.strokeStyle = '#ffffff'; g.lineWidth = 1.6; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
+      if (m.ok){ g.moveTo(-2.3, 0); g.lineTo(-0.8, 1.6); g.lineTo(2.2, -1.8); } else { g.moveTo(-1.9, -1.9); g.lineTo(1.9, 1.9); g.moveTo(1.9, -1.9); g.lineTo(-1.9, 1.9); }
+      g.stroke(); g.restore();
+    }
+    const wob = RUN.wob < 2 ? 0.07 * Math.sin(RUN.wob * 16) * Math.exp(-RUN.wob * 3) : 0;
+    const hd = RUN.lvl >= 4 || (RUN.lvl === 3 && RUN.placed >= 8);
+    drawRobot(g, RX, GY, 1, { done: RUN.lvl, part: { lvl: RUN.lvl, n: RUN.placed }, rot: wob, eyes: hd ? (Math.sin(t * 1.3) > 0.97 ? 0.1 : 1) : 1 });
+    const c = RUN.crane, A = RUN.act;
+    g.fillStyle = '#3a3f5a'; rrect(g, c.x - 7, 5, 14, 8, 2); g.fill();
+    g.strokeStyle = '#3a3f5a'; g.lineWidth = 1; seg(g, c.x, 13, c.x, c.y - 3);
+    g.strokeStyle = '#5a628f'; g.lineWidth = 1.6; g.lineCap = 'round';
+    const open = A && A.type === 'fall' && A.t > 0.6 ? 1 : 0;
+    seg(g, c.x, c.y - 3, c.x - 4 - 2 * open, c.y + 1); seg(g, c.x, c.y - 3, c.x + 4 + 2 * open, c.y + 1);
+    if (A && !A.done && !(A.type === 'fall' && A.t >= 0.6) && A.t >= 0.0){
+      const b = BLOCKS[RUN.lvl][Math.min(7, A.k)], carry = A.type === 'fall' || A.t > 0.05;
+      if (carry) drawBlock(g, c.x - b[2] / 2, c.y, b[2], b[3], col, b[4]);
+    }
+    if (A && A.type === 'fall' && A.drop){
+      const d = A.drop, b = BLOCKS[RUN.lvl][Math.min(7, A.k)];
+      g.save(); g.translate(d.x, d.y); g.rotate(d.rot); drawBlock(g, -b[2] / 2, -b[3] / 2, b[2], b[3], col, b[4], clamp01((1.7 - A.t) / 0.3)); g.restore();
+      if (A.t > 0.9 && A.t < 1.6){ const a = clamp01(Math.min(A.t - 0.9, 1.6 - A.t) / 0.15); g.fillStyle = 'rgba(245,197,24,' + a.toFixed(2) + ')'; for (let i = 0; i < 3; i++){ const an = t * 7 + i * 2.09; star(g, d.x + Math.cos(an) * 9, d.y - 10 + Math.sin(an) * 3, 2.4); } }
+    }
+    RUN.sparks.forEach(p => { g.globalAlpha = 1 - p.life / p.max; g.fillStyle = p.col; circ(g, p.x, p.y, 1.3); }); g.globalAlpha = 1;
+  }
+
+  /* ---- La scène de fin de niveau et le grand final ---- */
+  const HELPER_COLS = ['#8e4ec6', '#e93d82', '#12a594', '#f76b15', '#3b9ae1', '#46a758'];
+  const HELPER_X = [44, 318, 80, 284, 18, 344];
+  function playScene(box, idx, finale, sound){
+    const P = PARTS[idx], tok = (playScene.n = (playScene.n || 0) + 1), lv = finale ? 4 : idx;
+    box.setAttribute('data-tok', tok);
+    box.hidden = false;
+    box.innerHTML = '<canvas role="img" aria-label="' + (finale ? 'Le robot terminé décolle dans le ciel' : 'Une nouvelle pièce se fixe sur le robot') + '"></canvas>' +
+      '<div class="scene-foot"><p class="cheer">' + (finale ? 'Ton robot est terminé : il décolle !' : P.cheer) + '</p>' +
+      '<button class="sound-btn" type="button" data-sound>' + soundLabel() + '</button></div>';
+    const cv = box.querySelector('canvas'), g = cv.getContext('2d');
+    if (!g) return;
+    const SX = 180, SY = 222, SC = 1.7, nHelp = finale ? 6 : idx + 1, DROP = 1.4;
+    const st = { t: 0, sparks: [], smoke: [], rockets: [], parts: [], nextRocket: 0, conf: lv >= 4 ? makeConfetti(finale ? 44 : 26, CONF_COLORS) : [], sounds: {}, stars: Array.from({ length: 40 }, () => [rnd(10, 350), rnd(2, 120), rnd(0.5, 1.4)]) };
+    const bgPaint = g2 => {
+      const wall = g2.createLinearGradient(0, 0, 0, SY); wall.addColorStop(0, '#d6e2f3'); wall.addColorStop(1, '#bccbe2');
+      g2.fillStyle = wall; g2.fillRect(0, 0, 360, SY);
+      g2.strokeStyle = 'rgba(90,110,150,.18)'; g2.lineWidth = 1; for (let x = 0; x < 360; x += 45) seg(g2, x, 26, x, SY);
+      g2.fillStyle = '#9aa6b8'; g2.fillRect(0, SY, 360, 240 - SY);
+      g2.fillStyle = '#f5c518'; for (let x = -10; x < 370; x += 24){ g2.beginPath(); g2.moveTo(x, SY); g2.lineTo(x + 12, SY); g2.lineTo(x + 6, SY + 5); g2.lineTo(x - 6, SY + 5); g2.closePath(); g2.fill(); }
+      g2.fillStyle = 'rgba(0,0,0,.14)'; g2.beginPath(); g2.ellipse(SX, SY, 70, 5, 0, 0, 6.283); g2.fill();
+      badge(g2, 8, 34, P.color, 'Niveau ' + (idx + 1) + ' · ' + cap(P.name));
+    };
+    const A = animate(box, cv, tok, 360, 240, fit => ({ bg: layer(fit, bgPaint) }), dt => step(dt), lst => draw(lst));
+    const once = (k, f) => { if (!st.sounds[k]){ st.sounds[k] = 1; if (sound) f(); } };
+    const LAUNCH = DROP + 2.6;
+    function step(dt){
+      st.t += dt;
+      const t = st.t, u = t - DROP;
+      if (u >= 0){
+        once('clank', () => { sndClank(); });
+        if (st.sounds.sp === undefined){ st.sounds.sp = 1; const jy = SY + (idx === 0 ? -8 : [-32, -64, -64, -64, -64][idx]) * SC; for (let i = 0; i < 26; i++){ const a = rnd(0, 6.283), sp = rnd(40, 110); st.sparks.push({ x: SX + rnd(-40, 40), y: jy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: rnd(0.4, 0.8) }); } }
+        if (u > 0.3) once('fan', () => sndFanfare(finale));
+        if (u > 0.6) once('claps', () => sndClaps(nHelp + (finale ? 4 : 0), finale ? 3.6 : 2.4));
+        if (lv >= 3 && u > 0.9) once('bip', sndBip);
+        stepConfetti(st.conf, dt, t);
+        if (finale){
+          if (u > 2.5) once('jet', () => sndJet(2.4));
+          if (u > 2.3 && Math.random() < dt * 60){ const ry = SY - Math.max(0, robotLift(u)) ; [-17, 17].forEach(fx => st.smoke.push({ x: SX + fx * SC + rnd(-3, 3), y: ry + 2, vx: rnd(-25, 25), vy: rnd(10, 40), r: rnd(4, 8), life: 0, max: rnd(0.8, 1.4) })); }
+          if (u > 4.6 && t >= st.nextRocket){ st.nextRocket = t + rnd(0.4, 0.8); st.rockets.push({ x: rnd(70, 290), y: 240, vy: -rnd(160, 200), ty: rnd(20, 90), col: ['#ffd93b', '#ff5fa2', '#5ec8ff', '#7dff8a', '#ff9a3b'][Math.floor(rnd(0, 5))], trail: [] }); }
+        }
+      }
+      for (let i = st.sparks.length - 1; i >= 0; i--){ const p = st.sparks[i]; p.vy += 160 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt; if (p.life > p.max) st.sparks.splice(i, 1); }
+      for (let i = st.smoke.length - 1; i >= 0; i--){ const p = st.smoke[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 1 - dt; p.r += 14 * dt; p.life += dt; if (p.life > p.max) st.smoke.splice(i, 1); }
+      for (let i = st.rockets.length - 1; i >= 0; i--){ const r = st.rockets[i]; r.trail.push([r.x, r.y]); if (r.trail.length > 8) r.trail.shift(); r.y += r.vy * dt; r.vy += 55 * dt; if (r.y <= r.ty || r.vy > -20){ for (let j = 0; j < 42; j++){ const a = j * Math.PI / 21, sp = rnd(28, 64); st.parts.push({ x: r.x, y: r.y, px: r.x, py: r.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: rnd(1, 1.7), col: r.col }); } if (sound) sndPop(); st.rockets.splice(i, 1); } }
+      for (let i = st.parts.length - 1; i >= 0; i--){ const p = st.parts[i]; p.px = p.x; p.py = p.y; p.vx *= 1 - 1.2 * dt; p.vy = p.vy * (1 - 1.2 * dt) + 34 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt; if (p.life > p.max) st.parts.splice(i, 1); }
+    }
+    function robotLift(u){ if (u < 2.6) return 0; const k = u - 2.6; return 60 * k * k + 10 * k; }
+    function draw(lst){
+      const t = st.t, u = t - DROP, k = lst.fit.k;
+      g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(lst.layers.bg, 0, 0); g.setTransform(k, 0, 0, k, 0, 0);
+      // plafond (s'ouvre au final)
+      const roof = finale ? easeSine(clamp01((u - 1.2) / 1.0)) : 0;
+      if (roof > 0){
+        const sky = g.createLinearGradient(0, 0, 0, 26); sky.addColorStop(0, '#0f1a3d'); sky.addColorStop(1, '#2a3f7a');
+        g.fillStyle = sky; g.fillStyle = '#0f1a3d'; g.fillRect(180 - 180 * roof, 0, 360 * roof, SY);
+        g.fillStyle = '#ffffff'; st.stars.forEach(s => { if (Math.abs(s[0] - 180) < 180 * roof){ g.globalAlpha = 0.5 + 0.5 * Math.sin(t * 3 + s[0]); circ(g, s[0], s[1], s[2]); } }); g.globalAlpha = 1;
+      }
+      g.fillStyle = '#5a628f'; g.fillRect(0, 0, 180 - 180 * roof, 24); g.fillRect(180 + 180 * roof, 0, 180, 24);
+      g.fillStyle = '#ffd93b'; for (let x = 20; x < 360; x += 60){ if (x < 180 - 180 * roof - 6 || x > 180 + 180 * roof + 6){ circ(g, x, 22, 3); } }
+      if (st.parts.length || st.rockets.length){
+        g.save(); g.lineCap = 'round';
+        st.rockets.forEach(r => { g.strokeStyle = 'rgba(255,230,180,.85)'; g.lineWidth = 1.6; g.beginPath(); r.trail.forEach((q, j) => j ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.lineTo(r.x, r.y); g.stroke(); });
+        st.parts.forEach(p => { g.globalAlpha = 1 - p.life / p.max; g.strokeStyle = p.col; g.lineWidth = 1.8; seg(g, p.px - p.vx * 0.05, p.py - p.vy * 0.05, p.x, p.y); });
+        g.restore();
+      }
+      // grue
+      const dy = u < 0 ? -150 * Math.pow(1 - easeOut(clamp01(t / DROP)), 1) : 0;
+      const topY = SY + ([-8, -48, -64, -76, -100][idx]) * SC + dy;
+      if (u < 0.6 && !finale || (finale && u < 0.6)){ g.strokeStyle = '#3a3f5a'; g.lineWidth = 1.5; seg(g, SX, 24, SX, Math.max(24, topY - 6 + (u > 0 ? -u * 120 : 0))); g.fillStyle = '#3a3f5a'; rrect(g, SX - 10, 18, 20, 9, 2); g.fill(); }
+      // aides
+      for (let i = 0; i < nHelp; i++) drawHelper(g, HELPER_X[i], SY + 6, HELPER_COLS[i], t, u > 0.4, i * 1.3);
+      // robot
+      const o = { done: idx, part: { lvl: idx, n: 8, dy: dy / SC } };
+      if (u >= 0){
+        o.done = idx + 1; o.part = null;
+        if (lv >= 0) o.tap = idx === 0 || lv >= 4 ? t * 9 : 0;
+        if (idx === 1 || lv >= 4) o.bob = Math.abs(Math.sin(t * 6)) * (idx === 1 ? 4 : 2);
+        if (idx >= 2) o.wave = (idx === 2 || lv >= 4 ? 0.5 + 0.45 * Math.sin(t * 7) : 0.15) * clamp01(u / 0.4) + 0;
+        if (idx >= 3) o.tilt = 0.12 * Math.sin(t * 2.4);
+        o.eyes = idx >= 3 ? clamp01((u - 0.3) / 0.3) : 1;
+        o.blink = Math.sin(t * 8) > 0;
+        o.lights = t * 3;
+        if (finale && u > 2.2){ o.wave = 0.9; o.tap = 0; o.bob = 0; }
+      }
+      const lift = finale ? robotLift(u) : 0;
+      if (finale && u > 2.3){
+        [-17, 17].forEach(fx => { const fl = 10 + Math.sin(t * 40) * 3 + Math.min(14, lift * 0.1); const x0 = SX + fx * SC, y0 = SY - lift + 2; const gr = g.createLinearGradient(0, y0, 0, y0 + fl * 2); gr.addColorStop(0, '#fff6c8'); gr.addColorStop(0.4, '#ffb347'); gr.addColorStop(1, 'rgba(255,90,40,0)'); g.fillStyle = gr; g.beginPath(); g.moveTo(x0 - 6, y0); g.quadraticCurveTo(x0, y0 + fl * 2.4, x0 + 6, y0); g.closePath(); g.fill(); });
+      }
+      st.smoke.forEach(p => { g.fillStyle = 'rgba(235,235,240,' + (0.7 * (1 - p.life / p.max)).toFixed(2) + ')'; circ(g, p.x, p.y, p.r); });
+      if (SY - lift > -40) drawRobot(g, SX, SY - lift, SC, o);
+      if (finale && u > 5.2){
+        const w = (u - 5.2) * 0.9, x = 180 + Math.cos(w) * 110, y = 70 + Math.sin(w * 2) * 22;
+        g.save(); g.translate(x, y); g.rotate(-Math.sin(w) * 0.6); drawRobot(g, 0, 0, 0.32, { done: 5, wave: 0.9, eyes: 1, blink: true });
+        g.fillStyle = 'rgba(255,180,70,.85)'; circ(g, -5.4, 3, 2.6); circ(g, 5.4, 3, 2.6); g.restore();
+      }
+      // bulle « Bip bip »
+      if (lv >= 3 && u > 0.9 && !(finale && u > 2.2)){
+        const a = easeOutBack(clamp01((u - 0.9) / 0.35)), by = SY - 92 * SC - (o.bob || 0) * SC - 4;
+        g.save(); g.translate(SX + 92, by); g.scale(a, a);
+        g.fillStyle = '#ffffff'; rrect(g, -54, -14, 108, 24, 10); g.fill(); g.strokeStyle = '#1a2358'; g.lineWidth = 1.4; g.stroke();
+        g.beginPath(); g.moveTo(-44, 6); g.lineTo(-62, 16); g.lineTo(-36, 10); g.closePath(); g.fillStyle = '#ffffff'; g.fill(); g.stroke(); g.fillStyle = '#ffffff'; g.fillRect(-44, 7.6, 9, 3);
+        g.fillStyle = '#12a594'; g.font = '800 11px ' + FONT; g.textAlign = 'center'; g.fillText('BIP BIP, BRAVO !', 0, 2);
+        g.restore();
+      }
+      if (finale && u > 0.9 && u < 2.6){
+        const n = 3 - Math.floor((u - 0.9) / 0.55);
+        if (n >= 1){ const a = 1 - ((u - 0.9) % 0.55) / 0.55; g.save(); g.translate(SX + 70, 100); g.scale(1 + (1 - a) * 0.4, 1 + (1 - a) * 0.4); g.globalAlpha = a; g.fillStyle = '#d8343c'; g.font = '800 30px ' + FONT; g.textAlign = 'center'; g.fillText(String(n), 0, 10); g.restore(); }
+      }
+      g.fillStyle = '#ffd93b'; st.sparks.forEach(p => { g.globalAlpha = 1 - p.life / p.max; circ(g, p.x, p.y, 1.6); }); g.globalAlpha = 1;
+      drawConfetti(g, st.conf);
+    }
+    if (REDUCED){
+      st.t = DROP + (finale ? 1 : 2); st.sounds = { clank: 1, sp: 1, fan: 1, claps: 1, bip: 1 };
+      draw(A.st);
+      if (sound) sndFanfare(finale);
+      return;
+    }
+    A.start();
+  }
+
+  const PART_GOT = ['ton robot a ses jambes !', 'ton robot a son corps !', 'ton robot a ses bras !', 'ton robot a sa tête !', 'ton robot est terminé !'];
+
+  /* ---------- Affichage ---------- */
+  const DEL_SVG = '<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M11.5 7H26a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H11.5L4 16z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M15 12l7 8M22 12l-7 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  const LOCK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="2"/></svg>';
+  const TICK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const CROSS = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+  const plural = g => g === 1 ? 'un bon point' : g + ' bons points';
+
+  function buildPad(el){
+    el.innerHTML = ['1','2','3','4','5','6','7','8','9','del','0','ok'].map(k => {
+      if (k === 'del') return '<button class="key del" type="button" data-k="del" aria-label="Effacer">' + DEL_SVG + '</button>';
+      if (k === 'ok') return '<button class="key ok" type="button" data-k="ok">Valider</button>';
+      return '<button class="key" type="button" data-k="' + k + '">' + k + '</button>';
+    }).join('');
+  }
+  function buildTrack(el, count){
+    el.style.gridTemplateColumns = 'repeat(' + count + ', 1fr)';
+    el.innerHTML = '';
+    for (let k = 0; k < count; k++) el.appendChild(document.createElement('li'));
+  }
+
+  function renderStart(){
+    const prof = profile();
+    const showForm = !prof || S.askName;
+    $('nameForm').hidden = !showForm;
+    $('hello').hidden = showForm;
+    if (!showForm) $('helloName').textContent = prof.name;
+    if (!S.askName) $('nameMsg').hidden = true;
+    const names = Object.keys(store.profiles), known = $('knownNames');
+    if (showForm && names.length){
+      known.innerHTML = '<span>Déjà sur cet appareil :</span>' + names.map(k => '<button class="chip" type="button" data-profile="' + esc(k) + '">' + esc(store.profiles[k].name) + '</button>').join('');
+      known.hidden = false;
+    } else known.hidden = true;
+    $('learnDoneChip').hidden = !learnDone();
+
+    $('levelList').innerHTML = LEVELS.map(lv => {
+      const st = prof ? lvlStat(prof, lv.id) : null;
+      const open = prof ? unlocked(prof, lv.id) : lv.id === 1;
+      const best = st && st.best !== null && st.best !== undefined ? st.best + '/' + lv.n : '—';
+      const pts = st ? tier(st.best, lv.n) : 0;
+      return '<li><button class="lvl' + (st && st.validated ? ' ok' : '') + '" type="button" data-level="' + lv.id + '"' + (open ? '' : ' disabled') + '>' +
+        '<span class="lvl-num theme" style="background:' + partOf(lv.id).color + '">' + (open ? (st && st.validated ? TICK : lv.id) : LOCK) + '</span>' +
+        '<span class="lvl-body"><span class="lvl-name">' + lv.id + '. ' + cap(partOf(lv.id).name) + ' · ' + lv.name + '</span><span class="lvl-desc">' + lv.desc + '</span>' + (lv.tag ? '<span class="lvl-tag">' + lv.tag + '</span>' : '') + '</span>' +
+        '<span class="lvl-score"><b>' + best + '</b><span>' + (open ? '★ ' + pts + ' sur 3' : 'fermé') + '</span></span>' +
+        '</button></li>';
+    }).join('');
+
+    const tt = $('totals');
+    if (prof && (prof.totals.ok || prof.totals.err)) tt.innerHTML = 'Depuis le début : <b>' + prof.totals.ok + '</b> réussites du premier coup et <b>' + prof.totals.err + '</b> erreurs.';
+    else tt.textContent = prof ? 'Commence par le niveau 1 : les jambes du robot.' : 'Écris ton prénom en haut pour enregistrer tes réussites.';
+
+    const pts = prof ? prof.points : [];
+    $('startCard').innerHTML = cardHTML(pts, Math.floor(pts.length / 10) + 1);
+    const done = Math.floor(pts.length / 10), dc = $('doneCards');
+    if (done > 0){
+      let h = '<span>Cartes complètes :</span>';
+      for (let k = 1; k <= done; k++) h += '<button class="chip" type="button" data-card="' + k + '">Carte n°' + k + '</button>';
+      dc.innerHTML = h;
+      dc.hidden = false;
+    } else dc.hidden = true;
+  }
+
+  function lessonSpec(card, sw){ return card.swaps ? Object.assign({}, card.solid, card.swaps[sw][1]) : card.solid; }
+  function renderLearn(){
+    const L = S.Lr, card = LEARN[L.card], ch = card.checks[L.check];
+    $('learnCount').textContent = 'Fiche ' + (L.card + 1) + ' sur ' + LEARN.length;
+    const tr = $('ltrack');
+    for (let k = 0; k < tr.children.length; k++) tr.children[k].className = k < L.card ? 'done' : (k === L.card ? 'current' : '');
+    if (L.drawn !== L.card){
+      L.drawn = L.card;
+      $('lessonTop').innerHTML = '<h2>' + card.title + '</h2>' + card.html;
+      let c = '';
+      if (card.swaps) c += '<div class="snaps">' + card.swaps.map((s, i) => '<button class="vbtn' + (i === L.sw ? ' on' : '') + '" type="button" data-sw="' + i + '">' + s[0] + '</button>').join('') + '</div>';
+      if (card.snaps) c += '<div class="snaps">' + DIR5.map(d => '<button class="vbtn" type="button" data-snap="' + d + '">' + cap(DIRS[d].label.replace('de ', '')) + '</button>').join('') + '</div><div class="lview" id="lessonView"></div>';
+      $('lessonCtrl').innerHTML = c;
+      $('lessonCtrl').hidden = !c;
+    }
+    vwShow($('lessonSlot'), lessonSpec(card, L.sw), { key: 'L' + L.card + '-' + L.sw, spin: true, showSpin: true, drag: true, tip: TIP_SPIN });
+
+    let h = '<div class="check"><span class="eyebrow">Question ' + (L.check + 1) + ' sur ' + card.checks.length + '</span><p class="check-q">' + ch.q + '</p><div class="choices' + (ch.figs ? ' figs' : '') + '">';
+    ch.c.forEach((c, k) => {
+      let cls = 'choice' + (ch.figs ? ' fig' : '');
+      if (L.picked.includes(k)) cls += k === ch.a ? ' right' : ' wrong';
+      h += '<button class="' + cls + '" type="button" data-choice="' + k + '"' + (ch.figs ? ' aria-label="Choix ' + (k + 1) + '"' : '') + (L.solved || L.picked.includes(k) ? ' disabled' : '') + '>' + c + '</button>';
+    });
+    h += '</div>';
+    if (L.picked.length){
+      const last = L.picked[L.picked.length - 1];
+      h += '<p class="why ' + (last === ch.a ? 'good' : 'bad') + '">' + (last === ch.a ? '' : 'Pas tout à fait. ') + ch.why + (last === ch.a ? '' : ' Choisis la bonne réponse.') + '</p>';
+    }
+    if (L.solved){
+      const lastCheck = L.check === card.checks.length - 1, lastCard = L.card === LEARN.length - 1;
+      h += '<button class="btn-primary" id="learnNextBtn" type="button">' + (!lastCheck ? 'Question suivante' : (lastCard ? "Terminer l'étape 1" : 'Fiche suivante')) + '</button>';
+    }
+    h += '</div>';
+    $('lessonCheck').innerHTML = h;
+  }
+  function renderLearnEnd(){
+    const L = S.Lr;
+    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + ' questions sur ' + L.total + '.';
+  }
+
+  function doneRow(st, v){
+    const cls = 'srow done' + (v.fixed ? ' fixed' : '');
+    if (st.kind === 'choice') return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sa"><span class="ico">' + (v.fixed ? CROSS : TICK) + '</span><span>' + v.h + '</span></span></div>';
+    return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', '<span>' + v.h + '</span>') + '</span></div>';
+  }
+  function activeRow(st, R){
+    if (st.kind === 'choice'){
+      return '<div class="srow active"><span class="sq">' + st.q + '</span><div class="choices' + (st.figs ? ' figs' : '') + '">' +
+        st.opts.map((o, k) => '<button class="choice' + (st.figs ? ' fig' : '') + (R.picked.includes(k) ? ' wrong' : '') + '" type="button" data-opt="' + k + '"' + (st.figs ? ' aria-label="Choix ' + (k + 1) + '"' : '') + (R.picked.includes(k) ? ' disabled' : '') + '>' + o.h + '</button>').join('') +
+        '</div></div>';
+    }
+    const box = '<span class="abox' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : '') + '" aria-label="Ta réponse">' + esc(R.input) + '<span class="caret" aria-hidden="true"></span></span>';
+    return '<div class="srow active"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
+  }
+  function renderPlay(){
+    const R = S.R, lv = LEVELS[R.level - 1], it = curItem();
+    $('playLevel').textContent = 'Niveau ' + lv.id + ' sur 5';
+    $('playName').textContent = lv.name;
+    $('playCount').textContent = 'Question ' + (R.i + 1) + ' sur ' + R.total;
+    $('tOk').textContent = R.ok;
+    $('tErr').textContent = R.err;
+    const tr = $('ptrack');
+    if (tr.children.length !== R.total) buildTrack(tr, R.total);
+    for (let k = 0; k < tr.children.length; k++){
+      tr.children[k].className = k < R.results.length ? (R.results[k].ok ? 'done' : 'miss') : (k === R.i ? 'current' : '');
+    }
+    runUpdate(R);
+    const slot = $('playSlot');
+    if (it.solid){
+      slot.hidden = false;
+      const help = !it.spin && R.helpSpin;
+      vwShow(slot, it.solid, { key: 'P' + R.uid + '-' + R.i, spin: !!it.spin, showSpin: !!it.spin || help, drag: !!it.spin || help, tip: it.spin ? TIP_SPIN : (help ? TIP_HELP : '') });
+    } else { slot.hidden = true; vwHide(); }
+
+    $('stmt').innerHTML = it.stmt || '';
+    let h = '';
+    for (let j = 0; j <= R.si && j < it.steps.length; j++){
+      h += R.vals[j] ? doneRow(it.steps[j], R.vals[j]) : activeRow(it.steps[j], R);
+    }
+    $('steps').innerHTML = h;
+    fillThumbs($('stmt'));
+    fillThumbs($('steps'));
+
+    const fb = $('feedback');
+    fb.className = 'feedback' + (R.fb ? ' ' + R.fb.kind : '');
+    fb.innerHTML = R.fb ? R.fb.html : '';
+    const hint = $('hint');
+    if (R.hint && !R.itemDone){ hint.innerHTML = '<b>Indice :</b> ' + R.hint; hint.hidden = false; } else hint.hidden = true;
+    const endBox = $('endBox');
+    endBox.hidden = !R.itemDone;
+    if (R.itemDone){ endBox.innerHTML = it.end; fillThumbs(endBox); }
+    $('contBtn').hidden = !(R.revealed && !R.itemDone);
+    const nb = $('nextBtn');
+    nb.hidden = !R.itemDone;
+    nb.textContent = R.i === R.total - 1 ? 'Voir mon score' : 'Question suivante';
+    const st = it.steps[R.si];
+    $('pad').hidden = !(st && st.kind === 'num' && !R.vals[R.si] && !R.itemDone);
+    R.shake = false;
+  }
+
+  function renderResult(){
+    const r = S.res, lv = LEVELS[r.id - 1], prof = profile();
+    $('resLevel').textContent = 'Niveau ' + lv.id + ' · ' + cap(partOf(lv.id).name) + ' · ' + lv.name;
+    if (r.gained > 0 || r.finale) playScene($('resScene'), r.id - 1, !!r.finale, true); else { $('resScene').hidden = true; $('resScene').innerHTML = ''; }
+    $('resScore').innerHTML = r.ok + '<small> / ' + r.total + '</small>';
+    const stamp = $('resStamp'), oc = $('resOutcome');
+    stamp.hidden = !(r.outcome === 'validate' || r.outcome === 'record');
+    stamp.textContent = r.outcome === 'validate' ? 'Niveau validé !' : 'Nouveau record !';
+    oc.className = 'outcome' + (stamp.hidden ? '' : ' win');
+    if (r.outcome === 'validate') oc.textContent = 'Tu gagnes ' + plural(r.gained) + ' : ' + PART_GOT[r.id - 1] + (r.id < 5 ? ' Tu ouvres le niveau ' + (r.id + 1) + '.' : '');
+    else if (r.outcome === 'record') oc.textContent = 'Sans-faute ! Tu gagnes ' + plural(r.gained) + ' de plus.';
+    else if (r.outcome === 'same') oc.textContent = r.best >= r.total ? 'Tu as déjà fait un sans-faute sur ce niveau : tu as ses 3 bons points.' : 'Niveau déjà validé. Fais un sans-faute pour gagner 2 bons points de plus.';
+    else oc.textContent = 'Il faut ' + r.need + ' réussites sur ' + r.total + ' pour valider ce niveau. Relis les corrections et réessaie !';
+
+    const rc = $('resCard'), see = $('seeCardBtn');
+    if (r.gained > 0 && prof){
+      const k = Math.floor((r.to - 1) / 10) + 1;
+      rc.innerHTML = cardHTML(prof.points, k, r.from, r.to);
+      rc.hidden = false;
+      see.hidden = !r.card;
+      see.dataset.card = r.card || k;
+    } else { rc.hidden = true; see.hidden = true; }
+
+    $('resOk').textContent = r.ok;
+    $('resErr').textContent = r.err;
+    $('resNeed').textContent = r.need + '/' + r.total;
+    $('resDetail').innerHTML = r.results.map(x =>
+      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? '' : ' <span class="tries">· à revoir</span>') + '</span></li>').join('');
+    $('sendBox').hidden = !prof;
+    if (prof) $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Niveau ' + lv.id + ' : ' + lv.name,
+      r.ok + '/' + r.total + ' réussites du premier coup ; ' + nErr(r.err) + (r.ok >= r.need ? ' ; niveau validé' : ' ; niveau pas encore validé') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '')]);
+
+    const nbtn = $('nextLevelBtn');
+    const canNext = r.id < 5 && prof && unlocked(prof, r.id + 1);
+    nbtn.hidden = !canNext;
+    if (canNext) nbtn.textContent = 'Niveau ' + (r.id + 1) + ' : ' + LEVELS[r.id].name;
+    $('replayBtn').className = canNext ? 'btn-secondary' : 'btn-primary';
+  }
+
+  function renderCard(){
+    const prof = profile(), k = S.cardView;
+    const slice = prof ? prof.points.slice((k - 1) * 10, k * 10) : [];
+    if (slice.length < 10){ S.phase = 'start'; render(); return; }
+    const last = slice[9];
+    const code = cardCode(prof.name, k);
+    const lv = validList(prof);
+    $('cardWho').textContent = prof.name;
+    $('cardNum').textContent = 'Carte n°' + k;
+    $('cardFull').innerHTML = cardHTML(prof.points, k);
+    $('cardDate').textContent = 'Complétée le ' + new Date(last.at).toLocaleDateString('fr-FR') + ' · niveaux validés : ' + (lv || 'aucun') + ' · ' + prof.totals.ok + ' réussites, ' + prof.totals.err + ' erreurs';
+    $('cardCode').textContent = code;
+    $('cardMsg').textContent = 'Bonjour, ' + prof.name + ' a complété sa carte n°' + k + ' de 10 bons points au jeu « ' + GAME_NAME + ' » (niveaux validés : ' + (lv || 'aucun') + ' ; ' +
+      prof.totals.ok + ' réussites du premier coup et ' + prof.totals.err + ' erreurs depuis le début). Code de vérification : ' + code + '.';
+    $('copyStatus').textContent = '';
+  }
+
+  function render(){
+    syncParcUI();
+    ['start', 'learn', 'learnEnd', 'play', 'result', 'card', 'teacher'].forEach(id => { $(id).hidden = S.phase !== id; });
+    if (S.phase !== 'learn' && S.phase !== 'play') vwHide();
+    if (S.phase === 'start') renderStart();
+    if (S.phase === 'learn') renderLearn();
+    if (S.phase === 'learnEnd') renderLearnEnd();
+    if (S.phase === 'play') renderPlay();
+    if (S.phase === 'result') renderResult();
+    if (S.phase === 'card') renderCard();
+    window.scrollTo(0, 0);
+  }
+  function goHome(){ S.phase = 'start'; S.askName = false; render(); }
+  function openCard(k){ S.cardView = k; S.phase = 'card'; render(); }
+
+  /* ---------- Événements ---------- */
+  $('nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    if (setName($('nameInput').value)){ $('nameInput').value = ''; S.askName = false; render(); }
+    else { $('nameMsg').textContent = 'Écris ton prénom dans la case.'; $('nameMsg').hidden = false; $('nameInput').focus(); }
+  });
+  $('knownNames').addEventListener('click', e => {
+    const b = e.target.closest('[data-profile]');
+    if (!b || !store.profiles[b.dataset.profile]) return;
+    store.current = b.dataset.profile; saveStore(); S.askName = false; render();
+  });
+  $('changeName').addEventListener('click', () => { S.askName = true; render(); $('nameInput').value = ''; $('nameInput').focus(); });
+  $('levelList').addEventListener('click', e => { const b = e.target.closest('[data-level]'); if (b && !b.disabled) startLevel(+b.dataset.level); });
+  $('doneCards').addEventListener('click', e => { const b = e.target.closest('[data-card]'); if (b) openCard(+b.dataset.card); });
+  $('seeCardBtn').addEventListener('click', e => openCard(+e.currentTarget.dataset.card));
+  $('cardBack').addEventListener('click', goHome);
+  $('copyBtn').addEventListener('click', () => {
+    const text = $('cardMsg').textContent, status = $('copyStatus');
+    const fallback = () => {
+      const r = document.createRange();
+      r.selectNodeContents($('cardMsg'));
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(r);
+      status.textContent = 'Le message est sélectionné : copiez-le avec le menu de votre appareil.';
+    };
+    try { navigator.clipboard.writeText(text).then(() => { status.textContent = 'Message copié. Collez-le dans votre messagerie.'; }, fallback); }
+    catch (e) { fallback(); }
+  });
+  $('teacherLink').addEventListener('click', () => { S.phase = 'teacher'; $('checkResult').hidden = true; render(); });
+  $('teacherBack').addEventListener('click', goHome);
+  $('previewBtns').addEventListener('click', e => { const b = e.target.closest('[data-prev]'); if (!b) return; const v = b.getAttribute('data-prev'); playScene($('previewScene'), v === 'fin' ? 4 : +v, v === 'fin', true); });
+  $('checkForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('tName').value, k = parseInt($('tCard').value, 10);
+    const code = $('tCode').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const out = $('checkResult');
+    out.hidden = false;
+    if (!key(name) || !(k >= 1) || code.length !== 4){ out.className = 'check-result ko'; out.textContent = 'Remplissez les trois cases : le prénom, le numéro de carte et le code à 4 caractères.'; return; }
+    if (cardCode(name, k) === code){ out.className = 'check-result ok'; out.textContent = 'Carte valide : ' + name.trim() + ', carte n°' + k + '. La récompense est méritée !'; }
+    else { out.className = 'check-result ko'; out.textContent = "Ce code ne correspond pas. Vérifiez l'orthographe du prénom et le numéro de carte."; }
+  });
+
+  $('learnBtn').addEventListener('click', learnStart);
+  $('learnAgainBtn').addEventListener('click', learnStart);
+  $('learnHome').addEventListener('click', goHome);
+  $('toGameBtn').addEventListener('click', goHome);
+  $('lessonCheck').addEventListener('click', e => {
+    const c = e.target.closest('[data-choice]');
+    if (c){ learnPick(+c.dataset.choice); return; }
+    if (e.target.closest('#learnNextBtn')) learnNext();
+  });
+  $('lessonCtrl').addEventListener('click', e => {
+    const L = S.Lr, card = LEARN[L.card];
+    const sw = e.target.closest('[data-sw]');
+    if (sw){
+      L.sw = +sw.dataset.sw;
+      $('lessonCtrl').querySelectorAll('[data-sw]').forEach(b => b.classList.toggle('on', +b.dataset.sw === L.sw));
+      vwShow($('lessonSlot'), lessonSpec(card, L.sw), { key: 'L' + L.card + '-' + L.sw, spin: true, showSpin: true, drag: true, tip: TIP_SPIN });
+      return;
+    }
+    const sn = e.target.closest('[data-snap]');
+    if (sn && card.snaps){
+      const d = sn.dataset.snap;
+      $('lessonCtrl').querySelectorAll('[data-snap]').forEach(b => b.classList.toggle('on', b.dataset.snap === d));
+      vwSnap(d);
+      $('lessonView').innerHTML = '<span class="vcap">Vue ' + DIRS[d].label + cellsSVG(voxCells(card.solid.c, d), 0, 24) + '</span>';
+    }
+  });
+
+  $('playHome').addEventListener('click', goHome);
+  $('steps').addEventListener('click', e => { const b = e.target.closest('[data-opt]'); if (b && !b.disabled && S.R) pickOpt(+b.dataset.opt); });
+  $('pad').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b && S.phase === 'play') numPress(b.dataset.k); });
+  $('contBtn').addEventListener('click', () => { if (S.R && S.R.revealed) nextStep(); });
+  $('nextBtn').addEventListener('click', nextItem);
+  document.addEventListener('keydown', e => {
+    if (S.phase !== 'play' || !S.R || e.ctrlKey || e.metaKey || e.altKey) return;
+    const R = S.R;
+    if (e.key === 'Enter'){
+      if (R.itemDone){ e.preventDefault(); nextItem(); return; }
+      if (R.revealed){ e.preventDefault(); nextStep(); return; }
+    }
+    const st = curStep();
+    if (!st || st.kind !== 'num') return;
+    let k = null;
+    if (/^[0-9]$/.test(e.key)) k = e.key;
+    else if (e.key === 'Backspace' || e.key === 'Delete') k = 'del';
+    else if (e.key === 'Enter') k = 'ok';
+    if (!k) return;
+    e.preventDefault();
+    numPress(k);
+  });
+
+  $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
+  $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
+  $('resHome').addEventListener('click', goHome);
+
+  /* ---------- Démarrage (garde la partie en cours si la page est mise à jour) ---------- */
+  function boot(data){
+    buildPad($('pad'));
+    buildTrack($('ltrack'), LEARN.length);
+    const saved = data && data.S;
+    if (saved && saved.phase && saved.Lr) Object.assign(S, saved);
+    S.Lr.drawn = -1;
+    if (S.phase === 'play' && (!S.R || !S.R.items || !S.R.items.length)) S.phase = 'start';
+    if (S.phase === 'result' && !S.res) S.phase = 'start';
+    if (S.phase === 'learn' && S.Lr.card >= LEARN.length) S.phase = 'start';
+    render();
+    if (S.phase === 'play' && S.R.locked && !S.R.itemDone) nextStep();
+  }
+  const hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function'){
+    try { hot.snapshot(() => ({ S: JSON.parse(JSON.stringify(S)) })); } catch (e) {}
+  }
+  if (hot && hot.ready) hot.ready(boot);
+  else boot((hot && hot.data) || {});
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,2258 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Je me teste</title>
+<!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html#calcul-mental"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Mise en page : une seule colonne posée sur un cahier Seyès, comme le jeu des soustractions.
+   Étape 1 : combien de doubles, puis les doubles écrits ligne par ligne comme dans la leçon.
+   Étape 2 : compteur et chrono, la fiche du calcul, un grand pavé de touches.
+   Bons points : une carte de 10 cases tamponnées à l'encre violette. */
+:root{
+  --paper:#f6f7fd;
+  --sheet:#ffffff;
+  --ink:#1a2358;
+  --ink-soft:#5a628f;
+  --rule:#e4e8f7;
+  --rule-strong:#cad1ef;
+  --pen:#2b45c8;
+  --pen-deep:#1a2d92;
+  --pen-ink:#ffffff;
+  --double:#c23a54;
+  --stamp:#7a36c2;
+  --stamp-bg:#f3ecfb;
+  --red:#cf2f46;
+  --red-bg:#fdebee;
+  --good:#157a45;
+  --good-bg:#e3f4ea;
+  --key:#ffffff;
+  --key-edge:#ccd3f0;
+  --key-shadow:#b5bee6;
+  --jaune:#f2b200;
+  --jaune-ink:#3b2b00;
+  --orange:#ea7417;
+  --orange-ink:#ffffff;
+  --font-title:"Playwrite FR Moderne","Segoe Print","Bradley Hand",cursive;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+    --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff; --pen-deep:#5c74e0; --pen-ink:#0f1638;
+    --double:#ff8fa3; --stamp:#cfa8ff; --stamp-bg:#2c2540;
+    --red:#ff8894; --red-bg:#3b2128; --good:#63d49a; --good-bg:#1a3729;
+    --key:#283833; --key-edge:#3a4d46; --key-shadow:#0e1513;
+    --jaune:#e8ab00; --jaune-ink:#2a1f00; --orange:#f08a3a; --orange-ink:#1f1004;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+  --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff; --pen-deep:#5c74e0; --pen-ink:#0f1638;
+  --double:#ff8fa3; --stamp:#cfa8ff; --stamp-bg:#2c2540;
+  --red:#ff8894; --red-bg:#3b2128; --good:#63d49a; --good-bg:#1a3729;
+  --key:#283833; --key-edge:#3a4d46; --key-shadow:#0e1513;
+  --jaune:#e8ab00; --jaune-ink:#2a1f00; --orange:#f08a3a; --orange-ink:#1f1004;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to bottom, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to right, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+  background-size:100% 32px, 32px 100%, 100% 8px;
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-offset:3px}
+
+.app{
+  min-height:100%;
+  max-width:30rem;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:16px 20px;
+}
+.screen{flex:1;display:flex;flex-direction:column;gap:16px}
+.n{font-family:var(--font-num);font-weight:700;font-variant-numeric:tabular-nums}
+.x2{color:var(--double)}
+
+.title{
+  font-family:var(--font-title);
+  font-weight:400;
+  font-size:clamp(1.8rem, 7.5vw, 2.5rem);
+  line-height:1.6;
+  color:var(--pen);
+  margin:0;
+  text-wrap:balance;
+}
+.title-block{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.lead{margin:0;font-size:1.05rem;line-height:1.55;color:var(--ink-soft);max-width:38ch}
+
+.fiche{
+  background:var(--sheet);
+  border:1.5px solid var(--key-edge);
+  border-radius:20px;
+  box-shadow:0 3px 0 var(--key-shadow);
+  padding:20px;
+}
+.eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* Boutons */
+.btn-primary,.btn-secondary{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;border-radius:18px;cursor:pointer;text-align:center;
+  font-family:var(--font-num);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.btn-primary{
+  min-height:60px;border:0;
+  background:var(--pen);color:var(--pen-ink);
+  font-weight:800;font-size:1.4rem;line-height:1.2;padding:8px 16px;
+  box-shadow:0 4px 0 var(--pen-deep);
+}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--pen-deep)}
+.btn-secondary{
+  min-height:54px;border:1.5px solid var(--key-edge);
+  background:var(--sheet);color:var(--pen);
+  font-weight:700;font-size:1.2rem;line-height:1.2;padding:8px 16px;
+  box-shadow:0 3px 0 var(--key-shadow);
+}
+.btn-secondary:active{transform:translateY(2px);box-shadow:0 1px 0 var(--key-shadow)}
+.btn-inline{width:auto;flex:none;min-height:48px;padding:6px 18px;font-size:1.1rem}
+.btn-ghost{
+  border:0;background:none;cursor:pointer;padding:6px 4px;
+  color:var(--ink-soft);font-weight:600;font-size:.95rem;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.push-bottom{margin-top:auto}
+.send-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--sheet);border:1.5px dashed var(--pen)}
+.send-btn{text-decoration:none}
+.send-btn svg{width:22px;height:22px;flex:none}
+.send-note{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
+.stack{display:flex;flex-direction:column;gap:10px}
+
+/* Champs */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.9rem;font-weight:600}
+.input{
+  width:100%;min-width:0;height:50px;padding:0 14px;
+  border:1.5px solid var(--key-edge);border-radius:14px;
+  background:var(--sheet);color:var(--ink);font-size:1.1rem;
+}
+.input::placeholder{color:var(--ink-soft);opacity:.7}
+.name-row{display:flex;gap:8px;align-items:stretch}
+.name-row .input{flex:1}
+.form-msg{margin:0;font-size:.92rem;color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+.chip{
+  border:1.5px solid var(--key-edge);background:var(--paper);border-radius:999px;
+  padding:4px 12px;font-weight:600;font-size:.95rem;color:var(--pen);cursor:pointer;
+}
+.hello{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hello p{margin:0;font-size:1.15rem}
+.hello b{font-family:var(--font-num);font-weight:800;font-size:1.35rem;color:var(--pen)}
+
+/* Parcours jaune / orange */
+.parcours{display:flex;flex-direction:column;gap:10px;padding:16px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg-btn{
+  min-height:50px;border-radius:14px;cursor:pointer;
+  font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1.2;
+  background:var(--sheet);color:var(--ink);border:2.5px solid var(--key-edge);
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.seg-btn i{width:12px;height:12px;border-radius:50%;flex:none}
+.seg-btn.jaune i{background:var(--jaune)}
+.seg-btn.orange i{background:var(--orange)}
+.seg-btn.jaune[aria-pressed="true"]{background:var(--jaune);border-color:var(--jaune);color:var(--jaune-ink)}
+.seg-btn.orange[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.seg-btn[aria-pressed="true"] i{background:currentColor}
+.seg-note{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.pchip{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:600;line-height:1.6}
+.pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
+.pchip.orange{background:var(--orange);color:var(--orange-ink)}
+
+/* Accueil */
+.step-card{display:flex;flex-direction:column;gap:12px}
+.step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.step-card h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.45rem;line-height:1.2}
+.step-card > p{margin:0;line-height:1.5;color:var(--ink-soft)}
+.done-chip{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;font-weight:600;color:var(--good);background:var(--good-bg);border-radius:999px;padding:2px 10px 2px 8px}
+.done-chip svg{width:14px;height:14px}
+.rule-box{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:12px;background:var(--paper);border:1.5px dashed var(--rule-strong);font-size:.95rem;line-height:1.5}
+.rule-box .n{font-size:1.05rem}
+.record-line{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.5}
+.record-line b{color:var(--ink)}
+.teacher-link{align-self:center}
+
+/* Carte de bons points */
+.bp{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--paper);border:1.5px solid var(--key-edge)}
+.bp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bp-head h3{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem;line-height:1.2}
+.bp-count{font-family:var(--font-num);font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.slots{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5, minmax(0,1fr));gap:8px}
+.slot{
+  aspect-ratio:1 / 1.12;max-width:100%;
+  border:2px dashed var(--rule-strong);border-radius:14px;background:var(--sheet);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  color:var(--ink-soft);font-family:var(--font-num);font-weight:700;font-size:1rem;
+}
+.slot.on{border-style:solid;border-color:var(--stamp);background:var(--stamp-bg);color:var(--stamp)}
+.slot svg{width:62%;height:auto;transform:rotate(-9deg)}
+.slot .t{font-size:.76rem;line-height:1;font-variant-numeric:tabular-nums}
+.slot.new svg{animation:stampIn .55s cubic-bezier(.2,1.4,.4,1) both}
+.bp-note{margin:0;font-size:.82rem;color:var(--ink-soft)}
+.done-cards{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+
+/* En-tête commun */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.count{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.count .label{font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.count .num{font-family:var(--font-num);font-weight:800;font-size:1.7rem;line-height:1}
+.count .of{font-family:var(--font-num);font-weight:600;font-size:1.15rem;color:var(--ink-soft)}
+.chrono{
+  display:flex;align-items:center;gap:8px;
+  background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:999px;
+  padding:4px 14px 4px 10px;
+  font-family:var(--font-num);font-weight:700;font-size:1.45rem;line-height:1.3;
+  font-variant-numeric:tabular-nums;
+}
+.chrono svg{width:22px;height:22px;color:var(--pen)}
+.track{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+#track{grid-template-columns:repeat(15, 1fr)}
+#ltrack{grid-template-columns:repeat(6, 1fr)}
+.track li{height:8px;border-radius:4px;background:var(--rule-strong);transition:background-color .25s}
+.track li.done{background:var(--good)}
+.track li.current{background:var(--pen)}
+
+/* Étape 1 : apprendre */
+#learn{gap:12px}
+.lcalc{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px}
+.lcalc .calc{font-size:clamp(2.6rem, 13vw, 4rem)}
+.lcalc.compact{padding:10px 16px}
+.lcalc.compact .calc{font-size:clamp(1.8rem, 8.5vw, 2.4rem)}
+.calc .q{color:var(--ink-soft)}
+.calc .res{color:var(--good)}
+
+.choose{display:flex;flex-direction:column;gap:12px}
+.choose-lead{margin:0;font-size:1.05rem;line-height:1.5}
+.strat{
+  display:grid;grid-template-columns:44px minmax(0,1fr) 18px;gap:12px;align-items:center;
+  width:100%;padding:16px;text-align:left;cursor:pointer;
+  background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:20px;
+  box-shadow:0 3px 0 var(--key-shadow);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.strat:active{transform:translateY(2px);box-shadow:0 1px 0 var(--key-shadow)}
+.strat.is-wrong{border-color:var(--red);background:var(--red-bg)}
+.strat-icon{width:44px;height:44px;border-radius:12px;background:var(--paper);display:flex;align-items:center;justify-content:center;color:var(--double);font-family:var(--font-num);font-weight:800;font-size:1.5rem}
+.strat-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.strat-name{font-family:var(--font-num);font-weight:800;font-size:1.3rem;line-height:1.2}
+.strat-desc{font-family:var(--font-num);font-weight:700;font-size:1.05rem;line-height:1.4;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.strat-chev{width:18px;height:18px;color:var(--ink-soft)}
+.choose-fb{margin:0;padding:12px 14px;border-radius:14px;background:var(--red-bg);color:var(--red);font-weight:500;line-height:1.5}
+
+.work{display:flex;flex-direction:column;gap:12px;padding:16px}
+.dlines{display:flex;flex-direction:column;gap:8px}
+.dline{display:grid;grid-template-columns:4.6rem minmax(0,1fr);align-items:center;gap:10px}
+.dlabel{font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);line-height:1.2}
+.deq{
+  display:flex;align-items:center;gap:.28em;white-space:nowrap;min-width:0;
+  font-family:var(--font-num);font-weight:800;font-size:clamp(1.35rem, 6.2vw, 1.85rem);line-height:1.2;
+  font-variant-numeric:tabular-nums;
+}
+.deq.future{color:var(--ink-soft);opacity:.75}
+.dfinal{padding-top:8px;border-top:1.5px dashed var(--rule-strong)}
+.dfinal .deq{color:var(--ink)}
+.dfinal .res{color:var(--good)}
+.cbox{
+  flex:none;display:inline-flex;align-items:center;justify-content:center;
+  min-width:3.4ch;padding:0 8px;border-radius:12px;
+  border:2px solid var(--key-edge);background:var(--sheet);color:var(--ink);
+  font-family:var(--font-num);font-weight:800;font-size:1em;line-height:1.3;
+  font-variant-numeric:tabular-nums;
+  transition:background-color .2s, border-color .2s, color .2s;
+}
+.cbox.empty{border-style:dashed;border-color:var(--rule-strong);color:var(--ink-soft)}
+.cbox.active{border-color:var(--pen);color:var(--pen)}
+.cbox.filled{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.cbox.bad{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.cbox.bad .caret{display:none}
+.cbox.shake{animation:shake .38s ease}
+.instr{margin:0;font-size:1.05rem;line-height:1.55}
+.instr .n{font-size:1.2rem}
+
+/* Étape 1 : bilan */
+.tips{display:flex;flex-direction:column;gap:14px}
+.tip{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start}
+.tip h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.25rem;line-height:1.3}
+.tip p{margin:2px 0 0;line-height:1.5;color:var(--ink-soft)}
+.tip .example{margin-top:4px;font-family:var(--font-num);font-weight:700;font-size:1.05rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.choices{margin:0;color:var(--ink-soft);line-height:1.5}
+.choices b{color:var(--ink)}
+
+/* Étape 2 : défi chrono */
+.play{display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 16px 18px}
+.calc{
+  font-family:var(--font-num);font-weight:800;
+  font-size:clamp(2.7rem, 14.5vw, 4.4rem);line-height:1.05;
+  display:flex;align-items:baseline;justify-content:center;gap:.22em;
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.op{color:var(--pen)}
+.answer{
+  display:flex;align-items:center;justify-content:center;
+  min-width:4.4ch;min-height:1.3em;padding:0 .35em;
+  font-family:var(--font-num);font-weight:800;font-size:clamp(2.6rem, 13vw, 4rem);line-height:1.15;
+  font-variant-numeric:tabular-nums;color:var(--pen);
+  border:2.5px dashed var(--rule-strong);border-radius:18px;
+  transition:background-color .2s, border-color .2s, color .2s;
+}
+.caret{display:inline-block;width:3px;height:.85em;background:currentColor;border-radius:2px;margin-left:2px;animation:blink 1.05s steps(1) infinite}
+.answer.is-good{border-style:solid;border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.answer.is-bad{border-style:solid;border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.answer.shake{animation:shake .38s ease}
+.answer.is-good .caret,.answer.is-bad .caret{display:none}
+.feedback{margin:0;min-height:1.6em;font-weight:600;font-size:1.08rem}
+.play .feedback{text-align:center}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--red)}
+.feedback.info{color:var(--ink-soft);font-weight:500}
+.hint-btn{
+  border:0;background:none;cursor:pointer;padding:4px 6px;
+  color:var(--pen);font-weight:600;font-size:1rem;
+  text-decoration:underline;text-decoration-style:dashed;text-underline-offset:4px;
+}
+.hint{
+  margin:0;width:100%;padding:12px 14px;border-radius:14px;
+  background:var(--paper);border:1.5px dashed var(--rule-strong);
+  font-size:1rem;line-height:1.6;
+}
+.hint .n{font-size:1.1rem}
+
+.pad{margin-top:auto;display:grid;grid-template-columns:repeat(3, 1fr);gap:10px}
+.key{
+  height:clamp(52px, 8.4vh, 70px);
+  border:1.5px solid var(--key-edge);border-radius:16px;
+  background:var(--key);color:var(--ink);
+  font-family:var(--font-num);font-weight:700;font-size:1.95rem;line-height:1;
+  box-shadow:0 3px 0 var(--key-shadow);cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.key:active{transform:translateY(2px);box-shadow:0 1px 0 var(--key-shadow)}
+.key.del{color:var(--ink-soft)}
+.key.del svg{width:30px;height:30px}
+.key.ok{background:var(--pen);border-color:var(--pen-deep);color:var(--pen-ink);box-shadow:0 3px 0 var(--pen-deep);font-size:1.3rem;font-weight:800}
+.key.ok:active{box-shadow:0 1px 0 var(--pen-deep)}
+
+/* Fin du défi */
+.result{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.big-time{font-family:var(--font-num);font-weight:800;font-size:clamp(2.6rem, 13vw, 3.8rem);line-height:1.1;font-variant-numeric:tabular-nums}
+.stamp{
+  margin-top:8px;display:inline-block;padding:2px 14px;
+  border:2.5px solid var(--stamp);border-radius:10px;color:var(--stamp);
+  font-family:var(--font-title);font-size:1.05rem;line-height:1.9;
+  transform:rotate(-4deg);
+}
+.outcome{margin:8px 0 0;font-size:1.05rem;line-height:1.5;max-width:32ch}
+.outcome b{font-family:var(--font-num);font-weight:800}
+.outcome.win{color:var(--stamp);font-weight:600}
+.goal{margin:6px 0 0;font-size:.95rem;line-height:1.5;color:var(--ink-soft)}
+.goal.ok{color:var(--good);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px;margin:0}
+.stats div{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:16px;padding:10px 8px;text-align:center;min-width:0}
+.stats dt{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.stats dd{margin:2px 0 0;font-family:var(--font-num);font-weight:800;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.list-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.list-head h2{margin:0;font-size:1.05rem;font-weight:600}
+.legend{font-size:.82rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red)}
+.rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.row{display:grid;grid-template-columns:minmax(0, 8.8rem) minmax(0,1fr) 3.3rem;gap:10px;align-items:center}
+.r-calc{font-family:var(--font-num);font-weight:600;font-size:1.05rem;line-height:1.2;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.r-calc b{font-weight:800;color:var(--pen)}
+.r-dots{display:inline-flex;gap:3px}
+.r-bar{height:10px;border-radius:5px;background:var(--paper);overflow:hidden}
+.r-bar i{display:block;height:100%;border-radius:5px;background:var(--rule-strong)}
+.row.fast .r-bar i{background:var(--good)}
+.r-time{text-align:right;font-family:var(--font-num);font-weight:700;font-variant-numeric:tabular-nums}
+.row.fast .r-time{color:var(--good)}
+.fast-note{margin:10px 0 0;font-size:.85rem;color:var(--ink-soft)}
+.fast-note b{color:var(--good)}
+
+/* Carte complète */
+.card-sheet{display:flex;flex-direction:column;gap:14px}
+.card-who{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card-who b{font-family:var(--font-num);font-weight:800;font-size:1.5rem;color:var(--pen)}
+.card-date{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.code-box{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px;border:2.5px solid var(--stamp);border-radius:16px;background:var(--stamp-bg)}
+.code{font-family:var(--font-num);font-weight:800;font-size:2.4rem;line-height:1.1;letter-spacing:.2em;padding-left:.2em;color:var(--stamp)}
+.msg{
+  margin:0;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px dashed var(--rule-strong);
+  line-height:1.55;-webkit-user-select:all;user-select:all;
+}
+.copy-status{margin:0;font-size:.92rem;color:var(--good);min-height:1.4em}
+
+/* Espace enseignante */
+.form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.check-result{margin:0;padding:12px 14px;border-radius:14px;line-height:1.5;font-weight:500}
+.check-result.ok{background:var(--good-bg);color:var(--good)}
+.check-result.ko{background:var(--red-bg);color:var(--red)}
+.howto{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;line-height:1.5;color:var(--ink-soft)}
+
+@keyframes blink{50%{opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+@keyframes stampIn{0%{transform:rotate(-9deg) scale(1.9);opacity:0}100%{transform:rotate(-9deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .caret{animation:none}
+  .answer.shake,.cbox.shake,.slot.new svg{animation:none}
+  .track li{transition:none}
+}
+@media (max-height:660px){
+  .play{padding:14px 12px 12px;gap:8px}
+  .work{gap:8px;padding:12px 14px}
+  .key{height:50px}
+  #game,#learn{gap:10px}
+}
+[hidden]{display:none!important}
+/* Pistes de ski */
+.runbox{border-radius:14px;overflow:hidden;border:1.5px solid var(--key-edge);background:#e6f3ff;line-height:0}
+.runbox canvas,.scene canvas{display:block;width:100%;height:auto}
+.scene{border-radius:18px;overflow:hidden;border:1.5px solid var(--key-edge);background:var(--sheet)}
+.scene[hidden]{display:none}
+.scene-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px}
+.cheer{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem;line-height:1.3;color:var(--ink)}
+.sound-btn{border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:600;color:var(--pen);cursor:pointer}
+.pbtns{display:flex;flex-wrap:wrap;gap:8px}
+.pbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;padding:6px 12px;font-weight:600;color:var(--ink);cursor:pointer}
+.pdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink-soft);flex:none}
+.head-btns{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--key-edge);background:var(--sheet);color:var(--pen);display:inline-grid;place-items:center;cursor:pointer;padding:0;flex:none}
+.icon-btn svg{width:22px;height:22px}
+.icon-btn .slash{display:none}
+.icon-btn.off .wave{display:none}
+.icon-btn.off .slash{display:inline}
+.piste-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0}
+.piste-row .pdot.on{width:20px;height:20px;box-shadow:0 0 0 2px var(--sheet),0 0 0 4px var(--pen)}
+.piste-txt{flex-basis:100%;margin:2px 0 0;font-size:.92rem;line-height:1.4;color:var(--ink-soft)}
+.piste-txt b{color:var(--ink)}
+.prev-title{margin:0;font-family:var(--font-num);font-size:1.2rem;color:var(--ink)}
+
+.start-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.start-choice{grid-template-columns:1fr}}
+.start-opt{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px;text-align:left;height:auto;padding:12px 14px;white-space:normal}
+.so-title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.05rem}
+.so-sub{font-size:.82rem;font-weight:500;opacity:.85;line-height:1.35}
+
+.notions{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.notions li{border:1.5px solid var(--key-edge);border-radius:999px;padding:3px 10px;font-size:.85rem;font-weight:600;color:var(--ink-soft);background:var(--sheet)}
+.progress-note{margin:0;text-align:center;font-size:.92rem;color:var(--ink-soft)}
+.calc.long{font-size:clamp(1.9rem, 9vw, 3rem)}
+.calc.xlong{font-size:clamp(1.4rem, 6.8vw, 2.3rem)}
+.calc .w{font-family:var(--font-body);font-weight:600;font-size:.6em;color:var(--ink-soft);align-self:center}
+.corr{margin:0;padding:10px 12px;border-radius:12px;background:var(--pen-soft, #eef1fd);line-height:1.6;font-size:1.05rem}
+.corr b{color:var(--pen);font-family:var(--font-num);font-weight:800}
+.first-pick{margin:6px 0 0;font-size:1.08rem;line-height:1.5}
+.first-pick b{font-family:var(--font-num);font-weight:800}
+.rank{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.rk{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;border:1.5px solid var(--key-edge);border-radius:14px;padding:10px 12px;background:var(--sheet)}
+.rk-num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-num);font-weight:800;color:var(--sheet);background:var(--ink-soft)}
+.rk-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.rk-name{font-weight:700;color:var(--ink);line-height:1.3}
+.rk-badge{align-self:flex-start;border-radius:999px;padding:1px 9px;font-size:.78rem;font-weight:700}
+.rk-reco{font-weight:600;color:var(--ink);font-size:.92rem;line-height:1.35}
+.rk-detail{font-size:.82rem;color:var(--ink-soft);line-height:1.4}
+.step-card .pchip{vertical-align:middle}
+.rk-go{padding:8px 14px;font-size:.95rem;white-space:nowrap;text-decoration:none}
+.st-work .rk-num{background:var(--red)} .st-work .rk-badge{color:var(--red);background:var(--red-bg)}
+:root{--rev:#a35200;--rev-bg:#fff0dc}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--rev:#ffb366;--rev-bg:#3a2a14}}
+:root[data-theme="dark"]{--rev:#ffb366;--rev-bg:#3a2a14}
+.st-rev .rk-num{background:var(--rev)} .st-rev .rk-badge{color:var(--rev);background:var(--rev-bg)}
+.st-ok .rk-num{background:var(--good)} .st-ok .rk-badge{color:var(--good);background:var(--good-bg)}
+.t-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.t-list li{border-top:1.5px dashed var(--key-edge);padding-top:10px;line-height:1.5;font-size:.92rem}
+.t-list li:first-child{border-top:0;padding-top:0}
+.t-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.t-table th,.t-table td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--key-edge);vertical-align:top}
+.pad.dim{opacity:.4}
+@media (max-width:380px){.rk{grid-template-columns:auto 1fr}.rk-go{grid-column:1 / -1;justify-self:start}}
+</style>
+
+<div class="app">
+
+  <!-- Accueil -->
+  <section id="start" class="screen" aria-labelledby="startTitle">
+    <div class="title-block">
+      <span class="eyebrow">Calcul mental · Bilan</span>
+      <h1 class="title" id="startTitle">Je me teste</h1>
+    </div>
+
+    <form class="fiche stack" id="nameForm" novalidate>
+      <div class="field">
+        <label for="nameInput">Ton prénom</label>
+        <div class="name-row">
+          <input class="input" id="nameInput" name="prenom" type="text" autocomplete="given-name" maxlength="30" placeholder="Par exemple : Léa">
+          <button class="btn-secondary btn-inline" type="submit">Valider</button>
+        </div>
+      </div>
+      <p class="form-msg" id="nameMsg" hidden></p>
+      <div class="chips" id="knownNames" hidden></div>
+    </form>
+
+    <div class="hello" id="hello" hidden>
+      <p>Bonjour <b id="helloName"></b> !</p>
+      <button class="btn-ghost" id="changeName" type="button">Ce n'est pas moi</button>
+    </div>
+
+    <div class="fiche step-card">
+      <span class="eyebrow">Le test</span>
+      <h2>Tous les calculs, mélangés</h2>
+      <p>Les calculs de tous les jeux de calcul mental arrivent dans le désordre : à chaque calcul, choisis la bonne astuce. Réponds vite, sans te tromper.</p>
+      <p>Chaque sorte de calcul commence au niveau <span class="pchip jaune">Jaune</span>. Quand tu la réussis vite, elle passe au niveau <span class="pchip orange">Orange</span>.</p>
+      <p>Choisis ta version. La <b>courte</b> pose 1 ou 2 calculs de chaque sorte. La <b>longue</b> fait revenir les calculs ratés ou trop lents : son bilan est plus sûr. À la fin, tu sais par quel jeu commencer, et dans quel parcours.</p>
+      <ul class="notions" id="notionList" aria-label="Les notions du test"></ul>
+      <div class="bp" id="startCard"></div>
+      <p class="record-line" id="lastLine"></p>
+      <div class="done-cards" id="doneCards" hidden></div>
+      <div class="start-choice">
+        <button class="btn-secondary start-opt" id="startShort" type="button">
+          <span class="so-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Version courte</span>
+          <span class="so-sub" id="shortSub"></span>
+        </button>
+        <button class="btn-secondary start-opt" id="startLong" type="button">
+          <span class="so-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4.4h4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Version longue</span>
+          <span class="so-sub" id="longSub"></span>
+        </button>
+      </div>
+      <p class="bp-note">Un bon point par test terminé, une fois par jour. Tes résultats sont gardés sur cet appareil : joue toujours sur le même.</p>
+    </div>
+
+    <div class="fiche stack" id="lastBox" hidden>
+      <div class="list-head"><h2>Ton dernier bilan</h2></div>
+      <p class="record-line" id="lastDate"></p>
+      <ol class="rank" id="lastRank"></ol>
+    </div>
+
+    <button class="btn-ghost teacher-link" id="teacherLink" type="button">Espace enseignante : bilans et cartes</button>
+  </section>
+
+  <!-- Le test -->
+  <section id="game" class="screen" hidden aria-label="Le test">
+    <header class="bar">
+      <div class="count" aria-live="polite">
+        <span class="label">Calcul</span>
+        <span class="num" id="qNum">1</span>
+        <span class="pchip jaune" id="gameParcours">Jaune</span>
+      </div>
+      <div class="head-btns"><button class="icon-btn" id="soundBtn" type="button" data-sound="icon" aria-label="Son : activé"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path class="wave" d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="slash" d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="btn-ghost" id="quitBtn" type="button">Arrêter</button></div>
+    </header>
+
+    <div class="runbox" id="runbox" aria-hidden="true"></div>
+    <p class="progress-note" id="progressNote"></p>
+
+    <div class="fiche play">
+      <div class="calc" aria-live="polite" id="qCalc"></div>
+      <div class="answer" id="answer" aria-live="polite" aria-label="Ta réponse"><span id="answerText"></span><span class="caret" aria-hidden="true"></span></div>
+      <p class="feedback" id="feedback" aria-live="assertive"></p>
+      <p class="corr" id="corr" hidden></p>
+      <button class="btn-primary" id="nextBtn" type="button" hidden>Calcul suivant</button>
+    </div>
+
+    <div class="pad" id="pad"></div>
+  </section>
+
+  <!-- Le bilan -->
+  <section id="end" class="screen" hidden aria-labelledby="endTitle">
+    <h1 class="title" id="endTitle">Ton bilan</h1>
+
+    <div class="fiche result">
+      <span class="eyebrow" id="endEyebrow">Parcours jaune</span>
+      <p class="first-pick" id="firstPick"></p>
+      <p class="outcome" id="outcome"></p>
+    </div>
+
+    <div class="bp" id="endCard" hidden></div>
+    <button class="btn-primary" id="seeCardBtn" type="button" hidden>Voir ma carte complète</button>
+
+    <dl class="stats">
+      <div><dt>Calculs</dt><dd id="statN">0</dd></div>
+      <div><dt>Réussis</dt><dd id="statOk">0</dd></div>
+      <div><dt>Durée</dt><dd id="statTime">0 s</dd></div>
+    </dl>
+
+    <div class="fiche stack">
+      <div class="list-head"><h2>Tes jeux, du plus difficile au plus facile</h2></div>
+      <ol class="rank" id="rank"></ol>
+      <p class="send-note">« Jouer » ouvre le jeu dans un nouvel onglet.</p>
+    </div>
+
+    <div class="send-box" id="sendBox">
+      <a class="btn-secondary send-btn" id="sendLink" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M4 7.5l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Envoyer mon bilan à la maîtresse
+      </a>
+      <p class="send-note">Un formulaire s'ouvre avec ton bilan déjà écrit. Appuie sur « Envoyer » pour que ta maîtresse le reçoive.</p>
+    </div>
+
+    <div class="stack push-bottom">
+      <button class="btn-primary" id="againBtn" type="button">Refaire le test</button>
+      <button class="btn-secondary" id="endHomeBtn" type="button">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- Carte de 10 bons points complète -->
+  <section id="card" class="screen" hidden aria-labelledby="cardTitle">
+    <h1 class="title" id="cardTitle">Carte complète !</h1>
+    <div class="fiche card-sheet">
+      <div class="card-who"><b id="cardWho"></b><span class="eyebrow" id="cardNum"></span></div>
+      <div class="bp" id="cardFull"></div>
+      <p class="card-date" id="cardDate"></p>
+      <div class="code-box">
+        <span class="eyebrow">Code de vérification</span>
+        <span class="code" id="cardCode"></span>
+      </div>
+    </div>
+    <p class="lead">Montre cette carte à ta maîtresse. Un adulte peut aussi lui envoyer ce message :</p>
+    <p class="msg" id="cardMsg"></p>
+    <button class="btn-secondary" id="copyBtn" type="button">Copier le message</button>
+    <p class="copy-status" id="copyStatus" aria-live="polite"></p>
+    <button class="btn-primary push-bottom" id="cardBack" type="button">Retour à l'accueil</button>
+  </section>
+
+  <!-- Espace enseignante -->
+  <section id="teacher" class="screen" hidden aria-labelledby="teacherTitle">
+    <h1 class="title" id="teacherTitle">Espace enseignante</h1>
+
+    <div class="fiche stack">
+      <h2 class="prev-title">Les bilans sur cet appareil</h2>
+      <ul class="t-list" id="teacherTests"></ul>
+    </div>
+
+    <div class="fiche">
+      <ul class="howto">
+        <li>Le test mélange des calculs de toutes les notions de calcul mental déjà créées. Ce sont les calculs des jeux eux-mêmes, tirés au hasard dans leurs parcours jaune et orange.</li>
+        <li>Chaque test est différent du précédent. Pour chaque prénom, l'appareil retient les 60 derniers calculs vus dans chaque notion et à chaque niveau : un calcul jamais vu passe d'abord, et quand tous ont été vus, le plus ancien revient. Le même calcul ne revient jamais deux fois dans un test. Le test ne commence pas non plus par les mêmes notions que le précédent.</li>
+        <li>Jamais deux calculs de la même notion à la suite, et si possible jamais deux sur trois : l'élève doit changer d'astuce à chaque calcul. Une notion réussie est quand même redemandée.</li>
+        <li>Deux versions, au choix de l'élève (depuis le 11 novembre). <b>Version courte</b> : 1 calcul jaune par notion ; s'il est juste et rapide, 1 calcul orange. Rien ne revient : de 1 à 2 calculs par notion. <b>Version longue</b> : le test complet décrit ci-dessous. La version est écrite dans le bilan et dans le score envoyé. Les deux donnent le bon point du jour.</li>
+        <li>Version longue : chaque notion commence au niveau jaune. Dès qu'une réponse est juste et rapide, elle passe au niveau orange, où elle est demandée au moins 2 fois. Au plus 5 calculs en jaune (on s'arrête après 3 erreurs) et 4 en orange par notion, 45 calculs en tout. Sans erreur, le test compte 3 calculs par notion.</li>
+        <li>Le temps de réponse compte. Une réponse juste est « lente » si elle prend plus de 2 fois le temps visé en classe pour un calcul (tableau ci-dessous). L'élève voit alors « Juste, mais un peu lent : ce calcul reviendra. »</li>
+        <li>Version longue : après une erreur, la notion revient, mais pas tout de suite (au moins 2 autres calculs entre les deux). Elle n'est validée qu'après 2 réponses justes et rapides d'affilée, de même après une réponse lente.</li>
+        <li>Une erreur n'est pas corrigée par l'élève : la bonne réponse s'affiche, puis on passe au calcul suivant.</li>
+        <li>Le bilan classe les jeux du plus difficile au plus facile et donne un conseil pour chacun. <b>À travailler</b> : le niveau jaune n'est pas validé, « Reprends ce jeu en parcours jaune ». <b>À revoir</b> : le jaune est validé mais pas l'orange, « Passe au parcours orange » ; ou l'orange est validé avec des erreurs ou des réponses lentes, « Rejoue en parcours orange ». Il en va de même si l'orange est validé mais qu'il y a eu au moins 2 erreurs ou réponses lentes en jaune. <b>Acquis</b> : l'orange est validé, tout juste et rapide (au plus une erreur ou une lenteur en jaune).</li>
+        <li>Dans chaque groupe, le classement tient compte du taux d'erreurs, du taux de réponses lentes et du temps habituel (la médiane des réponses justes).</li>
+        <li>Après le test, l'élève peut envoyer son bilan dans votre formulaire Google (prénom, jeu, niveau, bilan). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
+        <li>Un bon point par test terminé, une fois par jour au plus. Les cartes de 10 bons points ont un code propre à ce jeu ; le prénom doit être écrit comme l'élève l'a saisi (majuscules et accents ne comptent pas).</li>
+        <li>Quand un nouveau jeu de calcul mental est créé, sa notion est ajoutée à ce test.</li>
+      </ul>
+    </div>
+
+    <div class="fiche stack">
+      <h2 class="prev-title">Les notions du test</h2>
+      <table class="t-table" id="notionTable"></table>
+    </div>
+
+    <form class="fiche form" id="checkForm" novalidate>
+      <h2 class="prev-title">Vérifier une carte</h2>
+      <div class="field">
+        <label for="tName">Prénom de l'élève</label>
+        <input class="input" id="tName" type="text" autocomplete="off" maxlength="30">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="tCard">N° de carte</label>
+          <input class="input" id="tCard" type="text" inputmode="numeric" value="1" maxlength="3">
+        </div>
+        <div class="field">
+          <label for="tCode">Code</label>
+          <input class="input" id="tCode" type="text" autocapitalize="characters" autocomplete="off" maxlength="6" placeholder="K7P3">
+        </div>
+      </div>
+      <button class="btn-primary" type="submit">Vérifier</button>
+      <p class="check-result" id="checkResult" hidden></p>
+    </form>
+
+    <button class="btn-secondary push-bottom" id="teacherBack" type="button">Retour à l'accueil</button>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  /* « Je me teste » : un test mélangé sur toutes les notions de calcul mental.
+     - Les calculs de toutes les notions arrivent dans le désordre, jamais deux fois la même notion à la suite.
+     - Chaque notion commence au niveau jaune. Après PROMO réponse(s) juste(s) et rapide(s) d'affilée, elle passe
+       au niveau orange, où elle est demandée au moins BASE_O fois.
+     - Une réponse juste est « lente » si elle prend plus de SLOW fois le temps visé en classe.
+     - Après une erreur, la notion revient (au moins GAP calculs plus tard) jusqu'à AFTER_ERR réponses justes
+       et rapides d'affilée ; après une réponse lente, jusqu'à AFTER_SLOW.
+     - Le bilan classe les jeux du plus difficile au plus facile et dit pour chacun : reprendre en jaune,
+       passer en orange, ou acquis. */
+  const N = 15;
+  const STORE_KEY = 'je-me-teste-calcul-mental';
+  const GAME_NAME = 'Je me teste';
+  // Deux versions depuis le 11 novembre.
+  //  - courte : 1 calcul jaune par notion, puis 1 calcul orange s'il est juste et rapide ; rien ne revient
+  //    (entre 1 et 2 calculs par notion) ;
+  //  - longue : le test complet (réglage du 7 novembre) : les calculs ratés ou lents reviennent.
+  const MODES = {
+    court: { PROMO: 1, BASE_O: 1, AFTER_ERR: 0, AFTER_SLOW: 0, MAX_J: 1, J_STOP: 1, MAX_O: 1, MAX_TOTAL: 99, label: 'version courte' },
+    long:  { PROMO: 1, BASE_O: 2, AFTER_ERR: 2, AFTER_SLOW: 2, MAX_J: 5, J_STOP: 3, MAX_O: 4, MAX_TOTAL: 45, label: 'version longue' }
+  };
+  let PROMO, BASE_O, AFTER_ERR, AFTER_SLOW, MAX_J, J_STOP, MAX_O, MAX_TOTAL;
+  const SLOW = 2, GAP = 2, GATES = 12;
+  function setMode(m){ ({ PROMO, BASE_O, AFTER_ERR, AFTER_SLOW, MAX_J, J_STOP, MAX_O, MAX_TOTAL } = MODES[m] || MODES.long); }
+  setMode('long');
+  const modeLabel = m => (MODES[m] || MODES.long).label;
+  const HIST = 60;   // calculs déjà vus retenus par notion et par niveau, pour chaque prénom
+  const $ = id => document.getElementById(id);
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSde3BnaU_vGD6JeeCqP3mgcxNhnm5z15fbf38R3D-ihhwOscQ/viewform';
+  const FORM_IDS = ['1488044105', '165270319', '1824034822', '454882096']; // Prénom, Jeu, Niveau, Score
+  const formLink = vals => FORM_URL + '?usp=pp_url' + FORM_IDS.map((id, i) => '&entry.' + id + '=' + encodeURIComponent(vals[i] || '')).join('');
+  const n = x => '<span class="n">' + x + '</span>';
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmtNum = v => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const PNAME = { jaune: 'jaune', orange: 'orange' };
+  const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
+  const BAD = ["Ce n'est pas ça.", 'Oups, pas cette fois.', 'Pas encore.'];
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  function shuffle(arr){
+    const c = arr.slice();
+    for (let k = c.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); const t = c[k]; c[k] = c[j]; c[j] = t; }
+    return c;
+  }
+  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  const qHTML = (q, box) => q.replace('□', box);
+  function calcCls(q){ const t = q.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().length; return t > 13 ? ' xlong' : (t > 8 ? ' long' : ''); }
+  const pad2 = x => String(x).padStart(2, '0');
+  function fmtLong(ms){ const s = Math.round(ms / 1000); return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min ' + pad2(s % 60) + ' s'; }
+  function fmtShort(ms){ const s = ms / 1000; return s < 10 ? s.toFixed(1).replace('.', ',') + ' s' : Math.round(s) + ' s'; }
+  function fmtMinSec(ms){ const s = Math.round(ms / 1000); return s < 60 ? s + ' s' : Math.floor(s / 60) + ':' + pad2(s % 60); }
+  const dayKey = t => { const d = new Date(t); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
+  const plural = (k, one, many) => k + ' ' + (k > 1 ? many : one);
+
+  /* ---------- Outils pour écrire les calculs ---------- */
+  const F = x => fmtNum(x);
+  const B = x => '<span>' + F(x) + '</span>';
+  const OP = o => '<span class="op">' + o + '</span>';
+  const W = t => '<span class="w">' + t + '</span>';
+  const Q = '□';
+  const plainQ = q => q.replace(/<[^>]+>/g, ' ').replace('□', '?').replace(/\s+/g, ' ').trim();
+  // q : le calcul (□ = ce que l'élève tape) ; ans : la réponse ; txt : le calcul corrigé (avec <b>) ; hint : le coup de pouce
+  // espaces insécables autour des signes, pour ne pas couper un calcul en fin de ligne
+  const nbo = t => String(t).replace(/ ([+−×÷=→]) /g, '\u00a0$1\u00a0').replace(/ ([:?!;])/g, '\u00a0$1');
+  const mkP = (q, ans, txt, hint) => ({ q, ans, txt: nbo(txt), short: plainQ(q), hint: nbo(hint) });
+  const mkL = (q, a, tip, hint, done) => ({ q, a, tip: nbo(tip), hint: nbo(hint), done: nbo(done) });
+  function fillList(gen, count){
+    const out = [], seen = new Set(); let g = 0;
+    while (out.length < count && g++ < 8000){ const p = gen(out.length); if (!p || seen.has(p.short)) continue; seen.add(p.short); out.push(p); }
+    return out;
+  }
+
+  /* ---------- Les notions du test ----------
+     Une entrée par jeu de calcul mental : ses calculs viennent du jeu lui-même (parcours jaune et orange).
+     targetMs : le temps visé par calcul en classe (le temps du défi chrono divisé par 15). */
+  const NOTIONS = [];
+  function addNotion(o){ NOTIONS.push(o); }
+  addNotion({ id: 'cm01', title: 'Les tables d\'addition', chap: 'Chapitre 1', url: '../les-tables-d-addition/index.html', targetMs: 4000,
+    make: (function(){
+  /* ---------- Les tables d'addition ---------- */
+  function addHint(a, b){
+    const big = Math.max(a, b), small = Math.min(a, b);
+    if (big === 10) return 'Ajouter 10, c\'est ajouter une dizaine : ' + n(small) + ' devient ' + n(small + 10) + '.';
+    if (small === 1) return 'Ajouter 1, c\'est trouver le nombre suivant.';
+    if (a === b) return 'C\'est un double : ' + n(a + ' + ' + a) + ', le nombre écrit 2 fois.';
+    if (big - small === 1) return 'Presque un double : ' + n(small + ' + ' + small + ' = ' + 2 * small) + ', puis encore 1.';
+    if (big + small > 10) return 'Passe par 10 : ' + n(big + ' + ' + (10 - big) + ' = 10') + ', puis ajoute encore ' + n(small - (10 - big)) + '.';
+    return 'Pense au miroir : ' + n(a + ' + ' + b) + ', c\'est comme ' + n(b + ' + ' + a) + '. Pars du plus grand.';
+  }
+  function missHint(a, c){
+    if (c - a === 10) return 'De ' + n(a) + ' à ' + n(c) + ', il y a une dizaine.';
+    if (a < 10 && c > 10) return 'Cherche ce qu\'il faut ajouter à ' + n(a) + ' pour arriver à ' + n(c) + ' : ' + n(a + ' + ' + (10 - a) + ' = 10') + ', puis ' + n('10 + ' + (c - 10) + ' = ' + c) + '.';
+    return 'Cherche ce qu\'il faut ajouter à ' + n(a) + ' pour arriver à ' + n(c) + '. Tu peux compter : ' + (a + 1) + ', ' + (a + 2) + '…';
+  }
+  function makeLearnItems(parc){
+    const L = [
+      mkL(B(5) + OP('+') + B(8) + OP('=') + Q, 13, '<b>Le miroir</b> : 5 + 8, c\'est comme 8 + 5. Je pars du plus grand nombre, 8.', addHint(5, 8), 'Je passe par 10 : 8 + 2 = 10, puis 10 + 3 = 13.'),
+      parc === 'orange'
+        ? mkL(Q + OP('+') + B(9) + OP('=') + B(16), 7, '<b>Dans les deux sens</b> : je cherche le nombre qui, ajouté à 9, donne 16.', missHint(9, 16), '9 + 1 = 10, puis 10 + 6 = 16 : j\'ai ajouté 1 + 6 = 7.')
+        : mkL(B(1) + OP('+') + B(8) + OP('=') + Q, 9, '<b>+ 1</b> : quand j\'ajoute 1, j\'obtiens le nombre suivant.', addHint(1, 8), 'Le nombre qui suit 8, c\'est 9.'),
+      mkL(B(10) + OP('+') + B(6) + OP('=') + Q, 16, '<b>+ 10</b> : j\'ajoute une dizaine. 6 unités et 1 dizaine, c\'est 16.', addHint(10, 6), '10 + 6 = 16 : on ajoute une dizaine.'),
+      mkL(B(6) + OP('+') + B(6) + OP('=') + Q, 12, '<b>Les doubles</b> : je les connais par cœur. Ils m\'aident aussi : 6 + 7, c\'est 6 + 6, plus 1.', addHint(6, 6), '6 + 6 = 12. Donc 6 + 7 = 13.'),
+      mkL(B(8) + OP('+') + B(6) + OP('=') + Q, 14, '<b>Je passe par 10</b> : 8 + 2 = 10, puis j\'ajoute ce qui reste de 6.', addHint(8, 6), '8 + 2 = 10, puis 10 + 4 = 14.'),
+      mkL(B(6) + OP('+') + Q + OP('=') + B(15), 9, '<b>Dans les deux sens</b> : je cherche ce qu\'il faut ajouter à 6 pour arriver à 15.', missHint(6, 15), '6 + 4 = 10, puis 10 + 5 = 15 : j\'ai ajouté 4 + 5 = 9.')
+    ];
+    return L;
+  }
+  function pairAdd(hard){
+    let a, b;
+    do { a = rand(2, 10); b = rand(2, 10); } while ((hard && a + b <= 10 && Math.random() < 0.7) || (!hard && (a === 10 || b === 10) && Math.random() < 0.6) || (a === 10 && b === 10));
+    if (!hard && Math.random() < 0.08) b = 1;
+    return [a, b];
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const kinds = shuffle(hard ? Array(5).fill('s').concat(Array(5).fill('m1'), Array(5).fill('m2')) : Array(10).fill('s').concat(Array(5).fill('m1')));
+    return fillList(k => {
+      const [a, b] = pairAdd(hard), c = a + b, kind = kinds[k];
+      if (kind === 's') return mkP(B(a) + OP('+') + B(b) + OP('=') + Q, c, a + ' + ' + b + ' = <b>' + c + '</b>', addHint(a, b));
+      if (kind === 'm1') return mkP(B(a) + OP('+') + Q + OP('=') + B(c), b, a + ' + <b>' + b + '</b> = ' + c, missHint(a, c));
+      return mkP(Q + OP('+') + B(b) + OP('=') + B(c), a, '<b>' + a + '</b> + ' + b + ' = ' + c, missHint(b, c));
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm02', title: 'Les doubles', chap: 'Chapitre 2', url: '../les-doubles/index.html', targetMs: 4000,
+    make: (function(){
+  /* ---------- Les doubles ---------- */
+  function dblHint(x){
+    if (x < 10) return 'Le double de ' + n(x) + ', c\'est ' + n(x + ' + ' + x) + '.';
+    const t = Math.floor(x / 10) * 10, u = x % 10;
+    if (!u) return 'Double les dizaines : ' + n(t / 10 + ' dizaines') + ' → ' + n(t / 5 + ' dizaines') + '.';
+    return 'Double les dizaines et les unités : ' + n(t + ' → ' + 2 * t) + ', ' + n(u + ' → ' + 2 * u) + ', puis ' + n(2 * t + ' + ' + 2 * u) + '.';
+  }
+  const DD = x => W('double de') + B(x) + OP('→') + Q;
+  function makeLearnItems(parc){
+    return [
+      mkL(DD(8), 16, '<b>Le double</b> d\'un nombre, c\'est 2 fois ce nombre : 8 + 8.', dblHint(8), 'Le double de 8, c\'est 8 + 8 = 16.'),
+      mkL(DD(13), 26, '<b>Je double les dizaines et les unités</b> : 10 → 20 et 3 → 6.', dblHint(13), '20 + 6 = 26 : le double de 13, c\'est 26.'),
+      mkL(DD(20), 40, '<b>Les dizaines</b> : 2 dizaines, doublées, font 4 dizaines.', dblHint(20), 'Le double de 20, c\'est 40.'),
+      mkL(B(12) + OP('×') + B(2) + OP('=') + Q, 24, '<b>Multiplier par 2</b>, c\'est chercher le double.', dblHint(12), '12 × 2 = 24 : c\'est le double de 12.'),
+      mkL(DD(17), 34, '<b>Avec une retenue</b> : 10 → 20 et 7 → 14. J\'ajoute 20 + 14.', dblHint(17), '20 + 14 = 34 : le double de 17, c\'est 34.'),
+      parc === 'orange'
+        ? mkL(Q + OP('÷') + B(2) + OP('=') + B(15), 30, '<b>Dans l\'autre sens</b> : je cherche le nombre qui, partagé en 2, donne 15. C\'est le double de 15.', dblHint(15), '30 ÷ 2 = 15, car le double de 15, c\'est 30.')
+        : mkL(DD(19), 38, '<b>Presque 20</b> : 10 → 20 et 9 → 18, puis 20 + 18.', dblHint(19), 'Le double de 19, c\'est 38.')
+    ];
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const kinds = shuffle(hard ? Array(6).fill('d').concat(Array(4).fill('div'), Array(5).fill('inv')) : Array(11).fill('d').concat(Array(4).fill('x2')));
+    return fillList(k => {
+      const kind = kinds[k], x = hard ? rand(6, 20) : (Math.random() < 0.25 ? rand(1, 9) : rand(6, 20));
+      if (kind === 'd') return mkP(DD(x), 2 * x, 'double de ' + x + ' → <b>' + 2 * x + '</b>', dblHint(x));
+      if (kind === 'x2') return mkP(B(x) + OP('×') + B(2) + OP('=') + Q, 2 * x, x + ' × 2 = <b>' + 2 * x + '</b>', 'Multiplier par 2, c\'est doubler. ' + dblHint(x));
+      if (kind === 'div') return mkP(Q + OP('÷') + B(2) + OP('=') + B(x), 2 * x, '<b>' + 2 * x + '</b> ÷ 2 = ' + x, 'Le nombre qui, partagé en 2, donne ' + n(x) + ', c\'est le double de ' + n(x) + '. ' + dblHint(x));
+      return mkP(W('double de') + Q + OP('→') + B(2 * x), x, 'double de <b>' + x + '</b> → ' + 2 * x, 'Cherche le nombre qui, ajouté à lui-même, donne ' + n(2 * x) + ' : c\'est la moitié de ' + n(2 * x) + '.');
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm03', title: 'Multiplier par 10, 100, 1 000', chap: 'Chapitre 3', url: '../multiplier-par-10-100-1000/index.html', targetMs: 12000,
+    make: (function(){
+  /* ---------- Multiplier par 10, 100, 1 000 ---------- */
+  const ZW = { 10: 'un 0', 100: 'deux 0', 1000: 'trois 0' };
+  const PL = { 10: 'les unités deviennent des dizaines', 100: 'les unités deviennent des centaines', 1000: 'les unités deviennent des milliers' };
+  const mulHint = (a, m) => '× ' + F(m) + ' : ' + PL[m] + '. J\'écris ' + ZW[m] + ' à droite de ' + n(F(a)) + '.';
+  const MX = (a, m) => B(a) + OP('×') + B(m) + OP('=') + Q;
+  function makeLearnItems(parc){
+    return [
+      mkL(MX(24, 10), 240, '<b>× 10</b> : les unités deviennent des dizaines, les dizaines des centaines… J\'écris <b>un 0</b> à droite.', mulHint(24, 10), '24 × 10 = 240.'),
+      mkL(MX(37, 100), 3700, '<b>× 100</b> : les unités deviennent des centaines. J\'écris <b>deux 0</b> à droite.', mulHint(37, 100), '37 × 100 = 3 700.'),
+      mkL(MX(5, 1000), 5000, '<b>× 1 000</b> : les unités deviennent des milliers. J\'écris <b>trois 0</b> à droite.', mulHint(5, 1000), '5 × 1 000 = 5 000.'),
+      mkL(MX(60, 10), 600, '<b>Attention au 0</b> déjà là : 6 dizaines × 10, ça fait 6 centaines. J\'ajoute quand même un 0.', mulHint(60, 10), '60 × 10 = 600.'),
+      parc === 'orange'
+        ? mkL(MX(1408, 10), 14080, '<b>Même avec un grand nombre</b>, × 10 : chaque chiffre avance d\'un rang. J\'écris un 0 à droite.', mulHint(1408, 10), '1 408 × 10 = 14 080.')
+        : mkL(MX(208, 100), 20800, '<b>Le 0 du milieu</b> reste à sa place. J\'écris deux 0 à droite de 208.', mulHint(208, 100), '208 × 100 = 20 800.'),
+      parc === 'orange'
+        ? mkL(B(45) + OP('×') + Q + OP('=') + B(4500), 100, '<b>Dans l\'autre sens</b> : je compte les 0 ajoutés. Deux 0, c\'est × 100.', 'De 45 à 4 500, on a écrit deux 0 à droite.', '45 × 100 = 4 500.')
+        : mkL(MX(12, 1000), 12000, '<b>× 1 000</b> : trois 0 à droite de 12.', mulHint(12, 1000), '12 × 1 000 = 12 000.')
+    ];
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const kinds = shuffle(hard ? Array(12).fill('m').concat(Array(3).fill('inv')) : Array(15).fill('m'));
+    return fillList(k => {
+      const m = pick([10, 100, 1000]);
+      let a;
+      if (!hard) a = m === 10 ? (Math.random() < 0.4 ? rand(101, 999) : rand(2, 99)) : (Math.random() < 0.2 ? rand(1, 9) * 10 : rand(2, 99));
+      else if (m === 10) a = Math.random() < 0.6 ? rand(1001, 9999) : rand(101, 999);
+      else if (m === 100) a = Math.random() < 0.5 ? rand(101, 999) : rand(1001, 9999);
+      else a = rand(101, 999);
+      if (hard && Math.random() < 0.3){ const s = String(a).split(''); s[1] = '0'; a = +s.join(''); }
+      if (a * m > 999999) return null;
+      if (kinds[k] === 'inv') return mkP(B(a) + OP('×') + Q + OP('=') + B(a * m), m, F(a) + ' × <b>' + F(m) + '</b> = ' + F(a * m), 'Compte les 0 écrits à droite de ' + n(F(a)) + ' : un 0 → × 10, deux 0 → × 100, trois 0 → × 1 000.');
+      return mkP(MX(a, m), a * m, F(a) + ' × ' + F(m) + ' = <b>' + F(a * m) + '</b>', mulHint(a, m));
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm04', title: 'Additionner deux nombres', chap: 'Chapitre 4', url: '../additionner-deux-nombres/index.html', targetMs: 12000,
+    make: (function(){
+  /* ---------- Additionner deux nombres ---------- */
+  function sumHint(a, b){
+    const big = Math.max(a, b), small = Math.min(a, b), t = Math.floor(small / 10) * 10, u = small % 10;
+    if (!u) return 'Ajoute les dizaines : ' + n(F(big) + ' + ' + t + ' = ' + F(big + t)) + '.';
+    return 'Décompose ' + n(small) + ' : ' + n(F(big) + ' + ' + t + ' = ' + F(big + t)) + ', puis ' + n(F(big + t) + ' + ' + u + ' = ?') + '.';
+  }
+  const AX = (a, b) => B(a) + OP('+') + B(b) + OP('=') + Q;
+  function makeLearnItems(parc){
+    const o = parc === 'orange';
+    return [
+      mkL(AX(32, 45), 77, '<b>Les dizaines et les unités à part</b> : 30 + 40 = 70 et 2 + 5 = 7.', '30 + 40 = 70, puis 2 + 5 = 7, et 70 + 7 = ?', '32 + 45 = 77.'),
+      mkL(AX(27, 46), 73, '<b>Les dizaines et les unités à part</b> : 20 + 40 = 60 et 7 + 6 = 13. Puis 60 + 13.', '20 + 40 = 60, 7 + 6 = 13, puis 60 + 13 = ?', '60 + 13 = 73.'),
+      mkL(AX(58, 36), 94, '<b>Je décompose un des deux nombres</b> : 36 = 30 + 6. Puis 58 + 30 = 88, et 88 + 6.', sumHint(58, 36), '58 + 30 = 88, puis 88 + 6 = 94.'),
+      o ? mkL(AX(236, 48), 284, '<b>Avec un nombre à 3 chiffres</b> : je garde 236 et je décompose 48 = 40 + 8.', sumHint(236, 48), '236 + 40 = 276, puis 276 + 8 = 284.')
+        : mkL(AX(63, 28), 91, '<b>Je décompose 28</b> = 20 + 8. Puis 63 + 20 = 83, et 83 + 8.', sumHint(63, 28), '63 + 20 = 83, puis 83 + 8 = 91.'),
+      o ? mkL(AX(57, 325), 382, '<b>Je pars du plus grand</b> : 325 + 57, c\'est pareil. 325 + 50 = 375, puis + 7.', sumHint(57, 325), '325 + 50 = 375, puis 375 + 7 = 382.')
+        : mkL(AX(45, 37), 82, '<b>Je choisis ma méthode</b> : 45 + 30 = 75, puis 75 + 7.', sumHint(45, 37), '45 + 37 = 82.'),
+      o ? mkL(AX(469, 26), 495, '<b>Je décompose 26</b> = 20 + 6 : 469 + 20 = 489, puis + 6.', sumHint(469, 26), '489 + 6 = 495.')
+        : mkL(AX(19, 54), 73, '<b>Je pars du plus grand</b> : 54 + 19. 54 + 10 = 64, puis 64 + 9.', sumHint(19, 54), '64 + 9 = 73.')
+    ];
+  }
+  const BANNED_ADD = new Set(['35+24', '52+34', '33+49', '73+218', '24+38', '37+42', '34+248', '78+37', '387+74']);
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    return fillList(k => {
+      let a, b;
+      if (!hard){ a = rand(12, 89); b = rand(12, 89); if (a + b > 170) return null; if (k < 4 && (a % 10) + (b % 10) >= 10) return null; }
+      else { a = rand(105, 895); b = rand(13, 89); if (a + b > 990) return null; if (Math.random() < 0.35){ const t = a; a = b; b = t; } }
+      if (a % 10 === 0 || b % 10 === 0) return null;
+      if (BANNED_ADD.has(Math.min(a, b) + '+' + Math.max(a, b)) || BANNED_ADD.has(a + '+' + b)) return null;
+      return mkP(AX(a, b), a + b, F(a) + ' + ' + F(b) + ' = <b>' + F(a + b) + '</b>', sumHint(a, b));
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm05', title: 'Les tables de multiplication', chap: 'Chapitre 5', url: '../les-tables-de-multiplication/index.html', targetMs: 4000,
+    make: (function(){
+  /* ---------- Les tables de multiplication ---------- */
+  function tabHint(a, b){
+    const big = Math.max(a, b), small = Math.min(a, b);
+    if (small === 1) return 'Multiplier par 1, ça donne le même nombre.';
+    if (big === 10) return 'Multiplier par 10 : les unités deviennent des dizaines. J\'écris un 0 à droite de ' + n(small) + '.';
+    if (small === 2) return n(big + ' × 2') + ', c\'est le double de ' + n(big) + '.';
+    if (a === 5 || b === 5){ const o = a === 5 ? b : a; return n(o + ' × 5') + ', c\'est la moitié de ' + n(o + ' × 10 = ' + o * 10) + '.'; }
+    if (a === 9 || b === 9){ const o = a === 9 ? b : a; return n(o + ' × 9') + ', c\'est ' + n(o + ' × 10 − ' + o) + ' : ' + n(o * 10 + ' − ' + o) + '.'; }
+    if (a === 4 || b === 4){ const o = a === 4 ? b : a; return n(o + ' × 4') + ', c\'est le double du double de ' + n(o) + ' : ' + n(o + ' → ' + 2 * o + ' → ?') + '.'; }
+    return 'Pars d\'un résultat que tu connais : ' + n(big + ' × ' + (small - 1) + ' = ' + big * (small - 1)) + ', puis ajoute encore ' + n(big) + '.';
+  }
+  const missTab = (a, p) => 'Récite la table de ' + n(a) + ' : ' + [1, 2, 3, 4].map(k => a * k).join(', ') + '… jusqu\'à ' + n(p) + '.';
+  const MT = (a, b) => B(a) + OP('×') + B(b) + OP('=') + Q;
+  function makeLearnItems(parc){
+    return [
+      mkL(MT(7, 5), 35, '<b>× 5</b> : c\'est la moitié de × 10. 7 × 10 = 70, et la moitié de 70, c\'est 35.', tabHint(7, 5), '7 × 5 = 35.'),
+      mkL(MT(4, 8), 32, '<b>Le miroir</b> : 4 × 8 = 8 × 4. Et × 4, c\'est le double du double : 8 → 16 → 32.', tabHint(4, 8), '4 × 8 = 8 × 4 = 32.'),
+      mkL(MT(9, 6), 54, '<b>× 9</b> : c\'est × 10, moins une fois le nombre. 6 × 10 = 60, et 60 − 6.', tabHint(9, 6), '9 × 6 = 54.'),
+      parc === 'orange'
+        ? mkL(B(7) + OP('×') + Q + OP('=') + B(56), 8, '<b>Dans l\'autre sens</b> : je cherche dans la table de 7 le résultat 56.', missTab(7, 56), '7 × 8 = 56.')
+        : mkL(MT(1, 9), 9, '<b>× 1</b> : multiplier par 1, ça donne le même nombre.', tabHint(1, 9), '1 × 9 = 9.'),
+      mkL(MT(10, 7), 70, '<b>× 10</b> : les unités deviennent des dizaines. J\'écris un 0 à droite.', tabHint(10, 7), '10 × 7 = 70.'),
+      mkL(MT(6, 7), 42, '<b>Je pars d\'un résultat connu</b> : 6 × 6 = 36, puis j\'ajoute encore 6.', tabHint(6, 7), '6 × 7 = 42.')
+    ];
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const kinds = shuffle(hard ? Array(8).fill('p').concat(Array(4).fill('m1'), Array(3).fill('m2')) : Array(15).fill('p'));
+    const used = new Set();
+    return fillList(k => {
+      let a = rand(hard ? 3 : 2, 9), b = rand(hard ? 3 : 2, 9);
+      if (!hard && Math.random() < 0.07) b = pick([1, 10]);
+      const key = Math.min(a, b) + 'x' + Math.max(a, b);
+      if (used.has(key)) return null;
+      const kind = kinds[k], p = a * b;
+      let r;
+      if (kind === 'p') r = mkP(MT(a, b), p, a + ' × ' + b + ' = <b>' + p + '</b>', tabHint(a, b));
+      else if (kind === 'm1') r = mkP(B(a) + OP('×') + Q + OP('=') + B(p), b, a + ' × <b>' + b + '</b> = ' + p, missTab(a, p));
+      else r = mkP(Q + OP('×') + B(b) + OP('=') + B(p), a, '<b>' + a + '</b> × ' + b + ' = ' + p, missTab(b, p));
+      used.add(key);
+      return r;
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm06', title: 'Les moitiés', chap: 'Chapitre 6', url: '../les-moities/index.html', targetMs: 4000,
+    make: (function(){
+  /* ---------- Les moitiés ---------- */
+  function halfHint(x){
+    if (x <= 20) return 'Cherche le nombre qui, ajouté à lui-même, donne ' + n(x) + ' : ' + n('? + ? = ' + x) + '.';
+    const t = Math.floor(x / 10) * 10, u = x % 10;
+    if (t % 20 === 0) return 'Moitié des dizaines, moitié des unités : ' + n(t + ' → ' + t / 2) + (u ? ', ' + n(u + ' → ' + u / 2) + ', puis ' + n(t / 2 + ' + ' + u / 2) : '') + '.';
+    const big = t - 10, rest = x - big;
+    return 'Coupe ' + n(x) + ' en ' + n(big + ' + ' + rest) + ' : moitié de ' + n(big) + ' → ' + n(big / 2) + ', moitié de ' + n(rest) + ' → ' + n(rest / 2) + '.';
+  }
+  const MH = x => W('moitié de') + B(x) + OP('→') + Q;
+  function makeLearnItems(parc){
+    return [
+      mkL(MH(12), 6, '<b>La moitié</b>, c\'est partager en 2 parts égales. Je cherche le nombre dont le double est 12.', halfHint(12), 'La moitié de 12, c\'est 6, car 6 + 6 = 12.'),
+      mkL(MH(26), 13, '<b>Moitié des dizaines, moitié des unités</b> : 20 → 10 et 6 → 3.', halfHint(26), '10 + 3 = 13 : la moitié de 26, c\'est 13.'),
+      mkL(MH(30), 15, '<b>3 dizaines</b> : je coupe 30 en 20 + 10. Moitié de 20 → 10, moitié de 10 → 5.', halfHint(30), '10 + 5 = 15 : la moitié de 30, c\'est 15.'),
+      mkL(MH(36), 18, '<b>Je coupe 36</b> en 20 + 16 : moitié de 20 → 10, moitié de 16 → 8.', halfHint(36), '10 + 8 = 18 : la moitié de 36, c\'est 18.'),
+      mkL(MH(40), 20, '<b>Les dizaines</b> : 4 dizaines, partagées en 2, font 2 dizaines.', halfHint(40), 'La moitié de 40, c\'est 20.'),
+      parc === 'orange'
+        ? mkL(B(2) + OP('×') + Q + OP('=') + B(32), 16, '<b>Dans l\'autre sens</b> : 2 fois quel nombre donne 32 ? C\'est la moitié de 32.', halfHint(32), '2 × 16 = 32.')
+        : mkL(MH(14), 7, '<b>Les doubles m\'aident</b> : 7 + 7 = 14, donc la moitié de 14, c\'est 7.', halfHint(14), 'La moitié de 14, c\'est 7.')
+    ];
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const kinds = shuffle(hard ? Array(7).fill('h').concat(Array(4).fill('x2'), Array(4).fill('inv')) : Array(15).fill('h'));
+    return fillList(k => {
+      const kind = kinds[k];
+      const x = 2 * (hard ? rand(6, 20) : (Math.random() < 0.3 ? rand(1, 9) : rand(6, 20)));
+      if (kind === 'h') return mkP(MH(x), x / 2, 'moitié de ' + x + ' → <b>' + x / 2 + '</b>', halfHint(x));
+      if (kind === 'x2') return mkP(B(2) + OP('×') + Q + OP('=') + B(x), x / 2, '2 × <b>' + x / 2 + '</b> = ' + x, '2 fois quel nombre donne ' + n(x) + ' ? C\'est la moitié de ' + n(x) + '. ' + halfHint(x));
+      return mkP(W('moitié de') + Q + OP('→') + B(x / 2), x, 'moitié de <b>' + x + '</b> → ' + x / 2, 'Le nombre dont la moitié est ' + n(x / 2) + ', c\'est le double de ' + n(x / 2) + '.');
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'soustractions', title: 'Soustractions de tête', chap: 'Soustractions', url: '../soustractions-de-tete/index.html', targetMs: 12000,
+    make: (function(){
+  /* ---------- Calculs du défi ---------- */
+  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  // 3 chiffres moins 2 chiffres. Les 5 premiers sans retenue pour s'échauffer,
+  // ensuite de plus en plus de calculs avec retenue.
+  const NEAR100 = [98, 99, 101, 102, 198, 199, 201, 202, 298, 299, 301];
+  function makeProblemsO(){
+    const list = [], seen = new Set();
+    while (list.length < N){
+      const k = list.length;
+      let a, b;
+      if (k >= 10){ b = NEAR100[rand(0, NEAR100.length - 1)]; a = rand(b + 120, 999); }
+      else {
+        const borrow = k < 3 ? Math.random() < 0.5 : Math.random() < 0.85;
+        a = k < 3 ? rand(150, 599) : rand(300, 999); b = rand(21, 99);
+        const au = a % 10, bu = b % 10;
+        if (borrow ? !(au < bu) : !(au >= bu)) continue;
+        if (bu === 0) continue;
+      }
+      const key = a + '-' + b;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      list.push({ a, b });
+    }
+    return shuffle(list.slice(0, 3)).concat(shuffle(list.slice(3)));
+  }
+  function makeProblems(parc){
+    if (parc === 'orange') return makeProblemsO();
+    const list = [], seen = new Set();
+    while (list.length < N){
+      const k = list.length;
+      const borrow = k < 5 ? false : (k < 9 ? Math.random() < 0.6 : Math.random() < 0.85);
+      const a = k < 7 ? rand(102, 399) : rand(150, 599);
+      const b = rand(11, 99);
+      const au = a % 10, bu = b % 10;
+      if (borrow ? !(au < bu) : !(au >= bu)) continue;
+      if (bu === 0 && Math.random() < 0.75) continue;
+      const key = a + '-' + b;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      list.push({ a, b });
+    }
+    return list;
+  }
+
+
+    return parc => makeProblems(parc).map(p => mkP(B(p.a) + OP('−') + B(p.b) + OP('=') + Q, p.a - p.b, F(p.a) + ' − ' + F(p.b) + ' = <b>' + F(p.a - p.b) + '</b>', ''));
+  })() });
+  addNotion({ id: 'cm08', title: 'Les nombres terminés par 8 ou 9', chap: 'Chapitre 8', url: '../les-nombres-termines-par-8-ou-9/index.html', targetMs: 12000,
+    make: (function(){
+  /* ---------- Les nombres terminés par 8 ou 9 ---------- */
+  // Méthode : j'ajoute (ou je soustrais) la dizaine supérieure, puis je corrige de 1 ou de 2.
+  const fix89 = b => (b % 10 === 9 ? 1 : 2);
+  const up89 = b => b + fix89(b);
+  const AX = (a, op, b) => B(a) + OP(op) + B(b) + OP('=') + Q;
+  const res89 = (a, op, b) => (op === '+' ? a + b : a - b);
+  function hint89(a, op, b){
+    const u = up89(b), d = fix89(b);
+    if (op === '+') return F(b) + ', c\'est presque ' + F(u) + ' : ' + n(F(a) + ' + ' + F(u) + ' = ' + F(a + u)) + ', puis ' + n(F(a + u) + ' − ' + d + ' = ?') + '.';
+    return F(b) + ', c\'est presque ' + F(u) + ' : ' + n(F(a) + ' − ' + F(u) + ' = ' + F(a - u)) + ', puis ' + n(F(a - u) + ' + ' + d + ' = ?') + '.';
+  }
+  // Un message pour les erreurs les plus fréquentes (sinon, le message habituel)
+  function why89(a, op, b){
+    const u = up89(b), d = fix89(b), r = res89(a, op, b);
+    return v => {
+      if (op === '+'){
+        if (v === a + u) return 'Presque ! Tu as ajouté ' + F(u) + ' : il faut encore retirer ' + d + '.';
+        if (v === a + u + d) return 'Attention : après + ' + F(u) + ', on retire ' + d + ', on ne l\'ajoute pas.';
+      } else {
+        if (v === a - u) return 'Presque ! Tu as retiré ' + F(u) + ' : il faut rajouter ' + d + '.';
+        if (v === a - u - d) return 'Attention : après − ' + F(u) + ', on rajoute ' + d + ', on ne l\'enlève pas.';
+      }
+      if (Math.abs(v - r) === 100) return Math.floor(a / 100) !== Math.floor(r / 100)
+        ? 'Attention à la centaine : ' + (op === '+' ? 'on passe à ' : 'on passe sous ') + F(Math.max(Math.floor(a / 100), Math.floor(r / 100)) * 100) + '.'
+        : 'Presque ! Regarde bien le chiffre des centaines.';
+      return null;
+    };
+  }
+  const withWhy = (o, w) => { o.why = w; return o; };
+  function L89(a, op, b, tip, done){
+    return withWhy(mkL(AX(a, op, b), res89(a, op, b), tip, hint89(a, op, b), done), why89(a, op, b));
+  }
+  function makeLearnItems(parc){
+    const o = parc === 'orange';
+    return [
+      L89(146, '+', 9, '<b>+ 9, c\'est presque + 10</b> : 146 + 10 = 156. J\'ai ajouté 1 de trop : je le retire.', '146 + 10 − 1 = 155.'),
+      L89(263, '+', 28, '<b>28, c\'est presque 30</b>, la dizaine supérieure : 263 + 30 = 293. J\'ai ajouté 2 de trop : je les retire.', '263 + 30 − 2 = 291.'),
+      L89(352, '−', 19, '<b>Pour soustraire 19</b>, je soustrais 20 : 352 − 20 = 332. J\'ai enlevé 1 de trop : je le rajoute.', '352 − 20 + 1 = 333.'),
+      o ? L89(436, '+', 78, '<b>78, c\'est presque 80</b> : 436 + 80 = 516 (attention, on passe la centaine). Puis je retire 2.', '436 + 80 − 2 = 514.')
+        : L89(471, '−', 38, '<b>Je soustrais la dizaine supérieure</b> : 471 − 40 = 431. J\'ai enlevé 2 de trop : je les rajoute.', '471 − 40 + 2 = 433.'),
+      o ? L89(622, '−', 69, '<b>69, c\'est presque 70</b> : 622 − 70 = 552 (on passe sous 600). Puis je rajoute 1.', '622 − 70 + 1 = 553.')
+        : L89(685, '+', 39, '<b>Attention à la centaine</b> : 685 + 40 = 725, on passe de 6 à 7 centaines. Puis 725 − 1.', '685 + 40 − 1 = 724.'),
+      o ? L89(714, '−', 98, '<b>98, c\'est presque 100</b> : 714 − 100 = 614. J\'ai enlevé 2 de trop : je les rajoute.', '714 − 100 + 2 = 616.')
+        : L89(513, '−', 29, '<b>Attention à la centaine</b> : 513 − 30 = 483, on passe sous 500. Puis 483 + 1.', '513 − 30 + 1 = 484.')
+    ];
+  }
+  // Calculs du diaporama et des exercices du manuel : jamais repris
+  const BANNED_89 = new Set(('156+28 781-78 287-39 767+69 187+29 253+88 304-18 745-99 581+38 805+98 891-19 488-59 ' +
+    '455-29 67+18 274+39 850+28 654-8 112-38 505-19 637+19 379+8 475-9 552+29 103-18 234+9 567-28 819+38 ' +
+    '851-59 562+38 105+79 141-18 527+98 206-49 808-29 604+69 327+9 822+48 123-58 903-99 551+28 483-39 321+68 ' +
+    '562-29 78+18 473-8 974+19 704-38 637+39 811-19 225-39 886+8 639-28 67+38 507+29 914+9 534-9 466-18 ' +
+    '562+59 303-88 673-19 815+48 207-58 368+9 746-69 308+88 566-78 223-49 942+19 527+68 345+79 441-38 755-98 ' +
+    '854+19 577+38 132-29 171-18 766+8 603-39 555-8 202+29 567+18 411-38 187-9 334+39 813+9 441-19 398+29 ' +
+    '103-68 449+49 55+78 234-48 912+19 713-89 516+38 847-9 123+98 753+69 401-59 677-28 446+89 306+58 355-99 ' +
+    '55-29 855-88 263-39 236-38 132+28 185+18 854-88 ' +
+    '146+9 263+28 352-19 471-38 685+39 513-29 436+78 622-69 714-98').split(' '));
+  const B89_J = [8, 9, 18, 19, 28, 29, 38, 39];
+  const B89_O = [8, 9, 18, 19, 28, 29, 38, 39, 48, 49, 58, 59, 68, 69, 78, 79, 88, 89, 98, 99];
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const ops = shuffle(['+', '+', '+', '+', '+', '+', '+', '+', '−', '−', '−', '−', '−', '−', '−']);
+    // les 2 premiers calculs restent dans la même centaine ; ensuite, 6 (jaune) ou 8 (orange) changements de centaine
+    const nc = hard ? 8 : 6;
+    const crossAt = [false, false].concat(shuffle(Array.from({ length: 13 }, (_, i) => i < nc)));
+    return fillList(k => {
+      const op = ops[k % ops.length];
+      // en orange, surtout les grands nombres (48 à 99)
+      const b = hard ? (Math.random() < 0.7 ? pick(B89_O.slice(8)) : pick(B89_O.slice(0, 8))) : pick(B89_J);
+      let a = (k === 0 && op === '+' && Math.random() < 0.6) ? rand(41, 89) : rand(102, 975);
+      if (hard && op === '+' && Math.random() < 0.12) a = rand(31, 89);
+      const r = res89(a, op, b);
+      if (r < 10 || r > 999) return null;
+      if (op === '−' && a - b < 20) return null;
+      // dès le 3e calcul, souvent un changement de centaine (c'est là qu'on se trompe)
+      const cross = Math.floor(a / 100) !== Math.floor(r / 100);
+      if (cross !== crossAt[k % 15]) return null;
+      if (BANNED_89.has(a + (op === '+' ? '+' : '-') + b)) return null;
+      return withWhy(mkP(AX(a, op, b), r, F(a) + ' ' + op + ' ' + F(b) + ' = <b>' + F(r) + '</b>', hint89(a, op, b)), why89(a, op, b));
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm08b', title: 'Passer la centaine', chap: 'Entraînement', url: '../passer-la-centaine/index.html', targetMs: 12000,
+    make: (function(){
+  /* ---------- Passer la centaine : ajouter ou retirer des dizaines ---------- */
+  const TX = (a, op, b) => B(a) + OP(op) + B(b) + OP('=') + Q;
+  const TM = (a, op, c) => B(a) + OP(op) + Q + OP('=') + B(c);
+  const unitTxt = u => u + (u > 1 ? ' unités' : ' unité');
+  const resT = (a, op, t) => (op === '+' ? a + t : a - t);
+  function hintT(a, op, t){
+    const da = Math.floor(a / 10), u = a % 10, dt = t / 10;
+    return 'Compte en dizaines : ' + n(F(a)) + ', c\'est ' + n(F(da) + ' dizaines') + ' et ' + unitTxt(u) + '. ' +
+      n(F(da) + ' ' + op + ' ' + F(dt) + ' = ?') + ' dizaines. Les ' + unitTxt(u) + ' ne bougent pas.';
+  }
+  function hintM(a, op, c){
+    const da = Math.floor(a / 10), dc = Math.floor(c / 10);
+    return 'Les unités sont les mêmes : il manque des dizaines. ' + (op === '+'
+      ? 'De ' + n(F(da)) + ' à ' + n(F(dc)) + ' dizaines, combien de dizaines ?'
+      : 'De ' + n(F(dc)) + ' à ' + n(F(da)) + ' dizaines, combien de dizaines ?');
+  }
+  // Les erreurs les plus fréquentes : la centaine (ou le millier) qui ne change pas, les unités qui bougent
+  function whyT(a, op, t){
+    const r = resT(a, op, t), u = a % 10;
+    const big = Math.floor(a / 1000) !== Math.floor(r / 1000) ? 'le millier' : 'la centaine';
+    const cross = Math.floor(a / 100) !== Math.floor(r / 100);
+    return v => {
+      if (v % 10 !== u) return 'Les unités ne bougent pas : le résultat se termine par ' + u + '.';
+      if (cross && Math.floor(v / 100) === Math.floor(a / 100)) return op === '+'
+        ? 'Tu passes ' + big + ' : le chiffre des centaines augmente aussi.'
+        : 'Tu passes sous ' + big + ' : le chiffre des centaines baisse aussi.';
+      if (Math.abs(v - r) === 100) return 'Presque ! Regarde bien le chiffre des centaines.';
+      if (Math.abs(v - r) === 10) return 'Presque ! Recompte les dizaines.';
+      return null;
+    };
+  }
+  function whyM(a, op, c){
+    const t = Math.abs(c - a);
+    return v => {
+      if (v % 10 !== 0) return 'Il manque un nombre de dizaines : il se termine par 0.';
+      if (Math.abs(v - t) === 100) return 'Presque ! Compte bien les dizaines en passant la centaine.';
+      return null;
+    };
+  }
+  const withWhy = (o, w) => { o.why = w; return o; };
+  const LT = (a, op, t, tip, done) => withWhy(mkL(TX(a, op, t), resT(a, op, t), tip, hintT(a, op, t), done), whyT(a, op, t));
+  function makeLearnItems(parc){
+    const o = parc === 'orange';
+    return [
+      LT(156, '+', 30, '<b>Je compte en dizaines</b> : 156, c\'est 15 dizaines et 6 unités. 15 + 3 = 18 dizaines. Les 6 unités ne bougent pas.', '15 + 3 = 18 dizaines : 156 + 30 = 186.'),
+      LT(327, '+', 80, '<b>On passe la centaine</b> : 32 dizaines + 8 dizaines = 40 dizaines, c\'est 400. Avec les 7 unités : 407.', '327 + 80 = 407 : on passe de 3 à 4 centaines.'),
+      LT(247, '−', 60, '<b>On passe sous la centaine</b> : 24 dizaines − 6 dizaines = 18 dizaines, c\'est 180. Avec les 7 unités : 187.', '247 − 60 = 187 : on passe de 2 centaines à 1 centaine.'),
+      o ? LT(958, '+', 70, '<b>On passe le millier</b> : 95 dizaines + 7 dizaines = 102 dizaines, c\'est 1 020. Avec les 8 unités : 1 028.', '958 + 70 = 1 028.')
+        : LT(465, '+', 50, '<b>Je m\'arrête à la centaine</b> : 50 = 40 + 10. 465 + 40 = 505, puis 505 + 10.', '465 + 40 + 10 = 515.'),
+      o ? LT(1034, '−', 50, '<b>On passe sous le millier</b> : 103 dizaines − 5 dizaines = 98 dizaines, c\'est 980. Avec les 4 unités : 984.', '1 034 − 50 = 984.')
+        : LT(732, '−', 40, '<b>Je m\'arrête à la centaine</b> : 40 = 30 + 10. 732 − 30 = 702, puis 702 − 10.', '732 − 30 − 10 = 692.'),
+      o ? withWhy(mkL(TM(386, '+', 456), 70, '<b>Le nombre qui manque</b> : de 38 dizaines à 45 dizaines, il y a 7 dizaines. Les unités sont les mêmes.', hintM(386, '+', 456), '386 + 70 = 456.'), whyM(386, '+', 456))
+        : LT(608, '−', 30, '<b>Avec un 0 aux dizaines</b> : 608, c\'est 60 dizaines et 8 unités. 60 − 3 = 57 dizaines.', '608 − 30 = 578.')
+    ];
+  }
+  const BANNED_T = new Set(['156+30', '327+80', '247-60', '465+50', '732-40', '608-30', '958+70', '1034-50', '386+70']);
+  const okT = (a, op, t) => !BANNED_T.has(a + (op === '+' ? '+' : '-') + t);
+  function problemT(op, a, t){
+    const r = resT(a, op, t);
+    return withWhy(mkP(TX(a, op, t), r, F(a) + ' ' + op + ' ' + F(t) + ' = <b>' + F(r) + '</b>', hintT(a, op, t)), whyT(a, op, t));
+  }
+  function missingT(op, a, t){
+    const c = resT(a, op, t);
+    return withWhy(mkP(TM(a, op, c), t, F(a) + ' ' + op + ' <b>' + F(t) + '</b> = ' + F(c), hintM(a, op, c)), whyM(a, op, c));
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const ops = shuffle(['+', '+', '+', '+', '+', '+', '+', '+', '−', '−', '−', '−', '−', '−', '−']);
+    const kinds = hard ? shuffle(['c', 'c', 'c', 'c', 'c', 'm', 'm', 'm', 'g', 'g', 'g', 'x', 'x', 'x', 'x']) : null;
+    return fillList(k => {
+      const op = ops[k % ops.length];
+      if (!hard){
+        const a = rand(110, 989), t = 10 * rand(1, 9), r = resT(a, op, t);
+        if (a % 10 === 0 || r < 101 || r > 999) return null;
+        const cross = Math.floor(a / 100) !== Math.floor(r / 100);
+        // un calcul sur quatre ne change pas de centaine : il faut bien regarder
+        if (cross !== (k % 4 !== 0)) return null;
+        if (!okT(a, op, t)) return null;
+        return problemT(op, a, t);
+      }
+      const kind = kinds[k % kinds.length];
+      if (kind === 'm'){   // passer le millier
+        const t = 10 * rand(2, 9);
+        const a = op === '+' ? rand(905, 995) : rand(1002, 1088);
+        const r = resT(a, op, t);
+        if (a % 10 === 0 || Math.floor(a / 1000) === Math.floor(r / 1000) || !okT(a, op, t)) return null;
+        return problemT(op, a, t);
+      }
+      if (kind === 'g'){   // plus de 9 dizaines d'un coup
+        const t = 10 * rand(11, 19), a = rand(150, 850), r = resT(a, op, t);
+        if (a % 10 === 0 || r < 101 || r > 999 || !okT(a, op, t)) return null;
+        if (Math.floor(a / 100) === Math.floor(r / 100)) return null;
+        return problemT(op, a, t);
+      }
+      const a = rand(120, 980), t = 10 * rand(2, 9), r = resT(a, op, t);
+      if (a % 10 === 0 || r < 101 || r > 999 || Math.floor(a / 100) === Math.floor(r / 100) || !okT(a, op, t)) return null;
+      return kind === 'x' ? missingT(op, a, t) : problemT(op, a, t);
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
+  addNotion({ id: 'cm09', title: 'Multiplier par 4, par 8', chap: 'Chapitre 9', url: '../multiplier-par-4-par-8/index.html', targetMs: 12000,
+    make: (function(){
+  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  const EASY = [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44];
+  function friendly(){
+    const h = rand(1, 6), r = Math.random();
+    if (r < 0.4) return h * 100 + rand(1, 9);          // 105, 504
+    if (r < 0.8) return h * 100 + rand(1, 5) * 10;     // 120, 230
+    return 110 + rand(1, 9);                           // 112, 115
+  }
+  // Jaune : nombres à 2 chiffres (×8 jusqu'à 36). Orange : 2 chiffres et 5 nombres à 3 chiffres.
+  function makeProblems(parc){
+    const list = [], seen = new Set(), big = new Set();
+    if (parc === 'orange'){ while (big.size < 5) big.add(rand(3, N - 1)); }
+    let guard = 0;
+    while (list.length < N && guard++ < 5000){
+      const k = list.length;
+      let a, m;
+      if (parc === 'jaune'){
+        if (k < 4){ m = 4; a = pick(EASY); }
+        else { m = Math.random() < 0.5 ? 4 : 8; a = m === 4 ? rand(11, 65) : rand(11, 36); }
+      } else {
+        if (big.has(k)){ m = Math.random() < 0.5 ? 4 : 8; a = friendly(); }
+        else if (k < 3){ m = 4; a = rand(14, 85); }
+        else { m = Math.random() < 0.5 ? 4 : 8; a = m === 4 ? rand(14, 85) : rand(14, 75); }
+      }
+      if (a < 100 && a % 10 === 0 && Math.random() < 0.7) continue;
+      const key = a + 'x' + m;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      list.push({ a, m });
+    }
+    return list;
+  }
+
+    return parc => makeProblems(parc).map(p => mkP(B(p.a) + OP('×') + B(p.m) + OP('=') + Q, p.a * p.m, F(p.a) + ' × ' + p.m + ' = <b>' + F(p.a * p.m) + '</b>', ''));
+  })() });
+  const notionOf = id => NOTIONS.find(x => x.id === id);
+
+  /* ---------- Élèves, bilans et bons points (gardés dans ce navigateur) ---------- */
+  function norm(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+
+  function loadStore(){
+    try {
+      const v = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (v && typeof v === 'object' && v.profiles && typeof v.profiles === 'object') return v;
+    } catch (e) {}
+    return { current: null, profiles: {} };
+  }
+  let store = loadStore();
+  function saveStore(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
+  function profile(){
+    const p = (store.current && store.profiles[store.current]) || null;
+    if (p){
+      if (!p.tests) p.tests = [];
+      if (!p.points) p.points = [];
+      if (!p.seen || typeof p.seen !== 'object') p.seen = {};
+    }
+    return p;
+  }
+  function setName(raw){
+    const clean = String(raw || '').replace(/\s+/g, ' ').trim().slice(0, 30);
+    const key = norm(clean);
+    if (!key) return false;
+    if (!store.profiles[key]) store.profiles[key] = { name: clean, tests: [], points: [] };
+    store.current = key;
+    saveStore();
+    return true;
+  }
+
+  const ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  function fnv(str){
+    let h = 0x811c9dc5;
+    for (let k = 0; k < str.length; k++){ h ^= str.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  function cardCode(name, k){
+    let h = fnv(norm(name) + '|' + k + '|cm00-je-me-teste-bons-points');
+    let c = '';
+    for (let j = 0; j < 4; j++){ c += ALPHA[h % ALPHA.length]; h = Math.floor(h / ALPHA.length); }
+    return c;
+  }
+
+
+  /* ---------- Carte de bons points ---------- */
+  const STAR = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1.8"/><path transform="translate(4 4.3)" d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor"/></svg>';
+  function cardHTML(points, k, highlight){
+    const start = (k - 1) * 10;
+    const count = Math.max(0, Math.min(10, points.length - start));
+    let h = '<div class="bp-head"><h3>Carte n°' + k + '</h3><span class="bp-count">' + count + ' / 10 bons points</span></div><ol class="slots">';
+    for (let j = 0; j < 10; j++){
+      const p = points[start + j];
+      if (p) h += '<li class="slot on' + (start + j === highlight ? ' new' : '') + '" aria-label="Bon point ' + (j + 1) + ', record de ' + fmtLong(p.ms) + '">' + STAR + '<span class="t">' + fmtMinSec(p.ms) + '</span></li>';
+      else h += '<li class="slot" aria-label="Case ' + (j + 1) + ' vide">' + (j + 1) + '</li>';
+    }
+    return h + '</ol>';
+  }
+
+
+  /* ---------- Le laissez-passer vers les jeux (le code de la classe n'est pas redemandé) ---------- */
+  function cyrb(t){
+    let e, h1 = -559038744, h2 = 1103547984;
+    for (let a = 0; a < t.length; a++){ e = t.charCodeAt(a); h1 = Math.imul(h1 ^ e, 2654435761); h2 = Math.imul(h2 ^ e, 1597334677); }
+    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507); h1 ^= Math.imul(h2 ^ h2 >>> 13, 3266489909);
+    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507); h2 ^= Math.imul(h1 ^ h1 >>> 13, 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  }
+  function passToken(){
+    try { const s = sessionStorage.getItem('cm1cm2-pass'); if (s) return s; } catch (e) {}
+    let code = '';
+    try { code = String(localStorage.getItem('cm1cm2-code-classe') || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, ''); } catch (e) {}
+    return code ? cyrb('pass|' + cyrb('cm1cm2|' + code) + '|' + dayKey(Date.now())) : '';
+  }
+
+  /* ---------- État ---------- */
+  const S = {
+    phase: 'start',      // 'start' | 'game' | 'end' | 'card' | 'teacher'
+    askName: false,
+    cardView: 1,
+    T: null,             // le test en cours
+    last: null,          // le dernier bilan affiché
+    outcome: 'none', newPoint: -1
+  };
+
+  /* ---------- Le test ---------- */
+  function askForName(message){
+    S.phase = 'start';
+    S.askName = true;
+    render();
+    const msg = $('nameMsg');
+    msg.textContent = message;
+    msg.hidden = false;
+    $('nameInput').focus();
+  }
+  const newLevel = () => ({ asked: 0, ok: 0, err: 0, slow: 0, streak: 0, req: 0, times: [] });
+  function startTest(mode){
+    if (!profile()){ askForName("Écris d'abord ton prénom : ton bilan sera gardé sous ce prénom."); return; }
+    mode = mode === 'court' ? 'court' : 'long';
+    setMode(mode);
+    S.lastMode = mode;
+    const st = {};
+    NOTIONS.forEach(x => { st[x.id] = { lvl: 'jaune', cool: 0, L: { jaune: newLevel(), orange: newLevel() } }; });
+    S.T = { uid: 't' + Date.now().toString(36), mode, start: Date.now(), end: 0, count: 0, prog: 0,
+            st, seq: [], pools: {}, seen: {}, cur: null, input: '', wrong: false, locked: false, results: [],
+            avoid: (profile().opening || []).slice(0, 3) };
+    nextQ();
+    S.phase = 'game';
+    render();
+  }
+  // Un calcul jamais vu par cet élève passe d'abord (d'un test à l'autre, la mémoire est gardée
+  // sous son prénom) ; quand tous ont été vus, le plus ancien revient. Jamais deux fois le même dans un test.
+  function drawProblem(id, lvl){
+    const T = S.T, x = notionOf(id), key = id + '|' + lvl;
+    const pr = profile(), hist = (pr && Array.isArray(pr.seen[key])) ? pr.seen[key] : [];
+    const cand = {};
+    for (let tries = 0; tries < 4; tries++){
+      shuffle(x.make(lvl)).forEach(q => { if (!T.seen[q.short] && !cand[q.short]) cand[q.short] = q; });
+      if (Object.keys(cand).some(k => !hist.includes(k))) break;
+    }
+    const list = shuffle(Object.values(cand));
+    let p = list.find(q => !hist.includes(q.short));
+    if (!p && list.length){ p = list.reduce((a, q) => hist.indexOf(q.short) < hist.indexOf(a.short) ? q : a); }
+    if (!p) p = shuffle(x.make(lvl))[0];
+    T.seen[p.short] = 1;
+    if (pr){
+      const h = hist.filter(k => k !== p.short); h.push(p.short);
+      pr.seen[key] = h.slice(-HIST);
+      saveStore();
+    }
+    return p;
+  }
+  // Ce qu'il reste au moins à demander pour une notion.
+  function needOf(s){
+    const j = s.L.jaune, o = s.L.orange;
+    if (s.lvl === 'jaune'){
+      if (j.asked >= MAX_J || j.err >= J_STOP) return 0;           // le jaune n'est pas acquis : on s'arrête là
+      return Math.max(1, Math.max(PROMO, j.req) - j.streak) + BASE_O;
+    }
+    if (o.asked >= MAX_O) return 0;
+    return Math.max(0, BASE_O - o.asked, o.req - o.streak);
+  }
+  const totalNeed = T => NOTIONS.reduce((a, x) => a + needOf(T.st[x.id]), 0);
+  // La notion suivante : jamais la même que juste avant, si possible pas l'avant-dernière,
+  // et une notion ratée ou lente attend au moins GAP calculs. Les notions qui ont encore besoin
+  // d'être demandées passent d'abord, au hasard selon ce qu'il leur reste.
+  function chooseNotion(){
+    const T = S.T, ids = NOTIONS.map(x => x.id);
+    if (T.count >= MAX_TOTAL || !totalNeed(T)) return null;
+    const last = T.seq[T.seq.length - 1], last2 = T.seq[T.seq.length - 2];
+    const lvlFull = id => { const s = T.st[id], L = s.L[s.lvl]; return s.lvl === 'jaune' ? (L.asked >= MAX_J || L.err >= J_STOP) : L.asked >= MAX_O; };
+    const free = id => T.st[id].cool <= T.count && !lvlFull(id);
+    const needy = ids.filter(id => needOf(T.st[id]) > 0);
+    let c = needy.filter(id => id !== last && id !== last2 && free(id));
+    // Le test ne commence pas par les mêmes notions que le précédent
+    if (T.seq.length < 3 && T.avoid && T.avoid.length){ const c2 = c.filter(id => !T.avoid.includes(id)); if (c2.length) c = c2; }
+    if (!c.length) c = needy.filter(id => id !== last && free(id));
+    if (c.length){
+      let tot = 0; c.forEach(id => { tot += needOf(T.st[id]); });
+      let r = Math.random() * tot;
+      for (const id of c){ r -= needOf(T.st[id]); if (r < 0) return id; }
+      return c[c.length - 1];
+    }
+    // Sinon, un calcul d'une autre notion, pour ne pas enchaîner la même astuce
+    let f = ids.filter(id => id !== last && id !== last2 && free(id));
+    if (!f.length) f = ids.filter(id => id !== last && !lvlFull(id));
+    if (f.length) return pick(f);
+    return needy[0] || null;
+  }
+  function nextQ(){
+    const T = S.T, id = chooseNotion();
+    if (!id){ finishTest(); return false; }
+    const lvl = T.st[id].lvl;
+    T.cur = { id, lvl, p: drawProblem(id, lvl), t0: Date.now() };
+    T.seq.push(id);
+    if (T.seq.length === 3){ const pr = profile(); if (pr){ pr.opening = T.seq.slice(0, 3); saveStore(); } }
+    T.input = ''; T.wrong = false; T.locked = false;
+    return true;
+  }
+  function testPress(k){
+    const T = S.T;
+    if (!T || T.locked) return;
+    if (T.wrong){ if (k === 'ok') goNext(); return; }
+    if (k === 'ok'){ check(); return; }
+    if (k === 'del'){ T.input = T.input.slice(0, -1); clearFeedback(); renderAnswer(); return; }
+    if (T.input.length >= 7) return;
+    if (T.input === '' && k === '0') return;
+    T.input += k;
+    clearFeedback();
+    renderAnswer();
+  }
+  function check(){
+    const T = S.T;
+    if (T.input === ''){ setFeedback('info', "Tape d'abord ta réponse."); return; }
+    const c = T.cur, s = T.st[c.id], L = s.L[c.lvl], ms = Date.now() - c.t0, ok = parseInt(T.input, 10) === c.p.ans;
+    const slow = ok && ms > SLOW * notionOf(c.id).targetMs;
+    T.count++; L.asked++;
+    T.results.push({ id: c.id, lvl: c.lvl, txt: c.p.txt, ok, slow, ms, given: T.input });
+    if (ok){ L.ok++; L.times.push(ms); }
+    if (ok && !slow) L.streak++;
+    else if (slow){ L.slow++; L.streak = 0; L.req = Math.max(L.req, AFTER_SLOW); s.cool = T.count + GAP; }
+    else { L.err++; L.streak = 0; L.req = Math.max(L.req, AFTER_ERR); s.cool = T.count + GAP; }
+    let promoted = false;
+    if (c.lvl === 'jaune' && s.lvl === 'jaune' && L.streak >= Math.max(PROMO, L.req)){ s.lvl = 'orange'; promoted = true; }
+    const done = T.count, rem = totalNeed(T);
+    T.prog = Math.max(T.prog, done / (done + rem || 1));
+    if (ok){
+      T.locked = true;
+      if (promoted) setFeedback('good', pick(GOOD) + ' Ce genre de calcul passe au niveau orange.');
+      else if (slow) setFeedback('info', 'Juste, mais un peu lent : ce calcul reviendra.');
+      else setFeedback('good', pick(GOOD));
+      renderAnswer('good');
+      skiUpdate();
+      setTimeout(() => { if (S.phase === 'game' && S.T === T) goNext(); }, promoted || slow ? 1500 : 650);
+    } else {
+      T.wrong = true;
+      runFall();
+      setFeedback('bad', pick(BAD));
+      renderAnswer('bad');
+      renderCorrection();
+      skiUpdate();
+    }
+  }
+  function goNext(){
+    if (nextQ()) renderGame();
+  }
+
+  /* ---------- Le bilan ---------- */
+  function median(a){ if (!a.length) return null; const b = a.slice().sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; }
+  const lvlBrief = L => ({ asked: L.asked, err: L.err, slow: L.slow });
+  function evalNotion(x, s){
+    const j = s.L.jaune, o = s.L.orange;
+    const jOk = s.lvl === 'orange';
+    const oOk = jOk && o.asked >= BASE_O && o.streak >= o.req;
+    const reached = oOk ? 'orange' : (jOk ? 'jaune' : 'none');
+    const asked = j.asked + o.asked, err = j.err + o.err, slow = j.slow + o.slow;
+    const med = median(j.times.concat(o.times));
+    const ratio = med === null ? 3 : med / x.targetMs;           // temps habituel / temps visé
+    let status, reco;
+    if (reached === 'none'){ status = 'work'; reco = (!j.err && j.slow) ? 'Reprends ce jeu en parcours jaune pour aller plus vite.' : 'Reprends ce jeu en parcours jaune.'; }
+    else if (reached === 'jaune'){ status = 'rev'; reco = 'Passe au parcours orange.'; }
+    else if (o.err || o.slow){ status = 'rev'; reco = o.err ? 'Rejoue en parcours orange.' : 'Rejoue en parcours orange pour aller plus vite.'; }
+    else if (j.err + j.slow >= 2){ status = 'rev'; reco = "Rejoue en parcours orange pour t'entraîner encore."; }
+    else { status = 'ok'; reco = 'Acquis, même en orange !'; }
+    const base = { work: 300, rev: 150, ok: 0 }[status];
+    const score = base + 100 * (asked ? err / asked : 1) + 50 * (asked ? slow / asked : 0) + Math.min(40, Math.max(0, ratio - 1) * 20);
+    return { id: x.id, reached, status, reco, asked, err, slow, med, j: lvlBrief(j), o: lvlBrief(o), score: Math.round(score * 10) / 10 };
+  }
+  function finishTest(){
+    const T = S.T, prof = profile();
+    T.end = Date.now();
+    const rows = NOTIONS.map(x => evalNotion(x, T.st[x.id])).sort((a, b) => b.score - a.score || (b.med || 0) - (a.med || 0));
+    const test = { at: T.end, mode: T.mode, ms: T.end - T.start, n: T.count, ok: T.results.filter(r => r.ok).length, rows };
+    S.last = test;
+    S.outcome = 'none'; S.newPoint = -1;
+    if (prof){
+      prof.tests.push(test);
+      if (prof.tests.length > 30) prof.tests = prof.tests.slice(-30);
+      if (!prof.points.some(p => dayKey(p.at) === dayKey(T.end))){
+        prof.points.push({ ms: test.ms, at: T.end });
+        S.newPoint = prof.points.length - 1;
+        S.outcome = prof.points.length % 10 === 0 ? 'card' : 'point';
+      } else S.outcome = 'already';
+      saveStore();
+    }
+    S.T = null;
+    S.phase = 'end';
+    render();
+  }
+  const STATUS_TXT = { work: 'À travailler', rev: 'À revoir', ok: 'Acquis' };
+  function lvlText(name, L){
+    if (!L.asked) return null;
+    const pb = [];
+    if (L.err) pb.push(plural(L.err, 'erreur', 'erreurs'));
+    if (L.slow) pb.push(plural(L.slow, 'lente', 'lentes'));
+    return name + ' : ' + plural(L.asked, 'calcul', 'calculs') + (pb.length ? ', ' + pb.join(', ') : ', tout bon');
+  }
+  function rowDetail(r){
+    const parts = [lvlText('Jaune', r.j), lvlText('Orange', r.o)].filter(Boolean);
+    if (r.med !== null) parts.push('≈ ' + fmtShort(r.med) + ' par calcul');
+    return parts.join(' · ');
+  }
+  function rankHTML(test){
+    return test.rows.map((r, k) => {
+      const x = notionOf(r.id);
+      if (!x) return '';
+      return '<li class="rk st-' + r.status + '"><span class="rk-num" aria-hidden="true">' + (k + 1) + '</span>' +
+        '<span class="rk-body"><span class="rk-name">' + esc(x.title) + '</span><span class="rk-badge">' + STATUS_TXT[r.status] + '</span>' +
+        '<span class="rk-reco">' + esc(r.reco) + '</span><span class="rk-detail">' + rowDetail(r) + '</span></span>' +
+        '<a class="btn-secondary rk-go game" href="' + esc(x.url) + '" target="_blank" rel="noopener" aria-label="Jouer à ' + esc(x.title) + '">Jouer</a></li>';
+    }).join('');
+  }
+  function firstPickHTML(test){
+    const r = test.rows, top = r[0] && notionOf(r[0].id), next = r[1] && notionOf(r[1].id);
+    if (!top) return '';
+    if (r[0].status === 'ok') return "Tout est acquis, même en orange, bravo ! Pour aller encore plus vite, rejoue à <b>« " + esc(top.title) + " »</b>.";
+    const say = row => row.reached === 'none' ? 'en parcours jaune' : 'en parcours orange';
+    return 'Commence par <b>« ' + esc(top.title) + ' »</b> ' + say(r[0]) +
+      (next && r[1].status !== 'ok' ? ', puis <b>« ' + esc(next.title) + ' »</b> ' + say(r[1]) + '.' : '.');
+  }
+  function summaryText(test){
+    return test.rows.map(r => { const x = notionOf(r.id); return x ? x.title + ' : ' + r.reco.replace(/ !$/, '').replace(/\.$/, '').toLowerCase() : ''; }).filter(Boolean).join(' ; ');
+  }
+
+  /* ---------- Affichage ---------- */
+  const DEL_SVG = '<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M11.5 7H26a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H11.5L4 16z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M15 12l7 8M22 12l-7 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  function buildPad(el){
+    el.innerHTML = ['1','2','3','4','5','6','7','8','9','del','0','ok'].map(k => {
+      if (k === 'del') return '<button class="key del" type="button" data-k="del" aria-label="Effacer">' + DEL_SVG + '</button>';
+      if (k === 'ok') return '<button class="key ok" type="button" data-k="ok">Valider</button>';
+      return '<button class="key" type="button" data-k="' + k + '">' + k + '</button>';
+    }).join('');
+  }
+
+  function setFeedback(kind, text){ const el = $('feedback'); el.className = 'feedback ' + kind; el.textContent = text; }
+  function clearFeedback(){
+    const el = $('feedback');
+    el.className = 'feedback';
+    el.textContent = '';
+    $('answer').classList.remove('is-bad', 'shake');
+  }
+  function renderAnswer(state){
+    const box = $('answer');
+    $('answerText').textContent = S.T ? S.T.input : '';
+    box.classList.remove('is-good', 'is-bad', 'shake');
+    if (state === 'good') box.classList.add('is-good');
+    if (state === 'bad'){ box.classList.add('is-bad'); void box.offsetWidth; box.classList.add('shake'); }
+  }
+  function renderCorrection(){
+    const T = S.T, show = !!(T && T.wrong);
+    $('corr').hidden = !show;
+    $('nextBtn').hidden = !show;
+    $('pad').classList.toggle('dim', show);
+    $('corr').innerHTML = show ? 'La bonne réponse : ' + T.cur.p.txt : '';
+    if (show) $('nextBtn').focus();
+  }
+  function renderStart(){
+    const prof = profile();
+    const showForm = !prof || S.askName;
+    $('nameForm').hidden = !showForm;
+    $('hello').hidden = showForm;
+    if (!showForm) $('helloName').textContent = prof.name;
+    if (!S.askName) $('nameMsg').hidden = true;
+    const names = Object.keys(store.profiles), known = $('knownNames');
+    if (showForm && names.length){
+      known.innerHTML = '<span>Déjà sur cet appareil :</span>' +
+        names.map(k => '<button class="chip" type="button" data-profile="' + esc(k) + '">' + esc(store.profiles[k].name) + '</button>').join('');
+      known.hidden = false;
+    } else known.hidden = true;
+    $('notionList').innerHTML = NOTIONS.map(x => '<li>' + esc(x.title) + '</li>').join('');
+    const nN = NOTIONS.length;
+    $('shortSub').textContent = 'De ' + nN + ' à ' + (2 * nN) + ' calculs. Rien ne revient.';
+    $('longSub').textContent = 'Environ ' + (3 * nN) + ' calculs, plus si tu te trompes : les calculs ratés reviennent.';
+
+    const pts = prof ? prof.points : [];
+    $('startCard').innerHTML = cardHTML(pts, Math.floor(pts.length / 10) + 1, -1);
+    const tests = prof ? prof.tests : [], last = tests[tests.length - 1];
+    const ll = $('lastLine');
+    if (!prof) ll.textContent = 'Écris ton prénom en haut pour garder ton bilan.';
+    else if (!last) ll.textContent = 'Fais ton premier test pour savoir par quel jeu commencer.';
+    else ll.innerHTML = firstPickHTML(last);
+    const box = $('lastBox');
+    if (last){
+      box.hidden = false;
+      $('lastDate').textContent = 'Test du ' + new Date(last.at).toLocaleDateString('fr-FR') + (last.mode ? ', ' + modeLabel(last.mode) : '') + '.';
+      $('lastRank').innerHTML = rankHTML(last);
+    } else box.hidden = true;
+    const done = Math.floor(pts.length / 10), dc = $('doneCards');
+    if (done > 0){
+      let h = '<span>Cartes complètes :</span>';
+      for (let k = 1; k <= done; k++) h += '<button class="chip" type="button" data-card="' + k + '">Carte n°' + k + '</button>';
+      dc.innerHTML = h;
+      dc.hidden = false;
+    } else dc.hidden = true;
+  }
+  function renderGame(){
+    const T = S.T;
+    if (!T || !T.cur){ S.phase = 'start'; render(); return; }
+    const p = T.cur.p;
+    $('qNum').textContent = T.count + (T.wrong || T.locked ? 0 : 1);
+    const chip = $('gameParcours');
+    chip.className = 'pchip ' + T.cur.lvl;
+    chip.textContent = T.cur.lvl === 'orange' ? 'Orange' : 'Jaune';
+    const qc = $('qCalc');
+    qc.className = 'calc' + calcCls(p.q);
+    qc.innerHTML = qHTML(p.q, '<span class="q">?</span>');
+    const rem = totalNeed(T);
+    $('progressNote').textContent = rem > 0 ? 'Encore au moins ' + plural(rem, 'calcul', 'calculs') + '.' : 'Dernier calcul !';
+    clearFeedback();
+    renderAnswer(T.locked ? 'good' : null);
+    if (T.wrong){ $('answer').classList.add('is-bad'); setFeedback('bad', BAD[0]); }
+    renderCorrection();
+    skiUpdate();
+  }
+  function renderEnd(){
+    const test = S.last, prof = profile();
+    if (!test){ S.phase = 'start'; render(); return; }
+    $('endEyebrow').textContent = 'Test du ' + new Date(test.at).toLocaleDateString('fr-FR') + ' · ' + modeLabel(test.mode);
+    $('firstPick').innerHTML = firstPickHTML(test);
+    const oc = $('outcome'), won = S.outcome === 'point' || S.outcome === 'card';
+    oc.className = 'outcome' + (won ? ' win' : '');
+    if (S.outcome === 'point') oc.innerHTML = 'Tu gagnes un bon point pour ce test !';
+    else if (S.outcome === 'card') oc.innerHTML = 'Tu gagnes ton 10<sup>e</sup> bon point : ta carte est complète !';
+    else if (S.outcome === 'already') oc.innerHTML = "Tu as déjà gagné le bon point du test aujourd'hui. Reviens demain !";
+    else oc.innerHTML = '';
+    const endCard = $('endCard'), seeBtn = $('seeCardBtn');
+    if (won && prof){
+      const k = Math.floor(S.newPoint / 10) + 1;
+      endCard.innerHTML = cardHTML(prof.points, k, S.newPoint);
+      endCard.hidden = false;
+      seeBtn.hidden = S.outcome !== 'card';
+      seeBtn.dataset.card = k;
+    } else { endCard.hidden = true; seeBtn.hidden = true; }
+    $('againBtn').textContent = 'Refaire le test, ' + modeLabel(test.mode);
+    $('statN').textContent = test.n;
+    $('statOk').textContent = test.ok + '/' + test.n;
+    $('statTime').textContent = fmtMinSec(test.ms);
+    $('rank').innerHTML = rankHTML(test);
+    $('sendBox').hidden = !prof;
+    if (prof) $('sendLink').href = formLink([prof.name, GAME_NAME, 'Bilan de calcul mental (' + modeLabel(test.mode) + ')',
+      summaryText(test) + ' (' + test.ok + '/' + test.n + ' calculs justes, ' + fmtLong(test.ms) + ')']);
+  }
+  function renderCard(){
+    const prof = profile(), k = S.cardView;
+    const slice = prof ? prof.points.slice((k - 1) * 10, k * 10) : [];
+    if (slice.length < 10){ S.phase = 'start'; render(); return; }
+    const last = slice[9], code = cardCode(prof.name, k);
+    $('cardWho').textContent = prof.name;
+    $('cardNum').textContent = 'Carte n°' + k;
+    $('cardFull').innerHTML = cardHTML(prof.points, k, -1);
+    $('cardDate').textContent = 'Complétée le ' + new Date(last.at).toLocaleDateString('fr-FR') + ' · 10 tests « Je me teste » terminés';
+    $('cardCode').textContent = code;
+    $('cardMsg').textContent = 'Bonjour, ' + prof.name + ' a complété sa carte n°' + k + ' de 10 bons points au jeu « ' + GAME_NAME + ' » (10 tests de calcul mental terminés). Code de vérification : ' + code + '.';
+    $('copyStatus').textContent = '';
+  }
+  function renderTeacher(){
+    const ps = Object.keys(store.profiles).map(k => store.profiles[k]).filter(p => p.tests && p.tests.length);
+    $('teacherTests').innerHTML = ps.length ? ps.map(p => {
+      const t = p.tests[p.tests.length - 1];
+      return '<li><b>' + esc(p.name) + '</b> · ' + plural(p.tests.length, 'test', 'tests') + ' · dernier le ' + new Date(t.at).toLocaleDateString('fr-FR') + (t.mode ? ', ' + modeLabel(t.mode) : '') +
+        ' (' + t.ok + '/' + t.n + ' justes, ' + fmtLong(t.ms) + ')<br>' + esc(summaryText(t)) + '</li>';
+    }).join('') : '<li>Aucun test terminé sur cet appareil pour le moment.</li>';
+    $('notionTable').innerHTML = '<tr><th>Notion</th><th>Jeu</th><th>Temps visé</th><th>Lente au-delà de</th></tr>' +
+      NOTIONS.map(x => '<tr><td>' + esc(x.title) + '</td><td>' + esc(x.chap) + '</td><td>' + fmtShort(x.targetMs) + '</td><td>' + fmtShort(SLOW * x.targetMs) + '</td></tr>').join('');
+  }
+  function render(){
+    ['start', 'game', 'end', 'card', 'teacher'].forEach(id => { $(id).hidden = S.phase !== id; });
+    if (S.phase === 'start') renderStart();
+    if (S.phase === 'game') renderGame();
+    if (S.phase === 'end') renderEnd();
+    if (S.phase === 'card') renderCard();
+    if (S.phase === 'teacher') renderTeacher();
+    window.scrollTo(0, 0);
+  }
+  function goHome(){ S.phase = 'start'; S.askName = false; S.T = null; render(); }
+  function openCard(k){ S.cardView = k; S.phase = 'card'; render(); }
+
+  /* ---------- Les pistes de ski ---------- */
+  const PISTES = [
+    { name: 'blanche', color: '#ffffff', light: true,  fans: 1,  cheer: "Un moniteur t'applaudit !" },
+    { name: 'verte',   color: '#2fa84f', light: false, fans: 2,  cheer: "Deux amis t'applaudissent !" },
+    { name: 'bleue',   color: '#2f6fd6', light: false, fans: 3,  cheer: "Tes copains t'applaudissent !" },
+    { name: 'rouge',   color: '#d8343c', light: false, fans: 7,  cheer: "Tout le club de ski t'acclame !" },
+    { name: 'noire',   color: '#15171c', light: false, fans: 22, cheer: 'La foule est en délire !' }
+  ];
+  const pisteOf = id => PISTES[Math.max(0, Math.min(4, id - 1))];
+  const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+  let REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  const SND_KEY = 'ski-son';
+  function soundOn(){ try { return localStorage.getItem(SND_KEY) !== '0'; } catch (e) { return true; } }
+  function setSound(on){ try { localStorage.setItem(SND_KEY, on ? '1' : '0'); } catch (e) {} }
+  const soundLabel = () => soundOn() ? 'Son : activé' : 'Son : coupé';
+
+  // Petits bruitages fabriqués sur place (aucun fichier à charger).
+  let AC = null, NOISE = null;
+  function ac(){
+    if (!soundOn()) return null;
+    try {
+      if (!AC){ const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+      if (AC.state === 'suspended') AC.resume();
+      return AC;
+    } catch (e) { return null; }
+  }
+  function noiseBuf(a){
+    if (NOISE) return NOISE;
+    const b = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return (NOISE = b);
+  }
+  function nz(a, t, dur, type, freq, q, peak, attack){
+    const s = a.createBufferSource();
+    s.buffer = noiseBuf(a);
+    const f = a.createBiquadFilter();
+    f.type = type;
+    f.frequency.setValueAtTime(freq, t);
+    if (q) f.Q.value = q;
+    const g = a.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(Math.max(0.0002, peak), t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(a.destination);
+    s.start(t, Math.random(), dur + 0.05);
+    return f;
+  }
+  function sndWhoosh(sec){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, f = nz(a, t, sec, 'bandpass', 300, 0.8, 0.07, sec * 0.6);
+    f.frequency.linearRampToValueAtTime(1500, t + sec);
+  }
+  function sndClaps(n, dur){
+    const a = ac(); if (!a) return;
+    const t0 = a.currentTime + 0.03, people = Math.min(n, 14), base = n > 10 ? 0.55 : 0.75;
+    for (let p = 0; p < people; p++){
+      const rate = 3.4 + Math.random() * 1.8;
+      let t = t0 + Math.random() * 0.3;
+      while (t < t0 + dur){
+        const fade = t > t0 + dur - 0.8 ? Math.max(0.15, (t0 + dur - t) / 0.8) : 1;
+        nz(a, t, 0.06, 'bandpass', 1000 + Math.random() * 1600, 1.1, base / Math.sqrt(people) * (0.6 + Math.random() * 0.4) * fade, 0.004);
+        t += (1 / rate) * (0.85 + Math.random() * 0.3);
+      }
+    }
+    if (n > 10){
+      nz(a, t0, dur + 0.6, 'lowpass', 900, 0, 0.12, dur * 0.4);
+      [0.5, 1.4].forEach(dt => {
+        const o = a.createOscillator(), g = a.createGain(), s = t0 + dt;
+        o.type = 'sine';
+        o.frequency.setValueAtTime(1900, s); o.frequency.linearRampToValueAtTime(2500, s + 0.18); o.frequency.linearRampToValueAtTime(2100, s + 0.35);
+        g.gain.setValueAtTime(0.0001, s); g.gain.linearRampToValueAtTime(0.05, s + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, s + 0.4);
+        o.connect(g); g.connect(a.destination); o.start(s); o.stop(s + 0.45);
+      });
+    }
+  }
+  function sndThump(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.25);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.25, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 0.32);
+    nz(a, t, 0.25, 'lowpass', 1200, 0, 0.08, 0.005);
+  }
+  function sndRoll(sec){ const a = ac(); if (!a) return; nz(a, a.currentTime, sec, 'lowpass', 320, 0, 0.14, 0.1); }
+  function sndPop(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime;
+    nz(a, t, 0.5, 'lowpass', 600, 0, 0.18, 0.005);
+    nz(a, t + 0.05, 0.9, 'highpass', 2500, 0, 0.05, 0.02);
+  }
+
+  /* ---- Outils de dessin ---- */
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const clamp01 = k => Math.max(0, Math.min(1, k));
+  const easeOut = k => 1 - Math.pow(1 - k, 3);
+  const easeSine = k => 0.5 - 0.5 * Math.cos(Math.PI * k);
+  const easeOutBack = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const FONT = '"Baloo 2", "Arial Rounded MT Bold", Arial, sans-serif';
+  function makeTrack(segs){
+    const pts = [];
+    segs.forEach(sg => {
+      const n = sg[0] === 'C' ? 180 : 30;
+      for (let i = pts.length ? 1 : 0; i <= n; i++){
+        const t = i / n, u = 1 - t;
+        if (sg[0] === 'C'){
+          const a = sg[1], b = sg[2], c = sg[3], d = sg[4];
+          pts.push([u*u*u*a[0] + 3*u*u*t*b[0] + 3*u*t*t*c[0] + t*t*t*d[0], u*u*u*a[1] + 3*u*u*t*b[1] + 3*u*t*t*c[1] + t*t*t*d[1]]);
+        } else pts.push([lerp(sg[1][0], sg[2][0], t), lerp(sg[1][1], sg[2][1], t)]);
+      }
+    });
+    const cum = [0];
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const L = cum[cum.length - 1];
+    const pos = s => {
+      s = Math.max(0, Math.min(L, s));
+      let lo = 0, hi = cum.length - 1;
+      while (hi - lo > 1){ const m = (lo + hi) >> 1; if (cum[m] <= s) lo = m; else hi = m; }
+      const k = (s - cum[lo]) / ((cum[hi] - cum[lo]) || 1);
+      return [lerp(pts[lo][0], pts[hi][0], k), lerp(pts[lo][1], pts[hi][1], k)];
+    };
+    const at = s => { const p = pos(s), a = pos(s - 3), b = pos(s + 3); return { x: p[0], y: p[1], a: Math.atan2(b[1] - a[1], b[0] - a[0]) }; };
+    return { L, at, pos };
+  }
+  function fitCanvas(cv, W, H){
+    const cssW = Math.max(200, Math.round(cv.parentNode.clientWidth || 340)), d = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(cssW * d);
+    cv.height = Math.round(cssW * d * H / W);
+    return { k: cssW * d / W, cssW };
+  }
+  function rrect(g, x, y, w, h, r){
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+  function seg(g, x1, y1, x2, y2){ g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); }
+  function circ(g, x, y, r){ g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+  function poly(g, pts, fill){ g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.closePath(); g.fillStyle = fill; g.fill(); }
+
+  // Le skieur vu de profil, les pieds à l'origine. c = flexion, w = bras levés, tk = groupé (saut).
+  function drawSkier(g, x, y, ang, P, sc, alpha){
+    const c = P.c || 0, w = P.w || 0, tk = P.tk || 0;
+    g.save();
+    g.translate(x, y); g.rotate(ang);
+    if (sc) g.scale(sc, sc);
+    if (alpha !== undefined) g.globalAlpha = alpha;
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    g.strokeStyle = '#1a2358'; g.lineWidth = 2.6;
+    g.beginPath(); g.moveTo(-16, 0); g.lineTo(14, 0); g.quadraticCurveTo(19.5, 0, 19.5, -4); g.stroke();
+    const hip = [-2 + 1.5 * c - tk, -15 + 5 * c + 3 * tk], knee = [3 + 2 * c + 4 * tk, -8 + c - 3 * tk];
+    g.strokeStyle = '#2b3f8f'; g.lineWidth = 4.4;
+    g.beginPath(); g.moveTo(0, -1.5); g.lineTo(knee[0], knee[1]); g.lineTo(hip[0], hip[1]); g.stroke();
+    const lean = (0.32 + 0.35 * c + 0.55 * tk) * (1 - 0.75 * w);
+    const sh = [hip[0] + 11 * Math.sin(lean), hip[1] - 11 * Math.cos(lean)];
+    const hd = [sh[0] + 5.4 * Math.sin(lean * 0.8), sh[1] - 5.4 * Math.cos(lean * 0.8)];
+    const arm = back => {
+      const e = [lerp(4 + 2 * tk, back ? -2.5 : 3, w), lerp(5 - 3 * tk, -7, w)], h = [lerp(9 + 3 * tk, back ? -5.5 : 7, w), lerp(8 - 6 * tk, -14.5, w)];
+      const E = [sh[0] + e[0], sh[1] + e[1]], H = [sh[0] + h[0], sh[1] + h[1]];
+      const tip = [lerp(H[0] - 16, H[0] + (back ? -4 : 3), w), lerp(-1, H[1] - 13, w)];
+      g.strokeStyle = '#5a628f'; g.lineWidth = 1.5; seg(g, H[0], H[1], tip[0], tip[1]);
+      g.strokeStyle = back ? '#b8323a' : '#e5484d'; g.lineWidth = 3.4;
+      g.beginPath(); g.moveTo(sh[0], sh[1]); g.lineTo(E[0], E[1]); g.lineTo(H[0], H[1]); g.stroke();
+    };
+    arm(true);
+    g.strokeStyle = '#e5484d'; g.lineWidth = 7.5; seg(g, hip[0], hip[1], sh[0], sh[1]);
+    g.fillStyle = '#f1c7a3'; circ(g, hd[0], hd[1], 4.8);
+    g.fillStyle = '#f5c518'; g.beginPath(); g.arc(hd[0], hd[1], 5.1, Math.PI * 1.02, Math.PI * 2.02); g.closePath(); g.fill();
+    g.fillStyle = '#1a2358'; rrect(g, hd[0] + 0.8, hd[1] - 1.6, 4.8, 2.4, 1.1); g.fill();
+    arm(false);
+    g.restore();
+  }
+  function drawBall(g, x, y, r, rot, alpha){
+    g.save(); g.translate(x, y); g.rotate(rot); g.globalAlpha = alpha === undefined ? 1 : alpha;
+    g.fillStyle = '#ffffff'; circ(g, 0, 0, r);
+    g.strokeStyle = '#9fb3d1'; g.lineWidth = 1.3; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = '#c4d3ea'; g.lineWidth = 1.2;
+    g.beginPath(); g.arc(-r * 0.2, -r * 0.1, r * 0.55, 3.6, 5.2); g.stroke();
+    g.beginPath(); g.arc(r * 0.25, r * 0.3, r * 0.45, 0.2, 1.7); g.stroke();
+    g.restore();
+  }
+  function star(g, x, y, r){
+    g.beginPath();
+    for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    g.closePath(); g.fill();
+  }
+  // Gerbes de neige
+  function spray(list, x, y, n, dirX, speed){
+    for (let i = 0; i < n; i++) list.push({ x: x + rnd(-2, 2), y: y + rnd(-1, 1), vx: dirX * rnd(0.3, 1) * speed + rnd(-12, 12), vy: -rnd(18, 70), life: 0, max: rnd(0.35, 0.85), r: rnd(0.9, 2.4) });
+  }
+  function stepSpray(list, dt){
+    for (let i = list.length - 1; i >= 0; i--){
+      const p = list[i];
+      p.vy += 170 * dt; p.vx *= 1 - 1.5 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt;
+      if (p.life > p.max) list.splice(i, 1);
+    }
+  }
+  function drawSpray(g, list){
+    g.lineWidth = 0.6;
+    list.forEach(p => {
+      const a = 1 - p.life / p.max;
+      g.fillStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')';
+      g.strokeStyle = 'rgba(150,175,215,' + (a * 0.8).toFixed(2) + ')';
+      g.beginPath(); g.arc(p.x, p.y, p.r, 0, Math.PI * 2); g.fill(); g.stroke();
+    });
+  }
+  function makeFlakes(n){ return Array.from({ length: n }, () => ({ x: rnd(0, 360), y: rnd(0, 240), r: rnd(0.6, 1.6), vy: rnd(8, 18), ph: rnd(0, 6.3) })); }
+  function stepFlakes(list, dt, t, H){ list.forEach(f => { f.y += f.vy * dt; f.x += Math.sin(t * 0.8 + f.ph) * 6 * dt; if (f.y > H + 3){ f.y = -3; f.x = rnd(0, 360); } }); }
+  function drawFlakes(g, list){ g.fillStyle = 'rgba(255,255,255,.9)'; list.forEach(f => circ(g, f.x, f.y, f.r)); }
+
+  /* ---- Le slalom pendant le défi chrono ---- */
+  const pisteIdxFor = nPoints => Math.floor((nPoints % 10) / 2);
+  const RH = 96;
+  const RUN_TRACK = makeTrack([['C', [0, 34], [120, 38], [230, 74], [360, 80]]]);
+  const runS = (n, total) => RUN_TRACK.L * (0.03 + 0.9 * n / total);
+  const RUN = { uid: '', cv: null, g: null, k: 1, cssW: 0, bg: null, piste: PISTES[0], total: 15, done: 0, s: 0, v: 0, target: 0, fall: null, spray: [], flakes: makeFlakes(10), marks: [], daze: 0, t: 0, raf: 0, last: 0 };
+  function syncSound(){
+    document.querySelectorAll('[data-sound]').forEach(x => {
+      x.setAttribute('aria-pressed', String(soundOn()));
+      if (x.getAttribute('data-sound') === 'icon'){ x.setAttribute('aria-label', soundLabel()); x.title = soundLabel(); x.classList.toggle('off', !soundOn()); }
+      else x.textContent = soundLabel();
+    });
+  }
+  function runBg(){
+    const b = document.createElement('canvas');
+    b.width = RUN.cv.width; b.height = RUN.cv.height;
+    const g = b.getContext('2d');
+    g.setTransform(RUN.k, 0, 0, RUN.k, 0, 0);
+    const sky = g.createLinearGradient(0, 0, 0, RH); sky.addColorStop(0, '#bfe2ff'); sky.addColorStop(1, '#eef7ff');
+    g.fillStyle = sky; g.fillRect(0, 0, 360, RH);
+    poly(g, [[0,40],[40,18],[80,34],[130,10],[180,32],[230,14],[290,34],[330,20],[360,30],[360,RH],[0,RH]], '#d3e2f4');
+    poly(g, [[130,10],[121,19],[128,17],[134,21],[139,17]], '#ffffff');
+    poly(g, [[230,14],[222,22],[229,20],[234,24],[239,21]], '#ffffff');
+    g.beginPath(); g.moveTo(0, 34); g.bezierCurveTo(120, 38, 230, 74, 360, 80); g.lineTo(360, RH); g.lineTo(0, RH); g.closePath();
+    g.fillStyle = '#ffffff'; g.fill(); g.strokeStyle = '#cddcf0'; g.lineWidth = 1.2; g.stroke();
+    const P = RUN.piste;
+    g.lineCap = 'round';
+    for (let k = 0; k < RUN.total; k++){
+      const p = RUN_TRACK.at(runS(k + 1, RUN.total));
+      if (k === RUN.total - 1){
+        g.strokeStyle = '#5a628f'; g.lineWidth = 2.2; seg(g, p.x - 11, p.y + 3, p.x - 11, p.y - 26); seg(g, p.x + 11, p.y + 3, p.x + 11, p.y - 26);
+        g.fillStyle = P.light ? '#2b45c8' : P.color; rrect(g, p.x - 17, p.y - 34, 34, 10, 3); g.fill();
+        g.fillStyle = '#ffffff'; g.font = '800 6.5px ' + FONT; g.textAlign = 'center'; g.fillText('ARRIVÉE', p.x, p.y - 26.6);
+      } else {
+        const col = k % 2 ? '#2f6fd6' : '#e5484d';
+        g.strokeStyle = col; g.lineWidth = 1.6; seg(g, p.x, p.y + 2, p.x, p.y - 17);
+        g.beginPath(); g.moveTo(p.x + 0.6, p.y - 17); g.lineTo(p.x + 9, p.y - 13.5); g.lineTo(p.x + 0.6, p.y - 10); g.closePath(); g.fillStyle = col; g.fill();
+      }
+    }
+    // Panneau de la piste, en haut à droite
+    g.font = '800 9px ' + FONT; g.textAlign = 'left';
+    const label = 'Piste ' + P.name, w = g.measureText(label).width + 26;
+    g.fillStyle = 'rgba(255,255,255,.95)'; rrect(g, 354 - w, 5, w, 16, 8); g.fill(); g.strokeStyle = '#1a2358'; g.lineWidth = 1.1; g.stroke();
+    g.fillStyle = P.color; circ(g, 354 - w + 10, 13, 4.6); g.strokeStyle = '#1a2358'; g.lineWidth = 1; g.beginPath(); g.arc(354 - w + 10, 13, 4.6, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#1a2358'; g.fillText(label, 354 - w + 18, 16.4);
+    return b;
+  }
+  function runFit(){ const f = fitCanvas(RUN.cv, 360, RH); RUN.k = f.k; RUN.cssW = f.cssW; RUN.bg = runBg(); }
+  function runSetup(G){
+    if (RUN.uid === G.uid && RUN.cv && RUN.cv.isConnected) return true;
+    const box = $('runbox');
+    box.innerHTML = '<canvas aria-hidden="true"></canvas>';
+    RUN.cv = box.querySelector('canvas');
+    RUN.g = RUN.cv.getContext('2d');
+    if (!RUN.g) return false;
+    RUN.uid = G.uid; RUN.piste = PISTES[G.piste] || PISTES[0]; RUN.total = G.total;
+    runFit();
+    RUN.done = G.done;
+    RUN.s = RUN.target = runS(G.done, G.total);
+    RUN.v = 0; RUN.fall = null; RUN.spray = []; RUN.daze = 0;
+    RUN.marks = G.marks.map(ok => ({ ok, t0: -10 }));
+    return true;
+  }
+  function runUpdate(G){
+    syncSound();
+    if (!runSetup(G)) return;
+    RUN.done = G.done;
+    RUN.target = runS(G.done, G.total);
+    G.marks.forEach((ok, k) => { if (!RUN.marks[k]) RUN.marks[k] = { ok, t0: RUN.t }; });
+    if (REDUCED){ RUN.s = RUN.target; runDraw(); return; }
+    runKick();
+  }
+  function runKick(){ if (!RUN.raf){ RUN.last = performance.now(); RUN.raf = requestAnimationFrame(runFrame); } }
+  function runFrame(now){
+    RUN.raf = 0;
+    if (!RUN.cv || !RUN.cv.isConnected || !RUN.cv.offsetParent) return;
+    const dt = Math.min(0.05, Math.max(0, (now - RUN.last) / 1000));
+    RUN.last = now; RUN.t += dt;
+    if (Math.abs((RUN.cv.parentNode.clientWidth || 0) - RUN.cssW) > 2) runFit();
+    runStep(dt);
+    runDraw();
+    RUN.raf = requestAnimationFrame(runFrame);
+  }
+  function runFall(){
+    if (!RUN.cv || !RUN.cv.isConnected || RUN.fall) return;
+    sndThump();
+    if (REDUCED) return;
+    const next = runS(RUN.done + 1, RUN.total);
+    RUN.fall = { t: 0, s0: RUN.s, s1: RUN.s + Math.min(12, Math.max(0, next - RUN.s) * 0.5), burst: false, rolled: false };
+    RUN.v = 0;
+    runKick();
+  }
+  function runStep(dt){
+    const F = RUN.fall;
+    if (F){
+      F.t += dt;
+      if (F.t > 0.22 && !F.rolled){ F.rolled = true; sndRoll(0.9); }
+      if (F.t > 0.22 && F.t < 1.25 && Math.random() < dt * 25){ const p = RUN_TRACK.at(lerp(F.s0, F.s1, easeOut(clamp01((F.t - 0.22) / 1.03)))); spray(RUN.spray, p.x - 6, p.y - 2, 1, -1, 25); }
+      if (F.t >= 1.25 && !F.burst){
+        F.burst = true;
+        const p = RUN_TRACK.at(F.s1);
+        for (let i = 0; i < 22; i++){ const a = rnd(-Math.PI, 0), sp = rnd(30, 75); RUN.spray.push({ x: p.x, y: p.y - 8, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: rnd(0.4, 0.8), r: rnd(1, 2.4) }); }
+        RUN.daze = 1.4;
+      }
+      if (F.t >= 1.7){ RUN.s = F.s1; RUN.v = 0; RUN.fall = null; }
+    } else {
+      const K = 9, d = RUN.target - RUN.s;
+      if (d < 0){ RUN.v = 0; }
+      else {
+        RUN.v += (K * d - 2 * Math.sqrt(K) * RUN.v) * dt;
+        RUN.s += RUN.v * dt;
+        if (d < 0.05 && Math.abs(RUN.v) < 0.5){ RUN.s = RUN.target; RUN.v = 0; }
+        if (RUN.v > 12 && Math.random() < dt * RUN.v * 0.5){ const p = RUN_TRACK.at(RUN.s); spray(RUN.spray, p.x - 10, p.y - 1, 1, -1, 30); }
+      }
+    }
+    if (RUN.daze > 0) RUN.daze = Math.max(0, RUN.daze - dt);
+    stepSpray(RUN.spray, dt);
+    stepFlakes(RUN.flakes, dt, RUN.t, RH);
+  }
+  function runDraw(){
+    const g = RUN.g;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.drawImage(RUN.bg, 0, 0);
+    g.setTransform(RUN.k, 0, 0, RUN.k, 0, 0);
+    drawFlakes(g, RUN.flakes);
+    RUN.marks.forEach((m, k) => {
+      if (!m) return;
+      const p = RUN_TRACK.at(runS(k + 1, RUN.total)), last = k === RUN.total - 1;
+      const sc = easeOutBack(clamp01((RUN.t - m.t0) / 0.35)), y = p.y - (last ? 41 : 24);
+      if (sc <= 0.01) return;
+      g.save(); g.translate(p.x + (last ? 0 : 1), y); g.scale(sc, sc);
+      g.fillStyle = m.ok ? '#157a45' : '#d9730d'; circ(g, 0, 0, 5);
+      g.strokeStyle = '#ffffff'; g.lineWidth = 1.7; g.lineCap = 'round'; g.lineJoin = 'round';
+      g.beginPath(); g.moveTo(-2.4, 0); g.lineTo(-0.8, 1.7); g.lineTo(2.3, -1.9); g.stroke();
+      g.restore();
+    });
+    const F = RUN.fall;
+    if (F){
+      const t = F.t;
+      if (t < 0.32){
+        const u = clamp01(t / 0.28), p = RUN_TRACK.at(F.s0);
+        drawSkier(g, p.x, p.y, p.a + 1.45 * u * u, { c: 0.3 + 0.7 * u }, 0.82, 1 - clamp01((t - 0.18) / 0.14));
+      }
+      if (t > 0.2 && t < 1.42){
+        const u = clamp01((t - 0.22) / 1.03), s = lerp(F.s0, F.s1, easeOut(u)), p = RUN_TRACK.at(s);
+        const r = 8 * Math.min(1, easeOutBack(clamp01((t - 0.2) / 0.25))) * (t > 1.25 ? 1 + (t - 1.25) * 3 : 1);
+        const alpha = t > 1.25 ? clamp01(1 - (t - 1.25) / 0.17) : 1;
+        drawBall(g, p.x + Math.sin(p.a) * r, p.y - Math.cos(p.a) * r, Math.max(0.1, r), (s - F.s0) / 8, alpha);
+      }
+      if (t > 1.25){
+        const u = clamp01((t - 1.25) / 0.45), p = RUN_TRACK.at(F.s1);
+        drawSkier(g, p.x, p.y, p.a, { c: lerp(0.9, 0.3, easeOut(u)) }, 0.82, clamp01(u * 2.5));
+      }
+    } else {
+      const p = RUN_TRACK.at(RUN.s), c = 0.3 + 0.25 * Math.min(1, RUN.v / 45) + 0.03 * Math.sin(RUN.t * 2.2);
+      drawSkier(g, p.x, p.y, p.a, { c }, 0.82);
+    }
+    drawSpray(g, RUN.spray);
+    if (RUN.daze > 0){
+      const s = RUN.fall ? RUN.fall.s1 : RUN.s, p = RUN_TRACK.at(s), a = clamp01(RUN.daze / 0.3);
+      g.fillStyle = 'rgba(245,197,24,' + a.toFixed(2) + ')';
+      for (let i = 0; i < 3; i++){ const ang = RUN.t * 6 + i * 2.09; star(g, p.x + 2 + Math.cos(ang) * 8, p.y - 33 + Math.sin(ang) * 2.5, 2.6); }
+    }
+  }
+
+
+  function skiPisteIdx(){ const p = profile(); return pisteIdxFor(p ? p.points.length : 0); }
+  function skiUpdate(){
+    const T = S.T;
+    if (!T) return;
+    runUpdate({ uid: T.uid, total: GATES, done: T.prog * (GATES - 1), marks: [], piste: skiPisteIdx() });
+  }
+
+  /* ---------- Événements ---------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-sound]');
+    if (!b) return;
+    setSound(!soundOn());
+    syncSound();
+  });
+  // Les liens « Jouer » emportent le laissez-passer du jour : le jeu ne redemande pas le code.
+  ['pointerdown', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, e => {
+    const a = e.target && e.target.closest ? e.target.closest('a.game') : null;
+    if (!a) return;
+    const t = passToken();
+    if (t) a.setAttribute('href', a.getAttribute('href').split('#')[0] + '#cmg-' + t);
+  }, true));
+  $('nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    if (setName($('nameInput').value)){
+      $('nameInput').value = '';
+      S.askName = false;
+      render();
+    } else {
+      $('nameMsg').textContent = 'Écris ton prénom dans la case.';
+      $('nameMsg').hidden = false;
+      $('nameInput').focus();
+    }
+  });
+  $('knownNames').addEventListener('click', e => {
+    const b = e.target.closest('[data-profile]');
+    if (!b || !store.profiles[b.dataset.profile]) return;
+    store.current = b.dataset.profile;
+    saveStore();
+    S.askName = false;
+    render();
+  });
+  $('changeName').addEventListener('click', () => {
+    S.askName = true;
+    render();
+    $('nameInput').value = '';
+    $('nameInput').focus();
+  });
+  $('doneCards').addEventListener('click', e => { const b = e.target.closest('[data-card]'); if (b) openCard(+b.dataset.card); });
+  $('seeCardBtn').addEventListener('click', e => openCard(+e.currentTarget.dataset.card));
+  $('cardBack').addEventListener('click', goHome);
+  $('copyBtn').addEventListener('click', () => {
+    const text = $('cardMsg').textContent, status = $('copyStatus');
+    const fallback = () => {
+      const r = document.createRange();
+      r.selectNodeContents($('cardMsg'));
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      status.textContent = 'Le message est sélectionné : copiez-le avec le menu de votre appareil.';
+    };
+    try { navigator.clipboard.writeText(text).then(() => { status.textContent = 'Message copié. Collez-le dans votre messagerie.'; }, fallback); }
+    catch (e) { fallback(); }
+  });
+  $('teacherLink').addEventListener('click', () => { S.phase = 'teacher'; $('checkResult').hidden = true; render(); });
+  $('teacherBack').addEventListener('click', goHome);
+  $('checkForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('tName').value, k = parseInt($('tCard').value, 10);
+    const code = $('tCode').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const out = $('checkResult');
+    out.hidden = false;
+    if (!norm(name) || !(k >= 1) || code.length !== 4){
+      out.className = 'check-result ko';
+      out.textContent = 'Remplissez les trois cases : le prénom, le numéro de carte et le code à 4 caractères.';
+      return;
+    }
+    if (cardCode(name, k) === code){
+      out.className = 'check-result ok';
+      out.textContent = 'Carte valide : ' + name.trim() + ', carte n°' + k + '. La récompense est méritée !';
+    } else {
+      out.className = 'check-result ko';
+      out.textContent = "Ce code ne correspond pas. Vérifiez l'orthographe du prénom et le numéro de carte.";
+    }
+  });
+  $('startShort').addEventListener('click', () => startTest('court'));
+  $('startLong').addEventListener('click', () => startTest('long'));
+  $('againBtn').addEventListener('click', () => startTest(S.lastMode || 'court'));
+  $('endHomeBtn').addEventListener('click', goHome);
+  $('quitBtn').addEventListener('click', goHome);
+  $('nextBtn').addEventListener('click', goNext);
+  $('pad').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b && S.phase === 'game') testPress(b.dataset.k); });
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey || S.phase !== 'game') return;
+    if (e.target && e.target.id === 'nextBtn' && e.key === 'Enter') return;
+    let k = null;
+    if (/^[0-9]$/.test(e.key)) k = e.key;
+    else if (e.key === 'Backspace' || e.key === 'Delete') k = 'del';
+    else if (e.key === 'Enter') k = 'ok';
+    if (!k) return;
+    e.preventDefault();
+    testPress(k);
+  });
+
+  /* ---------- Démarrage (garde le test en cours si la page est mise à jour) ---------- */
+  function boot(data){
+    buildPad($('pad'));
+    const saved = data && data.S;
+    if (saved && saved.phase) Object.assign(S, saved);
+    if (S.T) setMode(S.T.mode || 'long');   // un test commencé avant les deux versions est un test long
+    if (S.phase === 'game' && !(S.T && S.T.cur)) S.phase = 'start';
+    if (S.phase === 'end' && !S.last) S.phase = 'start';
+    render();
+    if (S.phase === 'game' && S.T.locked) goNext();
+  }
+  const hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function'){
+    try { hot.snapshot(() => ({ S: JSON.parse(JSON.stringify(S)) })); } catch (e) {}
+  }
+  if (hot && hot.ready) hot.ready(boot);
+  else boot((hot && hot.data) || {});
+})();
+</script>
+
+</body></html>

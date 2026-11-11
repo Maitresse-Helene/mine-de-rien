@@ -1,0 +1,2685 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Le présent des trois groupes</title>
+<!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html#conjugaison"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Mise en page : une seule colonne posée sur un cahier Seyès, comme les jeux de calcul.
+   Étape 1 : cinq fiches de leçon avec une petite question chacune.
+   Étape 2 : cinq niveaux, des phrases à trous jusqu'à la transposition d'un texte.
+   Le verbe est marqué en rouge, le sujet en bleu ; les terminaisons en rouge. */
+:root{
+  --paper:#f6f7fd;
+  --sheet:#ffffff;
+  --ink:#1a2358;
+  --ink-soft:#5a628f;
+  --rule:#e4e8f7;
+  --rule-strong:#cad1ef;
+  --pen:#2b45c8;
+  --pen-deep:#1a2d92;
+  --pen-ink:#ffffff;
+  --pen-soft:#e7ebfb;
+  --end:#c23a54;
+  --end-bg:#fbe7ec;
+  --stamp:#7a36c2;
+  --stamp-bg:#f3ecfb;
+  --red:#cf2f46;
+  --red-bg:#fdebee;
+  --good:#157a45;
+  --good-bg:#e3f4ea;
+  --key:#ffffff;
+  --key-edge:#ccd3f0;
+  --key-shadow:#b5bee6;
+  --font-title:"Playwrite FR Moderne","Segoe Print","Bradley Hand",cursive;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+    --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff; --pen-deep:#5c74e0; --pen-ink:#0f1638; --pen-soft:#25314a;
+    --end:#ff8fa3; --end-bg:#3d2229; --stamp:#cfa8ff; --stamp-bg:#2c2540;
+    --red:#ff8894; --red-bg:#3b2128; --good:#63d49a; --good-bg:#1a3729;
+    --key:#283833; --key-edge:#3a4d46; --key-shadow:#0e1513;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab;
+  --rule:#1c2925; --rule-strong:#283a35; --pen:#97abff; --pen-deep:#5c74e0; --pen-ink:#0f1638; --pen-soft:#25314a;
+  --end:#ff8fa3; --end-bg:#3d2229; --stamp:#cfa8ff; --stamp-bg:#2c2540;
+  --red:#ff8894; --red-bg:#3b2128; --good:#63d49a; --good-bg:#1a3729;
+  --key:#283833; --key-edge:#3a4d46; --key-shadow:#0e1513;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to bottom, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to right, var(--rule-strong) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+  background-size:100% 32px, 32px 100%, 100% 8px;
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--pen);outline-offset:3px}
+
+.app{
+  min-height:100%;
+  max-width:32rem;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:16px 20px;
+}
+.screen{flex:1;display:flex;flex-direction:column;gap:16px}
+.n{font-family:var(--font-num);font-weight:700;font-variant-numeric:tabular-nums}
+.end{color:var(--end);font-weight:700}
+
+.title{
+  font-family:var(--font-title);
+  font-weight:400;
+  font-size:clamp(1.7rem, 7vw, 2.4rem);
+  line-height:1.6;
+  color:var(--pen);
+  margin:0;
+  text-wrap:balance;
+}
+.title-block{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.lead{margin:0;font-size:1.05rem;line-height:1.55;color:var(--ink-soft);max-width:40ch}
+
+.fiche{
+  background:var(--sheet);
+  border:1.5px solid var(--key-edge);
+  border-radius:20px;
+  box-shadow:0 3px 0 var(--key-shadow);
+  padding:20px;
+}
+.eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* Boutons */
+.btn-primary,.btn-secondary{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;border-radius:18px;cursor:pointer;text-align:center;
+  font-family:var(--font-num);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.btn-primary{
+  min-height:58px;border:0;
+  background:var(--pen);color:var(--pen-ink);
+  font-weight:800;font-size:1.35rem;line-height:1.2;padding:8px 16px;
+  box-shadow:0 4px 0 var(--pen-deep);
+}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--pen-deep)}
+.btn-secondary{
+  min-height:52px;border:1.5px solid var(--key-edge);
+  background:var(--sheet);color:var(--pen);
+  font-weight:700;font-size:1.15rem;line-height:1.2;padding:8px 16px;
+  box-shadow:0 3px 0 var(--key-shadow);
+}
+.btn-secondary:active{transform:translateY(2px);box-shadow:0 1px 0 var(--key-shadow)}
+.btn-inline{width:auto;flex:none;min-height:50px;padding:6px 18px;font-size:1.1rem}
+.btn-ghost{
+  border:0;background:none;cursor:pointer;padding:6px 4px;
+  color:var(--ink-soft);font-weight:600;font-size:.95rem;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.push-bottom{margin-top:auto}
+.send-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--sheet);border:1.5px dashed var(--pen)}
+.send-btn{text-decoration:none}
+.send-btn svg{width:22px;height:22px;flex:none}
+.send-note{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
+.stack{display:flex;flex-direction:column;gap:10px}
+
+/* Champs */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.9rem;font-weight:600}
+.input{
+  width:100%;min-width:0;height:52px;padding:0 14px;
+  border:1.5px solid var(--key-edge);border-radius:14px;
+  background:var(--sheet);color:var(--ink);font-size:1.15rem;
+}
+.input::placeholder{color:var(--ink-soft);opacity:.7}
+.name-row{display:flex;gap:8px;align-items:stretch}
+.name-row .input{flex:1}
+.form-msg{margin:0;font-size:.92rem;color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+.chip{
+  border:1.5px solid var(--key-edge);background:var(--paper);border-radius:999px;
+  padding:4px 12px;font-weight:600;font-size:.95rem;color:var(--pen);cursor:pointer;
+}
+.hello{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hello p{margin:0;font-size:1.15rem}
+.hello b{font-family:var(--font-num);font-weight:800;font-size:1.35rem;color:var(--pen)}
+
+/* Accueil */
+.step-card{display:flex;flex-direction:column;gap:12px}
+.step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.step-card h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.45rem;line-height:1.2}
+.step-card > p{margin:0;line-height:1.5;color:var(--ink-soft)}
+.done-chip{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;font-weight:600;color:var(--good);background:var(--good-bg);border-radius:999px;padding:2px 10px 2px 8px}
+.done-chip svg{width:14px;height:14px}
+.teacher-link{align-self:center}
+.totals{margin:0;font-size:.95rem;color:var(--ink-soft);line-height:1.5}
+.totals b{color:var(--ink);font-family:var(--font-num);font-weight:800}
+
+.levels{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.lvl{
+  display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;
+  width:100%;text-align:left;padding:12px;cursor:pointer;
+  border:1.5px solid var(--key-edge);border-radius:16px;background:var(--sheet);
+  box-shadow:0 2px 0 var(--key-shadow);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.lvl:active{transform:translateY(2px);box-shadow:none}
+.lvl:disabled{cursor:not-allowed;box-shadow:none;background:var(--paper)}
+.lvl:disabled .lvl-name,.lvl:disabled .lvl-desc{color:var(--ink-soft)}
+.lvl-num{width:40px;height:40px;border-radius:12px;background:var(--pen-soft);color:var(--pen);display:flex;align-items:center;justify-content:center;font-family:var(--font-num);font-weight:800;font-size:1.3rem}
+.lvl.ok .lvl-num{background:var(--good-bg);color:var(--good)}
+.lvl:disabled .lvl-num{background:var(--sheet);color:var(--ink-soft)}
+.lvl-num svg{width:20px;height:20px}
+.lvl-body{display:flex;flex-direction:column;gap:1px;min-width:0}
+.lvl-name{font-family:var(--font-num);font-weight:800;font-size:1.12rem;line-height:1.25}
+.lvl-desc{font-size:.86rem;line-height:1.4;color:var(--ink-soft)}
+.lvl-score{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.lvl-score b{font-family:var(--font-num);font-weight:800;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.lvl-score span{font-size:.74rem;color:var(--ink-soft);white-space:nowrap}
+.lvl.ok .lvl-score b{color:var(--good)}
+
+/* Carte de bons points */
+.bp{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--paper);border:1.5px solid var(--key-edge)}
+.bp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bp-head h3{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem;line-height:1.2}
+.bp-count{font-family:var(--font-num);font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.slots{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5, minmax(0,1fr));gap:8px}
+.slot{
+  aspect-ratio:1 / 1.12;max-width:100%;
+  border:2px dashed var(--rule-strong);border-radius:14px;background:var(--sheet);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  color:var(--ink-soft);font-family:var(--font-num);font-weight:700;font-size:1rem;
+}
+.slot.on{border-style:solid;border-color:var(--stamp);background:var(--stamp-bg);color:var(--stamp)}
+.slot svg{width:62%;height:auto;transform:rotate(-9deg)}
+.slot .t{font-size:.74rem;line-height:1}
+.slot.new svg{animation:stampIn .55s cubic-bezier(.2,1.4,.4,1) both}
+.bp-note{margin:0;font-size:.82rem;color:var(--ink-soft);line-height:1.5}
+.gift{margin:0;padding:10px 12px;border-radius:12px;background:var(--stamp-bg);color:var(--stamp);font-weight:600;line-height:1.5}
+.done-cards{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+
+/* En-tête commun */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar-title{display:flex;flex-direction:column;gap:0;min-width:0}
+.bar-title b{font-family:var(--font-num);font-weight:800;font-size:1.2rem;line-height:1.2}
+.track{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.track li{height:8px;border-radius:4px;background:var(--rule-strong);transition:background-color .25s}
+.track li.done{background:var(--good)}
+.track li.miss{background:var(--red)}
+.track li.current{background:var(--pen)}
+.tally{display:flex;gap:14px;font-size:.95rem;color:var(--ink-soft)}
+.tally b{font-family:var(--font-num);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
+.tally .ok b{color:var(--good)}
+.tally .ko b{color:var(--red)}
+
+/* Étape 1 : fiches de leçon */
+#learn{gap:12px}
+.lesson{display:flex;flex-direction:column;gap:12px}
+.lesson h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.4rem;line-height:1.25;color:var(--pen)}
+.lesson p{margin:0;line-height:1.6}
+.lesson ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;line-height:1.55}
+.ex{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:10px;background:var(--paper);border:1.5px dashed var(--rule-strong)}
+.warn{padding:10px 12px;border-radius:12px;background:var(--end-bg);color:var(--ink)}
+.groups{display:flex;flex-direction:column;gap:10px}
+.grow{display:grid;grid-template-columns:4.4rem minmax(0,1fr);gap:10px;align-items:start}
+.gbadge{font-family:var(--font-num);font-weight:800;font-size:.95rem;line-height:1.3;padding:4px 8px;border-radius:10px;background:var(--pen-soft);color:var(--pen);text-align:center}
+.ctable{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:4px 16px;padding:12px 14px;border-radius:14px;background:var(--paper);font-size:1.05rem}
+.ctable .vname{grid-column:1 / -1;font-family:var(--font-num);font-weight:800;font-size:1.05rem;margin-bottom:2px}
+.memo summary{cursor:pointer;font-weight:600;color:var(--pen);padding:6px 0}
+.memo-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:10px;margin-top:8px}
+.memo-card{padding:10px 12px;border-radius:12px;background:var(--paper);border:1.5px solid var(--key-edge);font-size:.92rem;line-height:1.5;min-width:0}
+.memo-card b{display:block;font-family:var(--font-num);font-weight:800;font-size:1rem;color:var(--pen)}
+.check{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1.5px dashed var(--rule-strong)}
+.check-q{margin:0;font-weight:600;font-size:1.08rem;line-height:1.5}
+.choices{display:grid;gap:8px}
+.choice{
+  width:100%;min-height:50px;padding:8px 14px;text-align:left;cursor:pointer;
+  border:1.5px solid var(--key-edge);border-radius:14px;background:var(--sheet);
+  font-family:var(--font-num);font-weight:700;font-size:1.15rem;
+  box-shadow:0 2px 0 var(--key-shadow);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.choice.right{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.choice.wrong{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.why{margin:0;padding:10px 12px;border-radius:12px;line-height:1.5}
+.why.good{background:var(--good-bg);color:var(--good)}
+.why.bad{background:var(--red-bg);color:var(--red)}
+
+/* Étape 2 : jeu */
+#play{gap:12px}
+.task{display:flex;flex-direction:column;gap:14px;padding:18px 16px}
+.instr{margin:0;font-weight:600;font-size:1rem;color:var(--ink-soft)}
+.text-title{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem}
+.sentence{margin:0;font-size:clamp(1.2rem, 5.2vw, 1.45rem);line-height:2.05}
+.sentence.long{font-size:clamp(1.05rem, 4.4vw, 1.2rem);line-height:2.15}
+.gap{
+  display:inline-block;min-width:4.6em;padding:0 .3em;margin:0 .1em;
+  border-bottom:2.5px dashed var(--rule-strong);text-align:center;
+  font-family:var(--font-num);font-weight:700;line-height:1.35;color:var(--pen);
+  vertical-align:baseline;
+}
+.gap.active{border-bottom:3px solid var(--pen);background:var(--pen-soft);border-radius:8px 8px 0 0}
+.gap.filled{color:var(--good);border-bottom:2.5px solid var(--good)}
+.gap.fixed{color:var(--red);border-bottom:2.5px solid var(--red)}
+.gap.bad{color:var(--red);border-bottom-color:var(--red);background:var(--red-bg)}
+.gap.shake{animation:shake .38s ease}
+.inf{font-size:.78em;color:var(--ink-soft);font-style:italic;white-space:nowrap}
+.orig{margin:0;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px dashed var(--rule-strong);line-height:1.75;color:var(--ink-soft)}
+.orig-label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.ov{color:var(--ink);font-weight:600;border-bottom:2px solid var(--rule-strong)}
+.ov.cur{color:var(--end);border-bottom-color:var(--end);background:var(--end-bg)}
+.ov.done{color:var(--good);border-bottom-color:var(--good)}
+.caret{display:inline-block;width:2px;height:.95em;background:currentColor;margin-left:1px;vertical-align:-.12em;animation:blink 1.05s steps(1) infinite}
+
+.answer-box{display:flex;flex-direction:column;gap:10px}
+.now{margin:0;font-size:.95rem;line-height:1.6;padding:8px 12px;border-radius:12px;background:var(--pen-soft)}
+.now .label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.answer-row{display:flex;gap:8px}
+.answer-row .input{flex:1;font-family:var(--font-num);font-weight:700;font-size:1.3rem}
+.answer-row .input.bad{border-color:var(--red);background:var(--red-bg)}
+.feedback{margin:0;min-height:1.5em;font-weight:600;font-size:1.05rem;line-height:1.5}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--red)}
+.feedback.info{color:var(--ink-soft);font-weight:500}
+.hint{
+  margin:0;padding:12px 14px;border-radius:14px;
+  background:var(--paper);border:1.5px dashed var(--rule-strong);
+  font-size:1rem;line-height:1.6;
+}
+
+.tokens{font-size:clamp(1.15rem, 5vw, 1.35rem);line-height:2.4}
+.tok{
+  display:inline;padding:3px 7px;margin:0 .12em;cursor:pointer;
+  border:1.5px solid var(--key-edge);border-radius:10px;background:var(--sheet);
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.tok.elide{margin-right:0}
+.tok.is-verb{background:var(--end-bg);border-color:var(--end);color:var(--end);font-weight:700}
+.tok.is-subj{background:var(--pen-soft);border-color:var(--pen);color:var(--pen);font-weight:700}
+.tok.is-wrong{background:var(--red-bg);border-color:var(--red)}
+.tok:disabled{cursor:default}
+.legend-row{display:flex;flex-wrap:wrap;gap:12px;font-size:.85rem;color:var(--ink-soft)}
+.legend-row span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:4px;border:1.5px solid}
+.sw.v{background:var(--end-bg);border-color:var(--end)}
+.sw.s{background:var(--pen-soft);border-color:var(--pen)}
+.grp{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px}
+.grp .btn-secondary{padding:6px 8px}
+
+/* Résultat */
+.result{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.score{font-family:var(--font-num);font-weight:800;font-size:clamp(3rem, 15vw, 4.2rem);line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:.45em;color:var(--ink-soft)}
+.stamp{
+  margin-top:8px;display:inline-block;padding:2px 14px;
+  border:2.5px solid var(--stamp);border-radius:10px;color:var(--stamp);
+  font-family:var(--font-title);font-size:1.05rem;line-height:1.9;
+  transform:rotate(-4deg);
+}
+.outcome{margin:8px 0 0;font-size:1.02rem;line-height:1.5;max-width:34ch}
+.outcome.win{color:var(--stamp);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px;margin:0}
+.stats div{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:16px;padding:10px 8px;text-align:center;min-width:0}
+.stats dt{font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+.stats dd{margin:2px 0 0;font-family:var(--font-num);font-weight:800;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.det{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.det li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;line-height:1.5}
+.det svg{width:20px;height:20px;margin-top:2px}
+.det .ok{color:var(--good)}
+.det .ko{color:var(--red)}
+.det b{font-family:var(--font-num);font-weight:800}
+.det .tries{font-size:.85rem;color:var(--ink-soft)}
+
+/* Carte complète */
+.card-sheet{display:flex;flex-direction:column;gap:14px}
+.card-who{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card-who b{font-family:var(--font-num);font-weight:800;font-size:1.5rem;color:var(--pen)}
+.card-date{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.code-box{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px;border:2.5px solid var(--stamp);border-radius:16px;background:var(--stamp-bg)}
+.code{font-family:var(--font-num);font-weight:800;font-size:2.4rem;line-height:1.1;letter-spacing:.2em;padding-left:.2em;color:var(--stamp)}
+.msg{
+  margin:0;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px dashed var(--rule-strong);
+  line-height:1.55;-webkit-user-select:all;user-select:all;
+}
+.copy-status{margin:0;font-size:.92rem;color:var(--good);min-height:1.4em}
+
+/* Espace enseignante */
+.form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.check-result{margin:0;padding:12px 14px;border-radius:14px;line-height:1.5;font-weight:500}
+.check-result.ok{background:var(--good-bg);color:var(--good)}
+.check-result.ko{background:var(--red-bg);color:var(--red)}
+.howto{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;line-height:1.5;color:var(--ink-soft)}
+
+@keyframes blink{50%{opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes stampIn{0%{transform:rotate(-9deg) scale(1.9);opacity:0}100%{transform:rotate(-9deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .caret{animation:none}
+  .gap.shake,.slot.new svg{animation:none}
+  .track li{transition:none}
+}
+[hidden]{display:none!important}
+/* Escalade */
+.lvl-num.theme{border-radius:50%;border:2.5px solid rgba(0,0,0,.25);color:#ffffff}
+.lvl:disabled .lvl-num.theme{opacity:.45}
+.closed{display:inline-block;margin-top:3px;font-size:.72rem;font-weight:600;color:var(--red);background:var(--red-bg);border-radius:999px;padding:1px 8px;width:max-content}
+.runbox{border-radius:14px;overflow:hidden;border:1.5px solid var(--key-edge);background:#e6f3ff;line-height:0}
+.runbox canvas,.scene canvas{display:block;width:100%;height:auto}
+.scene{border-radius:18px;overflow:hidden;border:1.5px solid var(--key-edge);background:var(--sheet)}
+.scene-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px}
+.cheer{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.15rem;line-height:1.3;color:var(--ink)}
+.sound-btn{border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:600;color:var(--pen);cursor:pointer}
+.pbtns{display:flex;flex-wrap:wrap;gap:8px}
+.pbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--key-edge);background:var(--sheet);border-radius:999px;padding:6px 12px;font-weight:600;color:var(--ink);cursor:pointer}
+.pdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink-soft);flex:none}
+.head-btns{display:flex;align-items:center;gap:6px}
+.prev-title{margin:0;font-family:var(--font-num);font-size:1.2rem;color:var(--ink)}
+
+/* Parcours jaune / orange */
+:root{--jaune:#f2b200;--jaune-ink:#3b2b00;--orange:#ea7417;--orange-ink:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--jaune:#e8ab00;--jaune-ink:#2a1f00;--orange:#f08a3a;--orange-ink:#1f1004}}
+:root[data-theme="dark"]{--jaune:#e8ab00;--jaune-ink:#2a1f00;--orange:#f08a3a;--orange-ink:#1f1004}
+.parcours{display:flex;flex-direction:column;gap:10px;padding:16px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg-btn{min-height:50px;border-radius:14px;cursor:pointer;font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1.2;background:var(--sheet);color:var(--ink);border:2.5px solid var(--key-edge);display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.seg-btn i{width:12px;height:12px;border-radius:50%;flex:none}
+.seg-btn.jaune i{background:var(--jaune)}
+.seg-btn.orange i{background:var(--orange)}
+.seg-btn.jaune[aria-pressed="true"]{background:var(--jaune);border-color:var(--jaune);color:var(--jaune-ink)}
+.seg-btn.orange[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.seg-btn[aria-pressed="true"] i{background:currentColor}
+.seg-btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.seg-note{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.pchip{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.78rem;font-weight:600;line-height:1.6}
+.pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
+.pchip.orange{background:var(--orange);color:var(--orange-ink)}
+.bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+</style>
+
+<div class="app">
+
+  <!-- Accueil -->
+  <section id="start" class="screen" aria-labelledby="startTitle">
+    <div class="title-block">
+      <span class="eyebrow">Conjugaison · Le présent</span>
+      <h1 class="title" id="startTitle">Le présent des trois groupes</h1>
+    </div>
+
+    <form class="fiche stack" id="nameForm" novalidate>
+      <div class="field">
+        <label for="nameInput">Ton prénom</label>
+        <div class="name-row">
+          <input class="input" id="nameInput" name="prenom" type="text" autocomplete="given-name" maxlength="30" placeholder="Par exemple : Léa">
+          <button class="btn-secondary btn-inline" type="submit">Valider</button>
+        </div>
+      </div>
+      <p class="form-msg" id="nameMsg" hidden></p>
+      <div class="chips" id="knownNames" hidden></div>
+    </form>
+
+    <div class="hello" id="hello" hidden>
+      <p>Bonjour <b id="helloName"></b> !</p>
+      <button class="btn-ghost" id="changeName" type="button">Ce n'est pas moi</button>
+    </div>
+
+    <div class="fiche parcours">
+      <span class="eyebrow">Ton parcours</span>
+      <div class="seg" role="group" aria-label="Choisis ton parcours">
+        <button class="seg-btn jaune" type="button" data-parcours="jaune" aria-pressed="true"><i aria-hidden="true"></i>Jaune</button>
+        <button class="seg-btn orange" type="button" data-parcours="orange" aria-pressed="false"><i aria-hidden="true"></i>Orange</button>
+      </div>
+      <p class="seg-note" id="parcoursNote"></p>
+    </div>
+
+    <div class="fiche step-card">
+      <div class="step-head">
+        <span class="eyebrow">Étape 1</span>
+        <span class="done-chip" id="learnDoneChip" hidden>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Déjà fait
+        </span>
+      </div>
+      <h2>Comprendre la leçon</h2>
+      <p>5 fiches courtes : trouver l'infinitif, reconnaître le groupe d'un verbe, puis les terminaisons du présent pour chaque groupe. Une petite question à chaque fiche.</p>
+      <button class="btn-primary" id="learnBtn" type="button">Commencer l'étape 1</button>
+    </div>
+
+    <div class="fiche step-card">
+      <span class="eyebrow">Étape 2</span>
+      <h2>Le jeu en 5 sommets</h2>
+      <p>Du Petit Rocher (800 m) au Mont Géant (4 000 m), chaque sommet est plus difficile. Avec au moins 8 réussites sur 10 du premier coup, tu atteins le sommet et tu ouvres le suivant. Attention : à chaque erreur, ton alpiniste glisse !</p>
+      <ol class="levels" id="levelList"></ol>
+      <p class="totals" id="totals"></p>
+      <p class="gift" id="giftNote" hidden></p>
+      <div class="bp" id="startCard"></div>
+      <p class="bp-note">Chaque sommet peut te rapporter 3 bons points : quand tu l'atteins (80 % de réussite), à 90 % et au sans-faute. Si tu fais beaucoup mieux d'un coup, tu gagnes tous ces bons points d'un coup. Avec 10 bons points, tu as une récompense en classe ! Tes bons points sont gardés sur cet appareil.</p>
+      <div class="done-cards" id="doneCards" hidden></div>
+    </div>
+
+    <button class="btn-ghost teacher-link" id="teacherLink" type="button">Espace enseignante : vérifier une carte</button>
+  </section>
+
+  <!-- Étape 1 : fiches de leçon -->
+  <section id="learn" class="screen" hidden aria-label="Comprendre la leçon">
+    <header class="bar">
+      <div class="bar-title"><span class="eyebrow" id="learnCount">Fiche 1 sur 5</span></div>
+      <button class="btn-ghost" id="learnHome" type="button">Accueil</button>
+    </header>
+    <ol class="track" id="ltrack" aria-hidden="true"></ol>
+    <div class="fiche lesson" id="lesson"></div>
+  </section>
+
+  <!-- Étape 1 : bilan -->
+  <section id="learnEnd" class="screen" hidden aria-labelledby="learnEndTitle">
+    <h1 class="title" id="learnEndTitle">Bien joué !</h1>
+    <p class="lead" id="learnScore"></p>
+    <div class="fiche lesson">
+      <h2>À retenir</h2>
+      <div class="groups">
+        <div class="grow"><span class="gbadge">1er</span><span>Infinitif en -er (sauf aller) : <span class="end">-e, -es, -e, -ons, -ez, -ent</span>.</span></div>
+        <div class="grow"><span class="gbadge">2e</span><span>Infinitif en -ir avec « nous …issons » : <span class="end">-is, -is, -it, -issons, -issez, -issent</span>.</span></div>
+        <div class="grow"><span class="gbadge">3e</span><span>Tous les autres. Souvent <span class="end">-s, -s, -t, -ons, -ez, -ent</span>, mais aussi <span class="end">-ds, -ds, -d</span> ou <span class="end">-x, -x, -t</span>. Le radical change souvent.</span></div>
+      </div>
+      <details class="memo" id="memoEnd"><summary>Les 8 verbes à savoir par cœur</summary><div class="memo-grid"></div></details>
+    </div>
+    <div class="stack push-bottom">
+      <button class="btn-primary" id="toGameBtn" type="button">Passer au jeu</button>
+      <button class="btn-secondary" id="learnAgainBtn" type="button">Revoir les fiches</button>
+    </div>
+  </section>
+
+  <!-- Étape 2 : un niveau -->
+  <section id="play" class="screen" hidden aria-label="Jeu">
+    <header class="bar">
+      <div class="bar-title"><span class="bar-eyebrow"><span class="eyebrow" id="playLevel">Sommet 1</span><span class="pchip jaune" id="playParcours">Jaune</span></span><b id="playName">Phrases simples</b></div>
+      <div class="head-btns"><button class="btn-ghost" id="soundBtn" type="button" data-sound>Son : activé</button><button class="btn-ghost" id="playHome" type="button">Accueil</button></div>
+    </header>
+    <div class="bar">
+      <span class="eyebrow" id="playCount">Question 1 sur 10</span>
+      <div class="tally" aria-live="polite"><span class="ok">Réussites <b id="tOk">0</b></span><span class="ko">Erreurs <b id="tErr">0</b></span></div>
+    </div>
+    <ol class="track" id="ptrack" aria-hidden="true" hidden></ol>
+    <div class="runbox" id="runbox" aria-hidden="true"></div>
+
+    <div class="fiche task" id="task">
+      <p class="instr" id="instr"></p>
+      <p class="text-title" id="textTitle" hidden></p>
+      <p class="orig" id="orig" hidden></p>
+      <div id="unit"></div>
+      <div class="legend-row" id="spotLegend" hidden><span><i class="sw v"></i>verbe</span><span><i class="sw s"></i>sujet</span></div>
+    </div>
+
+    <form class="answer-box" id="answerForm" novalidate>
+      <p class="now" id="now" hidden></p>
+      <div class="answer-row" id="answerRow">
+        <label class="eyebrow" for="answerInput" hidden>Ta réponse</label>
+        <input class="input" id="answerInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Écris le verbe">
+        <button class="btn-primary btn-inline" id="answerBtn" type="submit">Valider</button>
+      </div>
+      <div class="grp" id="groupBtns" hidden>
+        <button class="btn-secondary" type="button" data-group="1">1er groupe</button>
+        <button class="btn-secondary" type="button" data-group="2">2e groupe</button>
+        <button class="btn-secondary" type="button" data-group="3">3e groupe</button>
+      </div>
+      <button class="btn-primary" id="subjBtn" type="button" hidden>Valider le sujet</button>
+      <p class="feedback" id="feedback" aria-live="assertive"></p>
+      <p class="hint" id="hint" hidden></p>
+      <button class="btn-primary" id="continueBtn" type="button" hidden>Continuer</button>
+    </form>
+  </section>
+
+  <!-- Résultat d'un niveau -->
+  <section id="result" class="screen" hidden aria-labelledby="resultTitle">
+    <h1 class="title" id="resultTitle">Escalade terminée !</h1>
+    <div class="scene" id="resScene" hidden></div>
+    <div class="fiche result">
+      <span class="eyebrow" id="resLevel"></span>
+      <div class="score" id="resScore"></div>
+      <span class="eyebrow">réussites du premier coup</span>
+      <span class="stamp" id="resStamp" hidden></span>
+      <p class="outcome" id="resOutcome"></p>
+    </div>
+    <div class="bp" id="resCard" hidden></div>
+    <button class="btn-primary" id="seeCardBtn" type="button" hidden>Voir ma carte complète</button>
+    <dl class="stats">
+      <div><dt>Réussites</dt><dd id="resOk">0</dd></div>
+      <div><dt>Erreurs</dt><dd id="resErr">0</dd></div>
+      <div><dt>Pour valider</dt><dd id="resNeed">8</dd></div>
+    </dl>
+    <div class="fiche">
+      <h2 class="text-title" style="margin-bottom:10px">Le détail</h2>
+      <ul class="det" id="resDetail"></ul>
+    </div>
+    <div class="send-box" id="sendBox">
+      <a class="btn-secondary send-btn" id="sendLink" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M4 7.5l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Envoyer mon score à la maîtresse
+      </a>
+      <p class="send-note">Un formulaire s'ouvre avec ton score déjà écrit. Appuie sur « Envoyer » pour que ta maîtresse le reçoive.</p>
+    </div>
+
+    <div class="stack push-bottom">
+      <button class="btn-primary" id="nextLevelBtn" type="button" hidden>Sommet suivant</button>
+      <button class="btn-secondary" id="replayBtn" type="button">Refaire cette escalade</button>
+      <button class="btn-ghost" id="resHome" type="button" style="align-self:center">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- Carte de 10 bons points complète -->
+  <section id="card" class="screen" hidden aria-labelledby="cardTitle">
+    <h1 class="title" id="cardTitle">Carte complète !</h1>
+    <div class="fiche card-sheet">
+      <div class="card-who"><b id="cardWho"></b><span class="eyebrow" id="cardNum"></span></div>
+      <div class="bp" id="cardFull"></div>
+      <p class="card-date" id="cardDate"></p>
+      <div class="code-box">
+        <span class="eyebrow">Code de vérification</span>
+        <span class="code" id="cardCode"></span>
+      </div>
+    </div>
+    <p class="lead">Montre cette carte à ta maîtresse. Un adulte peut aussi lui envoyer ce message :</p>
+    <p class="msg" id="cardMsg"></p>
+    <button class="btn-secondary" id="copyBtn" type="button">Copier le message</button>
+    <p class="copy-status" id="copyStatus" aria-live="polite"></p>
+    <button class="btn-primary push-bottom" id="cardBack" type="button">Retour à l'accueil</button>
+  </section>
+
+  <!-- Espace enseignante -->
+  <section id="teacher" class="screen" hidden aria-labelledby="teacherTitle">
+    <h1 class="title" id="teacherTitle">Vérifier une carte</h1>
+    <p class="lead">Saisissez le prénom, le numéro de carte et le code envoyés par la famille.</p>
+    <form class="fiche form" id="checkForm" novalidate>
+      <div class="field">
+        <label for="tName">Prénom de l'élève</label>
+        <input class="input" id="tName" type="text" autocomplete="off" maxlength="30">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="tCard">N° de carte</label>
+          <input class="input" id="tCard" type="text" inputmode="numeric" value="1" maxlength="3">
+        </div>
+        <div class="field">
+          <label for="tCode">Code</label>
+          <input class="input" id="tCode" type="text" autocapitalize="characters" autocomplete="off" maxlength="6" placeholder="K7P3">
+        </div>
+      </div>
+      <button class="btn-primary" type="submit">Vérifier</button>
+      <p class="check-result" id="checkResult" hidden></p>
+    </form>
+    <div class="fiche">
+      <ul class="howto">
+        <li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Il peut prendre un parcours différent d'un jeu à l'autre. Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte, et le parcours est écrit dans le score envoyé.</li>
+        <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
+        <li>Le score compte les réussites du premier coup. Une erreur donne un indice et un deuxième essai ; après deux erreurs, la réponse est montrée.</li>
+        <li>Les niveaux sont 5 sommets de plus en plus hauts, du Petit Rocher (800 m) au Mont Géant (4 000 m). Un sommet est atteint avec au moins 80 % de réussites du premier coup (8 sur 10). Il ouvre le sommet suivant. À chaque erreur, l'alpiniste glisse et sa corde le retient.</li>
+        <li>Bons points : chaque sommet en rapporte jusqu'à 3, à 80 % de réussite (sommet atteint), à 90 % et au sans-faute, soit 15 en tout. Un élève qui fait mieux d'un coup reçoit d'un coup tous les bons points correspondants. Les bons points déjà gagnés avec l'ancienne règle sont conservés.</li>
+        <li>Les erreurs d'accent sur le radical (ecris pour écris) sont acceptées, avec un rappel. Les terminaisons doivent être exactes.</li>
+        <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
+      </ul>
+    </div>
+    <div class="fiche stack">
+      <h2 class="prev-title">Aperçu des sommets</h2>
+      <p class="send-note">Ce que voit l'élève quand il gagne un bon point sur chaque sommet, et quand il atteint le Mont Géant pour la première fois (fin du jeu).</p>
+      <div class="pbtns" id="previewBtns">
+        <button class="pbtn" type="button" data-prev="0"><span class="pdot" style="background:#2fa84f"></span>Petit Rocher</button>
+        <button class="pbtn" type="button" data-prev="1"><span class="pdot" style="background:#2f6fd6"></span>Dent du Chamois</button>
+        <button class="pbtn" type="button" data-prev="2"><span class="pdot" style="background:#f08c1a"></span>Aiguille Rouge</button>
+        <button class="pbtn" type="button" data-prev="3"><span class="pdot" style="background:#d8343c"></span>Pic des Aigles</button>
+        <button class="pbtn" type="button" data-prev="4"><span class="pdot" style="background:#7a36c2"></span>Mont Géant</button>
+        <button class="pbtn" type="button" data-prev="fin"><span class="pdot" style="background:#f5c518"></span>Fin du jeu</button>
+      </div>
+      <div class="scene" id="previewScene" hidden></div>
+    </div>
+    <button class="btn-secondary push-bottom" id="teacherBack" type="button">Retour à l'accueil</button>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  const STORE_KEY = 'present-trois-groupes-bons-points';
+  const LEARN_KEY = 'present-trois-groupes-lecon-faite';
+  const GAME_NAME = 'Le présent des trois groupes';
+  const $ = id => document.getElementById(id);
+  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSde3BnaU_vGD6JeeCqP3mgcxNhnm5z15fbf38R3D-ihhwOscQ/viewform';
+  const FORM_IDS = ['1488044105', '165270319', '1824034822', '454882096']; // Prénom, Jeu, Niveau, Score
+  const formLink = vals => FORM_URL + '?usp=pp_url' + FORM_IDS.map((id, i) => '&entry.' + id + '=' + encodeURIComponent(vals[i] || '')).join('');
+  const nErr = n => n + (n > 1 ? ' erreurs' : ' erreur');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  function shuffle(arr){
+    const c = arr.slice();
+    for (let k = c.length - 1; k > 0; k--){ const j = Math.floor(Math.random() * (k + 1)); const t = c[k]; c[k] = c[j]; c[j] = t; }
+    return c;
+  }
+  function norm(s){ return String(s || '').replace(/[’`]/g, "'").toLowerCase().replace(/\s+/g, ' ').trim(); }
+  function bare(s){ return norm(s).normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
+  /* ---------- Conjugaison au présent ---------- */
+  const E1 = ['e', 'es', 'e', 'ons', 'ez', 'ent'];
+  const E2 = ['is', 'is', 'it', 'issons', 'issez', 'issent'];
+  const EDRE = ['s', 's', '', 'ons', 'ez', 'ent'];
+  const G2 = new Set(['finir','choisir','grandir','réussir','rougir','obéir','réfléchir','remplir','bâtir','nourrir','applaudir','atterrir','ralentir','saisir','fleurir','grossir','jaunir','noircir','bondir','réunir','pétrir','engloutir','agir','avertir','franchir','guérir','maigrir','vieillir','salir','unir']);
+  const DRE = ['attendre','répondre','entendre','descendre','perdre','rendre','vendre'];
+  const IRR = {
+    aller:['vais','vas','va','allons','allez','vont'],
+    faire:['fais','fais','fait','faisons','faites','font'],
+    dire:['dis','dis','dit','disons','dites','disent'],
+    venir:['viens','viens','vient','venons','venez','viennent'],
+    tenir:['tiens','tiens','tient','tenons','tenez','tiennent'],
+    prendre:['prends','prends','prend','prenons','prenez','prennent'],
+    voir:['vois','vois','voit','voyons','voyez','voient'],
+    pouvoir:['peux','peux','peut','pouvons','pouvez','peuvent'],
+    vouloir:['veux','veux','veut','voulons','voulez','veulent'],
+    partir:['pars','pars','part','partons','partez','partent'],
+    sortir:['sors','sors','sort','sortons','sortez','sortent'],
+    dormir:['dors','dors','dort','dormons','dormez','dorment'],
+    courir:['cours','cours','court','courons','courez','courent'],
+    mettre:['mets','mets','met','mettons','mettez','mettent'],
+    lire:['lis','lis','lit','lisons','lisez','lisent'],
+    'écrire':['écris','écris','écrit','écrivons','écrivez','écrivent'],
+    savoir:['sais','sais','sait','savons','savez','savent'],
+    devoir:['dois','dois','doit','devons','devez','doivent'],
+    boire:['bois','bois','boit','buvons','buvez','boivent'],
+    recevoir:['reçois','reçois','reçoit','recevons','recevez','reçoivent'],
+    croire:['crois','crois','croit','croyons','croyez','croient'],
+    'connaître':['connais','connais','connaît','connaissons','connaissez','connaissent'],
+    vivre:['vis','vis','vit','vivons','vivez','vivent'],
+    rire:['ris','ris','rit','rions','riez','rient'],
+    ouvrir:['ouvre','ouvres','ouvre','ouvrons','ouvrez','ouvrent'],
+    offrir:['offre','offres','offre','offrons','offrez','offrent'],
+    'découvrir':['découvre','découvres','découvre','découvrons','découvrez','découvrent'],
+    peindre:['peins','peins','peint','peignons','peignez','peignent'],
+    'éteindre':['éteins','éteins','éteint','éteignons','éteignez','éteignent'],
+    appeler:['appelle','appelles','appelle','appelons','appelez','appellent'],
+    jeter:['jette','jettes','jette','jetons','jetez','jettent'],
+    acheter:['achète','achètes','achète','achetons','achetez','achètent'],
+    lever:['lève','lèves','lève','levons','levez','lèvent'],
+    peser:['pèse','pèses','pèse','pesons','pesez','pèsent'],
+    envoyer:['envoie','envoies','envoie','envoyons','envoyez','envoient'],
+    nettoyer:['nettoie','nettoies','nettoie','nettoyons','nettoyez','nettoient']
+  };
+  const MUST_KNOW = ['aller','faire','dire','venir','prendre','voir','pouvoir','vouloir'];
+  function group(inf){
+    if (inf === 'aller') return 3;
+    if (inf.endsWith('er')) return 1;
+    if (G2.has(inf)) return 2;
+    return 3;
+  }
+  function forms(inf){
+    if (IRR[inf]) return IRR[inf];
+    if (inf.endsWith('prendre')){ const pre = inf.slice(0, -7); return IRR.prendre.map(f => pre + f); }
+    if (inf.endsWith('venir')){ const pre = inf.slice(0, -5); return IRR.venir.map(f => pre + f); }
+    const g = group(inf);
+    if (g === 1){
+      const f = E1.map(e => inf.slice(0, -2) + e);
+      if (inf.endsWith('ger')) f[3] = inf.slice(0, -2) + 'eons';
+      if (inf.endsWith('cer')) f[3] = inf.slice(0, -3) + 'çons';
+      return f;
+    }
+    if (g === 2) return E2.map(e => inf.slice(0, -2) + e);
+    if (DRE.includes(inf)) return EDRE.map(e => inf.slice(0, -2) + e);
+    return null;
+  }
+  const conj = (inf, p) => { const f = forms(inf); return f ? f[p] : null; };
+  const PRO = ['je', 'tu', 'il, elle ou on', 'nous', 'vous', 'ils ou elles'];
+  const PRO1 = ['je', 'tu', 'il', 'nous', 'vous', 'ils'];
+  const PRONOUNS = ['je', "j'", 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles'];
+  const isPronoun = w => PRONOUNS.includes(norm(w));
+  const startsVowel = s => /^[aeiouyhéèêâîôû]/i.test(s);
+  function withSubject(subj, form){
+    const s = String(subj);
+    if (norm(s) === "j'") return s + form;
+    if (norm(s) === 'je' && startsVowel(form)) return (s[0] === 'J' ? "J'" : "j'") + form;
+    return s + ' ' + form;
+  }
+  const ORD = g => g === 1 ? '1er' : g + 'e';
+
+  /* ---------- Étape 1 : fiches (leçon reformulée) ---------- */
+  function ctable(inf, rad, ends){
+    const pr = ['je','tu','il','nous','vous','ils'];
+    return '<div class="ctable"><span class="vname">' + inf + '</span>' +
+      ends.map((e, k) => '<span>' + (k === 0 && startsVowel(rad[k]) ? "j'" : pr[k] + ' ') + rad[k] + '<span class="end">' + e + '</span></span>').join('') + '</div>';
+  }
+  function memoHTML(){
+    return MUST_KNOW.map(v => {
+      const f = forms(v);
+      return '<div class="memo-card"><b>' + v + '</b>' + f.map((x, k) => (k === 0 && startsVowel(x) ? "j'" : PRO1[k] + ' ') + x).join('<br>') + '</div>';
+    }).join('');
+  }
+  const LEARN = [
+    {
+      title: 'Le verbe et son infinitif',
+      html: '<p>Dans une phrase, le verbe conjugué change selon la personne : <i>je danse</i>, <i>nous dansons</i>.</p>' +
+            '<p>Pour savoir de quel verbe il s\'agit, on cherche son <b>infinitif</b>. Astuce : dis « il faut… » devant.<br><span class="ex">nous dansons → il faut <b>danser</b></span></p>',
+      checks: [
+        { q: '« ils viennent » : quel est l\'infinitif ?', c: ['viendre', 'venir', 'viennir'], a: 1, why: 'On dit « il faut venir » : c\'est le verbe <b>venir</b>.' },
+        { q: '« tu réfléchis » : quel est l\'infinitif ?', c: ['réfléchir', 'réfléchire', 'réfléchier'], a: 0, why: 'On dit « il faut réfléchir » : c\'est le verbe <b>réfléchir</b>.' }
+      ]
+    },
+    {
+      title: 'Les trois groupes',
+      html: '<div class="groups">' +
+            '<div class="grow"><span class="gbadge">1er</span><span>L\'infinitif se termine par <b>-er</b> : sauter, jouer. Attention : <b>aller</b> n\'en fait pas partie.</span></div>' +
+            '<div class="grow"><span class="gbadge">2e</span><span>L\'infinitif se termine par <b>-ir</b> et on dit « nous …<b>issons</b> » : rougir → nous rougissons.</span></div>' +
+            '<div class="grow"><span class="gbadge">3e</span><span>Tous les autres : aller, les verbes en -ir sans -issons (partir → nous partons), en <b>-re</b> (lire) et en <b>-oir</b> (savoir).</span></div>' +
+            '</div>',
+      checks: [
+        { q: '« sauter » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 0, why: 'sauter se termine par -er : <b>1er groupe</b>.' },
+        { q: '« réussir » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 1, why: 'On dit « nous réussissons » : <b>2e groupe</b>.' },
+        { q: '« partir » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'On dit « nous partons », pas « nous partissons » : <b>3e groupe</b>.' },
+        { q: '« aller » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'aller finit par -er, mais c\'est l\'exception : <b>3e groupe</b>.' },
+        { q: '« descendre » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'descendre finit par -re : <b>3e groupe</b>.' }
+      ]
+    },
+    {
+      title: 'Le présent du 1er groupe',
+      html: '<p>On garde le radical (on enlève -er) et on ajoute la terminaison qui va avec la personne.</p>' +
+            ctable('parler', ['parl','parl','parl','parl','parl','parl'], E1) +
+            '<p class="warn">On n\'entend pas <b>-es</b> ni <b>-ent</b> : regarde bien le sujet !</p>',
+      checks: [
+        { q: 'Tu … avec ta sœur. (danser)', c: ['danse', 'danses', 'dansent'], a: 1, why: 'Avec tu, la terminaison est -es : <b>tu danses</b>.' },
+        { q: 'Les oiseaux … le matin. (chanter)', c: ['chante', 'chantes', 'chantent'], a: 2, why: 'Les oiseaux, c\'est comme ils : <b>ils chantent</b>.' }
+      ]
+    },
+    {
+      title: 'Le présent du 2e groupe',
+      html: '<p>Au singulier, on écrit -is, -is, -it. Au pluriel, on glisse <b>-iss-</b> avant la terminaison.</p>' +
+            ctable('réussir', ['réuss','réuss','réuss','réuss','réuss','réuss'], E2),
+      checks: [
+        { q: 'Ils … très vite. (grandir)', c: ['grandent', 'grandissent', 'grandisent'], a: 1, why: 'Au pluriel, on ajoute -iss- : <b>ils grandissent</b>.' },
+        { q: 'Je … un livre. (choisir)', c: ['choisi', 'choisis', 'choisit'], a: 1, why: 'Avec je, la terminaison est -is : <b>je choisis</b>.' }
+      ]
+    },
+    {
+      title: 'Le présent du 3e groupe',
+      html: '<p>Le plus souvent : -s, -s, -t, -ons, -ez, -ent.</p>' +
+            ctable('partir', ['par','par','par','part','part','part'], ['s','s','t','ons','ez','ent']) +
+            '<p>Deux familles s\'écrivent autrement au singulier :</p>' +
+            '<ul><li><span class="end">-ds, -ds, -d</span> : je réponds, il répond (pas de t).</li><li><span class="end">-x, -x, -t</span> : je veux, il veut.</li></ul>' +
+            '<p class="warn">Le radical change souvent : nous venons, mais ils viennent. Huit verbes très fréquents s\'apprennent par cœur : aller, faire, dire, venir, prendre, voir, pouvoir, vouloir.</p>' +
+            '<details class="memo"><summary>Voir les 8 verbes à savoir par cœur</summary><div class="memo-grid">' + '{{MEMO}}' + '</div></details>',
+      checks: [
+        { q: 'Il … le train. (prendre)', c: ['prend', 'prends', 'prent'], a: 0, why: 'prendre fait -ds, -ds, -d : <b>il prend</b>, sans t.' },
+        { q: 'Je … venir. (pouvoir)', c: ['peus', 'peux', 'peut'], a: 1, why: 'pouvoir fait -x, -x, -t : <b>je peux</b>.' },
+        { q: 'Vous … merci. (dire)', c: ['disez', 'dites', 'dîtes'], a: 1, why: 'À savoir par cœur : <b>vous dites</b>, comme vous faites.' }
+      ]
+    }
+  ];
+
+  /* ---------- Étape 2 : contenus des niveaux ---------- */
+  const LEVELS = [
+    { id: 1, name: 'Phrases simples', desc: 'Des phrases courtes à trous. Le sujet est un pronom.', kind: 'cloze', instr: 'Écris le verbe au présent.' },
+    { id: 2, name: 'Phrases complexes', desc: 'Le sujet est un groupe de mots, parfois loin du verbe.', kind: 'cloze', instr: 'Trouve le sujet, puis écris le verbe au présent.' },
+    { id: 3, name: 'Texte à trous', desc: 'Un petit texte avec des verbes à conjuguer.', kind: 'text', instr: 'Complète le texte avec les verbes au présent.' },
+    { id: 4, name: 'Sujet et verbe', desc: 'Repère le verbe conjugué, son sujet et son groupe.', kind: 'spot', instr: '' },
+    { id: 5, name: 'Transposer un texte', desc: 'Réécris un texte en changeant le sujet ou le temps.', kind: 'transpo', instr: '' }
+  ];
+  const L1 = [
+    "Je {mettre|0} mon goûter dans mon sac.", "Tu {fermer|1} la porte du garage.", "Il {faire|2} un gâteau au chocolat.",
+    "Nous {finir|3} nos devoirs avant le dîner.", "Vous {dire|4} toujours la vérité.", "Elles {partir|5} en vacances demain matin.",
+    "Je {prendre|0} le bus à huit heures.", "Tu {aller|1} au marché avec ta tante.", "Elle {choisir|2} un nouveau livre.",
+    "Nous {chanter|3} une chanson pour la fête.", "Vous {voir|4} la mer depuis le balcon.", "Ils {vouloir|5} jouer dehors.",
+    "Je {répondre|0} à toutes les questions.", "Tu {pouvoir|1} entrer dans la cabane.", "On {venir|2} avec nos voisins.",
+    "Nous {bâtir|3} un château de sable.", "Vous {courir|4} trop vite dans le couloir.", "Ils {réfléchir|5} avant de répondre.",
+    "J'{écrire|0} une lettre à ma grand-mère.", "Tu {choisir|1} toujours la même couleur.", "Elle {écouter|2} la radio dans la cuisine.",
+    "Nous {aller|3} au parc après l'école.", "Vous {remplir|4} vos gourdes d'eau fraîche.", "Ils {prendre|5} le dessert.",
+    "Je {nourrir|0} mon chien tous les jours.", "Tu {lire|1} une histoire drôle.", "Elle {rougir|2} quand on la félicite.",
+    "Nous {observer|3} les oiseaux du jardin.", "Vous {attendre|4} votre tour.", "Elles {retrouver|5} leurs amies au cinéma.",
+    "Je {dormir|0} tard le dimanche.", "Tu {arriver|1} toujours à l'heure.", "Il {perdre|2} souvent ses lunettes.",
+    "Nous {savoir|3} nager.", "Vous {faire|4} beaucoup de bruit.", "Ils {obéir|5} à leur entraîneur.",
+    "Je {vouloir|0} aller à la piscine.", "Tu {comprendre|1} les règles du jeu.", "On {applaudir|2} les acrobates.",
+    "Elle {sortir|2} de la salle de sport.", "Nous {dessiner|3} des cartes de vœux.", "Ils {voir|5} un arc-en-ciel.",
+    "Il {aller|2} chez le dentiste.", "Vous {venir|4} avec nous ?", "Je {grandir|0} vite.",
+    "Elles {dire|5} au revoir.", "Nous {pouvoir|3} commencer.", "Tu {mettre|1} ton manteau."
+  ];
+  const L2 = [
+    "Chaque matin, les enfants du quartier {aller|5|les enfants du quartier} à l'école à pied.",
+    "Mon frère et moi {mettre|3|Mon frère et moi} nos vélos au garage.",
+    "Au printemps, les arbres du jardin {fleurir|5|les arbres du jardin}.",
+    "La maîtresse de ma petite sœur {lire|2|La maîtresse de ma petite sœur} une histoire chaque vendredi.",
+    "Ton cousin et toi {faire|4|Ton cousin et toi} toujours les mêmes bêtises.",
+    "Dans la cour, les élèves de CM1 {jouer|5|les élèves de CM1} au ballon.",
+    "Le chat de nos voisins {dormir|2|Le chat de nos voisins} souvent sur le muret.",
+    "Après le repas, mes parents {prendre|5|mes parents} un café.",
+    "Le pilote de l'avion {atterrir|2|Le pilote de l'avion} doucement sur la piste.",
+    "Léo, Inès et moi {préparer|3|Léo, Inès et moi} un spectacle pour la kermesse.",
+    "Quand il pleut, mon chien et moi {rester|3|mon chien et moi} à la maison.",
+    "Les spectateurs, ravis, {applaudir|5|Les spectateurs} les danseurs.",
+    "Ma grand-mère {dire|2|Ma grand-mère} toujours ce qu'elle pense.",
+    "Ce soir, toi et ta sœur {pouvoir|4|toi et ta sœur} regarder le feu d'artifice.",
+    "Le boulanger de la place {vendre|2|Le boulanger de la place} des croissants délicieux.",
+    "En automne, les feuilles des arbres {jaunir|5|les feuilles des arbres}.",
+    "Sur la plage, les mouettes {attraper|5|les mouettes} les miettes de pain.",
+    "Tous les ans, mes cousins de Bretagne {venir|5|mes cousins de Bretagne} passer Noël chez nous.",
+    "Le petit garçon aux cheveux roux {voir|2|Le petit garçon aux cheveux roux} la mer pour la première fois.",
+    "Avec leurs jumelles, les randonneurs {observer|5|les randonneurs} les sommets.",
+    "Maman et toi {choisir|4|Maman et toi} toujours le même gâteau.",
+    "Les joueuses de l'équipe {vouloir|5|Les joueuses de l'équipe} gagner le match.",
+    "Pendant les vacances, ma tante {prendre|2|ma tante} le train pour Marseille.",
+    "D'un seul coup, le lion du zoo {engloutir|2|le lion du zoo} sa viande.",
+    "Vers midi, nous {arriver|3|nous} enfin au sommet de la montagne.",
+    "Près de l'école, les voitures {ralentir|5|les voitures}.",
+    "Mon oncle, qui habite à Lyon, {venir|2|Mon oncle} nous voir dimanche.",
+    "Les enfants qui ont froid {mettre|5|Les enfants qui ont froid} leurs gants.",
+    "Chaque été, la famille Martin {partir|2|la famille Martin} en camping.",
+    "Mes amis et moi {respecter|3|Mes amis et moi} toujours les règles du jeu.",
+    "Le soir, mon petit frère {faire|2|mon petit frère} ses devoirs dans sa chambre.",
+    "Tes amis et toi {aller|4|Tes amis et toi} au stade samedi ?"
+  ];
+  /* ---------- Parcours orange : verbes et phrases plus difficiles ---------- */
+  const L1O = [
+    "Nous {manger|3} à la cantine le midi.", "Nous {commencer|3} la leçon de sciences.", "Tu {appeler|1} ta grand-mère le dimanche.",
+    "Ils {jeter|5} les papiers dans la poubelle.", "J'{acheter|0} du pain à la boulangerie.", "Elle {lever|2} la main pour répondre.",
+    "Vous {devoir|4} ranger vos affaires.", "Nous {boire|3} un grand verre d'eau.", "Il {recevoir|2} une lettre de son correspondant.",
+    "Elles {croire|5} aux histoires de fantômes.", "Je {connaître|0} cette chanson par cœur.", "Tu {ouvrir|1} la fenêtre de la classe.",
+    "On {offrir|2} des fleurs à la directrice.", "Vous {peindre|4} un grand décor pour le spectacle.", "Ils {éteindre|5} la lumière avant de partir.",
+    "Nous {rire|3} aux éclats.", "Tu {envoyer|1} un message à ton cousin.", "Elle {nettoyer|2} son vélo.",
+    "Nous {nager|3} dans le lac.", "Nous {placer|3} les chaises en cercle.", "Vous {dire|4} merci au chauffeur.",
+    "Vous {faire|4} une belle maquette.", "Ils {faire|5} du vélo le mercredi.", "Tu {devoir|1} faire attention.",
+    "Ils {boire|5} du chocolat chaud.", "Je {recevoir|0} des cadeaux pour mon anniversaire.", "Vous {croire|4} cette histoire ?",
+    "Ils {appeler|5} les pompiers.", "Je {jeter|0} un coup d'œil dehors.", "Elles {acheter|5} des fruits au marché.",
+    "Nous {partager|3} notre goûter.", "Nous {lancer|3} le ballon très haut.", "Tu {vivre|1} près de la mer."
+  ];
+  const L2O = [
+    "Chaque soir, mes parents et moi {manger|3|mes parents et moi} en famille.",
+    "Au fond du jardin {pousser|5|des tomates} des tomates bien rouges.",
+    "Dans cette forêt {vivre|5|des cerfs} des cerfs et des sangliers.",
+    "Ton frère et toi {appeler|4|Ton frère et toi} souvent vos cousins.",
+    "Le chien des voisins, qui n'aime pas le bruit, {grogner|2|Le chien des voisins} quand une moto passe.",
+    "Mes cousines de Lyon {recevoir|5|Mes cousines de Lyon} toujours beaucoup de cartes postales.",
+    "Le matin, ma sœur et moi {boire|3|ma sœur et moi} un bol de lait.",
+    "Toi et tes amis {devoir|4|Toi et tes amis} rentrer avant la nuit.",
+    "Sur la place du village {jouer|5|des musiciens} des musiciens venus d'Espagne.",
+    "Le gardien du musée {éteindre|2|Le gardien du musée} les lumières à dix-huit heures.",
+    "Les enfants de la colonie {peindre|5|Les enfants de la colonie} une grande fresque.",
+    "Chaque année, mon oncle {offrir|2|mon oncle} un livre à chacun de ses neveux.",
+    "Les randonneurs, fatigués par la montée, {ouvrir|5|Les randonneurs} leur pique-nique.",
+    "Mes amis et moi {connaître|3|Mes amis et moi} un raccourci pour aller au stade.",
+    "Maman et toi {acheter|4|Maman et toi} les billets de train.",
+    "La maîtresse, toujours pleine d'idées, {lancer|2|La maîtresse} un défi à la classe.",
+    "Mon grand-père et moi {commencer|3|Mon grand-père et moi} un grand puzzle.",
+    "Les joueurs de l'équipe adverse {rire|5|Les joueurs de l'équipe adverse} de bon cœur.",
+    "Dans le ciel {briller|5|des milliers d'étoiles} des milliers d'étoiles.",
+    "Avant chaque match, l'entraîneur et ses joueurs {croire|5|l'entraîneur et ses joueurs} à la victoire.",
+    "Ma voisine et moi {nettoyer|3|Ma voisine et moi} la plage avec l'association."
+  ];
+  const TEXTS_O = [
+    { title: 'Le déménagement', t: "Ce matin, toute la famille {déménager|2|toute la famille}. Papa {appeler|2|Papa} les déménageurs. Ils {arriver|5} à huit heures et ils {commencer|5} à porter les cartons. Ma sœur et moi {ranger|3|Ma sœur et moi} nos jouets dans des caisses. Maman {nettoyer|2|Maman} les placards vides. Vers midi, nous {manger|3} des sandwichs assis par terre. Le voisin nous {offrir|2|Le voisin} des boissons fraîches. « Vous {devoir|4} être fatigués ! » Le soir, nous {découvrir|3} enfin notre nouvelle maison." },
+    { title: "La fête de l'école", t: "Samedi, l'école {organiser|2|l'école} sa grande fête. Les parents {installer|5|Les parents} des stands dans la cour. Les grands {peindre|5|Les grands} des panneaux et les petits {accrocher|5|les petits} des guirlandes. Moi, je {vendre|0} des crêpes avec ma mère. Nous {placer|3} les assiettes sur une grande table. Tu {venir|1} avec tes parents ? On {boire|2} de la citronnade et on {rire|2} beaucoup. À dix-huit heures, le directeur {éteindre|2|le directeur} la musique et tout le monde {applaudir|2|tout le monde}." },
+    { title: 'Au zoo', t: "Aujourd'hui, nous {visiter|3} le zoo avec la classe. Le soigneur {ouvrir|2|Le soigneur} la porte de l'enclos et il {jeter|2} du poisson aux phoques. Les phoques {plonger|5|Les phoques} aussitôt. Toi, tu {connaître|1} le nom de chaque animal ! Les girafes {lever|5|Les girafes} la tête vers les arbres. Nous {recevoir|3} chacun un plan du zoo. Vous {voir|4} les lions ? Ils {dormir|5} au soleil. À la fin, nous {acheter|3} des cartes postales." }
+  ];
+  const SPOT_O = [
+    "Dans le grenier {dorment|dormir} [de vieux jouets].",
+    "Au bord de la route {poussent|pousser} [des coquelicots].",
+    "[Le chat de la voisine], couché sur le muret, {surveille|surveiller} les oiseaux.",
+    "Sur la branche {chante|chanter} [un merle].",
+    "[Mes amis et moi] {achetons|acheter} des billets.",
+    "Chaque matin, [ma grand-mère] {boit|boire} un thé.",
+    "Ce soir, [vous] {devez|devoir} finir le livre.",
+    "[Les pompiers du village] {reçoivent|recevoir} une médaille.",
+    "[Tu] {appelles|appeler} ton chien.",
+    "Dans la classe, [les enfants] {rient|rire} aux éclats.",
+    "[Le boulanger et son apprenti] {commencent|commencer} le travail à cinq heures.",
+    "Près de l'étang {vivent|vivre} [des grenouilles vertes].",
+    "[On] {connaît|connaître} la réponse !",
+    "Demain matin, [Lucas et toi] {partez|partir} en classe de mer.",
+    "[La pluie], fine et froide, {tombe|tomber} depuis ce matin.",
+    "Avec ses pinceaux, [l'artiste] {peint|peindre} un paysage.",
+    "[Nous] {plongeons|plonger} dans la piscine.",
+    "Au-dessus des toits {volent|voler} [les hirondelles]."
+  ];
+  const TRANSPO_O = [
+    { title: 'Le bateau', instr: 'Réécris le texte avec « Ils » à la place de « Il ».',
+      orig: "Il *part* tôt le matin. Il *jette* l'ancre près de l'île. Il *plonge* et il *découvre* des poissons de toutes les couleurs. Il *prend* des photos. Le soir, il *rentre* au port et il *appelle* sa famille.",
+      t: "Ils {partir|5} tôt le matin. Ils {jeter|5} l'ancre près de l'île. Ils {plonger|5} et ils {découvrir|5} des poissons de toutes les couleurs. Ils {prendre|5} des photos. Le soir, ils {rentrer|5} au port et ils {appeler|5} leur famille." },
+    { title: 'Le pique-nique', instr: 'Réécris le texte au présent.',
+      orig: "Dimanche dernier, nous *mangions* au bord du lac. Papa *ouvrait* le panier et nous *buvions* du jus de pomme. Mes cousins *lançaient* des cailloux dans l'eau. Moi, je *peignais* le paysage. Le soir, nous *rangions* tout et nous *rentrions* fatigués.",
+      t: "Ce dimanche, nous {manger|3} au bord du lac. Papa {ouvrir|2|Papa} le panier et nous {boire|3} du jus de pomme. Mes cousins {lancer|5|Mes cousins} des cailloux dans l'eau. Moi, je {peindre|0} le paysage. Le soir, nous {ranger|3} tout et nous {rentrer|3} fatigués." },
+    { title: 'Les apprentis pâtissiers', instr: 'Réécris le texte avec « vous » à la place de « tu ».',
+      orig: "Tu *commences* par te laver les mains. Tu *pèses* la farine et tu *casses* les œufs. Tu *mélanges* sans t'arrêter. Tu *dois* attendre que le four chauffe. Puis tu *mets* le gâteau au four et tu *nettoies* la table.",
+      t: "Vous {commencer|4} par vous laver les mains. Vous {peser|4} la farine et vous {casser|4} les œufs. Vous {mélanger|4} sans vous arrêter. Vous {devoir|4} attendre que le four chauffe. Puis vous {mettre|4} le gâteau au four et vous {nettoyer|4} la table." },
+    { title: 'La lettre', instr: 'Réécris le texte avec « nous » à la place de « je ».',
+      orig: "Je *reçois* une lettre de ma correspondante. Je *lis* chaque mot et je *ris* beaucoup. Je *connais* bien sa famille. Je *réponds* tout de suite et j'*envoie* des dessins. Je *mange* ensuite un goûter.",
+      t: "Nous {recevoir|3} une lettre de notre correspondante. Nous {lire|3} chaque mot et nous {rire|3} beaucoup. Nous {connaître|3} bien sa famille. Nous {répondre|3} tout de suite et nous {envoyer|3} des dessins. Nous {manger|3} ensuite un goûter." }
+  ];
+  const TEXTS = [
+    { title: 'La classe verte', t: "Aujourd'hui, les élèves de CM1 {partir|5|les élèves de CM1} en classe verte. Le car {arriver|2|Le car} devant l'école à huit heures. Les enfants {mettre|5|Les enfants} leurs valises dans la soute. Mia et moi {choisir|3|Mia et moi} des places près de la fenêtre. Pendant le trajet, la maîtresse nous {lire|2|la maîtresse} une histoire. « Tu {voir|1} les montagnes ? » demande Mia. « Oui, je les {voir|0|je} ! » Nous {applaudir|3} quand le car {ralentir|2|le car} devant le chalet." },
+    { title: 'Le marché du samedi', t: "Le samedi, mon père et moi {aller|3|mon père et moi} au marché. Nous {prendre|3} un grand panier. Les marchands {crier|5|Les marchands} pour attirer les clients. Papa {choisir|2|Papa} des tomates bien rouges. Moi, je {vouloir|0} des fraises. Le fromager nous {faire|2|Le fromager} goûter un morceau de comté. « Vous {pouvoir|4} revenir la semaine prochaine », {dire|2|il}-il en souriant. Nous {finir|3} toujours par une crêpe au sucre." },
+    { title: 'Le match de handball', t: "Ce soir, l'équipe de ma sœur {jouer|2|l'équipe de ma sœur} un match important. Les joueuses {entrer|5|Les joueuses} sur le terrain. Ma sœur {saisir|2|Ma sœur} le ballon et {courir|2|Ma sœur} vers le but. Dans les tribunes, les supporters {applaudir|5|les supporters}. À la mi-temps, l'entraîneur {réunir|2|l'entraîneur} les joueuses : « Vous {devenir|4} plus fortes à chaque match ! » Je {sortir|0} mon appareil et je {prendre|0} une photo de l'équipe." },
+    { title: 'La tempête', t: "Ce matin, le ciel {noircir|2|le ciel} au-dessus du village. Le vent {souffler|2|Le vent} de plus en plus fort. Les pêcheurs {rentrer|5|Les pêcheurs} vite au port. Mon grand-père {dire|2|Mon grand-père} : « Nous ne {sortir|3} pas aujourd'hui ! » Mes frères et moi {regarder|3|Mes frères et moi} les vagues par la fenêtre. Elles {bondir|5} par-dessus la digue. « Tu {entendre|1} le tonnerre ? Je ne {pouvoir|0} pas dormir avec ce bruit ! »" },
+    { title: 'La cabane', t: "Pendant les vacances, mes cousins {bâtir|5|mes cousins} une cabane au fond du jardin. Lucas {apporter|2|Lucas} des planches et Emma {tenir|2|Emma} l'échelle. Moi, je {faire|0} le toit avec des branches. « Vous {venir|4} nous aider ? » {demander|5|mes cousins} mes cousins à leurs parents. Ils {répondre|5} qu'ils {vouloir|5} bien. Le soir, nous {dormir|3} tous dans la cabane !" }
+  ];
+  const SPOT = [
+    "Dans la forêt, [les écureuils] {cachent|cacher} des noisettes.",
+    "[Ma petite sœur] {grandit|grandir} très vite.",
+    "Le soir, [mon père] {lit|lire} le journal sur le canapé.",
+    "[Les élèves de la classe] {finissent|finir} leur exposé.",
+    "Au cirque, [le clown] {fait|faire} rire les enfants.",
+    "[Tu] {prends|prendre} ton parapluie.",
+    "Chaque lundi, [nous] {allons|aller} à la bibliothèque.",
+    "[Le vent du nord] {souffle|souffler} sur la plage.",
+    "[Les hirondelles] {reviennent|revenir} au printemps.",
+    "Dans le ciel, [un avion] {laisse|laisser} une longue trace blanche.",
+    "[Vous] {voulez|vouloir} un verre d'eau ?",
+    "Sous le pont, [la rivière] {grossit|grossir} après l'orage.",
+    "[Le facteur] {apporte|apporter} une lettre à ma voisine.",
+    "Maintenant, [on] {peut|pouvoir} entrer dans la salle.",
+    "En automne, [les feuilles mortes] {tombent|tomber} sur le chemin.",
+    "À la récréation, [Sami et Lou] {choisissent|choisir} un jeu.",
+    "[Le chien de la voisine] {dort|dormir} devant la porte.",
+    "Ce matin, [la directrice] {dit|dire} bonjour à chaque élève.",
+    "[Les pompiers] {éteignent|éteindre} le feu de la grange.",
+    "[J'] {entends|entendre} de la musique dans la rue.",
+    "Tous les jours, [mon grand-père] {nourrit|nourrir} ses poules.",
+    "Pendant l'hiver, [les ours] {dorment|dormir} dans leur tanière.",
+    "[Mes amis et moi] {voyons|voir} un film ce soir.",
+    "Demain, [les CM2] {partent|partir} en sortie."
+  ];
+  const TRANSPO = [
+    { title: 'À la piscine', instr: 'Réécris le texte avec « nous » à la place de « je ».',
+      orig: "Le dimanche, je *vais* à la piscine. Je *prends* mon sac et je *pars* à vélo. Dans l'eau, je *fais* des longueurs et je *finis* par un plongeon. Je *choisis* toujours le plongeoir le plus haut. Je *rentre* fatigué mais content.",
+      t: "Le dimanche, nous {aller|3} à la piscine. Nous {prendre|3} notre sac et nous {partir|3} à vélo. Dans l'eau, nous {faire|3} des longueurs et nous {finir|3} par un plongeon. Nous {choisir|3} toujours le plongeoir le plus haut. Nous {rentrer|3} fatigués mais contents." },
+    { title: 'Au fournil', instr: 'Réécris le texte avec « Les boulangers » à la place de « Le boulanger ».',
+      orig: "Le boulanger *arrive* à quatre heures du matin. Il *met* son tablier, il *prend* la farine et il *pétrit* la pâte. Il *remplit* les étagères de pains dorés. Puis il *dit* bonjour aux premiers clients.",
+      t: "Les boulangers {arriver|5|Les boulangers} à quatre heures du matin. Ils {mettre|5} leur tablier, ils {prendre|5} la farine et ils {pétrir|5} la pâte. Ils {remplir|5} les étagères de pains dorés. Puis ils {dire|5} bonjour aux premiers clients." },
+    { title: 'À la ferme', instr: 'Réécris le texte au présent.',
+      orig: "L'été dernier, je *passais* mes vacances à la ferme. Le matin, je *nourrissais* les poules et je *prenais* le lait encore chaud. Mon oncle *faisait* les foins avec ses voisins. Le soir, nous *dormions* dans la grange et nous *entendions* les chouettes.",
+      t: "Cet été, je {passer|0} mes vacances à la ferme. Le matin, je {nourrir|0} les poules et je {prendre|0} le lait encore chaud. Mon oncle {faire|2|Mon oncle} les foins avec ses voisins. Le soir, nous {dormir|3} dans la grange et nous {entendre|3} les chouettes." },
+    { title: 'Au théâtre', instr: 'Réécris le texte au présent.',
+      orig: "Demain, les élèves *iront* au théâtre. Ils *prendront* le métro avec leur maîtresse. Pendant la pièce, ils *rougiront* de plaisir et ils *applaudiront* les comédiens. Après, nous *écrirons* un article pour le journal de l'école. Tu *pourras* le lire !",
+      t: "Aujourd'hui, les élèves {aller|5|les élèves} au théâtre. Ils {prendre|5} le métro avec leur maîtresse. Pendant la pièce, ils {rougir|5} de plaisir et ils {applaudir|5} les comédiens. Après, nous {écrire|3} un article pour le journal de l'école. Tu {pouvoir|1} le lire !" },
+    { title: 'La recette des crêpes', instr: 'Réécris la recette avec « vous » à la place de « tu ».',
+      orig: "Pour faire des crêpes, tu *prends* un saladier. Tu *mets* la farine et tu *ajoutes* les œufs. Tu *mélanges* doucement. Tu *remplis* une louche de pâte et tu *fais* cuire la crêpe. Tu *peux* la garnir de sucre !",
+      t: "Pour faire des crêpes, vous {prendre|4} un saladier. Vous {mettre|4} la farine et vous {ajouter|4} les œufs. Vous {mélanger|4} doucement. Vous {remplir|4} une louche de pâte et vous {faire|4} cuire la crêpe. Vous {pouvoir|4} la garnir de sucre !" },
+    { title: 'Le bus', instr: 'Réécris le texte avec « Elles » à la place de « Elle ».',
+      orig: "Elle *sort* de l'école en courant. Elle *voit* le bus au coin de la rue. Elle *court*, elle *saisit* la barre et elle *monte* juste à temps. Elle *réussit* toujours à l'attraper !",
+      t: "Elles {sortir|5} de l'école en courant. Elles {voir|5} le bus au coin de la rue. Elles {courir|5}, elles {saisir|5} la barre et elles {monter|5} juste à temps. Elles {réussir|5} toujours à l'attraper !" }
+  ];
+
+  /* Réserves agrandies : environ 5 séries différentes par niveau */
+  L1.push("Tu {remplir|1} le seau de sable.", "Il {descendre|2} l'escalier en courant.", "Nous {tenir|3} la corde bien fort.", "Vous {sortir|4} le chien après le repas.", "Elles {jouer|5} à la marelle.", "Je {rendre|0} le livre à la bibliothèque.");
+  L2.push(
+    "Le soir, ma mère et moi {regarder|3|ma mère et moi} les étoiles.",
+    "Les poissons de l'aquarium {nager|5|Les poissons de l'aquarium} en rond.",
+    "Chaque mercredi, la grand-mère de Tom {préparer|2|la grand-mère de Tom} des crêpes.",
+    "Ton chat et toi {dormir|4|Ton chat et toi} sur le même canapé.",
+    "Les enfants de la chorale {chanter|5|Les enfants de la chorale} à la fête de Noël.",
+    "En hiver, les oiseaux du parc {chercher|5|les oiseaux du parc} des graines.",
+    "Le gardien du stade {ouvrir|2|Le gardien du stade} les grilles à dix heures.",
+    "Ma cousine et moi {finir|3|Ma cousine et moi} le puzzle.",
+    "Ce matin, le car de l'école {partir|2|le car de l'école} en retard.",
+    "Les élèves de la classe {écrire|5|Les élèves de la classe} un poème.",
+    "Mon père et toi {réparer|4|Mon père et toi} la roue du vélo.",
+    "Sur le marché, les marchands de fruits {vendre|5|les marchands de fruits} des cerises.",
+    "Le bébé de nos voisins {grandir|2|Le bébé de nos voisins} très vite.",
+    "Mes parents et moi {prendre|3|Mes parents et moi} le train pour Paris.",
+    "Le directeur de l'école {venir|2|Le directeur de l'école} dans notre classe.",
+    "Toi et ton frère {aller|4|Toi et ton frère} à la piscine le samedi.",
+    "Les feuilles du cerisier {tomber|5|Les feuilles du cerisier} en automne.",
+    "À la fin du spectacle, les comédiens {saluer|5|les comédiens} le public.",
+    "La petite fille aux nattes {lire|2|La petite fille aux nattes} sous l'arbre.",
+    "Dans la cuisine, Papa et moi {faire|3|Papa et moi} une tarte aux pommes."
+  );
+  L1O.push("Nous {voyager|3} en train.", "Nous {avancer|3} lentement dans la neige.", "Tu {jeter|1} la balle au chien.", "Elles {appeler|5} leur mère.", "Il {acheter|2} un cahier neuf.", "Vous {lever|4} le doigt.", "Je {peser|0} les pommes.", "Tu {envoyer|1} une carte postale.", "Ils {nettoyer|5} la cage du lapin.", "Je {boire|0} un jus d'orange.", "Nous {recevoir|3} nos amis.", "Tu {croire|1} au père Noël ?", "Elle {connaître|2} le chemin.", "Vous {ouvrir|4} vos cahiers.", "Ils {peindre|5} la barrière.", "On {rire|2} de ses blagues.", "Nous {devoir|3} partir tôt.", "Il {vivre|2} dans une maison bleue.", "Vous {éteindre|4} votre ordinateur.");
+  L2O.push(
+    "Chaque printemps, mes voisins et moi {nettoyer|3|mes voisins et moi} le parc du quartier.",
+    "Derrière la maison {couler|2|une petite rivière} une petite rivière.",
+    "Le frère de mon meilleur ami {recevoir|2|Le frère de mon meilleur ami} souvent des lettres.",
+    "Toi et ta cousine {boire|4|Toi et ta cousine} trop de soda.",
+    "Les oiseaux, effrayés par le chat, {quitter|5|Les oiseaux} la mangeoire.",
+    "Dans la vitrine {briller|5|des bijoux en or} des bijoux en or.",
+    "Mon père, qui adore la mer, {acheter|2|Mon père} un petit bateau.",
+    "Les enfants de la colonie {appeler|5|Les enfants de la colonie} leurs parents le dimanche.",
+    "Ma sœur et moi {partager|3|Ma sœur et moi} la même chambre.",
+    "Vous et vos amis {devoir|4|Vous et vos amis} rendre les livres vendredi.",
+    "Sous le vieux pont {vivre|5|des canards sauvages} des canards sauvages.",
+    "Le pâtissier du village {peser|2|Le pâtissier du village} la farine avec soin.",
+    "La voisine du dessus, très gentille, {offrir|2|La voisine du dessus} des bonbons aux enfants.",
+    "Chaque matin, mon grand-père et moi {lancer|3|mon grand-père et moi} du pain aux canards.",
+    "Les clowns du cirque {rire|5|Les clowns du cirque} plus fort que le public.",
+    "Au loin {sonner|5|les cloches de l'église} les cloches de l'église.",
+    "Ton équipe et toi {connaître|4|Ton équipe et toi} toutes les règles.",
+    "Le jardinier, armé de sa pelle, {creuser|2|Le jardinier} un trou profond.",
+    "Les élèves qui ont fini {ranger|5|Les élèves qui ont fini} leur matériel.",
+    "Mes amis et moi {croire|3|Mes amis et moi} aux légendes de la forêt.",
+    "Chaque année, la mairie {envoyer|2|la mairie} une carte aux habitants.",
+    "Dans le ciel d'été {passer|5|des nuages blancs} des nuages blancs.",
+    "Ma tante et toi {peindre|4|Ma tante et toi} de très beaux tableaux.",
+    "Le chauffeur du car, prudent, {éteindre|2|Le chauffeur du car} le moteur.",
+    "Les dauphins du parc marin {plonger|5|Les dauphins du parc marin} sous l'eau.",
+    "Avec mes cousins, nous {commencer|3|nous} une partie de cartes.",
+    "Le chat de ma grand-mère {jeter|2|Le chat de ma grand-mère} ses jouets par terre.",
+    "Les parents d'élèves {ouvrir|5|Les parents d'élèves} la kermesse.",
+    "Dans la mare {nager|5|des têtards} des têtards.",
+    "Le facteur et son chien {connaître|5|Le facteur et son chien} tout le quartier.",
+    "Lina et toi {lever|4|Lina et toi} la main en même temps."
+  );
+  TEXTS_O.push(
+    { title: 'La classe de neige', t: "Ce matin, nous {partir|3} en classe de neige. Le moniteur {appeler|2|Le moniteur} chaque élève. Nous {mettre|3} nos skis et nous {commencer|3} la descente. Mes amis {rire|5|Mes amis} quand je tombe dans la neige. « Tu {devoir|1} plier les genoux ! » me {dire|2|le moniteur} le moniteur. À midi, nous {boire|3} un chocolat chaud. Le soir, les enfants {écrire|5|les enfants} une carte à leurs parents et ils {recevoir|5} des nouvelles de la maison." },
+    { title: 'Le potager', t: "Au printemps, mon grand-père et moi {préparer|3|mon grand-père et moi} le potager. Grand-père {jeter|2|Grand-père} les mauvaises herbes sur le tas de compost. Moi, je {planter|0} des radis. Nous {arroser|3} les salades. Les limaces {manger|5|Les limaces} les feuilles, alors nous {placer|3} des coquilles d'œufs autour des plants. Tu {connaître|1} cette astuce ? Le samedi, ma grand-mère {acheter|2|ma grand-mère} des graines au marché et elle {offrir|2} des fleurs à la voisine." }
+  );
+  TRANSPO_O.push(
+    { title: 'Le voyage en train', instr: 'Réécris le texte avec « nous » à la place de « je ».',
+      orig: "Je *voyage* en train avec ma tante. Je *place* ma valise en haut. Je *mange* un sandwich et je *bois* de l'eau. Je *lis* un livre puis j'*appelle* mon père. Je *reçois* sa réponse et je *ris*.",
+      t: "Nous {voyager|3} en train avec notre tante. Nous {placer|3} notre valise en haut. Nous {manger|3} un sandwich et nous {boire|3} de l'eau. Nous {lire|3} un livre puis nous {appeler|3} notre père. Nous {recevoir|3} sa réponse et nous {rire|3}." },
+    { title: 'Les pompiers', instr: 'Réécris le texte avec « Les pompiers » à la place de « Le pompier ».',
+      orig: "Le pompier *reçoit* un appel. Il *court* vers le camion et il *met* son casque. Il *éteint* le feu et il *ouvre* les fenêtres. Il *jette* un dernier coup d'œil puis il *rentre* à la caserne.",
+      t: "Les pompiers {recevoir|5|Les pompiers} un appel. Ils {courir|5} vers le camion et ils {mettre|5} leur casque. Ils {éteindre|5} le feu et ils {ouvrir|5} les fenêtres. Ils {jeter|5} un dernier coup d'œil puis ils {rentrer|5} à la caserne." }
+  );
+  SPOT.push(
+    "[Le boulanger] {prépare|préparer} les baguettes.", "Le mercredi, [mes cousins] {viennent|venir} à la maison.", "[Nous] {finissons|finir} la peinture du mur.", "[La chatte] {nourrit|nourrir} ses chatons.",
+    "Dans la cour, [les petits] {jouent|jouer} à chat.", "[Tu] {dis|dire} toujours merci.", "[Le maître] {écrit|écrire} la date au tableau.", "Ce soir, [mes parents] {sortent|sortir} au restaurant.",
+    "[L'avion] {atterrit|atterrir} à l'heure.", "[Vous] {faites|faire} un bonhomme de neige.", "Au marché, [la fermière] {vend|vendre} des œufs.", "[Les spectateurs] {applaudissent|applaudir} les danseuses.",
+    "[Je] {vais|aller} chez le coiffeur.", "Le dimanche, [mon oncle] {répare|réparer} sa voiture.", "[Les tomates du jardin] {rougissent|rougir} au soleil.", "[Ma meilleure amie] {part|partir} en vacances.",
+    "Dans la mare, [les grenouilles] {sautent|sauter} sur les nénuphars.", "[On] {voit|voir} la tour Eiffel d'ici.", "[Les enfants] {remplissent|remplir} leurs seaux de sable.", "[Mon petit frère] {veut|vouloir} un chien.",
+    "Chaque soir, [la lune] {éclaire|éclairer} le jardin.", "[Nous] {prenons|prendre} le goûter dans la cuisine.", "[Le coq] {chante|chanter} au lever du soleil.", "[Les élèves] {réfléchissent|réfléchir} avant d'écrire.",
+    "Le samedi, [ma tante] {court|courir} dans le parc.", "[Vous] {attendez|attendre} le bus.", "[Les abeilles] {butinent|butiner} les fleurs.", "[Elle] {met|mettre} ses bottes de pluie."
+  );
+  SPOT_O.push(
+    "Dans la vitrine {brillent|briller} [des bijoux anciens].", "[Le gardien du phare], seul sur son île, {allume|allumer} la lampe.", "[Ma sœur et moi] {mangeons|manger} des cerises.", "Chaque soir, [mon père] {appelle|appeler} sa mère.",
+    "[Les élèves de CM2] {reçoivent|recevoir} leur diplôme.", "Sur le toit {roucoulent|roucouler} [deux pigeons].", "[Vous] {buvez|boire} trop vite !", "[Tu] {jettes|jeter} tes papiers à la poubelle.",
+    "[Le chien], fatigué par la promenade, {boit|boire} toute son eau.", "Au fond de la mer {vivent|vivre} [des poissons étranges].", "[Mes cousins et moi] {lançons|lancer} des cerfs-volants.", "[On] {croit|croire} entendre un bruit.",
+    "[La directrice et la maîtresse] {ouvrent|ouvrir} les portes de l'école.", "Le samedi, [mes voisins] {nettoient|nettoyer} leur jardin.", "[Nous] {devons|devoir} rentrer avant midi.", "Dans la clairière {jouent|jouer} [trois renardeaux].",
+    "[L'enfant], tout content, {offre|offrir} un dessin à sa mère.", "[Ils] {peignent|peindre} des masques pour le carnaval.", "[Toi et Léa] {connaissez|connaître} la réponse.", "Au bout du chemin {attend|attendre} [une vieille charrette].",
+    "[Le vent et la pluie] {frappent|frapper} les volets.", "[J'] {achète|acheter} du pain frais.", "Ce matin, [le facteur] {envoie|envoyer} un colis.", "[Vous] {riez|rire} de bon cœur.",
+    "Près du feu {dort|dormir} [le vieux chat].", "[Les randonneurs], épuisés, {posent|poser} leurs sacs.", "[Mon frère et toi] {partagez|partager} vos jouets.", "Chaque été, [les hirondelles] {construisent|construire} leur nid.",
+    "[La neige], douce et légère, {recouvre|recouvrir} les toits.", "Derrière la porte {attendent|attendre} [les invités].", "[Le cuisinier] {pèse|peser} le beurre.", "[Tu] {éteins|éteindre} la lumière.",
+    "Dans le jardin {fleurissent|fleurir} [les rosiers].", "[Les joueurs de l'équipe] {lèvent|lever} les bras."
+  );
+
+  function parseTemplate(str){
+    const segs = [], gaps = [];
+    const re = /\{([^|}]+)\|(\d)(?:\|([^}]*))?\}/g;
+    let last = 0, m;
+    while ((m = re.exec(str))){
+      if (m.index > last) segs.push({ t: str.slice(last, m.index) });
+      const g = { inf: m[1], p: +m[2], subj: m[3] || null };
+      g.answer = conj(g.inf, g.p);
+      segs.push({ g: gaps.length });
+      gaps.push(g);
+      last = re.lastIndex;
+    }
+    if (last < str.length) segs.push({ t: str.slice(last) });
+    gaps.forEach((g, k) => {
+      if (g.subj) return;
+      const idx = segs.findIndex(s => s.g === k);
+      const prev = idx > 0 && segs[idx - 1].t !== undefined ? segs[idx - 1].t : '';
+      const words = prev.trim().split(/\s+/);
+      let w = words.pop() || '';
+      while ((norm(w) === 'ne' || norm(w) === "n'") && words.length) w = words.pop();
+      w = w.replace(/^«/, '').replace(/^qu'/i, '');
+      g.subj = w || PRO1[g.p];
+    });
+    return { segs, gaps };
+  }
+  function parseSpot(str){
+    const toks = [], subj = [];
+    let inSubj = false, verbIdx = -1, form = '', inf = '';
+    str.split(' ').forEach(w => {
+      let word = w, endS = false;
+      if (word.startsWith('[')){ inSubj = true; word = word.slice(1); }
+      if (word.includes(']')){ endS = true; word = word.replace(']', ''); }
+      const m = word.match(/^\{([^|}]+)\|([^}]+)\}(.*)$/);
+      if (m){ form = m[1]; inf = m[2]; verbIdx = toks.length; toks.push(m[1] + m[3]); }
+      else { if (inSubj) subj.push(toks.length); toks.push(word); }
+      if (endS) inSubj = false;
+    });
+    return { toks, subj, verbIdx, form, inf, group: group(inf) };
+  }
+
+  /* ---------- Indices et corrections ---------- */
+  function ruleHTML(g){
+    const gr = group(g.inf), f = forms(g.inf), b = '<b>' + g.inf + '</b>';
+    if (gr === 1){
+      const SP1 = { appeler: "on double le l devant -e, -es, -ent : j'appelle, nous appelons", jeter: 'on double le t devant -e, -es, -ent : je jette, nous jetons', acheter: "le e devient è devant -e, -es, -ent : j'achète, nous achetons", lever: 'le e devient è devant -e, -es, -ent : je lève, nous levons', peser: 'le e devient è devant -e, -es, -ent : je pèse, nous pesons', envoyer: "le y devient i devant -e, -es, -ent : j'envoie, nous envoyons", nettoyer: 'le y devient i devant -e, -es, -ent : je nettoie, nous nettoyons' };
+      let extra = '';
+      if (SP1[g.inf]) extra = ' Attention : ' + SP1[g.inf] + '.';
+      else if (g.p === 3 && g.inf.endsWith('ger')) extra = ' Attention : avec nous, on garde le e pour entendre « je » : nous ' + f[3] + '.';
+      else if (g.p === 3 && g.inf.endsWith('cer')) extra = ' Attention : avec nous, le c devient ç : nous ' + f[3] + '.';
+      return b + ' est du 1er groupe : avec ' + PRO[g.p] + ', la terminaison est <span class="end">-' + E1[g.p] + '</span>.' + extra;
+    }
+    if (['ouvrir', 'offrir', 'découvrir'].includes(g.inf)) return b + ' est du 3e groupe, mais au présent il prend les terminaisons du 1er groupe : <span class="end">-e, -es, -e, -ons, -ez, -ent</span>.';
+    if (gr === 2) return b + ' est du 2e groupe : avec ' + PRO[g.p] + ', la terminaison est <span class="end">-' + E2[g.p] + '</span>' + (g.p >= 3 ? ' (on ajoute -iss- au pluriel)' : '') + '.';
+    const dre = DRE.includes(g.inf) || g.inf.endsWith('prendre');
+    if (dre && g.p < 3) return b + ' est du 3e groupe : au singulier, il fait <span class="end">-ds, -ds, -d</span> (pas de t avec il ou elle).';
+    if ((g.inf === 'pouvoir' || g.inf === 'vouloir') && g.p < 3) return b + ' est du 3e groupe : au singulier, il fait <span class="end">-x, -x, -t</span>.';
+    if (g.inf.endsWith('prendre') && g.p >= 3) return b + ' est du 3e groupe : au pluriel, le radical change (pren-, prenn-).';
+    const anchors = [0, 3, 5].filter(k => k !== g.p).slice(0, 2).map(k => (k === 0 && startsVowel(f[k]) ? "j'" : PRO1[k] + ' ') + f[k]);
+    if (MUST_KNOW.includes(g.inf) || g.inf.endsWith('venir')) return b + ' est un verbe du 3e groupe à savoir par cœur. Pense à : ' + anchors.join(', ') + '.';
+    return b + ' est du 3e groupe : le plus souvent -s, -s, -t, -ons, -ez, -ent. Pense à : ' + anchors.join(', ') + '.';
+  }
+  function subjectHTML(g){
+    if (!g.subj || isPronoun(g.subj)) return '';
+    return 'Le sujet est « <b>' + esc(g.subj) + '</b> » : c\'est comme « ' + PRO1[g.p] + ' ». ';
+  }
+  function hintHTML(g, kind){
+    let h = '';
+    if (kind === 'transpo' && g.orig) h += '« ' + esc(g.orig) + ' » vient du verbe <b>' + g.inf + '</b>. ';
+    return h + subjectHTML(g) + ruleHTML(g);
+  }
+  const answerWithSubject = g => withSubject(g.subj || PRO1[g.p], g.answer);
+
+  /* ---------- Élèves, scores et bons points ---------- */
+  function loadStore(){
+    try {
+      const v = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (v && typeof v === 'object' && v.profiles && typeof v.profiles === 'object') return v;
+    } catch (e) {}
+    return { current: null, profiles: {} };
+  }
+  let store = loadStore();
+  let PARC0 = 'jaune', HARD = false;
+  const PARC_NOTE = { jaune: 'Les verbes les plus courants, dans des phrases simples.', orange: 'Plus de verbes du 3e groupe, des verbes comme manger, commencer ou appeler, et des phrases plus longues.' };
+  const pOf = p => (p && p.parcours === 'orange') ? 'orange' : 'jaune';
+  function curParc(){ const p = store.current && store.profiles[store.current]; return p ? pOf(p) : PARC0; }
+  function levelsOf(prof){ if (pOf(prof) === 'orange'){ if (!prof.levelsO) prof.levelsO = {}; return prof.levelsO; } if (!prof.levels) prof.levels = {}; return prof.levels; }
+  function validList(prof){ const f = m => Object.keys(m || {}).filter(id => m[id].validated).sort().join(', '); const a = f(prof.levels), b = f(prof.levelsO); return [a ? 'jaune ' + a : '', b ? 'orange ' + b : ''].filter(Boolean).join(' / '); }
+  function setParc(v){ v = v === 'orange' ? 'orange' : 'jaune'; PARC0 = v; const p = store.current && store.profiles[store.current]; if (p){ p.parcours = v; saveStore(); } render(); }
+  function syncParcUI(){
+    const v = curParc();
+    document.querySelectorAll('[data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.getAttribute('data-parcours') === v)));
+    const n = document.getElementById('parcoursNote'); if (n) n.textContent = PARC_NOTE[v];
+    const c = document.getElementById('playParcours'); if (c){ c.className = 'pchip ' + v; c.textContent = v === 'orange' ? 'Orange' : 'Jaune'; }
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-parcours]'); if (b) setParc(b.getAttribute('data-parcours')); });
+  function saveStore(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
+  function key(s){ return bare(s); }
+  function profile(){
+    const p = (store.current && store.profiles[store.current]) || null;
+    if (p){
+      if (!p.levels) p.levels = {};
+      if (!p.points) p.points = [];
+      if (!p.totals) p.totals = { ok: 0, err: 0 };
+    }
+    return p;
+  }
+  function lvlStat(prof, id){
+    if (!levelsOf(prof)[id]) levelsOf(prof)[id] = { bestOk: null, bestTotal: null, validated: false, plays: 0 };
+    return levelsOf(prof)[id];
+  }
+  function unlocked(prof, id){ return id === 1 || (prof && lvlStat(prof, id - 1).validated); }
+  // Paliers d'un niveau : 80 % (validé) → 1 bon point, 90 % → 2, sans-faute → 3.
+  function tier(ok, total){
+    if (!total) return 0;
+    if (ok >= total) return 3;
+    if (ok * 10 >= total * 9) return 2;
+    if (ok * 10 >= total * 8) return 1;
+    return 0;
+  }
+  // Donne les bons points dus pour le meilleur score d'un niveau, sans jamais en retirer.
+  function award(prof, id){
+    const st = lvlStat(prof, id);
+    const owed = tier(st.bestOk, st.bestTotal);
+    const have = prof.points.filter(p => +p.level === +id && (p.parc || 'jaune') === pOf(prof)).length;
+    const g = Math.max(0, owed - have);
+    for (let k = 0; k < g; k++) prof.points.push({ at: Date.now(), level: +id, parc: pOf(prof), score: st.bestOk + '/' + st.bestTotal });
+    return g;
+  }
+  // Passage à la nouvelle règle : on complète les bons points des anciens meilleurs scores.
+  (function migrate(){
+    let changed = false;
+    Object.keys(store.profiles).forEach(k => {
+      const p = store.profiles[k];
+      if (!p || p.rule2) return;
+      if (!p.levels) p.levels = {};
+      if (!p.points) p.points = [];
+      let gift = 0;
+      const before = p.points.length;
+      Object.keys(p.levels).forEach(id => { gift += award(p, +id); });
+      p.gift = gift;
+      p.giftCard = Math.floor(before / 10) < Math.floor(p.points.length / 10);
+      p.rule2 = true;
+      changed = true;
+    });
+    if (changed) saveStore();
+  })();
+  function setName(raw){
+    const clean = String(raw || '').replace(/\s+/g, ' ').trim().slice(0, 30);
+    const k = key(clean);
+    if (!k) return false;
+    if (!store.profiles[k]) store.profiles[k] = { name: clean, levels: {}, points: [], totals: { ok: 0, err: 0 } };
+    store.current = k;
+    if (!store.profiles[k].parcours) store.profiles[k].parcours = PARC0;
+    saveStore();
+    return true;
+  }
+  function learnDone(){ try { return localStorage.getItem(LEARN_KEY) === '1'; } catch (e) { return false; } }
+  function setLearnDone(){ try { localStorage.setItem(LEARN_KEY, '1'); } catch (e) {} }
+
+  const ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  function fnv(str){
+    let h = 0x811c9dc5;
+    for (let k = 0; k < str.length; k++){ h ^= str.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  function cardCode(name, k){
+    let h = fnv(key(name) + '|' + k + '|c03-present-trois-groupes');
+    let c = '';
+    for (let j = 0; j < 4; j++){ c += ALPHA[h % ALPHA.length]; h = Math.floor(h / ALPHA.length); }
+    return c;
+  }
+  const STAR = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1.8"/><path transform="translate(4 4.3)" d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor"/></svg>';
+  function cardHTML(points, k, hlFrom, hlTo){
+    const start = (k - 1) * 10;
+    const count = Math.max(0, Math.min(10, points.length - start));
+    let h = '<div class="bp-head"><h3>Carte n°' + k + '</h3><span class="bp-count">' + count + ' / 10 bons points</span></div><ol class="slots">';
+    for (let j = 0; j < 10; j++){
+      const p = points[start + j];
+      const isNew = hlFrom !== undefined && hlTo !== undefined && start + j >= hlFrom && start + j < hlTo;
+      if (p) h += '<li class="slot on' + (isNew ? ' new' : '') + '" aria-label="Bon point ' + (j + 1) + ', sommet ' + p.level + ', ' + p.score + '">' + STAR + '<span class="t">' + sommetOf(p.level).alt + '</span></li>';
+      else h += '<li class="slot" aria-label="Case ' + (j + 1) + ' vide">' + (j + 1) + '</li>';
+    }
+    return h + '</ol>';
+  }
+
+  /* ---------- État ---------- */
+  const S = {
+    phase: 'start',   // start | learn | learnEnd | play | result | card | teacher
+    askName: false,
+    cardView: 1,
+    lastPick: {},
+    Lr: { card: 0, check: 0, picked: [], solved: false, first: 0, total: 0 },
+    R: null,
+    res: null
+  };
+  const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
+  const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
+
+  /* ---------- Étape 1 : déroulé ---------- */
+  function learnStart(){
+    S.Lr = { card: 0, check: 0, picked: [], solved: false, first: 0, total: 0 };
+    S.phase = 'learn';
+    render();
+  }
+  function learnPick(idx){
+    const L = S.Lr, ch = LEARN[L.card].checks[L.check];
+    if (L.solved || L.picked.includes(idx)) return;
+    L.picked.push(idx);
+    if (idx === ch.a){
+      L.solved = true;
+      L.total++;
+      if (L.picked.length === 1) L.first++;
+    }
+    renderLearn();
+  }
+  function learnNext(){
+    const L = S.Lr;
+    if (L.check < LEARN[L.card].checks.length - 1){ L.check++; }
+    else if (L.card < LEARN.length - 1){ L.card++; L.check = 0; window.scrollTo(0, 0); }
+    else { setLearnDone(); S.phase = 'learnEnd'; render(); return; }
+    L.picked = [];
+    L.solved = false;
+    renderLearn();
+  }
+
+  /* ---------- Étape 2 : déroulé ---------- */
+  function pickIndex(id, n){
+    let i = Math.floor(Math.random() * n);
+    if (n > 1 && S.lastPick[id] === i) i = (i + 1 + Math.floor(Math.random() * (n - 1))) % n;
+    S.lastPick[id] = i;
+    return i;
+  }
+  function buildRound(id){
+    const lv = LEVELS[id - 1];
+    let units = [];
+    if (lv.kind === 'cloze') units = shuffle(id === 1 ? (HARD ? L1O : L1) : (HARD ? L2O : L2)).slice(0, 10).map(parseTemplate);
+    const TX = HARD ? TEXTS_O : TEXTS, TP = HARD ? TRANSPO_O : TRANSPO;
+    if (lv.kind === 'text'){ const t = TX[pickIndex(id, TX.length)]; const u = parseTemplate(t.t); u.title = t.title; units = [u]; }
+    if (lv.kind === 'transpo'){
+      const x = TP[pickIndex(id, TP.length)];
+      const u = parseTemplate(x.t);
+      u.title = x.title; u.instr = x.instr; u.orig = x.orig;
+      const ov = [...x.orig.matchAll(/\*([^*]+)\*/g)].map(m => m[1]);
+      u.gaps.forEach((g, k) => { g.orig = ov[k]; });
+      units = [u];
+    }
+    if (lv.kind === 'spot') units = shuffle(HARD ? SPOT_O : SPOT).slice(0, 10).map(parseSpot);
+    const total = lv.kind === 'spot' ? units.length : units.reduce((s, u) => s + u.gaps.length, 0);
+    return {
+      level: id, kind: lv.kind, units, total, u: 0, g: 0,
+      input: '', tries: 0, wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false,
+      step: 'verb', sel: [], stepTries: 0, unitFirst: true, wrongTok: -1,
+      results: [], ok: 0, err: 0
+    };
+  }
+  function askForName(message){
+    S.phase = 'start';
+    S.askName = true;
+    render();
+    const msg = $('nameMsg');
+    msg.textContent = message;
+    msg.hidden = false;
+    $('nameInput').focus();
+  }
+  /* Les phrases et les textes jamais vus (sur cet appareil) passent en premier */
+  function freshRound(id){
+    const k = STORE_KEY + '-vues-' + (HARD ? 'orange' : 'jaune') + '-' + id;
+    let seen = []; try { seen = JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) {}
+    const S0 = new Set(seen), key = u => JSON.stringify(u).slice(0, 160);
+    let best = null, bs = Infinity;
+    for (let t = 0; t < 12; t++){ const R = buildRound(id), sc = R.units.filter(u => S0.has(key(u))).length; if (sc < bs){ best = R; bs = sc; } if (!sc) break; }
+    try { localStorage.setItem(k, JSON.stringify(seen.concat(best.units.map(key)).slice(-150))); } catch (e) {}
+    return best;
+  }
+  function startLevel(id){
+    const prof = profile();
+    HARD = curParc() === 'orange';
+    if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
+    if (!unlocked(prof, id)) return;
+    if (prof.gift){ prof.gift = 0; saveStore(); }
+    S.R = freshRound(id);
+    S.R.uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    S.phase = 'play';
+    render();
+    if (S.R.kind !== 'spot') $('answerInput').focus();
+  }
+  const curUnit = () => S.R.units[S.R.u];
+  const curGap = () => curUnit().gaps[S.R.g];
+
+  function resetGap(){
+    const R = S.R;
+    R.input = ''; R.tries = 0; R.wrong = false; R.locked = false; R.revealed = false; R.fb = null; R.hint = null; R.shake = false;
+    $('answerInput').value = '';
+  }
+  function submitAnswer(){
+    const R = S.R;
+    if (R.revealed){ advanceGap(); return; }
+    if (R.locked) return;
+    const g = curGap();
+    if (!norm(R.input)){ R.fb = { kind: 'info', html: "Écris d'abord le verbe." }; renderPlay(); return; }
+    if (R.wrong) return;
+    const typed = norm(R.input);
+    const ok = typed === norm(g.answer) ? 'exact' : (bare(typed) === bare(g.answer) ? 'accent' : 'no');
+    if (ok !== 'no'){
+      g.done = true; g.ok = R.tries === 0; g.shown = g.answer;
+      if (g.ok) R.ok++;
+      R.results.push(gapResult(g, g.ok, R.tries));
+      R.locked = true;
+      R.fb = { kind: 'good', html: pick(GOOD) + (ok === 'accent' ? ' Attention à l\'accent : <b>' + g.answer + '</b>.' : '') };
+      R.hint = null;
+      renderPlay();
+      setTimeout(advanceGap, ok === 'accent' ? 1800 : 800);
+    } else {
+      R.err++;
+      runFall();
+      R.tries++;
+      R.wrong = true;
+      R.shake = true;
+      if (R.tries >= 2){
+        g.done = true; g.ok = false; g.fixed = true; g.shown = g.answer;
+        R.results.push(gapResult(g, false, R.tries));
+        R.revealed = true;
+        R.fb = { kind: 'bad', html: 'La bonne réponse est : <b>' + esc(answerWithSubject(g)) + '</b>.' };
+        R.hint = hintHTML(g, R.kind);
+      } else {
+        R.fb = { kind: 'bad', html: pick(BAD) + ' Lis l\'indice et réessaie.' };
+        R.hint = hintHTML(g, R.kind);
+      }
+      renderPlay();
+    }
+  }
+  function gapResult(g, ok, tries){
+    let html;
+    if (S.R.kind === 'transpo') html = esc(g.orig) + ' → <b>' + esc(answerWithSubject(g)) + '</b> <span class="tries">(' + g.inf + ')</span>';
+    else html = '<b>' + esc(answerWithSubject(g)) + '</b> <span class="tries">(' + g.inf + ', ' + ORD(group(g.inf)) + ' groupe)</span>';
+    return { html, ok, tries };
+  }
+  function advanceGap(){
+    const R = S.R;
+    R.g++;
+    if (R.g >= curUnit().gaps.length){ R.u++; R.g = 0; }
+    resetGap();
+    if (R.u >= R.units.length){ finishRound(); return; }
+    renderPlay();
+    $('answerInput').focus();
+    const act = document.querySelector('#unit .gap.active');
+    if (act && act.scrollIntoView) act.scrollIntoView({ block: 'nearest' });
+  }
+
+  // Repérage : verbe, puis sujet, puis groupe.
+  function spotTap(i){
+    const R = S.R, u = curUnit();
+    if (R.locked) return;
+    if (R.step === 'verb'){
+      if (i === u.verbIdx){ R.step = 'subject'; R.stepTries = 0; R.fb = { kind: 'good', html: 'Oui, « ' + esc(u.form) + ' » est le verbe conjugué. Touche maintenant tous les mots du sujet.' }; R.hint = null; }
+      else spotWrong('verb', i);
+    } else if (R.step === 'subject'){
+      if (i === u.verbIdx) return;
+      const k = R.sel.indexOf(i);
+      if (k >= 0) R.sel.splice(k, 1); else R.sel.push(i);
+      if (R.fb && R.fb.kind === 'bad') R.fb = null;
+    }
+    renderPlay();
+  }
+  function spotSubject(){
+    const R = S.R, u = curUnit();
+    if (R.step !== 'subject' || R.locked) return;
+    if (!R.sel.length){ R.fb = { kind: 'info', html: "Touche d'abord les mots du sujet." }; renderPlay(); return; }
+    const a = R.sel.slice().sort((x, y) => x - y).join(','), b = u.subj.slice().sort((x, y) => x - y).join(',');
+    if (a === b){ R.step = 'group'; R.stepTries = 0; R.fb = { kind: 'good', html: 'Oui ! Le sujet est « ' + esc(u.subj.map(k => u.toks[k]).join(' ')) + ' ». À quel groupe appartient le verbe ?' }; R.hint = null; }
+    else spotWrong('subject');
+    renderPlay();
+  }
+  function spotGroup(gr){
+    const R = S.R, u = curUnit();
+    if (R.step !== 'group' || R.locked) return;
+    if (gr === u.group) spotDone();
+    else spotWrong('group');
+    renderPlay();
+  }
+  function spotWrong(step, i){
+    const R = S.R, u = curUnit();
+    R.err++;
+    runFall();
+    R.unitFirst = false;
+    R.stepTries++;
+    const rest = u.toks.slice(u.verbIdx + 1).join(' ').replace(/[.!?]\s*$/, '').trim();
+    if (step === 'verb'){
+      R.wrongTok = i;
+      if (R.stepTries >= 2){ R.step = 'subject'; R.stepTries = 0; R.fb = { kind: 'bad', html: 'Le verbe conjugué est « <b>' + esc(u.form) + '</b> ». Touche maintenant les mots du sujet.' }; R.hint = null; }
+      else { R.fb = { kind: 'bad', html: 'Ce n\'est pas le verbe conjugué.' }; R.hint = 'Encadre le mot avec « ne … pas » : le verbe conjugué est le mot qui se glisse entre les deux. Un verbe à l\'infinitif (comme « rire » ou « jouer ») ne compte pas.'; }
+    } else if (step === 'subject'){
+      if (R.stepTries >= 2){ R.sel = u.subj.slice(); R.step = 'group'; R.stepTries = 0; R.fb = { kind: 'bad', html: 'Le sujet est « <b>' + esc(u.subj.map(k => u.toks[k]).join(' ')) + '</b> ». À quel groupe appartient le verbe ?' }; R.hint = null; }
+      else { R.fb = { kind: 'bad', html: 'Ce n\'est pas tout à fait le sujet.' }; R.hint = 'Pose la question : « Qui est-ce qui ' + esc(u.form) + (rest ? ' ' + esc(rest) : '') + ' ? » La réponse est le sujet. Il peut avoir plusieurs mots.'; }
+    } else {
+      if (R.stepTries >= 2){ spotDone(true); return; }
+      R.fb = { kind: 'bad', html: 'Ce n\'est pas le bon groupe.' };
+      R.hint = 'Cherche d\'abord l\'infinitif : dis « il faut… » devant le verbe.';
+    }
+  }
+  function spotDone(revealed){
+    const R = S.R, u = curUnit();
+    R.step = 'done';
+    R.locked = true;
+    R.sel = u.subj.slice();
+    if (R.unitFirst) R.ok++;
+    R.results.push({
+      html: 'Sujet : <b>' + esc(u.subj.map(k => u.toks[k]).join(' ')) + '</b> · Verbe : <b>' + esc(u.form) + '</b> <span class="tries">(' + u.inf + ', ' + ORD(u.group) + ' groupe)</span>',
+      ok: R.unitFirst, tries: R.unitFirst ? 0 : 1
+    });
+    R.fb = { kind: R.unitFirst ? 'good' : (revealed ? 'bad' : 'info'), html: (R.unitFirst ? pick(GOOD) + ' ' : (revealed ? 'Ce n\'est pas le bon groupe. ' : 'Bien corrigé. ')) + '« ' + esc(u.form) + ' » vient de <b>' + u.inf + '</b> : ' + ORD(u.group) + ' groupe.' };
+    R.hint = null;
+    if (R.unitFirst){ renderPlay(); setTimeout(spotNext, 1300); }
+    else R.revealed = true;
+  }
+  function spotNext(){
+    const R = S.R;
+    if (!R || R.step !== 'done') return;
+    R.u++;
+    R.step = 'verb'; R.sel = []; R.stepTries = 0; R.unitFirst = true; R.locked = false; R.revealed = false; R.fb = null; R.hint = null; R.wrongTok = -1;
+    if (R.u >= R.units.length){ finishRound(); return; }
+    renderPlay();
+    window.scrollTo(0, 0);
+  }
+
+  function finishRound(){
+    const R = S.R, prof = profile(), id = R.level;
+    const st = lvlStat(prof, id);
+    const need = Math.ceil(R.total * 0.8);
+    const pct = R.ok / R.total;
+    const prevPct = st.bestTotal ? st.bestOk / st.bestTotal : null;
+    const prevBest = st.bestTotal ? st.bestOk + '/' + st.bestTotal : null;
+    const validNow = R.ok >= need;
+    const firstValid = validNow && !st.validated;
+    const newBest = prevPct === null || pct > prevPct;
+    if (newBest){ st.bestOk = R.ok; st.bestTotal = R.total; }
+    st.plays++;
+    if (validNow) st.validated = true;
+    prof.totals.ok += R.ok;
+    prof.totals.err += R.err;
+    const before = prof.points.length;
+    const gained = award(prof, id);
+    const after = prof.points.length;
+    saveStore();
+    let outcome = 'notyet';
+    if (gained > 0) outcome = firstValid ? 'validate' : 'record';
+    else if (validNow) outcome = 'same';
+    S.res = { id, finale: id === 5 && firstValid, ok: R.ok, total: R.total, err: R.err, need, outcome, gained, newBest, prevBest, from: before, to: after, results: R.results,
+              bestTier: tier(st.bestOk, st.bestTotal), best: st.bestOk + '/' + st.bestTotal,
+              card: Math.floor(before / 10) < Math.floor(after / 10) ? Math.floor(after / 10) : 0 };
+    S.phase = 'result';
+    render();
+  }
+
+  /* ---------- Animations et bruitages (communs) ---------- */
+  let REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  const SND_KEY = 'jeu-son';
+  function soundOn(){ try { return localStorage.getItem(SND_KEY) !== '0'; } catch (e) { return true; } }
+  function setSound(on){ try { localStorage.setItem(SND_KEY, on ? '1' : '0'); } catch (e) {} }
+  const soundLabel = () => soundOn() ? 'Son : activé' : 'Son : coupé';
+
+  // Petits bruitages fabriqués sur place (aucun fichier à charger).
+  let AC = null, NOISE = null;
+  function ac(){
+    if (!soundOn()) return null;
+    try {
+      if (!AC){ const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+      if (AC.state === 'suspended') AC.resume();
+      return AC;
+    } catch (e) { return null; }
+  }
+  function noiseBuf(a){
+    if (NOISE) return NOISE;
+    const b = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return (NOISE = b);
+  }
+  function nz(a, t, dur, type, freq, q, peak, attack){
+    const s = a.createBufferSource();
+    s.buffer = noiseBuf(a);
+    const f = a.createBiquadFilter();
+    f.type = type;
+    f.frequency.setValueAtTime(freq, t);
+    if (q) f.Q.value = q;
+    const g = a.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(Math.max(0.0002, peak), t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(a.destination);
+    s.start(t, Math.random(), dur + 0.05);
+    return f;
+  }
+  function sndWhoosh(sec){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, f = nz(a, t, sec, 'bandpass', 300, 0.8, 0.07, sec * 0.6);
+    f.frequency.linearRampToValueAtTime(1500, t + sec);
+  }
+  function sndClaps(n, dur){
+    const a = ac(); if (!a) return;
+    const t0 = a.currentTime + 0.03, people = Math.min(n, 14), base = n > 10 ? 0.55 : 0.75;
+    for (let p = 0; p < people; p++){
+      const rate = 3.4 + Math.random() * 1.8;
+      let t = t0 + Math.random() * 0.3;
+      while (t < t0 + dur){
+        const fade = t > t0 + dur - 0.8 ? Math.max(0.15, (t0 + dur - t) / 0.8) : 1;
+        nz(a, t, 0.06, 'bandpass', 1000 + Math.random() * 1600, 1.1, base / Math.sqrt(people) * (0.6 + Math.random() * 0.4) * fade, 0.004);
+        t += (1 / rate) * (0.85 + Math.random() * 0.3);
+      }
+    }
+    if (n > 10){
+      nz(a, t0, dur + 0.6, 'lowpass', 900, 0, 0.12, dur * 0.4);
+      [0.5, 1.4].forEach(dt => {
+        const o = a.createOscillator(), g = a.createGain(), s = t0 + dt;
+        o.type = 'sine';
+        o.frequency.setValueAtTime(1900, s); o.frequency.linearRampToValueAtTime(2500, s + 0.18); o.frequency.linearRampToValueAtTime(2100, s + 0.35);
+        g.gain.setValueAtTime(0.0001, s); g.gain.linearRampToValueAtTime(0.05, s + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, s + 0.4);
+        o.connect(g); g.connect(a.destination); o.start(s); o.stop(s + 0.45);
+      });
+    }
+  }
+  function sndThump(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.25);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.25, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 0.32);
+    nz(a, t, 0.25, 'lowpass', 1200, 0, 0.08, 0.005);
+  }
+  function sndRoll(sec){ const a = ac(); if (!a) return; nz(a, a.currentTime, sec, 'lowpass', 320, 0, 0.14, 0.1); }
+  function sndPop(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime;
+    nz(a, t, 0.5, 'lowpass', 600, 0, 0.18, 0.005);
+    nz(a, t + 0.05, 0.9, 'highpass', 2500, 0, 0.05, 0.02);
+  }
+
+  /* ---- Outils de dessin ---- */
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const clamp01 = k => Math.max(0, Math.min(1, k));
+  const easeOut = k => 1 - Math.pow(1 - k, 3);
+  const easeSine = k => 0.5 - 0.5 * Math.cos(Math.PI * k);
+  const easeOutBack = k => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const FONT = '"Baloo 2", "Arial Rounded MT Bold", Arial, sans-serif';
+  function makeTrack(segs){
+    const pts = [];
+    segs.forEach(sg => {
+      const n = sg[0] === 'C' ? 180 : 30;
+      for (let i = pts.length ? 1 : 0; i <= n; i++){
+        const t = i / n, u = 1 - t;
+        if (sg[0] === 'C'){
+          const a = sg[1], b = sg[2], c = sg[3], d = sg[4];
+          pts.push([u*u*u*a[0] + 3*u*u*t*b[0] + 3*u*t*t*c[0] + t*t*t*d[0], u*u*u*a[1] + 3*u*u*t*b[1] + 3*u*t*t*c[1] + t*t*t*d[1]]);
+        } else pts.push([lerp(sg[1][0], sg[2][0], t), lerp(sg[1][1], sg[2][1], t)]);
+      }
+    });
+    const cum = [0];
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const L = cum[cum.length - 1];
+    const pos = s => {
+      s = Math.max(0, Math.min(L, s));
+      let lo = 0, hi = cum.length - 1;
+      while (hi - lo > 1){ const m = (lo + hi) >> 1; if (cum[m] <= s) lo = m; else hi = m; }
+      const k = (s - cum[lo]) / ((cum[hi] - cum[lo]) || 1);
+      return [lerp(pts[lo][0], pts[hi][0], k), lerp(pts[lo][1], pts[hi][1], k)];
+    };
+    const at = s => { const p = pos(s), a = pos(s - 3), b = pos(s + 3); return { x: p[0], y: p[1], a: Math.atan2(b[1] - a[1], b[0] - a[0]) }; };
+    return { L, at, pos };
+  }
+  function fitCanvas(cv, W, H){
+    const cssW = Math.max(200, Math.round(cv.parentNode.clientWidth || 340)), d = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(cssW * d);
+    cv.height = Math.round(cssW * d * H / W);
+    return { k: cssW * d / W, cssW, w: cv.width, h: cv.height };
+  }
+  function rrect(g, x, y, w, h, r){
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+  function seg(g, x1, y1, x2, y2){ g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); }
+  function circ(g, x, y, r){ g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+  function poly(g, pts, fill){ g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]); g.closePath(); g.fillStyle = fill; g.fill(); }
+
+  // Le skieur vu de profil, les pieds à l'origine. c = flexion, w = bras levés, tk = groupé (saut).
+  function star(g, x, y, r){
+    g.beginPath();
+    for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    g.closePath(); g.fill();
+  }
+  // Gerbes de neige
+  function spray(list, x, y, n, dirX, speed){
+    for (let i = 0; i < n; i++) list.push({ x: x + rnd(-2, 2), y: y + rnd(-1, 1), vx: dirX * rnd(0.3, 1) * speed + rnd(-12, 12), vy: -rnd(18, 70), life: 0, max: rnd(0.35, 0.85), r: rnd(0.9, 2.4) });
+  }
+  function stepSpray(list, dt){
+    for (let i = list.length - 1; i >= 0; i--){
+      const p = list[i];
+      p.vy += 170 * dt; p.vx *= 1 - 1.5 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt;
+      if (p.life > p.max) list.splice(i, 1);
+    }
+  }
+  function drawSpray(g, list){
+    g.lineWidth = 0.6;
+    list.forEach(p => {
+      const a = 1 - p.life / p.max;
+      g.fillStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')';
+      g.strokeStyle = 'rgba(150,175,215,' + (a * 0.8).toFixed(2) + ')';
+      g.beginPath(); g.arc(p.x, p.y, p.r, 0, Math.PI * 2); g.fill(); g.stroke();
+    });
+  }
+  function makeFlakes(n){ return Array.from({ length: n }, () => ({ x: rnd(0, 360), y: rnd(0, 240), r: rnd(0.6, 1.6), vy: rnd(8, 18), ph: rnd(0, 6.3) })); }
+  function stepFlakes(list, dt, t, H){ list.forEach(f => { f.y += f.vy * dt; f.x += Math.sin(t * 0.8 + f.ph) * 6 * dt; if (f.y > H + 3){ f.y = -3; f.x = rnd(0, 360); } }); }
+  function drawFlakes(g, list){ g.fillStyle = 'rgba(255,255,255,.9)'; list.forEach(f => circ(g, f.x, f.y, f.r)); }
+  const mix2 = (p, q, k) => [lerp(p[0], q[0], k), lerp(p[1], q[1], k)];
+  const tri = x => { x = ((x % 1) + 1) % 1; return x < 0.5 ? x * 2 : 2 - x * 2; };
+  function rng(seed){ let v = seed % 2147483647; if (v <= 0) v += 2147483646; return () => { v = v * 16807 % 2147483647; return (v - 1) / 2147483646; }; }
+  function tone(a, t, f0, dur, type, peak, f1){
+    const o = a.createOscillator(), gn = a.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(f0, t);
+    if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    gn.gain.setValueAtTime(0.0001, t); gn.gain.linearRampToValueAtTime(peak, t + 0.012); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(gn); gn.connect(a.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  function sndFanfare(big){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime + 0.05, notes = big ? [[523,0,.16],[659,.15,.16],[784,.3,.16],[1047,.45,.3],[784,.75,.14],[1047,.9,.8]] : [[523,0,.16],[659,.15,.16],[784,.3,.16],[1047,.45,.55]];
+    notes.forEach(n => { tone(a, t + n[1], n[0], n[2] + 0.1, 'triangle', 0.11); tone(a, t + n[1], n[0] * 2, n[2], 'sine', 0.025); });
+  }
+  function syncSound(){
+    document.querySelectorAll('[data-sound]').forEach(x => {
+      x.setAttribute('aria-pressed', String(soundOn()));
+      if (x.getAttribute('data-sound') === 'icon'){ x.setAttribute('aria-label', soundLabel()); x.title = soundLabel(); x.classList.toggle('off', !soundOn()); }
+      else x.textContent = soundLabel();
+    });
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-sound]');
+    if (!b) return;
+    setSound(!soundOn());
+    syncSound();
+  });
+  function drawCloud(g, x, y, s, alpha){
+    g.save(); g.globalAlpha = alpha === undefined ? 0.92 : alpha; g.fillStyle = '#ffffff';
+    g.beginPath(); g.arc(x, y, 7 * s, 0, 6.283); g.arc(x + 9 * s, y - 4 * s, 9 * s, 0, 6.283); g.arc(x + 20 * s, y, 7.5 * s, 0, 6.283); g.rect(x, y - 1 * s, 20 * s, 7.5 * s); g.fill();
+    g.restore();
+  }
+  function makeConfetti(n, colors){ return Array.from({ length: n }, (_, i) => ({ x: rnd(0, 360), y: rnd(-260, -10), vy: rnd(26, 46), ph: rnd(0, 6.3), rot: rnd(0, 6.3), vr: rnd(-6, 6), col: colors[i % colors.length] })); }
+  function stepConfetti(list, dt, t){ list.forEach(c => { c.y += c.vy * dt; c.x += Math.sin(t * 2 + c.ph) * 14 * dt; c.rot += c.vr * dt; if (c.y > 250){ c.y = -10; c.x = rnd(0, 360); } }); }
+  function drawConfetti(g, list){ list.forEach(c => { g.save(); g.translate(c.x, c.y); g.rotate(c.rot); g.scale(1, Math.abs(Math.cos(c.rot * 1.3)) + 0.15); g.fillStyle = c.col; g.fillRect(-1.8, -3, 3.6, 6); g.restore(); }); }
+  const CONF_COLORS = ['#e5484d', '#3b9ae1', '#46a758', '#f5c518', '#8e4ec6', '#f76b15', '#e93d82', '#12a594'];
+  // Lance une animation sur un canevas : step(dt, t) puis draw(). S'arrête quand la boîte change ou disparaît.
+  function animate(box, cv, tok, W, H, layers, step, draw){
+    let fit = fitCanvas(cv, W, H);
+    const st = { fit, layers: layers(fit) };
+    let last = performance.now();
+    const frame = now => {
+      if (box.getAttribute('data-tok') !== String(tok) || !cv.isConnected || !cv.offsetParent) return;
+      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+      last = now;
+      if (Math.abs((cv.parentNode.clientWidth || 0) - st.fit.cssW) > 2){ st.fit = fitCanvas(cv, W, H); st.layers = layers(st.fit); }
+      step(dt);
+      draw(st);
+      requestAnimationFrame(frame);
+    };
+    return { st, start(){ draw(st); requestAnimationFrame(frame); } };
+  }
+  function layer(fit, paint){
+    const b = document.createElement('canvas');
+    b.width = fit.w; b.height = fit.h;
+    const g = b.getContext('2d'); g.setTransform(fit.k, 0, 0, fit.k, 0, 0); paint(g);
+    return b;
+  }
+
+  /* ---------- L'escalade : 5 sommets ---------- */
+  const SOMMETS = [
+    { name: 'le Petit Rocher',    alt: '800\u00a0m',   color: '#2fa84f', cheer: 'Une marmotte te salue !' },
+    { name: 'la Dent du Chamois', alt: '1\u00a0600\u00a0m', color: '#2f6fd6', cheer: 'Un chamois vient voir ton exploit !' },
+    { name: "l'Aiguille Rouge",   alt: '2\u00a0400\u00a0m', color: '#f08c1a', cheer: "Tes amis de cordée t'applaudissent !" },
+    { name: 'le Pic des Aigles',  alt: '3\u00a0200\u00a0m', color: '#d8343c', cheer: 'Les aigles volent en ton honneur !' },
+    { name: 'le Mont Géant',      alt: '4\u00a0000\u00a0m', color: '#7a36c2', cheer: 'Un avion te félicite dans le ciel !' }
+  ];
+  const sommetOf = id => SOMMETS[Math.max(0, Math.min(4, id - 1))];
+  const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+
+  function sndSlip(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, f = nz(a, t, 0.45, 'bandpass', 2600, 1.4, 0.12, 0.02);
+    f.frequency.exponentialRampToValueAtTime(500, t + 0.45);
+    for (let i = 0; i < 6; i++) nz(a, t + 0.1 + i * 0.07 + Math.random() * 0.04, 0.05, 'highpass', 2800, 0, 0.07, 0.002);
+  }
+  function sndTwang(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime;
+    tone(a, t, 210, 0.4, 'triangle', 0.16, 95);
+    nz(a, t, 0.12, 'lowpass', 900, 0, 0.08, 0.004);
+  }
+  function sndWhistle(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime;
+    tone(a, t, 2500, 0.16, 'sine', 0.06, 3300); tone(a, t + 0.24, 2500, 0.2, 'sine', 0.06, 3400);
+  }
+  function sndEagle(){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime;
+    tone(a, t, 2600, 0.55, 'sine', 0.045, 1500); tone(a, t + 0.05, 5200, 0.4, 'sine', 0.012, 3000);
+  }
+  function sndPlane(sec){
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), f = a.createBiquadFilter(), gn = a.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(92, t); o.frequency.linearRampToValueAtTime(80, t + sec);
+    f.type = 'lowpass'; f.frequency.value = 420;
+    gn.gain.setValueAtTime(0.0001, t); gn.gain.linearRampToValueAtTime(0.05, t + sec * 0.4); gn.gain.linearRampToValueAtTime(0.0001, t + sec);
+    o.connect(f); f.connect(gn); gn.connect(a.destination); o.start(t); o.stop(t + sec + 0.05);
+  }
+
+  /* ---- L'alpiniste ---- */
+  function joint(a, b, len, bend){
+    const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1;
+    const h = Math.sqrt(Math.max(0, len * len - d * d / 4)) * bend;
+    return [mx - dy / d * h, my + dx / d * h];
+  }
+  function limb(g, a, b, c, col, w){ g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.lineTo(c[0], c[1]); g.stroke(); }
+  // a = pente, ph = cycle des pas, mv = en mouvement, sit = suspendu à la corde, up = debout, raise = bras levés, clap = applaudit
+  function climberPose(o){
+    const a = o.a || 0, ph = o.ph || 0, sit = o.sit || 0, up = o.up || 0, mv = o.mv || 0, raise = o.raise === undefined ? 1 : o.raise;
+    const ca = Math.cos(a), sa = Math.sin(a), al = d => [ca * d, sa * d];
+    let fA = al(-4 + 8 * tri(ph)), fB = al(-4 + 8 * tri(ph + 0.5));
+    fA[1] -= 2 * mv * Math.max(0, Math.sin(ph * 6.283));
+    fB[1] -= 2 * mv * Math.max(0, -Math.sin(ph * 6.283));
+    fA = mix2(mix2(fA, al(2), sit), [3.5, 0], up);
+    fB = mix2(mix2(fB, al(5.5), sit), [-3, 0], up);
+    const hip = mix2(mix2([1.2 * ca, -14.5 + 1.2 * sa], [-8, -8.5], sit), [0, -15.5], up);
+    const leanC = 0.65 + 0.5 * Math.min(1, Math.max(0, -a));
+    const lean = lerp(lerp(leanC, -0.35, sit), 0, up) + (o.lean || 0);
+    const sh = [hip[0] + Math.sin(lean) * 12, hip[1] - Math.cos(lean) * 12];
+    const hd = [sh[0] + Math.sin(lean * 0.6) * 6, sh[1] - Math.cos(lean * 0.6) * 6];
+    let hA = al(15 + 6 * tri(ph + 0.25)), hB = al(15 + 6 * tri(ph + 0.75));
+    hA[1] -= 1; hB[1] -= 1;
+    const c = o.clap || 0;
+    const dA = [sh[0] + 6, sh[1] + 9.5], dB = [sh[0] - 1.5, sh[1] + 12];
+    const uA = [sh[0] + 7 - 5.5 * c, sh[1] - 12 + 2 * c], uB = [sh[0] - 6 + 5 * c, sh[1] - 12 + 2 * c];
+    hA = mix2(mix2(hA, [sh[0] + 6.5, sh[1] - 6], sit), mix2(dA, uA, raise), up);
+    hB = mix2(mix2(hB, [sh[0] + 4, sh[1] - 9.5], sit), mix2(dB, uB, raise), up);
+    return { fA, fB, hip, sh, hd, hA, hB, lean, armsUp: up * raise };
+  }
+  function drawClimber(g, x, y, o, sc){
+    const P = climberPose(o), J = o.jacket || '#f2711c', JD = o.jacketDark || '#c4520e';
+    g.save(); g.translate(x, y); if (sc) g.scale(sc, sc);
+    if (o.alpha !== undefined) g.globalAlpha = o.alpha;
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    const bendUp = P.armsUp > 0.5 ? -1 : 1;
+    limb(g, P.hip, joint(P.hip, P.fB, 8, -1), P.fB, '#22306e', 4.2);
+    g.fillStyle = '#3a2a1f'; circ(g, P.fB[0] + 1, P.fB[1] - 0.6, 1.9);
+    limb(g, P.sh, joint(P.sh, P.hB, 8, bendUp), P.hB, JD, 3.4);
+    g.fillStyle = '#1a2358'; circ(g, P.hB[0], P.hB[1], 1.6);
+    const bx = (P.hip[0] + P.sh[0]) / 2 - Math.cos(P.lean) * 4.4, by = (P.hip[1] + P.sh[1]) / 2 - Math.sin(P.lean) * 4.4;
+    g.save(); g.translate(bx, by); g.rotate(P.lean); g.fillStyle = o.pack || '#b8323a'; rrect(g, -3.3, -6.5, 6.6, 11.5, 2.6); g.fill(); g.restore();
+    g.strokeStyle = J; g.lineWidth = 7.5; seg(g, P.hip[0], P.hip[1], P.sh[0], P.sh[1]);
+    g.strokeStyle = '#1a2358'; g.lineWidth = 2;
+    seg(g, P.hip[0] - Math.cos(P.lean) * 3.7, P.hip[1] - Math.sin(P.lean) * 3.7, P.hip[0] + Math.cos(P.lean) * 3.7, P.hip[1] + Math.sin(P.lean) * 3.7);
+    g.fillStyle = '#f1c7a3'; circ(g, P.hd[0], P.hd[1], 4.6);
+    g.save(); g.translate(P.hd[0], P.hd[1]); g.rotate(P.lean * 0.6);
+    g.fillStyle = o.helmet || '#ffd23f'; g.beginPath(); g.arc(0, -0.5, 5.2, Math.PI * 1.02, Math.PI * 2.02); g.closePath(); g.fill();
+    g.fillStyle = '#1a2358'; circ(g, 2.5, 0.6, 0.85);
+    g.restore();
+    limb(g, P.hip, joint(P.hip, P.fA, 8, -1), P.fA, '#2b3f8f', 4.2);
+    g.fillStyle = '#3a2a1f'; circ(g, P.fA[0] + 1, P.fA[1] - 0.6, 1.9);
+    limb(g, P.sh, joint(P.sh, P.hA, 8, 1), P.hA, J, 3.4);
+    g.fillStyle = '#1a2358'; circ(g, P.hA[0], P.hA[1], 1.6);
+    g.restore();
+    return P;
+  }
+  const toWorld = (x, y, sc, j) => [x + j[0] * sc, y + j[1] * sc];
+  function drawFlag(g, x, y, w, h, col, t, k){
+    if (k <= 0.01) return;
+    const W = w * k;
+    g.beginPath();
+    for (let i = 0; i <= 6; i++){ const u = i / 6; g.lineTo(x + W * u, y + Math.sin(t * 6 - u * 4) * 1.6 * u); }
+    for (let i = 6; i >= 0; i--){ const u = i / 6; g.lineTo(x + W * u, y + h + Math.sin(t * 6 - u * 4) * 1.6 * u); }
+    g.closePath(); g.fillStyle = col; g.fill();
+    g.fillStyle = 'rgba(255,255,255,.9)'; star(g, x + W * 0.45, y + h / 2 + Math.sin(t * 6 - 1.8) * 0.7, Math.min(h, W) * 0.28);
+  }
+  function rope(g, pts){
+    g.strokeStyle = '#d63384'; g.lineWidth = 1.4; g.lineCap = 'round'; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++){
+      const p = pts[i - 1], q = pts[i], sag = Math.min(5, Math.hypot(q[0] - p[0], q[1] - p[1]) * 0.06);
+      g.quadraticCurveTo((p[0] + q[0]) / 2, (p[1] + q[1]) / 2 + sag, q[0], q[1]);
+    }
+    g.stroke();
+  }
+  function rockFill(g, top, ptsTail, c1, c2, y0, y1){
+    g.beginPath(); top.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); ptsTail.forEach(p => g.lineTo(p[0], p[1])); g.closePath();
+    const gr = g.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, c1); gr.addColorStop(1, c2); g.fillStyle = gr; g.fill();
+  }
+  function strata(g, tr, from, to, offs, R){
+    g.save(); g.strokeStyle = 'rgba(60,48,36,.22)'; g.lineWidth = 1.2; g.lineCap = 'round';
+    offs.forEach((o, j) => {
+      let s = from + R() * 10;
+      while (s < to){
+        const len = 8 + R() * 16, p = tr.at(s), q = tr.at(Math.min(to, s + len));
+        g.beginPath(); g.moveTo(p.x - Math.sin(p.a) * o, p.y + Math.cos(p.a) * o); g.lineTo(q.x - Math.sin(q.a) * o, q.y + Math.cos(q.a) * o); g.stroke();
+        s += len + 5 + R() * 12;
+      }
+    });
+    g.restore();
+  }
+  function badge(g, x, y, col, label){
+    g.font = '800 9px ' + FONT; g.textAlign = 'left';
+    const w = g.measureText(label).width + 26;
+    g.fillStyle = 'rgba(255,255,255,.95)'; rrect(g, x, y, w, 16, 8); g.fill(); g.strokeStyle = '#1a2358'; g.lineWidth = 1.1; g.stroke();
+    g.fillStyle = col; circ(g, x + 10, y + 8, 4.6); g.strokeStyle = '#1a2358'; g.lineWidth = 1; g.beginPath(); g.arc(x + 10, y + 8, 4.6, 0, 6.283); g.stroke();
+    g.fillStyle = '#1a2358'; g.fillText(label, x + 18, y + 11.4);
+  }
+
+  /* ---- La paroi pendant le jeu ---- */
+  const RH = 120;
+  const RUN_TRACK = makeTrack([['C', [4, 114], [50, 109], [90, 100], [128, 88]], ['C', [128, 88], [170, 74], [200, 68], [236, 58]], ['C', [236, 58], [272, 46], [300, 38], [330, 28]]]);
+  const runS = (n, total) => RUN_TRACK.L * (0.11 + 0.82 * n / total);
+  const BELAY = [10, 114];
+  const RUN = { uid: '', cv: null, g: null, k: 1, cssW: 0, sky: null, fg: null, lvl: 0, total: 10, done: 0, s: 0, v: 0, target: 0, ph: 0, fall: null, pebbles: [], clouds: [], marks: [], t: 0, raf: 0, last: 0 };
+  function runLayers(){
+    const fit = { k: RUN.k, w: RUN.cv.width, h: RUN.cv.height }, L = SOMMETS[RUN.lvl];
+    RUN.sky = layer(fit, g => {
+      const sky = g.createLinearGradient(0, 0, 0, RH); sky.addColorStop(0, '#9fd3ff'); sky.addColorStop(1, '#e9f6ff');
+      g.fillStyle = sky; g.fillRect(0, 0, 360, RH);
+      poly(g, [[0,78],[30,52],[62,70],[96,40],[132,64],[170,44],[200,60],[240,30],[270,48],[300,26],[360,40],[360,RH],[0,RH]], '#c6d7ee');
+      poly(g, [[96,40],[89,47],[95,46],[100,50],[104,46]], '#ffffff');
+      poly(g, [[240,30],[233,37],[239,36],[244,40],[248,36]], '#ffffff');
+    });
+    RUN.fg = layer(fit, g => {
+      const R = rng(7 + RUN.lvl), top = [];
+      for (let s = 0; s <= RUN_TRACK.L; s += 4) top.push(RUN_TRACK.pos(s));
+      top.push([330, 28]);
+      rockFill(g, top, [[344, 33], [352, 40], [360, 46], [360, RH], [0, RH]], '#a3988a', '#7a6f62', 20, RH);
+      poly(g, [[330,28],[344,33],[352,40],[360,46],[360,RH],[300,RH],[318,60]], 'rgba(40,30,20,.14)');
+      strata(g, RUN_TRACK, 20, RUN_TRACK.L, [9, 20, 33, 48], R);
+      const grassTo = RUN_TRACK.L * (0.32 - RUN.lvl * 0.06);
+      if (grassTo > 10){
+        g.beginPath(); for (let s = 0; s <= grassTo; s += 4){ const p = RUN_TRACK.pos(s); s ? g.lineTo(p[0], p[1] - 1) : g.moveTo(p[0], p[1] - 1); }
+        const e = RUN_TRACK.pos(grassTo); g.lineTo(e[0] - 6, e[1] + 10); g.lineTo(0, RH); g.lineTo(0, 114); g.closePath(); g.fillStyle = '#7cb342'; g.fill();
+      }
+      if (RUN.lvl >= 2) poly(g, [[300,38],[316,32],[330,28],[344,33],[352,40],[342,42],[334,38],[324,42],[312,40]], '#ffffff');
+      g.strokeStyle = '#c4b8a8'; g.lineWidth = 1.6; g.beginPath(); top.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke();
+      for (let k = 1; k <= RUN.total; k++){
+        const p = RUN_TRACK.at(runS(k, RUN.total));
+        g.fillStyle = '#6b7480'; circ(g, p.x, p.y + 0.5, 2.2); g.fillStyle = '#d9dee6'; circ(g, p.x, p.y + 0.5, 1.1);
+      }
+      g.strokeStyle = '#6b5a45'; g.lineWidth = 1.8; seg(g, 330, 29, 330, 7);
+      badge(g, 6, 5, L.color, 'Sommet ' + (RUN.lvl + 1) + ' · ' + L.alt);
+    });
+  }
+  function runFit(){ const f = fitCanvas(RUN.cv, 360, RH); RUN.k = f.k; RUN.cssW = f.cssW; runLayers(); }
+  function runSetup(R){
+    if (RUN.uid === R.uid && RUN.cv && RUN.cv.isConnected) return true;
+    const box = $('runbox');
+    box.innerHTML = '<canvas aria-hidden="true"></canvas>';
+    RUN.cv = box.querySelector('canvas');
+    RUN.g = RUN.cv.getContext('2d');
+    if (!RUN.g) return false;
+    RUN.uid = R.uid; RUN.lvl = Math.max(0, Math.min(4, R.level - 1)); RUN.total = R.total;
+    runFit();
+    RUN.done = R.results.length;
+    RUN.s = RUN.target = runS(RUN.done, R.total);
+    RUN.v = 0; RUN.fall = null; RUN.pebbles = [];
+    RUN.clouds = [[40, 22, 0.8, 4], [170, 14, 0.6, 3], [280, 10, 0.5, 2.5]].map(c => ({ x: c[0], y: c[1], s: c[2], v: c[3] }));
+    RUN.marks = R.results.map(r => ({ ok: r.ok, t0: -10 }));
+    return true;
+  }
+  function runUpdate(R){
+    syncSound();
+    if (!runSetup(R)) return;
+    RUN.done = R.results.length;
+    RUN.target = runS(RUN.done, R.total);
+    R.results.forEach((r, k) => { if (!RUN.marks[k]) RUN.marks[k] = { ok: r.ok, t0: RUN.t }; });
+    if (REDUCED){ RUN.s = RUN.target; runDraw(); return; }
+    runKick();
+  }
+  function runKick(){ if (!RUN.raf){ RUN.last = performance.now(); RUN.raf = requestAnimationFrame(runFrame); } }
+  function runFrame(now){
+    RUN.raf = 0;
+    if (!RUN.cv || !RUN.cv.isConnected || !RUN.cv.offsetParent) return;
+    const dt = Math.min(0.05, Math.max(0, (now - RUN.last) / 1000));
+    RUN.last = now; RUN.t += dt;
+    if (Math.abs((RUN.cv.parentNode.clientWidth || 0) - RUN.cssW) > 2) runFit();
+    runStep(dt);
+    runDraw();
+    RUN.raf = requestAnimationFrame(runFrame);
+  }
+  function runFall(){
+    if (!S.R || !RUN.cv || !RUN.cv.isConnected || RUN.fall) return;
+    sndSlip();
+    if (REDUCED) return;
+    const s0 = RUN.s;
+    RUN.fall = { t: 0, s0, low: Math.max(runS(0, RUN.total) - 3, s0 - 22), s: s0, caught: false };
+    RUN.v = 0;
+    runKick();
+  }
+  function runStep(dt){
+    const F = RUN.fall;
+    if (F){
+      F.t += dt;
+      const t = F.t;
+      if (t < 0.15) F.s = F.s0;
+      else if (t < 0.55){
+        const u = (t - 0.15) / 0.4; F.s = F.s0 - (F.s0 - F.low) * u * u;
+        if (Math.random() < dt * 30){ const p = RUN_TRACK.at(F.s); RUN.pebbles.push({ x: p.x + rnd(-3, 3), y: p.y - 1, vx: rnd(-25, -5), vy: rnd(-20, 5), life: 0, max: rnd(0.6, 1), r: rnd(0.8, 1.6) }); }
+      } else if (t < 1.3){
+        if (!F.caught){ F.caught = true; sndTwang(); }
+        const u = t - 0.55; F.s = F.low + 3.5 * Math.sin(u * 14) * Math.exp(-u * 5);
+      } else if (t < 2.1){
+        const u = (t - 1.3) / 0.8, ns = lerp(F.low, F.s0, easeSine(u));
+        RUN.ph += Math.max(0, ns - F.s) / 11; F.s = ns;
+      } else { RUN.s = F.s0; RUN.v = 0; RUN.fall = null; }
+    } else {
+      const K = 6, d = RUN.target - RUN.s;
+      if (d < 0) RUN.v = 0;
+      else {
+        RUN.v += (K * d - 2 * Math.sqrt(K) * RUN.v) * dt;
+        const ds = RUN.v * dt; RUN.s += ds; RUN.ph += ds / 11;
+        if (d < 0.05 && Math.abs(RUN.v) < 0.5){ RUN.s = RUN.target; RUN.v = 0; }
+      }
+    }
+    for (let i = RUN.pebbles.length - 1; i >= 0; i--){ const p = RUN.pebbles[i]; p.vy += 180 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt; if (p.life > p.max) RUN.pebbles.splice(i, 1); }
+    RUN.clouds.forEach(c => { c.x += c.v * dt; if (c.x > 380) c.x = -40; });
+  }
+  function runDraw(){
+    const g = RUN.g, sc = 0.82;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.drawImage(RUN.sky, 0, 0);
+    g.setTransform(RUN.k, 0, 0, RUN.k, 0, 0);
+    RUN.clouds.forEach(c => drawCloud(g, c.x, c.y, c.s));
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.drawImage(RUN.fg, 0, 0);
+    g.setTransform(RUN.k, 0, 0, RUN.k, 0, 0);
+    drawFlag(g, 330.8, 7, 15, 9, SOMMETS[RUN.lvl].color, RUN.t, 1);
+    RUN.marks.forEach((m, k) => {
+      if (!m) return;
+      const p = RUN_TRACK.at(runS(k + 1, RUN.total)), sc2 = easeOutBack(clamp01((RUN.t - m.t0) / 0.35));
+      if (sc2 <= 0.01) return;
+      g.save(); g.translate(p.x - Math.sin(p.a) * 13, p.y + Math.cos(p.a) * 13); g.scale(sc2, sc2);
+      g.fillStyle = m.ok ? '#157a45' : '#cf2f46'; circ(g, 0, 0, 5);
+      g.strokeStyle = '#ffffff'; g.lineWidth = 1.7; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
+      if (m.ok){ g.moveTo(-2.4, 0); g.lineTo(-0.8, 1.7); g.lineTo(2.3, -1.9); } else { g.moveTo(-2, -2); g.lineTo(2, 2); g.moveTo(2, -2); g.lineTo(-2, 2); }
+      g.stroke(); g.restore();
+    });
+    const F = RUN.fall, s = F ? F.s : RUN.s, p = RUN_TRACK.at(s);
+    let o;
+    if (F){
+      const t = F.t;
+      if (t < 0.15) o = { a: p.a, ph: RUN.ph, sit: t / 0.15 * 0.5, lean: -0.3 * t / 0.15 };
+      else if (t < 0.55) o = { a: p.a, ph: RUN.ph, sit: 0.85, lean: -0.25 + 0.15 * Math.sin(t * 30) };
+      else if (t < 1.3) o = { a: p.a, ph: RUN.ph, sit: 1, lean: 0.12 * Math.sin((t - 0.55) * 9) * Math.exp(-(t - 0.55) * 2) };
+      else o = { a: p.a, ph: RUN.ph, sit: clamp01(1 - (t - 1.3) / 0.3), mv: 1 };
+    } else o = { a: p.a, ph: RUN.ph, mv: clamp01(RUN.v / 10), lean: 0.03 * Math.sin(RUN.t * 2) };
+    const P = climberPose(o), hip = toWorld(p.x, p.y, sc, P.hip);
+    const bP = climberPose({ up: 1, raise: 0, lean: 0.04 * Math.sin(RUN.t * 1.5) }), bh = toWorld(BELAY[0], BELAY[1], sc, bP.hA);
+    const pts = [bh];
+    for (let k = 1; k <= RUN.done; k++){ const q = RUN_TRACK.at(runS(k, RUN.total)); pts.push([q.x, q.y + 0.5]); }
+    pts.push(hip);
+    rope(g, pts);
+    drawClimber(g, BELAY[0], BELAY[1], { up: 1, raise: 0, lean: 0.04 * Math.sin(RUN.t * 1.5), jacket: '#2f6fd6', jacketDark: '#23529f', helmet: '#ffffff', pack: '#2fa84f' }, sc);
+    drawClimber(g, p.x, p.y, o, sc);
+    g.fillStyle = '#6d6355'; RUN.pebbles.forEach(q => { g.globalAlpha = 1 - q.life / q.max; circ(g, q.x, q.y, q.r); }); g.globalAlpha = 1;
+    if (F && F.t > 0.05 && F.t < 1.1){
+      const hd = toWorld(p.x, p.y, sc, P.hd), sc3 = easeOutBack(clamp01((F.t - 0.05) / 0.2)) * (F.t > 0.95 ? clamp01((1.1 - F.t) / 0.15) : 1);
+      g.save(); g.translate(hd[0] - 4, hd[1] - 12); g.scale(sc3, sc3);
+      g.fillStyle = '#ffffff'; circ(g, 0, 0, 5.5); g.strokeStyle = '#cf2f46'; g.lineWidth = 1.2; g.beginPath(); g.arc(0, 0, 5.5, 0, 6.283); g.stroke();
+      g.fillStyle = '#cf2f46'; g.font = '800 9px ' + FONT; g.textAlign = 'center'; g.fillText('!', 0, 3.2);
+      g.restore();
+    }
+  }
+
+  /* ---- La scène du sommet et le grand final ---- */
+  const SC_TRACK = makeTrack([['C', [0, 236], [50, 214], [90, 196], [128, 172]], ['C', [128, 172], [165, 148], [190, 120], [214, 98]], ['C', [214, 98], [228, 86], [234, 76], [240, 66]]]);
+  const MAIN_TAIL = [[262, 66], [276, 80], [290, 86], [322, 90], [338, 118], [360, 132], [360, 240], [0, 240]];
+  const FRIENDS = [[298, 87.2, '#2f6fd6', '#23529f', '#ffffff'], [311, 88.6, '#2fa84f', '#21803b', '#ff8fb1'], [324, 91, '#8e4ec6', '#6b37a0', '#ffd23f']];
+  const PRAYER = ['#2f6fd6', '#ffffff', '#d8343c', '#2fa84f', '#f5c518'];
+  function drawMarmot(g, x, y, wave){
+    g.save(); g.translate(x, y);
+    g.fillStyle = '#8a5a35'; g.beginPath(); g.ellipse(0, -7, 5.2, 7.5, 0, 0, 6.283); g.fill();
+    g.fillStyle = '#d9b48a'; g.beginPath(); g.ellipse(0.8, -6, 2.8, 5, 0, 0, 6.283); g.fill();
+    g.fillStyle = '#8a5a35'; circ(g, 0.5, -15.5, 4.2); circ(g, -2.6, -18.6, 1.5); circ(g, 3, -18.8, 1.5);
+    g.fillStyle = '#d9b48a'; circ(g, 2.2, -14.4, 1.9);
+    g.fillStyle = '#1a2358'; circ(g, -0.7, -16.4, 0.8); circ(g, 2.4, -16.5, 0.8); circ(g, 3.2, -14.6, 0.7);
+    g.strokeStyle = '#8a5a35'; g.lineWidth = 2; g.lineCap = 'round';
+    seg(g, -3, -10, -6, -12); seg(g, 3.5, -10, 6 + 2 * Math.cos(wave), -14 - 3 * Math.abs(Math.sin(wave)));
+    g.restore();
+  }
+  function drawChamois(g, x, y, k, t){
+    g.save(); g.translate(x, y);
+    const tuck = Math.sin(Math.PI * clamp01(k)) * (k < 1 ? 1 : 0), bob = k >= 1 ? Math.sin(t * 3) * 0.6 : 0;
+    g.strokeStyle = '#5a3a20'; g.lineWidth = 1.6; g.lineCap = 'round';
+    [[-6, 1], [-3.5, -1], [5, 1], [7, -1]].forEach(l => { const fx = l[0] + (l[0] < 0 ? 3 : -3) * tuck; seg(g, l[0], -8, fx, -1 - 5 * tuck + l[1] * 0.3); });
+    g.fillStyle = '#8a5a35'; g.beginPath(); g.ellipse(0, -10, 9, 4.6, 0, 0, 6.283); g.fill();
+    g.fillStyle = '#5a3a20'; g.fillRect(-8, -12, 16, 1.6);
+    g.save(); g.translate(-8, -12 + bob); g.rotate(-0.5);
+    g.fillStyle = '#8a5a35'; rrect(g, -2.2, -8, 4.4, 9, 2); g.fill(); g.restore();
+    g.fillStyle = '#f0e6d8'; g.beginPath(); g.ellipse(-12.5, -19 + bob, 3, 2.3, -0.4, 0, 6.283); g.fill();
+    g.fillStyle = '#2a1d12'; g.fillRect(-14, -20.2 + bob, 4, 0.9);
+    g.strokeStyle = '#1a1a1a'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-11.5, -21 + bob); g.quadraticCurveTo(-11, -26 + bob, -9, -25 + bob); g.moveTo(-12.8, -21 + bob); g.quadraticCurveTo(-12.6, -26 + bob, -10.6, -25.5 + bob); g.stroke();
+    g.restore();
+  }
+  function drawEagle(g, x, y, s, flap, dir){
+    g.save(); g.translate(x, y); g.scale(s * dir, s);
+    const w = Math.sin(flap) * 5;
+    g.fillStyle = '#4a3220';
+    g.beginPath(); g.moveTo(-2, 0); g.quadraticCurveTo(-9, -4 - w, -18, -1 - w * 1.4); g.quadraticCurveTo(-10, 1, -2, 2.2); g.closePath(); g.fill();
+    g.beginPath(); g.moveTo(2, 0); g.quadraticCurveTo(9, -4 - w, 18, -1 - w * 1.4); g.quadraticCurveTo(10, 1, 2, 2.2); g.closePath(); g.fill();
+    g.beginPath(); g.ellipse(0, 1, 2.6, 5, 0, 0, 6.283); g.fill();
+    g.fillStyle = '#c99a4a'; circ(g, 0, -3.2, 2);
+    g.fillStyle = '#f5c518'; poly(g, [[-0.7, -4.6], [0.7, -4.6], [0, -6.4]], '#f5c518');
+    g.restore();
+  }
+  function drawPlane(g, x, y, t){
+    g.save(); g.translate(x, y);
+    g.strokeStyle = '#5a628f'; g.lineWidth = 0.8; seg(g, 12, 0, 28, 1.5);
+    const bx = 28, bw = 66, bh = 15;
+    g.beginPath();
+    for (let i = 0; i <= 8; i++){ const u = i / 8; g.lineTo(bx + bw * u, -bh / 2 + Math.sin(t * 7 + u * 5) * 1.6 * u); }
+    for (let i = 8; i >= 0; i--){ const u = i / 8; g.lineTo(bx + bw * u, bh / 2 + Math.sin(t * 7 + u * 5) * 1.6 * u); }
+    g.closePath(); g.fillStyle = '#ffffff'; g.fill(); g.strokeStyle = '#d8343c'; g.lineWidth = 1; g.stroke();
+    g.fillStyle = '#d8343c'; g.font = '800 10px ' + FONT; g.textAlign = 'center'; g.fillText('BRAVO !', bx + bw / 2, 3.6 + Math.sin(t * 7 + 2.5) * 0.8);
+    g.fillStyle = '#ffffff'; rrect(g, -12, -3, 24, 6, 3); g.fill(); g.strokeStyle = '#5a628f'; g.lineWidth = 0.8; g.stroke();
+    g.fillStyle = '#d8343c'; rrect(g, -3, -1.5, 8, 3, 1.5); g.fill(); poly(g, [[8, -3], [12, -8], [12, -2]], '#d8343c');
+    g.fillStyle = '#9fd3ff'; rrect(g, -8, -2.4, 4, 2.2, 1); g.fill();
+    g.strokeStyle = 'rgba(90,98,143,.6)'; g.lineWidth = 1; g.beginPath(); g.ellipse(-13, 0, 0.8, 5 * Math.abs(Math.sin(t * 40)) + 1, 0, 0, 6.283); g.stroke();
+    g.restore();
+  }
+  function drawGlider(g, x, y, col, t){
+    g.save(); g.translate(x, y); g.rotate(Math.sin(t * 1.3) * 0.06);
+    g.beginPath(); g.moveTo(-16, 0); g.quadraticCurveTo(0, -12, 16, 0); g.quadraticCurveTo(0, -7, -16, 0); g.closePath(); g.fillStyle = col; g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.7)'; g.lineWidth = 1; g.beginPath(); g.moveTo(-6, -5.2); g.lineTo(-5, -2.8); g.moveTo(6, -5.2); g.lineTo(5, -2.8); g.stroke();
+    g.strokeStyle = 'rgba(40,40,60,.5)'; g.lineWidth = 0.5; seg(g, -15, 0, 0, 16); seg(g, 15, 0, 0, 16); seg(g, -5, -3, 0, 16); seg(g, 5, -3, 0, 16);
+    g.fillStyle = '#1a2358'; rrect(g, -2, 15, 4, 6, 1.5); g.fill(); g.fillStyle = '#f1c7a3'; circ(g, 0, 14, 1.8);
+    g.restore();
+  }
+  function playScene(box, idx, finale, sound){
+    const L = SOMMETS[idx], tok = (playScene.n = (playScene.n || 0) + 1);
+    box.setAttribute('data-tok', tok);
+    box.hidden = false;
+    box.innerHTML = '<canvas role="img" aria-label="' + (finale ? "L'alpiniste arrive au sommet du Mont Géant au lever du soleil" : "L'alpiniste arrive au sommet et plante son drapeau") + '"></canvas>' +
+      '<div class="scene-foot"><p class="cheer">' + (finale ? 'Tu as gravi les 5 sommets : lever de soleil sur le Mont Géant !' : L.cheer) + '</p>' +
+      '<button class="sound-btn" type="button" data-sound>' + soundLabel() + '</button></div>';
+    const cv = box.querySelector('canvas'), g = cv.getContext('2d');
+    if (!g) return;
+    const lv = finale ? 4 : idx, s0 = SC_TRACK.L * 0.42, CL_T = 2.6;
+    const nFriends = lv >= 4 ? 3 : (lv >= 2 ? 2 : 0);
+    const st = { t: 0, ph: 0, s: s0, arrived: -1, sounds: {}, conf: finale ? makeConfetti(44, CONF_COLORS) : [], clouds: [[30, 40, 1, 5], [150, 24, 0.8, 3.5], [300, 52, 0.9, 4.5]].map(c => ({ x: c[0], y: c[1], s: c[2], v: c[3] })), stars: Array.from({ length: 30 }, () => [rnd(0, 360), rnd(0, 120), rnd(0.4, 1.2)]) };
+    const farPaint = g2 => {
+      poly(g2, [[0,150],[40,118],[70,136],[110,96],[150,130],[190,104],[230,128],[270,92],[310,118],[340,100],[360,112],[360,240],[0,240]], finale ? '#8c7fb6' : '#c9d9ee');
+      [[110,96],[270,92],[40,118]].forEach(p => poly(g2, [[p[0], p[1]], [p[0] - 8, p[1] + 9], [p[0] - 2, p[1] + 7], [p[0] + 3, p[1] + 10], [p[0] + 8, p[1] + 8]], finale ? '#d9cfee' : '#ffffff'));
+      poly(g2, [[190,240],[245,168],[278,184],[320,150],[360,170],[360,240]], finale ? '#6e6a9f' : '#a9bfdc');
+    };
+    const mainPaint = g2 => {
+      const R = rng(11 + lv), top = [];
+      for (let s = 0; s <= SC_TRACK.L; s += 4) top.push(SC_TRACK.pos(s));
+      top.push([240, 66]);
+      rockFill(g2, top, MAIN_TAIL, finale ? '#9a8a86' : '#a59a8c', finale ? '#6a5d5c' : '#776c5f', 60, 240);
+      poly(g2, [[262,66],[276,80],[290,86],[322,90],[338,118],[360,132],[360,240],[236,240],[226,160],[246,100]], 'rgba(40,30,20,.15)');
+      strata(g2, SC_TRACK, 10, SC_TRACK.L, [10, 24, 40, 58, 80], R);
+      if (lv <= 1){
+        g2.beginPath(); for (let s = 0; s <= SC_TRACK.L * 0.4; s += 4){ const p = SC_TRACK.pos(s); s ? g2.lineTo(p[0], p[1] - 1) : g2.moveTo(p[0], p[1] - 1); }
+        g2.lineTo(150, 200); g2.lineTo(120, 240); g2.lineTo(0, 240); g2.closePath(); g2.fillStyle = '#7cb342'; g2.fill();
+        g2.fillStyle = '#ffffff'; for (let i = 0; i < 14; i++){ const p = SC_TRACK.pos(SC_TRACK.L * R() * 0.36); circ(g2, p[0] + R() * 20, p[1] + 6 + R() * 26, 1.1); }
+      }
+      if (lv >= 2 || finale){
+        poly(g2, [[196,114],[214,98],[228,86],[240,66],[262,66],[276,80],[290,86],[300,88],[292,98],[278,94],[266,104],[254,96],[242,108],[228,102],[214,118]], finale ? '#f6eef6' : '#ffffff');
+        if (lv >= 3) poly(g2, [[290,86],[322,90],[332,106],[322,104],[312,112],[302,100],[292,98]], finale ? '#f6eef6' : '#ffffff');
+      }
+      g2.strokeStyle = finale ? '#c8b9b6' : '#c9bdad'; g2.lineWidth = 1.6; g2.beginPath(); top.concat([[262, 66], [276, 80], [290, 86], [322, 90], [338, 118], [360, 132]]).forEach((p, i) => i ? g2.lineTo(p[0], p[1]) : g2.moveTo(p[0], p[1])); g2.stroke();
+      if (lv === 0 || lv >= 0){ g2.fillStyle = '#8f8576'; g2.beginPath(); g2.moveTo(64, 214); g2.quadraticCurveTo(66, 196, 80, 195); g2.quadraticCurveTo(94, 196, 95, 212); g2.closePath(); g2.fill(); g2.fillStyle = 'rgba(255,255,255,.18)'; g2.beginPath(); g2.ellipse(76, 201, 7, 2.5, -0.2, 0, 6.283); g2.fill(); }
+      badge(g2, 8, 8, L.color, cap(L.name) + ' · ' + L.alt);
+    };
+    const A = animate(box, cv, tok, 360, 240, fit => ({ far: layer(fit, farPaint), main: layer(fit, mainPaint) }), dt => step(dt), lst => draw(lst));
+    const once = (k, f) => { if (!st.sounds[k]){ st.sounds[k] = 1; if (sound) f(); } };
+    function step(dt){
+      st.t += dt;
+      const t = st.t;
+      if (st.arrived < 0){
+        const k = clamp01(t / CL_T), s = lerp(s0, SC_TRACK.L, easeSine(k));
+        st.ph += Math.max(0, s - st.s) / 11; st.s = s;
+        if (k >= 1) st.arrived = t;
+      } else {
+        const u = t - st.arrived;
+        if (u > 0.05) once('fan', () => sndFanfare(finale));
+        if (u > 0.55 && nFriends) once('claps', () => sndClaps(nFriends + (finale ? 6 : 0), finale ? 4 : 2.6));
+        if (u > 0.6) once('whistle', sndWhistle);
+        if (lv >= 3 && u > 1.4) once('eagle', sndEagle);
+        if (lv >= 4 && u > 0.8) once('plane', () => sndPlane(6));
+        stepConfetti(st.conf, dt, t);
+      }
+      st.clouds.forEach(c => { c.x += c.v * dt; if (c.x > 390) c.x = -50; });
+    }
+    function draw(lst){
+      const t = st.t, u = st.arrived >= 0 ? t - st.arrived : -1;
+      g.setTransform(lst.fit.k, 0, 0, lst.fit.k, 0, 0);
+      const dawn = finale ? clamp01(t / 5) : 1;
+      const sky = g.createLinearGradient(0, 0, 0, 200);
+      if (finale){
+        sky.addColorStop(0, 'rgb(' + Math.round(lerp(22, 90, dawn)) + ',' + Math.round(lerp(32, 160, dawn)) + ',' + Math.round(lerp(78, 235, dawn)) + ')');
+        sky.addColorStop(0.65, 'rgb(' + Math.round(lerp(70, 255, dawn)) + ',' + Math.round(lerp(60, 170, dawn)) + ',' + Math.round(lerp(120, 130, dawn)) + ')');
+        sky.addColorStop(1, 'rgb(255,' + Math.round(lerp(120, 220, dawn)) + ',' + Math.round(lerp(120, 160, dawn)) + ')');
+      } else { sky.addColorStop(0, lv >= 3 ? '#5fa8ee' : '#8fcaff'); sky.addColorStop(1, '#e6f5ff'); }
+      g.fillStyle = sky; g.fillRect(0, 0, 360, 240);
+      if (finale){
+        g.fillStyle = '#ffffff'; st.stars.forEach(s => { g.globalAlpha = (1 - dawn) * 0.9; circ(g, s[0], s[1], s[2]); }); g.globalAlpha = 1;
+        const sy = lerp(196, 120, easeOut(clamp01(t / 5))), sx = 318;
+        if (u >= 0){
+          g.save(); g.translate(sx, sy); g.rotate(t * 0.15); g.fillStyle = 'rgba(255,236,170,.22)';
+          for (let i = 0; i < 12; i++){ g.rotate(Math.PI / 6); g.beginPath(); g.moveTo(0, 0); g.lineTo(220, -16); g.lineTo(220, 16); g.closePath(); g.fill(); }
+          g.restore();
+        }
+        const sg = g.createRadialGradient(sx, sy, 4, sx, sy, 40); sg.addColorStop(0, '#fff6c8'); sg.addColorStop(0.45, '#ffd25e'); sg.addColorStop(1, 'rgba(255,190,90,0)');
+        g.fillStyle = sg; circ(g, sx, sy, 40);
+      }
+      g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(lst.layers.far, 0, 0); g.setTransform(lst.fit.k, 0, 0, lst.fit.k, 0, 0);
+      st.clouds.forEach(c => drawCloud(g, c.x, c.y, c.s, finale ? 0.55 + 0.35 * dawn : 0.92));
+      if (lv >= 3 && u >= 0){
+        const al = clamp01(u / 1);
+        g.globalAlpha = al;
+        for (let i = 0; i < 2; i++){
+          const th = t * 0.7 + i * Math.PI, x = 196 + 82 * Math.cos(th), y = 40 + 15 * Math.sin(th) + i * 8, flap = (t * 0.5 + i * 0.4) % 2.5 < 0.9 ? t * 10 : 0.3;
+          drawEagle(g, x, y, 0.8 + 0.15 * Math.sin(th), flap, Math.sin(th) > 0 ? -1 : 1);
+        }
+        g.globalAlpha = 1;
+      }
+      g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(lst.layers.main, 0, 0); g.setTransform(lst.fit.k, 0, 0, lst.fit.k, 0, 0);
+      // marmotte
+      if (u >= 0){
+        const v = easeOutBack(clamp01((u - 0.5) / 0.4));
+        if (v > 0.01){ g.save(); g.beginPath(); g.rect(0, 0, 360, 199); g.clip(); drawMarmot(g, 80, 198 + (1 - v) * 20, u * 9); g.restore(); }
+      }
+      // chamois
+      if (lv >= 1 && u >= 0.9){
+        const k = clamp01((u - 0.9) / 0.7), x = lerp(392, 331, k), y = lerp(150, 105, k) - 42 * Math.sin(Math.PI * k);
+        drawChamois(g, x, y, k, t);
+      }
+      // corde
+      const s = st.s, p = SC_TRACK.at(Math.min(s, SC_TRACK.L));
+      let cx = p.x, cy = p.y, o;
+      if (u < 0) o = { a: p.a, ph: st.ph, mv: 1 };
+      else {
+        const k = clamp01(u / 0.4);
+        cx = lerp(240, 247, easeOut(k)); cy = 66;
+        if (u > 1.1 && u < 2.3) cy -= 4 * Math.abs(Math.sin((u - 1.1) * Math.PI * 2.5));
+        o = { a: lerp(p.a, 0, k), ph: st.ph, up: k, raise: easeOutBack(clamp01((u - 0.7) / 0.5)) };
+      }
+      const P = climberPose(o), hip = toWorld(cx, cy, 1.15, P.hip), rp = [hip];
+      for (let q = Math.min(s, SC_TRACK.L) - 6; q > -10; q -= 10){ const r = SC_TRACK.pos(Math.max(0, q)); rp.push([r[0], r[1] - 0.5]); }
+      g.strokeStyle = '#d63384'; g.lineWidth = 1.5; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); rp.forEach((q, i) => i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.stroke();
+      // amis de cordée
+      for (let i = 0; i < nFriends; i++){
+        const f = FRIENDS[i], cheer = u >= 0.3 ? 1 : 0;
+        drawClimber(g, f[0], f[1], { up: 1, raise: cheer, clap: cheer ? 0.5 + 0.5 * Math.sin(t * 13 + i * 2) : 0, lean: 0.03 * Math.sin(t * 2 + i), jacket: f[2], jacketDark: f[3], helmet: f[4], pack: '#5a628f' }, 0.95);
+      }
+      // drapeau planté
+      if (u >= 0){
+        const hgt = 30 * easeOutBack(clamp01((u - 0.25) / 0.35));
+        if (hgt > 0.5){ g.strokeStyle = '#6b5a45'; g.lineWidth = 2; seg(g, 257, 66, 257, 66 - hgt); }
+        drawFlag(g, 258, 36.5, 22, 14, L.color, t, easeOutBack(clamp01((u - 0.55) / 0.45)));
+        if (finale && u > 0.9){
+          const k = clamp01((u - 0.9) / 1.2), x1 = 257, y1 = 38, x2 = 340, y2 = 104;
+          g.strokeStyle = '#5a4632'; g.lineWidth = 0.7; g.beginPath();
+          for (let i = 0; i <= 20 * k; i++){ const v = i / 20, x = lerp(x1, x2, v), y = lerp(y1, y2, v) + Math.sin(Math.PI * v) * 14; i ? g.lineTo(x, y) : g.moveTo(x, y); }
+          g.stroke();
+          for (let i = 1; i < 12; i++){
+            const v = i / 12; if (v > k) break;
+            const x = lerp(x1, x2, v), y = lerp(y1, y2, v) + Math.sin(Math.PI * v) * 14, sw = Math.sin(t * 5 + i) * 1.2;
+            poly(g, [[x - 3, y], [x + 3, y], [x + sw, y + 7]], PRAYER[i % 5]);
+          }
+        }
+      }
+      drawClimber(g, cx, cy, o, 1.15);
+      if (lv >= 4 && u >= 0.8){ const x = 400 - ((u - 0.8) * 62) % 640; drawPlane(g, x, 26 + Math.sin(u * 1.8) * 3, t); }
+      if (finale && u >= 0){
+        [['#ff5fa2', 0.6, 60, 16], ['#5ec8ff', 1.8, 96, 21], ['#ffd93b', 3.2, 132, 13]].forEach(pg => {
+          if (u < pg[1]) return;
+          const x = -40 + ((u - pg[1]) * pg[3]) % 440;
+          drawGlider(g, x, pg[2] + Math.sin(t * 0.9 + pg[1]) * 4, pg[0], t);
+        });
+        drawConfetti(g, st.conf);
+      }
+    }
+    if (REDUCED){
+      st.t = 6; st.arrived = 0.01; st.s = SC_TRACK.L; st.sounds = { claps: 1 };
+      A.st.layers = { far: layer(A.st.fit, farPaint), main: layer(A.st.fit, mainPaint) };
+      draw(A.st);
+      if (sound) sndFanfare(finale);
+      return;
+    }
+    A.start();
+  }
+
+  /* ---------- Affichage ---------- */
+  function buildTrack(el, count){
+    el.style.gridTemplateColumns = 'repeat(' + count + ', 1fr)';
+    el.innerHTML = '';
+    for (let k = 0; k < count; k++) el.appendChild(document.createElement('li'));
+  }
+  function paintTrack(el, results, current){
+    const items = el.children;
+    for (let k = 0; k < items.length; k++){
+      items[k].className = k < results.length ? (results[k].ok ? 'done' : 'miss') : (k === current ? 'current' : '');
+    }
+  }
+
+  const LOCK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="2"/></svg>';
+  const TICK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const CROSS = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+
+  function renderStart(){
+    const prof = profile();
+    const showForm = !prof || S.askName;
+    $('nameForm').hidden = !showForm;
+    $('hello').hidden = showForm;
+    if (!showForm) $('helloName').textContent = prof.name;
+    if (!S.askName) $('nameMsg').hidden = true;
+    const names = Object.keys(store.profiles), known = $('knownNames');
+    if (showForm && names.length){
+      known.innerHTML = '<span>Déjà sur cet appareil :</span>' + names.map(k => '<button class="chip" type="button" data-profile="' + esc(k) + '">' + esc(store.profiles[k].name) + '</button>').join('');
+      known.hidden = false;
+    } else known.hidden = true;
+    $('learnDoneChip').hidden = !learnDone();
+
+    $('levelList').innerHTML = LEVELS.map(lv => {
+      const st = prof ? lvlStat(prof, lv.id) : null;
+      const open = unlocked(prof, lv.id) || !prof && lv.id === 1;
+      const best = st && st.bestTotal ? st.bestOk + '/' + st.bestTotal : '—';
+      const cls = 'lvl' + (st && st.validated ? ' ok' : '');
+      return '<li><button class="' + cls + '" type="button" data-level="' + lv.id + '"' + (open ? '' : ' disabled') + '>' +
+        '<span class="lvl-num theme" style="background:' + sommetOf(lv.id).color + '">' + (open ? (st && st.validated ? TICK : lv.id) : LOCK) + '</span>' +
+        '<span class="lvl-body"><span class="lvl-name">' + cap(sommetOf(lv.id).name) + ' · ' + sommetOf(lv.id).alt + '</span><span class="lvl-desc">' + lv.name + ' · ' + lv.desc + '</span>' + '</span>' +
+        '<span class="lvl-score"><b>' + best + '</b><span>' + (open ? '★ ' + (st ? tier(st.bestOk, st.bestTotal) : 0) + ' sur 3' : 'fermé') + '</span></span>' +
+        '</button></li>';
+    }).join('');
+
+    const gn = $('giftNote');
+    if (prof && prof.gift > 0){
+      gn.textContent = 'Bonne nouvelle : la règle des bons points a changé ! Tes anciens scores te rapportent ' + (prof.gift === 1 ? 'un bon point de plus' : prof.gift + ' bons points de plus') + '.' + (prof.giftCard ? ' Une carte est complète : ouvre-la plus bas !' : '');
+      gn.hidden = false;
+    } else gn.hidden = true;
+    const tt = $('totals');
+    if (prof && (prof.totals.ok || prof.totals.err)) tt.innerHTML = 'Depuis le début : <b>' + prof.totals.ok + '</b> réussites du premier coup et <b>' + prof.totals.err + '</b> erreurs.';
+    else tt.textContent = prof ? 'Commence par le premier sommet : le Petit Rocher.' : 'Écris ton prénom en haut pour enregistrer tes réussites.';
+
+    const pts = prof ? prof.points : [];
+    $('startCard').innerHTML = cardHTML(pts, Math.floor(pts.length / 10) + 1);
+    const done = Math.floor(pts.length / 10), dc = $('doneCards');
+    if (done > 0){
+      let h = '<span>Cartes complètes :</span>';
+      for (let k = 1; k <= done; k++) h += '<button class="chip" type="button" data-card="' + k + '">Carte n°' + k + '</button>';
+      dc.innerHTML = h;
+      dc.hidden = false;
+    } else dc.hidden = true;
+  }
+
+  function renderLearn(){
+    const L = S.Lr, card = LEARN[L.card], ch = card.checks[L.check];
+    $('learnCount').textContent = 'Fiche ' + (L.card + 1) + ' sur ' + LEARN.length;
+    const tr = $('ltrack');
+    for (let k = 0; k < tr.children.length; k++) tr.children[k].className = k < L.card ? 'done' : (k === L.card ? 'current' : '');
+    const right = L.solved;
+    let h = '<h2>' + card.title + '</h2>' + card.html.replace('{{MEMO}}', memoHTML());
+    h += '<div class="check"><span class="eyebrow">Question ' + (L.check + 1) + ' sur ' + card.checks.length + '</span><p class="check-q">' + ch.q + '</p><div class="choices">';
+    ch.c.forEach((c, k) => {
+      let cls = 'choice';
+      if (L.picked.includes(k)) cls += k === ch.a ? ' right' : ' wrong';
+      h += '<button class="' + cls + '" type="button" data-choice="' + k + '"' + (right ? ' disabled' : '') + '>' + c + '</button>';
+    });
+    h += '</div>';
+    if (L.picked.length){
+      const last = L.picked[L.picked.length - 1];
+      h += '<p class="why ' + (last === ch.a ? 'good' : 'bad') + '">' + (last === ch.a ? '' : 'Pas tout à fait. ') + ch.why + (last === ch.a ? '' : ' Choisis la bonne réponse.') + '</p>';
+    }
+    if (right){
+      const lastCheck = L.check === card.checks.length - 1, lastCard = L.card === LEARN.length - 1;
+      h += '<button class="btn-primary" id="learnNextBtn" type="button">' + (!lastCheck ? 'Question suivante' : (lastCard ? 'Terminer l\'étape 1' : 'Fiche suivante')) + '</button>';
+    }
+    h += '</div>';
+    const keepMemo = document.querySelector('#lesson details.memo');
+    const wasOpen = keepMemo && keepMemo.open;
+    $('lesson').innerHTML = h;
+    if (wasOpen){ const d = document.querySelector('#lesson details.memo'); if (d) d.open = true; }
+  }
+
+  function renderLearnEnd(){
+    const L = S.Lr;
+    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + ' questions sur ' + L.total + '.';
+    document.querySelector('#memoEnd .memo-grid').innerHTML = memoHTML();
+  }
+
+  function gapHTML(g, k, R, unitIdx, showInf){
+    let cls = 'gap', txt = '';
+    const active = unitIdx === R.u && k === R.g && !g.done;
+    if (g.done){ cls += g.fixed ? ' fixed' : ' filled'; txt = esc(g.shown); }
+    else if (active){ cls += ' active' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : ''); txt = esc(R.input) + '<span class="caret" aria-hidden="true"></span>'; }
+    let h = '<span class="' + cls + '"' + (active ? ' id="activeGap"' : '') + '>' + (txt || '&nbsp;') + '</span>';
+    if (showInf) h += ' <span class="inf">(' + g.inf + ')</span>';
+    return h;
+  }
+  function unitHTML(u, R, showInf){
+    return u.segs.map(s => s.t !== undefined ? esc(s.t) : gapHTML(u.gaps[s.g], s.g, R, R.u, showInf)).join('');
+  }
+  function currentSentenceHTML(u, R, showInf){
+    // la phrase qui contient le trou en cours, pour la garder sous les yeux près de la case réponse
+    let plain = '', pos = -1;
+    u.segs.forEach(s => {
+      if (s.t !== undefined) plain += s.t;
+      else if (s.g === R.g){ pos = plain.length; plain += '\u0001'; }
+      else { const g = u.gaps[s.g]; plain += g.done ? g.shown : '……'; }
+    });
+    let a = 0;
+    for (let k = pos - 1; k > 0; k--){ if (/[.!?]/.test(plain[k]) && /\s/.test(plain[k + 1] || '')){ a = k + 1; break; } }
+    let b = plain.length;
+    const m = /[.!?]/.exec(plain.slice(pos));
+    if (m) b = pos + m.index + 1;
+    while (b < plain.length && /[\s»]/.test(plain[b]) && plain[b] !== ' ') b++;
+    if (plain[b] === ' ' && plain[b + 1] === '»') b += 2;
+    const g = u.gaps[R.g];
+    const gapTxt = '<b>' + (esc(R.input) || '…') + '</b>' + (showInf ? ' <span class="inf">(' + g.inf + ')</span>' : '');
+    return esc(plain.slice(a, b).trim()).replace('\u0001', gapTxt);
+  }
+
+  function renderPlay(){
+    const R = S.R, lv = LEVELS[R.level - 1];
+    $('playLevel').textContent = 'Sommet ' + lv.id + ' · ' + sommetOf(lv.id).alt;
+    $('playName').textContent = lv.name;
+    const done = R.results.length;
+    $('playCount').textContent = (R.kind === 'spot' || R.kind === 'cloze' ? 'Question ' : 'Verbe ') + Math.min(done + 1, R.total) + ' sur ' + R.total;
+    $('tOk').textContent = R.ok;
+    $('tErr').textContent = R.err;
+    const tr = $('ptrack');
+    if (tr.children.length !== R.total) buildTrack(tr, R.total);
+    paintTrack(tr, R.results, done);
+    runUpdate(R);
+
+    const u = curUnit();
+    const isSpot = R.kind === 'spot', isText = R.kind === 'text' || R.kind === 'transpo';
+    $('instr').textContent = R.kind === 'transpo' ? u.instr : (isSpot ? spotInstr(R) : lv.instr);
+    $('textTitle').hidden = !isText;
+    if (isText) $('textTitle').textContent = u.title;
+    $('spotLegend').hidden = !isSpot;
+
+    const orig = $('orig');
+    if (R.kind === 'transpo'){
+      let k = -1;
+      orig.innerHTML = '<span class="orig-label">Texte de départ</span>' + esc(u.orig).replace(/\*([^*]+)\*/g, (m, w) => {
+        k++;
+        const g = u.gaps[k];
+        return '<span class="ov' + (g && g.done ? ' done' : (k === R.g ? ' cur' : '')) + '">' + w + '</span>';
+      });
+      orig.hidden = false;
+    } else orig.hidden = true;
+
+    const unit = $('unit');
+    if (isSpot){
+      unit.className = 'tokens';
+      unit.innerHTML = u.toks.map((t, k) => {
+        let cls = 'tok';
+        const verbShown = R.step !== 'verb';
+        if (k === u.verbIdx && verbShown) cls += ' is-verb';
+        if (R.sel.includes(k)) cls += ' is-subj';
+        if (k === R.wrongTok && R.step === 'verb') cls += ' is-wrong';
+        if (/'$/.test(t)) cls += ' elide';
+        return '<button class="' + cls + '" type="button" data-tok="' + k + '"' + (R.step === 'group' || R.step === 'done' ? ' disabled' : '') + '>' + esc(t) + '</button>';
+      }).join(' ').replace(/(elide"[^>]*>[^<]*<\/button>) /g, '$1');
+      R.wrongTok = -1;
+    } else {
+      unit.className = 'sentence' + (isText ? ' long' : '');
+      unit.innerHTML = unitHTML(u, R, R.kind !== 'transpo');
+    }
+
+    const now = $('now');
+    if (isText && !curGap().done){
+      const g = curGap();
+      now.innerHTML = '<span class="label">Phrase en cours</span>' + currentSentenceHTML(u, R, R.kind !== 'transpo') +
+        (R.kind === 'transpo' ? '<br><span class="label">Dans le texte de départ</span>« ' + esc(g.orig) + ' »' : '');
+      now.hidden = false;
+    } else now.hidden = true;
+
+    $('answerRow').hidden = isSpot;
+    const inp = $('answerInput');
+    inp.classList.toggle('bad', !isSpot && R.wrong);
+    inp.disabled = !isSpot && (R.locked || R.revealed);
+    $('answerBtn').disabled = !isSpot && (R.locked || R.revealed);
+    $('subjBtn').hidden = !(isSpot && R.step === 'subject');
+    $('groupBtns').hidden = !(isSpot && R.step === 'group');
+
+    const fb = $('feedback');
+    fb.className = 'feedback' + (R.fb ? ' ' + R.fb.kind : '');
+    fb.innerHTML = R.fb ? R.fb.html : '';
+    const hint = $('hint');
+    if (R.hint){ hint.innerHTML = (R.revealed ? '' : '<b>Indice :</b> ') + R.hint; hint.hidden = false; } else hint.hidden = true;
+    $('continueBtn').hidden = !R.revealed;
+    R.shake = false;
+  }
+  function spotInstr(R){
+    if (R.step === 'verb') return 'Touche le verbe conjugué.';
+    if (R.step === 'subject') return 'Touche tous les mots du sujet, puis valide.';
+    if (R.step === 'group') return 'À quel groupe appartient ce verbe ?';
+    return 'Bilan de la phrase.';
+  }
+
+  function renderResult(){
+    const r = S.res, lv = LEVELS[r.id - 1], prof = profile();
+    $('resLevel').textContent = cap(sommetOf(lv.id).name) + ' · ' + lv.name;
+    if (r.gained > 0 || r.finale) playScene($('resScene'), r.id - 1, !!r.finale, true); else { $('resScene').hidden = true; $('resScene').innerHTML = ''; }
+    $('resScore').innerHTML = r.ok + '<small> / ' + r.total + '</small>';
+    const stamp = $('resStamp'), oc = $('resOutcome');
+    stamp.hidden = !(r.outcome === 'validate' || r.outcome === 'record');
+    stamp.textContent = r.outcome === 'validate' ? 'Sommet atteint !' : 'Nouveau record !';
+    oc.className = 'outcome' + (stamp.hidden ? '' : ' win');
+    const pl = g => g === 1 ? 'un bon point' : g + ' bons points';
+    if (r.outcome === 'validate') oc.innerHTML = 'Tu gagnes ' + pl(r.gained) + (r.id < 5 ? ' et tu ouvres le sommet suivant : ' + SOMMETS[r.id].name : '. Tu as gravi tous les sommets') + ' !';
+    else if (r.outcome === 'record') oc.innerHTML = 'Tu bats ton meilleur score (' + r.prevBest + ') : ' + pl(r.gained) + ' de plus !';
+    else if (r.outcome === 'same') oc.innerHTML = r.bestTier >= 3
+      ? 'Tu as déjà fait un sans-faute sur ce sommet : tu as ses 3 bons points.'
+      : 'Sommet déjà atteint. Ton meilleur score : ' + r.best + '. ' + (r.bestTier === 1 ? 'Prochain bon point à 90 % de réussite, puis au sans-faute.' : 'Prochain bon point au sans-faute.');
+    else oc.innerHTML = 'Il faut ' + r.need + ' réussites sur ' + r.total + ' pour atteindre ce sommet.' + (r.newBest && r.prevBest ? ' Tu as amélioré ton score : continue !' : ' Relis les corrections et réessaie !');
+
+    const rc = $('resCard'), see = $('seeCardBtn');
+    if (r.gained > 0 && prof){
+      const k = Math.floor((r.to - 1) / 10) + 1;
+      rc.innerHTML = cardHTML(prof.points, k, r.from, r.to);
+      rc.hidden = false;
+      see.hidden = !r.card;
+      see.dataset.card = r.card || k;
+    } else { rc.hidden = true; see.hidden = true; }
+
+    $('resOk').textContent = r.ok;
+    $('resErr').textContent = r.err;
+    $('resNeed').textContent = r.need + '/' + r.total;
+    $('resDetail').innerHTML = r.results.map(x =>
+      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? '' : ' <span class="tries">· à revoir</span>') + '</span></li>').join('');
+    $('sendBox').hidden = !prof;
+    if (prof) $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Sommet ' + lv.id + ' (' + sommetOf(lv.id).alt + ') : ' + lv.name,
+      r.ok + '/' + r.total + ' réussites du premier coup ; ' + nErr(r.err) + (r.ok >= r.need ? ' ; sommet atteint' : ' ; sommet pas encore atteint') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '')]);
+
+    const nb = $('nextLevelBtn');
+    const canNext = r.id < 5 && prof && unlocked(prof, r.id + 1);
+    nb.hidden = !canNext;
+    if (canNext) nb.textContent = 'Sommet suivant : ' + LEVELS[r.id].name;
+    $('replayBtn').className = canNext ? 'btn-secondary' : 'btn-primary';
+  }
+
+  function renderCard(){
+    const prof = profile(), k = S.cardView;
+    const slice = prof ? prof.points.slice((k - 1) * 10, k * 10) : [];
+    if (slice.length < 10){ S.phase = 'start'; render(); return; }
+    const last = slice[9];
+    const code = cardCode(prof.name, k);
+    const lv = validList(prof);
+    $('cardWho').textContent = prof.name;
+    $('cardNum').textContent = 'Carte n°' + k;
+    $('cardFull').innerHTML = cardHTML(prof.points, k);
+    $('cardDate').textContent = 'Complétée le ' + new Date(last.at).toLocaleDateString('fr-FR') + ' · sommets atteints : ' + (lv || 'aucun') + ' · ' + prof.totals.ok + ' réussites, ' + prof.totals.err + ' erreurs';
+    $('cardCode').textContent = code;
+    $('cardMsg').textContent = 'Bonjour, ' + prof.name + ' a complété sa carte n°' + k + ' de 10 bons points au jeu « ' + GAME_NAME + ' » (sommets atteints : ' + (lv || 'aucun') + ' ; ' +
+      prof.totals.ok + ' réussites du premier coup et ' + prof.totals.err + ' erreurs depuis le début). Code de vérification : ' + code + '.';
+    $('copyStatus').textContent = '';
+  }
+
+  function render(){
+    syncParcUI();
+    ['start', 'learn', 'learnEnd', 'play', 'result', 'card', 'teacher'].forEach(id => { $(id).hidden = S.phase !== id; });
+    if (S.phase === 'start') renderStart();
+    if (S.phase === 'learn') renderLearn();
+    if (S.phase === 'learnEnd') renderLearnEnd();
+    if (S.phase === 'play') renderPlay();
+    if (S.phase === 'result') renderResult();
+    if (S.phase === 'card') renderCard();
+    window.scrollTo(0, 0);
+  }
+  function goHome(){ S.phase = 'start'; S.askName = false; render(); }
+  function openCard(k){ S.cardView = k; S.phase = 'card'; render(); }
+
+  /* ---------- Événements ---------- */
+  $('nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    if (setName($('nameInput').value)){ $('nameInput').value = ''; S.askName = false; render(); }
+    else { $('nameMsg').textContent = 'Écris ton prénom dans la case.'; $('nameMsg').hidden = false; $('nameInput').focus(); }
+  });
+  $('knownNames').addEventListener('click', e => {
+    const b = e.target.closest('[data-profile]');
+    if (!b || !store.profiles[b.dataset.profile]) return;
+    store.current = b.dataset.profile; saveStore(); S.askName = false; render();
+  });
+  $('changeName').addEventListener('click', () => { S.askName = true; render(); $('nameInput').value = ''; $('nameInput').focus(); });
+  $('levelList').addEventListener('click', e => { const b = e.target.closest('[data-level]'); if (b && !b.disabled) startLevel(+b.dataset.level); });
+  $('doneCards').addEventListener('click', e => { const b = e.target.closest('[data-card]'); if (b) openCard(+b.dataset.card); });
+  $('seeCardBtn').addEventListener('click', e => openCard(+e.currentTarget.dataset.card));
+  $('cardBack').addEventListener('click', goHome);
+  $('copyBtn').addEventListener('click', () => {
+    const text = $('cardMsg').textContent, status = $('copyStatus');
+    const fallback = () => {
+      const r = document.createRange();
+      r.selectNodeContents($('cardMsg'));
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(r);
+      status.textContent = 'Le message est sélectionné : copiez-le avec le menu de votre appareil.';
+    };
+    try { navigator.clipboard.writeText(text).then(() => { status.textContent = 'Message copié. Collez-le dans votre messagerie.'; }, fallback); }
+    catch (e) { fallback(); }
+  });
+  $('teacherLink').addEventListener('click', () => { S.phase = 'teacher'; $('checkResult').hidden = true; render(); });
+  $('teacherBack').addEventListener('click', goHome);
+  $('previewBtns').addEventListener('click', e => { const b = e.target.closest('[data-prev]'); if (!b) return; const v = b.getAttribute('data-prev'); playScene($('previewScene'), v === 'fin' ? 4 : +v, v === 'fin', true); });
+  $('checkForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('tName').value, k = parseInt($('tCard').value, 10);
+    const code = $('tCode').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const out = $('checkResult');
+    out.hidden = false;
+    if (!key(name) || !(k >= 1) || code.length !== 4){ out.className = 'check-result ko'; out.textContent = 'Remplissez les trois cases : le prénom, le numéro de carte et le code à 4 caractères.'; return; }
+    if (cardCode(name, k) === code){ out.className = 'check-result ok'; out.textContent = 'Carte valide : ' + name.trim() + ', carte n°' + k + '. La récompense est méritée !'; }
+    else { out.className = 'check-result ko'; out.textContent = "Ce code ne correspond pas. Vérifiez l'orthographe du prénom et le numéro de carte."; }
+  });
+
+  $('learnBtn').addEventListener('click', learnStart);
+  $('learnAgainBtn').addEventListener('click', learnStart);
+  $('learnHome').addEventListener('click', goHome);
+  $('toGameBtn').addEventListener('click', goHome);
+  $('lesson').addEventListener('click', e => {
+    const c = e.target.closest('[data-choice]');
+    if (c){ learnPick(+c.dataset.choice); return; }
+    if (e.target.closest('#learnNextBtn')) learnNext();
+  });
+
+  $('playHome').addEventListener('click', goHome);
+  $('answerForm').addEventListener('submit', e => { e.preventDefault(); if (S.R && S.R.kind !== 'spot') submitAnswer(); else if (S.R && S.R.revealed) spotNext(); });
+  $('answerInput').addEventListener('input', e => {
+    const R = S.R;
+    if (!R || R.kind === 'spot') return;
+    R.input = e.target.value;
+    if (R.wrong){ R.wrong = false; if (R.fb && R.fb.kind === 'bad') R.fb = null; }
+    if (R.fb && R.fb.kind === 'info') R.fb = null;
+    renderPlay();
+  });
+  $('unit').addEventListener('click', e => { const t = e.target.closest('[data-tok]'); if (t && S.R && S.R.kind === 'spot') spotTap(+t.dataset.tok); });
+  $('subjBtn').addEventListener('click', spotSubject);
+  $('groupBtns').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) spotGroup(+b.dataset.group); });
+  $('continueBtn').addEventListener('click', () => { if (!S.R) return; if (S.R.kind === 'spot') spotNext(); else advanceGap(); });
+
+  $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
+  $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
+  $('resHome').addEventListener('click', goHome);
+
+  /* ---------- Démarrage (garde la partie en cours si la page est mise à jour) ---------- */
+  function boot(data){
+    buildTrack($('ltrack'), LEARN.length);
+    const saved = data && data.S;
+    if (saved && saved.phase && saved.Lr) Object.assign(S, saved);
+    if (S.phase === 'play' && !S.R) S.phase = 'start';
+    if (S.phase === 'result' && !S.res) S.phase = 'start';
+    render();
+    if (S.phase === 'play'){
+      $('answerInput').value = S.R.input || '';
+      if (S.R.kind !== 'spot' && S.R.locked && !S.R.revealed) advanceGap();
+      if (S.R.kind === 'spot' && S.R.step === 'done' && !S.R.revealed) spotNext();
+    }
+  }
+  const hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function'){
+    try { hot.snapshot(() => ({ S: JSON.parse(JSON.stringify(S)) })); } catch (e) {}
+  }
+  if (hot && hot.ready) hot.ready(boot);
+  else boot((hot && hot.data) || {});
+})();
+</script>
+
+</body></html>

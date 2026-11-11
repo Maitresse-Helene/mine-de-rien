@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""Teste toute l'appli dans un navigateur sans interface (Playwright + Chrome/Chromium).
+
+  python3 outils/tester.py
+
+Le script travaille sur une copie de l'appli, où il ajoute un code de classe de test (TEST) :
+l'appli elle-même n'est pas modifiée. Il vérifie le code de la classe, la navigation, chaque jeu
+(chargement sans erreur, bouton « Tous les jeux », polices), l'absence de requêtes vers l'extérieur
+et le mode hors ligne.
+"""
+import functools, http.server, json, os, re, shutil, socket, sys, tempfile, threading
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+RACINE = Path(__file__).resolve().parent.parent
+COPIE = Path(tempfile.mkdtemp(prefix="jeux-test-")) / "appli"
+shutil.copytree(RACINE, COPIE, ignore=shutil.ignore_patterns(".git", "outils"))
+# code de test : TEST (empreinte de "cm1cm2|TEST")
+cjs = COPIE / "commun" / "commun.js"
+cjs.write_text(cjs.read_text(encoding="utf8").replace(
+    "window.CMG_CODES = [\n", 'window.CMG_CODES = [\n  { from: "2000-01-01", to: "9999-12-31", h: "25tsvmh4xsg" },\n', 1), encoding="utf8")
+with socket.socket() as so:
+    so.bind(("127.0.0.1", 0)); PORT = so.getsockname()[1]
+class Silencieux(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, *a):
+        pass
+Handler = functools.partial(Silencieux, directory=str(COPIE))
+srv = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+threading.Thread(target=srv.serve_forever, daemon=True).start()
+
+BASE = f"http://localhost:{PORT}/"
+CHROME = next((c for c in ["/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"] if os.path.exists(c)), None)
+jeux = json.loads(re.search(r"window\.JEUX = (\[.*\]);", (COPIE / "jeux.js").read_text(encoding="utf8"), re.S).group(1))
+problems = []
+
+def ok(cond, msg):
+    print(("  ok   " if cond else "  FAIL ") + msg)
+    if not cond:
+        problems.append(msg)
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(executable_path=CHROME, args=["--no-sandbox"]) if CHROME else p.chromium.launch()
+    ctx = browser.new_context(viewport={"width": 820, "height": 1180}, locale="fr-FR")
+    external, failed, errors = [], [], []
+    ctx.on("request", lambda r: external.append(r.url) if not r.url.startswith(("http://localhost", "data:", "blob:")) else None)
+    ctx.on("requestfailed", lambda r: failed.append(r.url))
+    page = ctx.new_page()
+    page.on("pageerror", lambda e: errors.append(("portail", str(e))))
+
+    print("1. Portail et code de la classe")
+    page.goto(BASE)
+    page.wait_for_load_state("networkidle")
+    ok(page.locator("#cmg-gate").is_visible(), "la porte du code s'affiche")
+    page.fill("#cmg-input", "ABCD")
+    page.click("#cmg-gate button")
+    ok(page.locator("#cmg-error").inner_text().strip() != "", "un mauvais code est refusé")
+    page.fill("#cmg-input", "test")
+    page.click("#cmg-gate button")
+    ok(page.locator("#cmg-gate").count() == 0, "le bon code ouvre le portail")
+    ok(page.locator(".subjects .card").count() == 2, "deux matières à l'accueil")
+    txt = page.locator(".subjects").inner_text()
+    print("    ", txt.replace("\n", " | "))
+    
+    print("2. Navigation Maths > Calcul mental > un jeu > retour")
+    page.click('a.card[href="#maths"]')
+    page.wait_for_selector('a.card[href="#calcul-mental"]')
+    page.click('a.card[href="#calcul-mental"]')
+    page.wait_for_selector("a.game")
+    n = page.locator("a.game").count()
+    ok(n == sum(1 for j in jeux if j["domaine"] == "calcul-mental"), f"{n} jeux en calcul mental")
+    ok(page.locator("a.game[target]").count() == 0, "les jeux s'ouvrent dans la même fenêtre")
+    with page.expect_navigation():
+        page.locator("a.game").nth(2).click()
+    ok("/jeux/" in page.url, "le jeu s'ouvre : " + page.url.replace(BASE, ""))
+    page.wait_for_load_state("networkidle")
+    ok(page.locator("#cmg-gate").count() == 0, "le jeu ne redemande pas le code")
+    with page.expect_navigation():
+        page.click("#allgames a")
+    page.wait_for_selector("a.game")
+    ok(page.url.endswith("index.html#calcul-mental") and page.locator("a.game").count() == n, "« Tous les jeux » ramène au domaine")
+    ok(len(ctx.pages) == 1, "pas de nouvel onglet")
+
+    print("3. Liens internes en target=_blank : même fenêtre")
+    page.evaluate("""() => { const a = document.createElement('a'); a.href = 'jeux/""" + jeux[0]["slug"] + """/index.html'; a.target = '_blank'; a.id = 'tlink'; a.textContent = 'x'; document.body.appendChild(a); }""")
+    with page.expect_navigation():
+        page.click("#tlink")
+    ok("/jeux/" + jeux[0]["slug"] in page.url and len(ctx.pages) == 1, "lien interne ouvert dans la même fenêtre")
+
+    print("4. Chaque jeu se charge sans erreur")
+    for j in jeux:
+        errs = []
+        pg = ctx.new_page()
+        pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
+        pg.on("console", lambda m, errs=errs: errs.append("console: " + m.text) if m.type == "error" else None)
+        pg.goto(BASE + "jeux/" + j["slug"] + "/index.html")
+        pg.wait_for_load_state("networkidle")
+        gate = pg.locator("#cmg-gate").count()
+        back = pg.get_attribute("#allgames a", "href")
+        fonts = pg.evaluate("() => document.fonts.check('800 20px \"Baloo 2\"') && document.fonts.check('400 16px Lexend')")
+        title = pg.title()
+        visible = pg.evaluate("() => document.body.innerText.trim().length")
+        good = gate == 0 and back == "../../index.html#" + j["domaine"] and not errs and visible > 50 and title == j["titre"]
+        ok(good, f"{j['slug']:<45} porte={gate} retour={back} polices={fonts} texte={visible} erreurs={errs[:2]}")
+        pg.close()
+
+    print("5. Ressources")
+    ok(not external, "aucune requête vers l'extérieur" + ("" if not external else " : " + ", ".join(sorted(set(external))[:5])))
+    ok(not failed, "aucune ressource manquante" + ("" if not failed else " : " + ", ".join(sorted(set(failed))[:5])))
+    ok(not errors, "aucune erreur sur le portail " + str(errors[:2]))
+
+    print("6. Hors ligne (service worker)")
+    page.goto(BASE + "index.html")
+    page.evaluate("() => navigator.serviceWorker.ready.then(() => true)")
+    page.wait_for_timeout(1500)
+    page.reload()
+    ctrl = page.evaluate("() => !!navigator.serviceWorker.controller")
+    ok(ctrl, "le service worker contrôle la page")
+    cached = page.evaluate("() => caches.keys().then(k => Promise.all(k.map(n => caches.open(n).then(c => c.keys())))).then(a => a.flat().length)")
+    ok(cached >= len(jeux) + 10, f"{cached} fichiers gardés sur l'appareil")
+    ctx.set_offline(True)
+    pg = ctx.new_page()
+    pg.goto(BASE + "jeux/" + jeux[-1]["slug"] + "/index.html")
+    ok(pg.title() == jeux[-1]["titre"], "un jeu jamais ouvert se charge hors ligne")
+    pg.goto(BASE + "index.html#francais")
+    ok(pg.locator("a.card").count() >= 1, "le portail marche hors ligne")
+    ctx.set_offline(False)
+    browser.close()
+
+srv.shutdown()
+shutil.rmtree(COPIE.parent, ignore_errors=True)
+print("\nRÉSULTAT :", "tout est bon" if not problems else f"{len(problems)} problème(s)")
+sys.exit(1 if problems else 0)
