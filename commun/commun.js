@@ -8,7 +8,7 @@
    4. Les liens vers les autres pages de l'appli s'ouvrent dans la même fenêtre
       (indispensable une fois l'appli installée sur une tablette). */
 window.CMG_CODES = [
-  { from: "2026-09-01", to: "2027-01-11", h: "ejfgpwf3y2" },
+  { from: "2026-09-01", to: "2027-01-11", h: "229sbxxdedt" },
   { from: "2026-12-18", to: "2027-03-15", h: "1gxznwzek4g" },
   { from: "2027-02-19", to: "2027-05-10", h: "2enfccympf6" },
   { from: "2027-04-16", to: "2027-09-15", h: "zq0dx8nf4q" },
