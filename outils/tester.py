@@ -175,6 +175,30 @@ with sync_playwright() as p:
             ok(not errs, "aucune erreur dans les outils " + str(errs[:2]))
             pg.close()
 
+    if "code-apc" in outils:
+        print("4e. Code APC d'une heure")
+        pg = ctx.new_page()
+        pg.goto(BASE + "enseignante/code-apc/index.html")
+        pg.fill("#ens-input", "test-ens"); pg.click("#ens-gate button")
+        code = pg.inner_text("#code").strip()
+        ok(len(code) == 4 and "Valable jusqu" in pg.inner_text("#fin"), f"code APC affiché : {code}, " + pg.inner_text("#fin"))
+        pg.close()
+        c2 = browser.new_context()
+        el = c2.new_page()
+        el.clock.install()
+        el.goto(BASE + "index.html")
+        el.fill("#cmg-input", code); el.click("#cmg-gate button")
+        ok(el.locator("#cmg-gate").count() == 0, "le code APC ouvre l'appli")
+        el.goto(BASE + "jeux/" + jeux[0]["slug"] + "/index.html"); el.wait_for_load_state("load")
+        ok(el.locator("#cmg-gate").count() == 0, "le code APC ouvre aussi les jeux")
+        el.clock.fast_forward("55:00"); el.reload(); el.wait_for_load_state("load")
+        ok(el.locator("#cmg-gate").count() == 0, "toujours valable 55 minutes plus tard")
+        el.clock.fast_forward("16:00"); el.wait_for_timeout(1500); el.wait_for_load_state("load")
+        ok(el.locator("#cmg-gate").count() == 1, "71 minutes plus tard, la page restée ouverte redemande le code")
+        el.fill("#cmg-input", code); el.click("#cmg-gate button")
+        ok(el.locator("#cmg-gate").count() == 1, "le code APC périmé est refusé")
+        c2.close()
+
     print("4d. Chaque jeu accepte les bons points ajoutés par l'enseignante")
     import unicodedata
     def cle_profil(j, nom):

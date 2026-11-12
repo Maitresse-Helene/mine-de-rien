@@ -13,7 +13,8 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 - `jeux/<slug>/index.html` : un jeu = une page HTML autonome.
 - `enseignante/<slug>/index.html` : les outils de l'enseignante, liés depuis l'« Espace enseignante » du portail, hors
   liste des jeux, protégés par le code de la maîtresse (`commun/enseignante.js` + `.css`) en plus du code de la classe :
-  « Vérifier une carte de bons points » (artefact intégré) et « Ajouter des bons points » (page écrite ici, pas d'artefact).
+  « Vérifier une carte de bons points » (artefact intégré), « Ajouter des bons points » et « Code APC d'une heure »
+  (pages écrites ici, pas d'artefact).
 - `commun/domaines.js` : noms des domaines, généré par `integrer_portail.py` pour les outils.
 - `commun/commun.js` + `commun/commun.css` : la porte « Code de la classe », le laissez-passer
   portail → jeux, et le bouton « ← Tous les jeux ». Chaque page les charge (`../../commun/...` pour les jeux).
@@ -99,6 +100,13 @@ seulement. Empreinte d'un code :
 node -e 'const c=process.argv[1].normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"");const h=t=>{let n=-559038744,a=1103547984;for(let o=0;o<t.length;o++){const e=t.charCodeAt(o);n=Math.imul(n^e,2654435761);a=Math.imul(a^e,1597334677)}n=Math.imul(n^n>>>16,2246822507);n^=Math.imul(a^a>>>13,3266489909);a=Math.imul(a^a>>>16,2246822507);a^=Math.imul(n^n>>>13,3266489909);return(4294967296*(2097151&a)+(n>>>0)).toString(36)};console.log(h("cm1cm2|"+c))' MONCODE
 ```
 La dernière ligne (2000-01-01 → 9999-12-31) est un code permanent : ne la supprime pas sans l'accord de l'enseignante.
+
+## Les codes APC (une heure)
+
+`window.CMG_APC` dans `commun/commun.js` : un code de 4 caractères par tranche de 10 minutes (`CMG_APC_CODE(n)`, à partir
+du `sel`), accepté par la porte de la classe pendant 6 tranches de plus (60 à 70 minutes). La maîtresse l'affiche avec
+l'outil `enseignante/code-apc/`. À l'expiration, `cm1cm2-apc-fin` fait recharger la page, qui redemande le code.
+Pour annuler tous les codes APC déjà donnés : changer le `sel`.
 
 ## Le code de la maîtresse
 

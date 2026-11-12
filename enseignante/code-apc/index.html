@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Code APC d'une heure</title>
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Outil de l'enseignante : un code qui n'ouvre l'appli que pendant une heure (séances d'APC). */
+:root{
+  --paper:#f6f7fd; --sheet:#ffffff; --ink:#1a2358; --ink-soft:#5a628f; --rule:#e4e8f7; --rule-strong:#cad1ef;
+  --pen:#2b45c8; --key-edge:#ccd3f0; --key-shadow:#b5bee6; --warn:#b02a50;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab; --rule:#1c2925; --rule-strong:#283a35;
+    --pen:#97abff; --key-edge:#3a4d46; --key-shadow:#0e1513; --warn:#ff8fb1; color-scheme:dark; }
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5;
+  background-image:linear-gradient(to bottom,var(--rule-strong) 1px,transparent 1px),linear-gradient(to right,var(--rule-strong) 1px,transparent 1px),linear-gradient(to bottom,var(--rule) 1px,transparent 1px);
+  background-size:100% 32px,32px 100%,100% 8px;
+}
+.wrap{max-width:640px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 80px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{margin:0;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+h1{margin:0;font-family:var(--font-num);font-weight:800;font-size:clamp(1.6rem,5vw,2.1rem);line-height:1.2}
+.lead{margin:0;color:var(--ink-soft)}
+.fiche{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:20px;box-shadow:0 4px 0 var(--key-shadow);padding:22px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+#code{margin:0;font-family:var(--font-num);font-weight:800;font-size:clamp(4rem,22vw,7.5rem);line-height:1;letter-spacing:.12em;color:var(--pen)}
+#fin{margin:0;font-family:var(--font-num);font-weight:700;font-size:1.3rem}
+#reste{margin:0;color:var(--ink-soft)}
+#reste.urgent{color:var(--warn);font-weight:600}
+.btn{border:0;border-radius:999px;background:var(--pen);color:var(--sheet);font:800 1.1rem var(--font-num);padding:10px 22px;cursor:pointer;box-shadow:0 3px 0 var(--key-shadow)}
+.btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.aide{margin:0;font-size:.92rem;color:var(--ink-soft)}
+ul.aide{padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<link rel="stylesheet" href="../../commun/enseignante.css"><script src="../../commun/enseignante.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Espace enseignante · Mine de rien</p>
+    <h1>Code APC d'une heure</h1>
+  </header>
+  <p class="lead">Un code à écrire au tableau pour une séance : les élèves le tapent à la place du code de la classe.</p>
+
+  <section class="fiche" aria-live="polite">
+    <p id="code" aria-label="Code APC">····</p>
+    <p id="fin"></p>
+    <p id="reste"></p>
+    <button class="btn" id="nouveau" type="button">Nouveau code</button>
+  </section>
+
+  <ul class="aide">
+    <li>Le code ouvre l'appli pendant une heure environ (jusqu'à l'heure indiquée). Ensuite il est refusé, et les tablettes qui l'ont utilisé redemandent le code, même si l'appli est restée ouverte.</li>
+    <li>Un nouveau code est disponible toutes les 10 minutes : si « Nouveau code » redonne le même, c'est normal.</li>
+    <li>Le code de la classe continue de marcher pour vos élèves. Un code APC ne peut pas être arrêté avant l'heure : en cas de besoin, demandez à Claude de les annuler tous.</li>
+  </ul>
+</main>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const A = window.CMG_APC;
+  let tranche = null;
+  const heure = t => { const d = new Date(t); return d.getHours() + ' h ' + String(d.getMinutes()).padStart(2, '0'); };
+  function afficher(){
+    if (!A || !window.CMG_APC_CODE) { $('code').textContent = '—'; $('fin').textContent = 'Codes APC indisponibles.'; return; }
+    const fin = (tranche + A.duree + 1) * A.tranche, reste = Math.ceil((fin - Date.now()) / 60000);
+    if (reste <= 0) { nouveau(); return; }
+    $('code').textContent = window.CMG_APC_CODE(tranche);
+    $('fin').textContent = 'Valable jusqu\'à ' + heure(fin);
+    $('reste').textContent = 'Encore ' + reste + ' minute' + (reste > 1 ? 's' : '');
+    $('reste').className = reste <= 10 ? 'urgent' : '';
+  }
+  function nouveau(){ tranche = Math.floor(Date.now() / A.tranche); afficher(); }
+  $('nouveau').addEventListener('click', nouveau);
+  nouveau();
+  setInterval(afficher, 20000);
+})();
+</script>
+</body>
+</html>
