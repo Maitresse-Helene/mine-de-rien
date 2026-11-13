@@ -1,4 +1,11 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+</head>
+<body>
 <title>Les parenthèses</title>
 <!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
 <link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
@@ -455,6 +462,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .calc{margin:6px 0 0;text-align:center;font-family:var(--font-num);font-weight:800;font-size:1.35rem;line-height:1.3;color:var(--ink)}
 .lrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
 .evlist{margin:0;padding-left:1.2em;display:grid;gap:6px;line-height:1.5;flex:1 1 220px}
+.lesson>.evlist{flex:none;align-content:start}
 .choices.big .choice{font-size:1.12rem}
 .lead-q.small{font-size:.9rem;color:var(--ink-soft)}
 @media (prefers-reduced-motion: reduce){.cur{animation:none}}
@@ -999,6 +1007,45 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   const buildItems = id => tidy(buildItems0(id));
   fixLearn(LEARN);
+
+  /* ---- Questions des fiches : d'autres nombres que l'exemple de la fiche, tirés à chaque passage ---- */
+  const learnQ = (q, choices, right, why, ordered) => {
+    const r = String(right), c = ordered ? choices.map(String) : shuffle(choices.map(String));
+    return { q: nb(q), c, a: c.indexOf(r), why: nb(why) };
+  };
+  function freshLearn(){
+    LEARN_GEN.forEach(([k, gen]) => {
+      for (let t = 0; t < 200; t++){
+        const ch = gen();
+        if (ch && ch.a >= 0 && new Set(ch.c).size === ch.c.length){ LEARN[k].checks = [ch]; return; }
+      }
+    });
+  }
+
+  const LEARN_GEN = [
+    [1, () => {
+      const a = ri(3, 9), plus = Math.random() < 0.35;
+      let b, c, d;
+      if (plus){ b = ri(3, 12); c = ri(2, 9); d = b + c; } else { b = ri(10, 20); c = ri(2, b - 3); d = b - c; }
+      if (a === 6 && b === 15 && c === 9) return null;
+      const op = plus ? '+' : '−', v = a * d, flat = plus ? a * b + c : a * b - c;
+      return learnQ(E(a, '×', P(E(b, op, c))) + ' = ?', [v, flat, pick([v + a, v - a])], v,
+        E(b, op, c) + ' = ' + d + ', puis ' + E(a, '×', d) + ' = ' + v + '.');
+    }],
+    [2, () => {
+      const x = ri(2, 9), y = ri(2, 9), t = ri(2, 9), c = ri(t + 3, t + 15), d = c - t, s = x + y, v = s * t;
+      if (x === 7 && y === 3 && c === 11 && d === 6) return null;
+      return learnQ(P(E(x, '+', y)) + ' × ' + P(E(c, '−', d)) + ' = ?', [v, x + y * c - d, s + t], v,
+        E(x, '+', y) + ' = ' + s + ', ' + E(c, '−', d) + ' = ' + t + ', puis ' + E(s, '×', t) + ' = ' + v + '.');
+    }],
+    [3, () => {
+      const x = ri(2, 7), y = ri(2, 7), m = ri(2, 5), A = m * (x + y) + ri(5, 40);
+      if (A === 40 && m === 3 && x === 2 && y === 6) return null;
+      return learnQ('Dans ' + E(A, '−', P(E(m, '×', P(E(x, '+', y))))) + ', quel calcul fais-tu en premier ?',
+        [E(A, '−', m), E(m, '×', x), E(x, '+', y)], E(x, '+', y), E(x, '+', y) + ' est dans la parenthèse la plus à l\'intérieur.');
+    }]
+  ];
+  freshLearn();
   /* ---------- Élèves, scores et bons points ---------- */
   function loadStore(){
     try {
@@ -1616,6 +1663,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   /* ---------- Étape 1 : déroulé ---------- */
   function learnStart(){
+    freshLearn();
     S.Lr = { card: 0, check: 0, picked: [], solved: false, first: 0, total: 0 };
     S.phase = 'learn';
     render();
@@ -1876,7 +1924,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function renderLearnEnd(){
     const L = S.Lr;
-    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + ' questions sur ' + L.total + '.';
+    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + (L.first > 1 ? ' questions' : ' question') + ' sur ' + L.total + '.';
   }
 
   function doneRow(st, v){
@@ -2104,4 +2152,3 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 })();
 </script>
 
-</body></html>

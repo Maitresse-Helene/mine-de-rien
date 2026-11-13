@@ -1,6 +1,6 @@
 /* Mine de rien : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-13-164102';
+const VERSION = '2026-11-13-201145';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -64,10 +64,12 @@ const FICHIERS = [
   "jeux/les-probabilites/index.html",
   "jeux/les-problemes-a-etapes/index.html",
   "jeux/les-problemes-de-comparaison/index.html",
+  "jeux/les-problemes-de-logique/index.html",
   "jeux/les-problemes-de-parties-tout/index.html",
   "jeux/les-problemes-de-proportionnalite/index.html",
   "jeux/les-tables-d-addition/index.html",
   "jeux/les-tables-de-multiplication/index.html",
+  "jeux/mon-resultat-est-il-possible/index.html",
   "jeux/multiplier-par-10-100-1000/index.html",
   "jeux/multiplier-par-4-par-8/index.html",
   "jeux/passer-la-centaine/index.html",

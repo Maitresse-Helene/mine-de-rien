@@ -1,4 +1,11 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+</head>
+<body>
 <title>L'addition et la soustraction posées</title>
 <!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
 <link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
@@ -455,6 +462,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .calc{margin:6px 0 0;text-align:center;font-family:var(--font-num);font-weight:800;font-size:1.35rem;line-height:1.3;color:var(--ink)}
 .lrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
 .evlist{margin:0;padding-left:1.2em;display:grid;gap:6px;line-height:1.5;flex:1 1 220px}
+.lesson>.evlist{flex:none;align-content:start}
 .choices.big .choice{font-size:1.12rem}
 .lead-q.small{font-size:.9rem;color:var(--ink-soft)}
 @media (prefers-reduced-motion: reduce){.cur{animation:none}}
@@ -1005,6 +1013,37 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   const buildItems = id => tidy(buildItems0(id));
   fixLearn(LEARN);
+
+  /* ---- Questions des fiches : d'autres nombres que l'exemple de la fiche, tirés à chaque passage ---- */
+  const learnQ = (q, choices, right, why, ordered) => {
+    const r = String(right), c = ordered ? choices.map(String) : shuffle(choices.map(String));
+    return { q: nb(q), c, a: c.indexOf(r), why: nb(why) };
+  };
+  function freshLearn(){
+    LEARN_GEN.forEach(([k, gen]) => {
+      for (let t = 0; t < 200; t++){
+        const ch = gen();
+        if (ch && ch.a >= 0 && new Set(ch.c).size === ch.c.length){ LEARN[k].checks = [ch]; return; }
+      }
+    });
+  }
+
+  const LEARN_GEN = [
+    [1, () => {
+      const dA = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4), dB = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 3);
+      if (dA[0] === 0) return null;
+      const A = +dA.join(''), B = +dB.join('');
+      if (A === 4706 || A === 1249 || B === 385) return null;
+      const pos = pick([0, 1, 2]), other = pos === 0 ? 1 : (pos === 1 ? 2 : 1);   // 0 unités, 1 dizaines, 2 centaines
+      const a = p => String(A)[3 - p], b = p => String(B)[2 - p];
+      if (String(A).includes(b(pos))) return null;   // pas « le 4 sous le 4 » : l'élève ne doit pas pouvoir répondre en cherchant le même chiffre
+      const NAMES = ['Unités sous unités', 'Dizaines sous dizaines', 'Centaines sous centaines'];
+      const ch = [3, pos, other].sort((x, y) => y - x).map(p => 'sous le ' + a(p));
+      return learnQ('Pour poser ' + N(A) + ' + ' + N(B) + ', sous quel chiffre de ' + N(A) + ' écris-tu le ' + b(pos) + ' de ' + N(B) + ' ?',
+        ch, 'sous le ' + a(pos), NAMES[pos] + ' : le ' + b(pos) + ' de ' + N(B) + ' va sous le ' + a(pos) + ' de ' + N(A) + '.', true);
+    }]
+  ];
+  freshLearn();
   /* ---------- Élèves, scores et bons points ---------- */
   function loadStore(){
     try {
@@ -1622,6 +1661,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   /* ---------- Étape 1 : déroulé ---------- */
   function learnStart(){
+    freshLearn();
     S.Lr = { card: 0, check: 0, picked: [], solved: false, first: 0, total: 0 };
     S.phase = 'learn';
     render();
@@ -1882,7 +1922,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function renderLearnEnd(){
     const L = S.Lr;
-    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + ' questions sur ' + L.total + '.';
+    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + (L.first > 1 ? ' questions' : ' question') + ' sur ' + L.total + '.';
   }
 
   function doneRow(st, v){
@@ -2110,4 +2150,3 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 })();
 </script>
 
-</body></html>

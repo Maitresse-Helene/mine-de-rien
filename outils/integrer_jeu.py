@@ -127,7 +127,16 @@ def extraire_infos(html):
     return infos
 
 
+ENTETE_FRAGMENT = ('<!DOCTYPE html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n'
+                   '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+                   '<style>body{margin:0}</style>\n</head>\n<body>\n')
+
+
 def preparer_page(html, domaine, artefacts, alertes):
+    # Certains artefacts ne sont qu'un fragment (pas de <head>, pas d'encodage) : claude.ai l'ajoute
+    # en les affichant. Sans « charset », le navigateur lit mal les accents et des scripts plantent.
+    if not re.search(r"<meta[^>]+charset", html[:4096], re.I):
+        html = ENTETE_FRAGMENT + html.lstrip("﻿")
     # langue de la page
     html = re.sub(r"<html(?![^>]*\blang=)", '<html lang="fr"', html, count=1)
 

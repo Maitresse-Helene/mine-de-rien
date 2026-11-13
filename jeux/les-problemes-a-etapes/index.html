@@ -1,5 +1,12 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}</style>
 <title>Les problèmes à étapes</title>
+</head>
+<body>
 <!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
 <link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
 <nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html#problemes"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
@@ -590,6 +597,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .revbox .send-note{margin:0}
 .rev-btn{justify-content:space-between;text-decoration:none;font-size:1.05rem}
 .rev-btn small{font-family:var(--font-body);font-weight:600;font-size:.82rem;color:var(--ink-soft)}
+
+/* ---------- Vérifier son résultat (le mousse étourdi) ---------- */
+.mousse{display:block;margin:8px 0 6px;padding:8px 12px;border-radius:12px;background:var(--div-bg);color:var(--ink);font-family:var(--font-body);font-weight:700;line-height:1.45}
 </style>
 
 <div class="app">
@@ -822,6 +832,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>L'île 1 cache les nombres : l'élève dit « D'abord, je cherche… Ensuite, je cherche… » pour se raconter l'histoire (piste de remédiation de la fiche). Quand deux chemins sont justes (donner deux fois, par exemple), les deux sont acceptés.</li>
         <li>À l'île 2 du parcours jaune, tous les nombres sont inférieurs à 20, pour se concentrer sur l'histoire (piste de la fiche). Dès l'île 2, chaque problème demande de choisir le schéma : ligne du temps dans l'ordre de l'histoire, ou plusieurs schémas en barres.</li>
         <li>Les îles 3 à 5 piègent la phrase réponse avec le résultat de la première étape (point de vigilance de la leçon). Parcours orange : nombres à trois chiffres et problèmes en trois étapes.</li>
+        <li>Vérification : sur environ un problème sur quatre, à partir de l'île 3, le mousse étourdi propose une phrase réponse, juste ou fausse, à contrôler avec les trois questions du détective (la bonne unité ? un nombre possible ? la réponse à la question ?). Une erreur à cette étape ne fait pas perdre la question : elle est notée « vérification à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Mon résultat est-il possible ? ».</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
       </ul>
     </div>
@@ -1068,7 +1079,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
             schema([{ name: 'Malik', segs: [{ v: 12, w: 12, c: 'a' }, { v: 15, w: 15, c: 'b' }], top: { v: '?' } }, { name: 'Léna', segs: [{ v: 20, w: 20, c: 'c' }], diff: { v: '??' } }], 27, 'Deux schémas en barres') +
             '<p>D\'abord, je cherche le nombre total de cartes de Malik : 12 + 15 = 27. Ensuite, je cherche l\'écart : 27 − 20 = 7.</p>',
       checks: [
-        { q: 'Dans cet exemple, que cherche-t-on d\'abord ?', c: ['Le nombre total de cartes de Malik', 'L\'écart entre Malik et Léna', 'Le nombre de cartes de Léna'], a: 0, why: 'On ne peut pas comparer avant de connaître toutes les cartes de Malik : <b>d\'abord le total</b>, 12 + 15 = 27.' }
+        { q: '« Hugo a 14 billes bleues et 9 billes vertes. Emma a 18 billes. Combien de billes Hugo a-t-il de plus qu\'Emma ? » Que cherche-t-on d\'abord ?', c: ['Le nombre total de billes de Hugo', 'L\'écart entre Hugo et Emma', 'Le nombre de billes d\'Emma'], a: 0, why: 'On ne peut pas comparer avant de connaître toutes les billes de Hugo : <b>d\'abord le total</b>, 14 + 9 = 23. Ensuite l\'écart : 23 − 18 = 5.' }
       ]
     },
     {
@@ -1078,7 +1089,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
             '<p>30 − 12 = 18 : ce n\'est pas fini ! 18 + 5 = 23.</p>' +
             '<p>Je relis la question avant d\'écrire ma phrase : « Il y a 23 pirates quand le bateau repart. »</p>',
       checks: [
-        { q: 'Quelle phrase répond à la question « Combien de pirates y a-t-il quand le bateau repart ? »', c: ['Il y a 18 pirates après la descente.', 'Il y a 23 pirates quand le bateau repart.', 'Il y a 18 pirates quand le bateau repart.'], a: 1, why: '18, c\'est seulement la première étape. La réponse au problème, c\'est <b>23 pirates</b>.' }
+        { q: '« Dans le bus, il y a 26 passagers. 8 descendent, puis 6 montent. Combien de passagers y a-t-il quand le bus repart ? » Quelle phrase répond à la question ?', c: ['Il y a 18 passagers après la descente.', 'Il y a 24 passagers quand le bus repart.', 'Il y a 18 passagers quand le bus repart.'], a: 1, why: '26 − 8 = 18, ce n\'est que la première étape. Puis 18 + 6 = 24 : <b>il y a 24 passagers quand le bus repart</b>.' }
       ]
     }
   ];
@@ -1115,7 +1126,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const GL = [
     { n: 'cartes', intro: '{N} avait {s} cartes.', intro0: '{N} joue aux cartes avec ses amis.', lose: { tx: '{il} en perd {a} contre {M}', aft: 'après la partie contre {M}', bef: 'avant la partie contre {M}' }, win: { tx: '{il} en gagne {b} contre {P}', aft: 'après la partie contre {P}', bef: 'avant la partie contre {P}' },
       chg: 'le nombre de cartes gagnées contre {P}', endS: '{Il} a maintenant {e} cartes.', qEnd: 'Combien de cartes {N} a-t-{il} maintenant ?', aEnd: '{N} a maintenant {r} cartes.', qStart: 'Combien de cartes {N} avait-{il} au début ?', aStart: '{N} avait {r} cartes au début.' },
-    { n: "pièces d'or", intro: "Le pirate avait {s} pièces d'or.", intro0: "Le pirate a des pièces d'or dans sa bourse.", lose: { tx: 'il en dépense {a} au marché', aft: 'après le marché', bef: 'avant le marché' }, win: { tx: 'il en trouve {b} dans une grotte', aft: 'après la grotte', bef: 'avant la grotte' },
+    { n: "pièces d'or", who: 'le pirate', intro: "Le pirate avait {s} pièces d'or.", intro0: "Le pirate a des pièces d'or dans sa bourse.", lose: { tx: 'il en dépense {a} au marché', aft: 'après le marché', bef: 'avant le marché' }, win: { tx: 'il en trouve {b} dans une grotte', aft: 'après la grotte', bef: 'avant la grotte' },
       chg: 'le nombre de pièces trouvées dans la grotte', endS: "Il a maintenant {e} pièces d'or.", qEnd: "Combien de pièces d'or le pirate a-t-il maintenant ?", aEnd: "Le pirate a maintenant {r} pièces d'or.", qStart: "Combien de pièces d'or le pirate avait-il au début ?", aStart: "Le pirate avait {r} pièces d'or au début." },
     { n: 'billes', intro: '{N} avait {s} billes.', intro0: '{N} joue aux billes dans la cour.', fixed: true, lose: { tx: 'à la récré du matin, {il} en perd {a}', aft: 'après la récré du matin', bef: 'avant la récré du matin' }, win: { tx: "à la récré de l'après-midi, {il} en gagne {b}", aft: "après la récré de l'après-midi", bef: "avant la récré de l'après-midi" },
       chg: "le nombre de billes gagnées l'après-midi", endS: 'Le soir, {il} a {e} billes.', qEnd: 'Combien de billes {N} a-t-{il} le soir ?', aEnd: 'Le soir, {N} a {r} billes.', qStart: 'Combien de billes {N} avait-{il} le matin ?', aStart: '{N} avait {r} billes le matin.' },
@@ -1232,11 +1243,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const sg1 = loseFirst ? -1 : 1, v1 = loseFirst ? a : b, v2 = loseFirst ? b : a;
     if (kind === 'end'){
       t = c.intro + ' ' + sent; q = c.qEnd; ans = c.aEnd;
-      chain = [step(s, loseFirst ? '−' : '+', v1, nn + ' ' + E1.aft, ucf(E1.aft) + ', {N} a {i1} ' + n + '.'), step(i1, loseFirst ? '+' : '−', v2, nn + ' ' + E2.aft)];
+      chain = [step(s, loseFirst ? '−' : '+', v1, nn + ' ' + E1.aft, ucf(E1.aft) + ', ' + (c.who || '{N}') + ' a {i1} ' + n + '.'), step(i1, loseFirst ? '+' : '−', v2, nn + ' ' + E2.aft)];
       pts = [s, '?', '??'];
     } else {
       t = c.intro0 + ' ' + sent + ' ' + c.endS; q = c.qStart; ans = c.aStart;
-      chain = [step(e, loseFirst ? '−' : '+', v2, nn + ' ' + E2.bef, ucf(E2.bef) + ', {N} avait {i1} ' + n + '.'), step(i1, loseFirst ? '+' : '−', v1, nn + ' au début')];
+      chain = [step(e, loseFirst ? '−' : '+', v2, nn + ' ' + E2.bef, ucf(E2.bef) + ', ' + (c.who || '{N}') + ' avait {i1} ' + n + '.'), step(i1, loseFirst ? '+' : '−', v1, nn + ' au début')];
       pts = ['??', '?', e];
     }
     ops = [opS(sg1, v1), opS(-sg1, v2)];
@@ -1401,6 +1412,62 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   const sum3 = (P, tail) => esc(P.l) + ' : ' + tail;
 
+  /* ---------- Vérifier son résultat : les trois questions du détective ----------
+     Le mousse étourdi propose une phrase réponse, juste ou fausse. L'élève dit s'il a raison et, sinon, laquelle
+     des trois questions montre l'erreur : la bonne unité ? un nombre possible ? la réponse à la question ? */
+  const VERIF_OPTS = { ok: 'Oui, il a raison.', unit: "Non : ce n'est pas la bonne unité.", sens: 'Non : ce nombre est impossible ici.', question: 'Non : sa phrase ne répond pas à la question.' };
+  const VERIF_NOT = { ok: "Il s'est trompé : relis sa phrase avec les trois questions du détective.", unit: "Non, l'unité est la bonne.", sens: 'Non, ce nombre est possible ici.', question: 'Non, sa phrase répond bien à la question.' };
+  const VERIF_HINT = 'Pose-toi les trois questions du détective : la bonne unité ? un nombre possible ? la réponse à la question ?';
+  /* V : { ans, okWhy, unit, unitWhy, sens: { p, why }, question, qWhy } (unit, sens et question peuvent manquer) */
+  /* Une unité impossible à la place de la bonne (le mousse se trompe d'unité) */
+  const UNIT_SWAP = { kg: 'km', g: 'cm', km: 'kg', m: 'L', cm: 'cL', L: 'm', cL: 'cm', mL: 'mm', '€': 'kg', min: 'kg', minutes: 'kilos', h: 'km', heures: 'mètres', ans: 'jours' };
+  function unitSwap(ph){
+    const m = String(ph).match(/(\d) (kg|km|cm|cL|mL|min|minutes|heures|ans|g|m|L|h|€)(?=[\s.,]|$)/);
+    if (!m) return null;
+    return ph.slice(0, m.index + 2) + UNIT_SWAP[m[2]] + ph.slice(m.index + 2 + m[2].length);
+  }
+  function verifKinds(V){ const ks = ['ok']; if (V.unit) ks.push('unit'); if (V.sens) ks.push('sens'); if (V.question) ks.push('question'); return ks; }
+  function moussePhrase(V, kind){ return kind === 'ok' ? V.ans : kind === 'sens' ? V.sens.p : V[kind]; }
+  function mousseStep(V, kind, o){
+    const why = {
+      ok: V.okWhy || "Bonne unité, nombre possible, et sa phrase répond à la question.",
+      unit: V.unitWhy || "Ce n'est pas la bonne unité.",
+      sens: V.sens ? V.sens.why : '',
+      question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
+    };
+    const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
+  }
+  /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
+     Une erreur à cette étape ne fait pas perdre la question : elle est notée « vérification à revoir ». */
+  function addReflex(items, infos, max){
+    const idx = shuffle(items.map((it, k) => k).filter(k => infos[k]));
+    const n = Math.min(idx.length, max || (items.length >= 10 ? (Math.random() < 0.5 ? 2 : 3) : 2));
+    idx.slice(0, n).forEach(k => {
+      const V = infos[k], kind = pick(verifKinds(V));
+      const st = mousseStep(V, kind, { verif: true, lead: 'Vérifie avec le mousse étourdi. Il a écrit :' });
+      items[k].steps.push(st);
+      if (items[k].branches) items[k].branches.forEach(b => b.push(st));
+    });
+    return items;
+  }
+
+  /* ---------- L'étape de vérification : ce que le mousse étourdi peut écrire de faux ---------- */
+  function verif3(P){
+    const last = P.chain[P.chain.length - 1];
+    let sens = null;
+    if (!last.expr3 && (last.op === '+' || last.op === '−')){
+      const wr = last.op === '+' ? last.x - last.y : last.x + last.y;
+      if (wr > 0 && wr !== P.r) sens = { p: txt(P.ans, Object.assign({}, P.V, { r: wr })),
+        why: last.op === '+' ? 'À la dernière étape, on ajoute ' + fmtNum(last.y) + ' à ' + fmtNum(last.x) + ' : le résultat doit être plus grand que ' + fmtNum(last.x) + '.'
+                             : 'À la dernière étape, on enlève ' + fmtNum(last.y) + ' à ' + fmtNum(last.x) + ' : le résultat doit être plus petit que ' + fmtNum(last.x) + '.' };
+    }
+    return { ans: P.ansTxt, okWhy: 'Son résultat est juste : ' + P.chain.map(s => (s.expr3 || exS(s)) + ' = ' + fmtNum(s.r)).join(', puis ') + '.',
+      sens, unit: unitSwap(P.ansTxt), unitWhy: 'Ce n\'est pas la bonne unité : relis la question.',
+      question: P.inter || null, qWhy: 'C\'est seulement le résultat d\'une étape : la question demande autre chose.' };
+  }
+
   /* ---------- Les questions de chaque niveau ---------- */
   function item3(id, P){
     const n = P.chain.length;
@@ -1450,9 +1517,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function buildItems(id){
     SMALL = id === 2 && !HARD;
     const plan = PLAN3[HARD ? 'orange' : 'jaune'][id];
-    const items = shuffle(plan).map(k => { let P, g = 0; do { P = GEN3[k](); } while (!valid3(P) && g++ < 80); return item3(id, P); });
+    const Ps = [], items = shuffle(plan).map(k => { let P, g = 0; do { P = GEN3[k](); } while (!valid3(P) && g++ < 80); Ps.push(P); return item3(id, P); });
     SMALL = false;
-    return items;
+    return id >= 3 ? addReflex(items, Ps.map(verif3)) : items;
   }
 
   /* ---------- Les énigmes du trésor : une par île ---------- */
@@ -1550,7 +1617,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     x48: ['Multiplier par 4, par 8', '../multiplier-par-4-par-8/index.html'],
     pose: ["L'addition et la soustraction posées", '../l-addition-et-la-soustraction-posees/index.html'],
     mpose: ['La multiplication posée', '../la-multiplication-posee/index.html'],
-    div: ['La division', '../la-division/index.html']
+    div: ['La division', '../la-division/index.html'],
+    verif: ['Mon résultat est-il possible ?', '../mon-resultat-est-il-possible/index.html']
   };
   function revueOf(c){
     if (!c) return null;
@@ -1578,11 +1646,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     } catch (e) {}
     return '';
   }
+  function noteVerif(R){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes('verif')) R.calcRev.push('verif'); }
   function noteRevue(R, st){
     const rv = st && st.calc ? revueOf(st.calc) : null;
     if (rv){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes(rv)) R.calcRev.push(rv); }
   }
-  const revNote = R => (R.calcRev && R.calcRev.length) ? '<p class="revnote"><b>Erreur de calcul</b> : la démarche compte d\'abord, mais pense à revoir ' + R.calcRev.map(k => '« ' + esc(revName(k)) + ' »').join(' et ') + '.</p>' : '';
+  const revNote = R => { const c = (R.calcRev || []).filter(k => k !== 'verif'), v = (R.calcRev || []).includes('verif');
+    return (c.length ? '<p class="revnote"><b>Erreur de calcul</b> : la démarche compte d\'abord, mais pense à revoir ' + c.map(k => '« ' + esc(revName(k)) + ' »').join(' et ') + '.</p>' : '') +
+      (v ? '<p class="revnote"><b>Vérification</b> : avant d\'écrire ta phrase réponse, pose-toi les trois questions du détective : la bonne unité ? un nombre possible ? la réponse à la question ? Tu peux t\'entraîner avec « Mon résultat est-il possible ? ».</p>' : ''); };
   function renderRevBox(r){
     const box = $('revBox'); if (!box) return;
     const counts = {};
@@ -1590,11 +1661,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
     if (!keys.length){ box.hidden = true; box.innerHTML = ''; return; }
     const pf = passFrag();
-    box.innerHTML = '<h2 class="det-title">Le calcul à revoir</h2><p class="send-note">Ta démarche compte d\'abord. Pour ne plus te tromper dans les calculs, entraîne-toi avec :</p>' +
+    const hasV = keys.includes('verif'), onlyV = keys.every(k => k === 'verif');
+    box.innerHTML = '<h2 class="det-title">' + (hasV ? (onlyV ? 'La vérification à revoir' : 'Le calcul et la vérification à revoir') : 'Le calcul à revoir') + '</h2><p class="send-note">Ta démarche compte d\'abord. ' + (hasV ? 'Pour progresser, entraîne-toi avec :' : 'Pour ne plus te tromper dans les calculs, entraîne-toi avec :') + '</p>' +
       keys.map(k => '<a class="btn-secondary rev-btn" href="' + REVUE[k][1] + pf + '" target="_blank" rel="noopener"><span>' + esc(REVUE[k][0]) + '</span><small>' + counts[k] + (counts[k] > 1 ? ' erreurs' : ' erreur') + '</small></a>').join('');
     box.hidden = false;
   }
-  const revSend = r => { const ks = []; (r.results || []).forEach(x => (x.rev || []).forEach(k => { if (!ks.includes(k)) ks.push(k); })); return ks.length ? ' ; calcul à revoir : ' + ks.map(revName).join(', ') : ''; };
+  const revSend = r => { const ks = []; (r.results || []).forEach(x => (x.rev || []).forEach(k => { if (k !== 'verif' && !ks.includes(k)) ks.push(k); })); return ks.length ? ' ; calcul à revoir : ' + ks.map(revName).join(', ') : ''; };
 
   /* ---------- Élèves, scores et bons points ---------- */
   function loadStore(){
@@ -2362,7 +2434,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
   const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
-  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, calcErr: 0, calcRev: [], itemDone: false, showKw: false }, stepState());
+  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, verifErr: 0, calcErr: 0, calcRev: [], itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
   function learnStart(){
@@ -2426,7 +2498,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (R.picked.includes(idx)) return;
     const o = st.opts[idx];
     if (o.ok){ applyBranch(o); solveStep(false, o.h, st.okFb, '', ''); return; }
-    R.err++; R.itemErr++; R.tries++; R.picked.push(idx);
+    R.err++; if (st.verif){ R.verifErr = (R.verifErr || 0) + 1; noteVerif(R); } else R.itemErr++; R.tries++; R.picked.push(idx);
     runFall();
     if (st.showKw) R.showKw = true;
     if (st.opts.length === 2 || R.tries >= 2){
@@ -2506,7 +2578,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     R.revealed = false;
     R.showKw = true;
     if (ok) R.ok++;
-    R.results.push({ ok, html: it.sum, calc: (R.calcErr || 0) > 0, rev: (R.calcRev || []).slice() });
+    R.results.push({ ok, html: it.sum, calc: (R.calcErr || 0) > 0, rev: (R.calcRev || []).slice(), verif: (R.verifErr || 0) > 0 });
     renderPlay();
     try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
   }
@@ -2537,7 +2609,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     let outcome = 'notyet';
     if (gained > 0) outcome = firstValid ? 'validate' : 'record';
     else if (R.ok >= need) outcome = 'same';
-    S.res = { calcN: R.results.filter(x => x.calc).length, id, enigme: R.enigme, clues: Math.min(R.ok, R.enigme.clues.length), solved: false, tries: 0, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: newBest, from: before, to: after, results: R.results,
+    S.res = { verifN: R.results.filter(x => x.verif).length, calcN: R.results.filter(x => x.calc).length, id, enigme: R.enigme, clues: Math.min(R.ok, R.enigme.clues.length), solved: false, tries: 0, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: newBest, from: before, to: after, results: R.results,
               card: Math.floor(before / 10) < Math.floor(after / 10) ? Math.floor(after / 10) : 0 };
     S.phase = 'result';
     render();
@@ -2630,7 +2702,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function renderLearnEnd(){
     const L = S.Lr;
-    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + ' questions sur ' + L.total + '.';
+    $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + (L.first > 1 ? ' questions' : ' question') + ' sur ' + L.total + '.';
   }
 
   function doneRow(st, v){
@@ -2709,7 +2781,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (!prof) return;
     $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Île ' + lv.id + ' (' + ileOf(lv.id).short + ') : ' + lv.name,
       r.ok + '/' + r.total + ' démarches justes du premier coup ; ' + (r.calcN ? r.calcN + (r.calcN > 1 ? ' calculs' : ' calcul') + ' à revoir ; ' : '') + nErr(r.err) + (r.ok >= r.need ? ' ; île validée' : ' ; île pas encore validée') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '') +
-      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + revSend(r)]);
+      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + (r.verifN ? ' ; ' + r.verifN + (r.verifN > 1 ? ' vérifications' : ' vérification') + ' à revoir' : '') + revSend(r)]);
   }
   function renderEnigma(){
     const r = S.res, E = r.enigme, valid = r.ok >= r.need;
@@ -2791,7 +2863,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     $('resErr').textContent = r.err;
     $('resNeed').textContent = r.need + '/' + r.total;
     $('resDetail').innerHTML = r.results.map(x =>
-      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? (x.calc ? ' <span class="tries">· démarche juste, calcul à revoir</span>' : '') : ' <span class="tries">· à revoir</span>') + '</span></li>').join('');
+      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? (x.calc ? ' <span class="tries">· démarche juste, calcul à revoir</span>' : '') : ' <span class="tries">· à revoir</span>') + (x.verif ? ' <span class="tries">· vérification à revoir</span>' : '') + '</span></li>').join('');
     renderRevBox(r);
     $('sendBox').hidden = !prof;
     setSendLink();
@@ -2933,6 +3005,5 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   else boot((hot && hot.data) || {});
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
