@@ -35,6 +35,10 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
    Le titre vient de `<title>`, le slug du titre sans accents. Pour une nouvelle version d'un jeu déjà là,
    la même commande remplace la page et garde la date d'ajout. Lis les lignes `ATTENTION` :
    police non hébergée, ressource externe, lien vers un artefact inconnu.
+   L'enseignante modifie souvent plusieurs jeux à la fois dans Claude : à chaque passage, liste ses artefacts
+   (`list_artifacts`) et réintègre tous les jeux, le portail et l'outil de vérification modifiés depuis le dernier
+   commit de leur page (`updated_at` ou le début du numéro de version = date en secondes). Un artefact peut n'être
+   qu'un fragment sans `<head>` : `integrer_jeu.py` ajoute alors l'en-tête (encodage utf-8).
 3. Teste : `python3 outils/tester.py` (Playwright + Chrome). Tout doit être « ok ».
 4. Nouveau domaine : ajoute-le dans `SUBJECTS[...].domains` et `DOMAINS` de `index.html`
    (avec un univers dans `SCENES`), avant d'intégrer le jeu.
