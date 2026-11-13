@@ -1072,6 +1072,108 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
     return parc => makeProblems(parc).map(p => mkP(B(p.a) + OP('−') + B(p.b) + OP('=') + Q, p.a - p.b, F(p.a) + ' − ' + F(p.b) + ' = <b>' + F(p.a - p.b) + '</b>', ''));
   })() });
+  addNotion({ id: 'c100', title: 'Les compléments à 100', chap: 'Compléments', url: '../les-complements-a-100/index.html', targetMs: 6000,
+    make: (function(){
+  /* ---------- Les compléments à 100 (et à 1\u00a0000, à la centaine suivante en orange) ---------- */
+  // Trois écritures : a + ? = C, ? + a = C, C − a = ?
+  const QA = (a, c) => B(a) + OP('+') + Q + OP('=') + B(c);
+  const QB = (a, c) => Q + OP('+') + B(a) + OP('=') + B(c);
+  const QS = (a, c) => B(c) + OP('−') + B(a) + OP('=') + Q;
+  function qOf(form, a, c){ return form === 'b' ? QB(a, c) : form === 's' ? QS(a, c) : QA(a, c); }
+  function txtOf(form, a, c){
+    const r = c - a;
+    if (form === 'b') return '<b>' + F(r) + '</b> + ' + F(a) + ' = ' + F(c);
+    if (form === 's') return F(c) + ' − ' + F(a) + ' = <b>' + F(r) + '</b>';
+    return F(a) + ' + <b>' + F(r) + '</b> = ' + F(c);
+  }
+  // Le coup de pouce, selon la sorte de complément (il ne donne jamais la réponse entière)
+  function hintC(a, c){
+    if (c === 100 || c === 1000 && a < 100){
+      const u = a % 10, d = Math.floor(a / 10) % 10;
+      if (u === 0) return 'Je compte en dizaines : ' + n(d + ' dizaines') + ', combien pour aller à ' + n('10 dizaines') + ' ?';
+      return 'Les unités vont à 10 : ' + n(u + ' + ? = 10') + '. Les dizaines vont à 9 : ' + n(d + ' + ? = 9') + '.';
+    }
+    if (c === 1000){
+      const u = a % 10, d = Math.floor(a / 10) % 10, h = Math.floor(a / 100);
+      if (u === 0) return 'Je compte en dizaines : ' + n(F(a / 10) + ' dizaines') + ', combien pour aller à ' + n('100 dizaines') + ' ? Les dizaines vont à 10, les centaines à 9.';
+      return 'Les unités vont à 10 (' + n(u + ' + ?') + '), les dizaines à 9 (' + n(d + ' + ?') + '), les centaines à 9 (' + n(h + ' + ?') + ').';
+    }
+    // jusqu'à la centaine suivante
+    return 'De ' + n(F(a)) + ' à ' + n(F(c)) + ', c\'est comme de ' + n(String(a % 100)) + ' à ' + n('100') + '.';
+  }
+  // Les erreurs les plus fréquentes
+  function whyC(a, c){
+    return v => {
+      const s = a + v;
+      if (s === c) return null;
+      if (c - a >= 10 && s === c + 10) return 'Attention : ' + F(a) + ' + ' + F(v) + ' = ' + F(s) + '. Une dizaine de trop' +
+        (a % 10 ? ' : les dizaines vont à 9, car les unités font déjà une dizaine.' : '.');
+      if (c === 1000 && s === 1100) return 'Attention : ' + F(a) + ' + ' + F(v) + ' = 1 100. Une centaine de trop : les centaines vont à 9.';
+      if (s === c - 10) return 'Presque ! ' + F(a) + ' + ' + F(v) + ' = ' + F(s) + ' : il manque une dizaine.';
+      if (a % 10 && (a % 10 + v % 10) !== 10) return 'Regarde les unités : ' + (a % 10) + ' + ? = 10.';
+      return null;
+    };
+  }
+  const withWhy = (o, w) => { o.why = w; return o; };
+  const LC = (form, a, c, tip, done) => withWhy(mkL(qOf(form, a, c), c - a, tip, hintC(a, c), done), whyC(a, c));
+  function makeLearnItems(parc){
+    const o = parc === 'orange';
+    return [
+      LC('a', 70, 100, '<b>Avec des dizaines rondes</b>, je compte les dizaines : 7 dizaines, combien pour aller à 10 dizaines ?', '7 dizaines + 3 dizaines = 10 dizaines : 70 + 30 = 100.'),
+      LC('a', 45, 100, '<b>Je passe par la dizaine</b> : 45 + 5 = 50. Puis, de 50 à 100, combien ? J\'additionne les deux bonds.', '45 + 5 = 50, puis 50 + 50 = 100 : 5 + 50 = 55.'),
+      LC('a', 28, 100, '<b>Les unités vont à 10</b> : 8 + 2 = 10. <b>Les dizaines vont à 9</b>, pas à 10, car les unités font déjà une dizaine : 2 + ? = 9.', '28 + 72 = 100 : 8 + 2 = 10 et 2 + 7 = 9.'),
+      o ? LC('a', 360, 1000, '<b>Compléments à 1\u00a0000</b> : 360, c\'est 36 dizaines. Combien pour aller à 100 dizaines ? Les dizaines vont à 10, les centaines à 9.', '360 + 640 = 1\u00a0000.')
+        : LC('b', 64, 100, '<b>Peu importe l\'ordre</b> : je cherche ce qui va avec 64 pour faire 100. Les unités vont à 10, les dizaines à 9.', '36 + 64 = 100.'),
+      o ? LC('a', 437, 500, '<b>Jusqu\'à la centaine suivante</b> : de 437 à 500, c\'est comme de 37 à 100.', '437 + 63 = 500.')
+        : LC('s', 53, 100, '<b>Enlever à 100, c\'est chercher le complément</b> : 100 − 53, c\'est ce qui va avec 53 pour faire 100.', '100 − 53 = 47, car 53 + 47 = 100.'),
+      o ? LC('s', 275, 1000, '<b>1\u00a0000 − 275</b> : je cherche le complément à 1\u00a0000. Les unités vont à 10, les dizaines et les centaines vont à 9.', '1\u00a0000 − 275 = 725, car 275 + 725 = 1\u00a0000.')
+        : LC('a', 35, 100, '<b>Attention au piège</b> : si je trouve un nombre qui fait 110 avec 35, j\'ai mis une dizaine de trop. Les dizaines vont à 9.', '35 + 65 = 100 (et non 75 : 35 + 75 = 110).')
+    ];
+  }
+  // Exemples de la règle, des fiches et de l'étape 1 : jamais dans le défi
+  const BANNED_C = new Set([37, 40, 70, 45, 28, 64, 53, 35, 63, 73, 360, 437, 275]);
+  function problemC(form, a, c){
+    return withWhy(mkP(qOf(form, a, c), c - a, txtOf(form, a, c), hintC(a, c)), whyC(a, c));
+  }
+  function makeProblems(parc){
+    const hard = parc === 'orange';
+    const forms = shuffle(['a', 'a', 'a', 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 's', 's', 's', 's']);
+    const kinds = hard ? shuffle(['h', 'h', 'h', 'h', 'h', 'r', 'r', 'r', 'r', 'k', 'k', 'k', 'm', 'm', 'm']) : null;
+    return fillList(k => {
+      const form = forms[k % forms.length];
+      if (!hard){
+        let a;
+        if (k < 2) a = 10 * rand(1, 9);                       // dizaines rondes pour commencer
+        else if (k < 5) a = 5 * rand(1, 19);                  // nombres terminés par 5 ou 0
+        else a = rand(1, 99);                                 // tous les nombres
+        if (k >= 5 && a % 10 === 0) return null;
+        if (a === 50 || BANNED_C.has(a)) return null;
+        return problemC(form, a, 100);
+      }
+      const kind = kinds[k % kinds.length];
+      if (kind === 'h'){                                      // compléments à 100, tous les nombres
+        const a = rand(2, 98);
+        if (a % 10 === 0 || BANNED_C.has(a)) return null;
+        return problemC(form, a, 100);
+      }
+      if (kind === 'r'){                                      // compléments à 1\u00a0000 d'un nombre de dizaines
+        const a = 10 * rand(11, 89);
+        if (a % 100 === 0 || BANNED_C.has(a)) return null;
+        return problemC(form, a, 1000);
+      }
+      if (kind === 'k'){                                      // compléments à la centaine suivante
+        const a = rand(101, 899), c = (Math.floor(a / 100) + 1) * 100;
+        if (a % 10 === 0 || BANNED_C.has(a)) return null;
+        return problemC(form, a, c);
+      }
+      const a = rand(102, 898);                               // compléments à 1\u00a0000 d'un nombre à 3 chiffres
+      if (a % 10 === 0 || BANNED_C.has(a)) return null;
+      return problemC(form, a, 1000);
+    }, N);
+  }
+
+    return makeProblems;
+  })() });
   addNotion({ id: 'cm08', title: 'Les nombres terminés par 8 ou 9', chap: 'Chapitre 8', url: '../les-nombres-termines-par-8-ou-9/index.html', targetMs: 12000,
     make: (function(){
   /* ---------- Les nombres terminés par 8 ou 9 ---------- */

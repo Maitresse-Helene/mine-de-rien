@@ -1,6 +1,6 @@
 /* Mine de rien : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-12-171318';
+const VERSION = '2026-11-13-164102';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -51,6 +51,7 @@ const FICHIERS = [
   "jeux/le-son-j/index.html",
   "jeux/le-sujet/index.html",
   "jeux/le-verbe/index.html",
+  "jeux/les-complements-a-100/index.html",
   "jeux/les-cubes-les-paves-et-les-prismes-droits/index.html",
   "jeux/les-determinants/index.html",
   "jeux/les-doubles/index.html",
