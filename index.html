@@ -799,7 +799,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     LIVE.forEach(it => { it.parts = makeParts(SEA(), it.cv.closest('.banner') ? 22 : 12); paint(it); });
   });
   /* ---------- La mascotte : un crayon HB maladroit ---------- */
-  /* Chaque phrase a son humeur : trebuche (il tombe), rire, fache (avec sa règle), dodo, sournois, cherche, fier */
+  /* Chaque phrase a son humeur : trebuche (il tombe), rire, fache (avec sa règle), dodo, sournois, cherche, fier, calme (il parle en souriant, sans bouger) */
   const MX_LINES = [
     ['Oups ! J\'ai encore trébuché…', 'trebuche'],
     ['Quelqu\'un a vu ma tarte au citron meringuée ?', 'cherche'],
@@ -817,6 +817,8 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     ['Les noms féminins en -té ou -tié ne prennent pas de e : la beauté, l\'amitié ! Sauf la dictée, la montée, la remontée, la jetée, la portée, la pâtée, la butée, la tétée, la nuitée et tous les noms de quantité !', 'fache'],
     ['L\'orthographe et la grammaire, c\'est aussi valable quand on résout un problème en maths ! On a le droit de mettre les s quand il y en a plusieurs et d\'accorder les verbes.', 'fache'],
     ['Moi, j\'aime les élèves souriants parce qu\'on apprend mieux en souriant et surtout, en souriant, on ne peut pas bavarder.', 'sournois'],
+    ['Quand on se trompe, on apprend en corrigeant ses erreurs. C\'est pour ça que c\'est important de suivre les corrections et de bien comprendre pourquoi on s\'est trompé.', 'calme'],
+    ['Avant de me dire « Maîtresse, je n\'ai pas compris la consigne », lis la consigne. Souvent, ça peut aider.', 'sournois'],
     ['Attention, je tire les oreilles jusqu\'à la gare !', 'fache'],
     ['Que dit le 0 au 8 ? Jolie ceinture !', 'rire'],
     ['Bien sûr que oui, il faut prendre la correction !', 'fache'],
@@ -826,7 +828,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     ['Le stylo est jaloux de moi : j\'ai une gomme pour réparer mes bêtises !', 'fier'],
     ['Avec Crayonnade, tu progresses à chaque jeu !', 'fier']
   ];
-  const MX_HUMEURS = ['h-fache', 'h-rire', 'h-dodo', 'h-sournois', 'h-cherche', 'h-fier'];
+  const MX_HUMEURS = ['h-fache', 'h-rire', 'h-dodo', 'h-sournois', 'h-cherche', 'h-fier', 'h-calme'];
   let mxLine = -1, mxFin = null;
   $('mascot').addEventListener('click', () => {
     const m = $('mascot');
