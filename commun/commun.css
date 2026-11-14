@@ -8,3 +8,6 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #allgames{background:rgba(18,20,38,.88)}:root:not([data-theme="light"]) #allgames a{background:#1f2440;color:#c8d2ff;border-color:#39406a}}
 :root[data-theme="dark"] #allgames{background:rgba(18,20,38,.88)}:root[data-theme="dark"] #allgames a{background:#1f2440;color:#c8d2ff;border-color:#39406a}
 @media print{#allgames{display:none}}
+
+/* « Envoyer mon score à la maîtresse » (formulaire Google) : pas proposé dans l'appli (demande de l'enseignante, 14/11/2026). */
+.send-box{display:none!important}

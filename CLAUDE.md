@@ -89,8 +89,9 @@ activé sur le dépôt, mais ses publications restaient bloquées : compte trop 
 ## Règles
 
 - Rien d'externe : pas de CDN ni de Google Fonts. Ajoute toute nouvelle bibliothèque dans `commun/vendor/`
-  et sa correspondance dans `BIBLIOTHEQUES` (`integrer_jeu.py`). Seule exception : le formulaire Google
-  de fin de jeu (envoi du prénom et du score à l'enseignante), à remplacer avant toute vente.
+  et sa correspondance dans `BIBLIOTHEQUES` (`integrer_jeu.py`). Le formulaire Google de fin de jeu (« Envoyer mon
+  score à la maîtresse », bloc `.send-box` des jeux) est masqué dans l'appli par `commun.css` : l'enseignante n'en veut
+  plus. Si un nouveau jeu l'affiche autrement, masque-le aussi.
 - Les clés `localStorage` d'un jeu doivent être propres à ce jeu (`<nom-du-jeu>-bons-points`…) : toutes les
   pages partagent le même stockage. Clés partagées voulues : `cm1cm2-code-classe`, `jeu-son`, `ski-son`.
 - Liens internes : chemins relatifs vers `index.html` (pas de dossier nu, pour que l'ouverture en fichier local
