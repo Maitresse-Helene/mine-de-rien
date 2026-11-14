@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reprend le portail (l'artefact « Mine de rien » sur Claude) et le prépare pour l'appli : index.html.
+"""Reprend le portail (l'artefact « Crayonnade » sur Claude) et le prépare pour l'appli : index.html.
 
 À lancer chaque fois que le portail a été modifié dans Claude (nom, mascotte, univers, domaines…).
 Les jeux, eux, s'intègrent avec integrer_jeu.py : ce script signale ceux du portail qui manquent.
@@ -19,8 +19,8 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-NOM_COURT = "Mine de rien"
-DESCRIPTION = "Mine de rien : des jeux bien taillés pour le CM1-CM2."
+NOM_COURT = "Crayonnade"
+DESCRIPTION = "Crayonnade : des jeux bien taillés pour le CM1-CM2."
 
 TETE = ('<meta name="description" content="{desc}"><meta name="theme-color" content="#2b45c8">'
         '<link rel="manifest" href="manifest.webmanifest">'

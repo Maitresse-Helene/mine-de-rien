@@ -13,7 +13,7 @@ EXCLUS_DOSSIERS = {"outils", ".git", ".github", "node_modules"}
 EXCLUS_FICHIERS = {"sw.js", "README.md", "CLAUDE.md", ".DS_Store", ".gitignore"}
 EXCLUS_EXTENSIONS = {".md", ".txt", ".py"}
 
-MODELE = """/* Mine de rien : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
+MODELE = """/* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
 const VERSION = '__VERSION__';
 const CACHE = 'jeux-cm1cm2-' + VERSION;

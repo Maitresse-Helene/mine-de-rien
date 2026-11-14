@@ -1,4 +1,4 @@
-# Mine de rien
+# Crayonnade
 
 *Des jeux bien taillés pour le CM1-CM2* : la web app de la classe.
 

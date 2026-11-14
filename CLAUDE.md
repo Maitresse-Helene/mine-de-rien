@@ -1,4 +1,4 @@
-# Mine de rien (des jeux bien taillés pour le CM1-CM2) : instructions pour Claude
+# Crayonnade (des jeux bien taillés pour le CM1-CM2) : instructions pour Claude
 
 Web app (PWA statique, sans serveur ni compilation) qui regroupe les jeux éducatifs d'une enseignante
 de CM1-CM2. Les jeux sont créés avec Claude sous forme d'artefacts, puis intégrés ici.

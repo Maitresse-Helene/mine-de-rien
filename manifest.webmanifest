@@ -1,6 +1,6 @@
 {
-  "name": "Mine de rien",
-  "short_name": "Mine de rien",
+  "name": "Crayonnade",
+  "short_name": "Crayonnade",
   "description": "Des jeux bien taillés pour le CM1-CM2.",
   "lang": "fr",
   "start_url": "./index.html",

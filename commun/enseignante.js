@@ -1,4 +1,4 @@
-/* Mine de rien : la porte « Code de la maîtresse », chargée par les outils de l'enseignante (enseignante/…),
+/* Crayonnade : la porte « Code de la maîtresse », chargée par les outils de l'enseignante (enseignante/…),
    après commun.js. Ne pas modifier à la main : demander à Claude.
 
    ENS_CODES : les empreintes du code de la maîtresse (jamais le code en clair).
