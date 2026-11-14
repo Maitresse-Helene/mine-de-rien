@@ -13,6 +13,9 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 - `jeux/<slug>/index.html` : un jeu = une page HTML autonome.
 - `enseignante/index.html` : « Mon Espace enseignante », la page d'accueil de la maîtresse (crayonnade.pages.dev/enseignante/),
   qui mène à tous ses outils et permet de changer son mot de passe. Lien ★ en tête de l'Espace enseignante du portail.
+  Elle a son propre manifeste (`enseignante/manifest.webmanifest`, icône « Maîtresse », start_url = cet espace) : ajoutée
+  à l'écran d'accueil, elle ouvre l'espace et pas le portail des élèves (sur iPhone, stockage séparé de Safari :
+  une connexion la première fois).
 - `enseignante/<slug>/index.html` : les outils de l'enseignante, liés depuis l'« Espace enseignante » du portail, hors
   liste des jeux, protégés par la connexion de l'enseignante (`commun/enseignante.js` + `.css`, sans code de la classe) :
   « Vérifier une carte de bons points » (artefact intégré), « Ajouter des bons points » et « Code APC d'une heure »
@@ -158,7 +161,8 @@ il devient son mot de passe ; sinon l'ancien code (empreintes `window.ENS_CODES`
   20 minutes sans action, 3 h au plus côté serveur.
 - « Rester connectée sur cet appareil » : localStorage `crayonnade-ens-appareil` (jeton, nom, fin), 30 jours.
 - Sans serveur (tests, pas de connexion) : la porte vérifie `ENS_CODES` ; seuls les outils locaux s'ouvrent.
-- « Verrouiller » / « Se déconnecter » referme ; `/api/ens/nouveau-code` change le mot de passe (page de l'espace).
+- « Verrouiller » (bouton flottant, sessions d'onglet seulement) referme ; avec « Rester connectée », seul le lien
+  « Me déconnecter de cet appareil » en bas de l'espace déconnecte. `/api/ens/nouveau-code` change le mot de passe.
 - « Rester connectée » est coché d'office. Maîtresse connectée (C.maitresse) : ni code de la classe ni « Qui joue ? »
   sur le portail et dans les jeux, badge « ★ Mon Espace enseignante » à la place du badge élève.
 - Mot de passe oublié : changer `REMISE_A_ZERO_ENS` dans `functions/api/[[chemin]].js` et publier ; à la connexion

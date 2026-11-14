@@ -249,8 +249,10 @@ with sync_playwright() as pw:
     m4.goto(BASE + "enseignante/index.html"); m4.wait_for_load_state("networkidle")
     m4.fill("#mdp1", "autre-mdp-7"); m4.fill("#mdp2", "AUTREMDP7"); m4.click("#formMdp button")
     ok(attendre(m4, "() => /changé/.test(document.getElementById('msgMdp').textContent)"), "changer le mot de passe")
-    m4.click("#ens-lock"); m4.wait_for_load_state("load")
-    ok(m4.locator("#ens-gate").count() == 1, "« Se déconnecter » referme")
+    ok(m4.locator("#ens-lock").count() == 0, "rester connectée : pas de bouton flottant « Se déconnecter »")
+    ok(m4.evaluate("() => document.querySelector('link[rel=manifest]').getAttribute('href')") == "manifest.webmanifest", "« Mon Espace enseignante » a sa propre icône d'écran d'accueil")
+    m4.click("#deconnecter"); m4.wait_for_load_state("load")
+    ok(m4.locator("#ens-gate").count() == 1, "« Me déconnecter de cet appareil » referme")
     m4.fill("#ens-login", "helene"); m4.fill("#ens-input", "autremdp7"); m4.click("#ens-gate button[type=submit]")
     ok(attendre(m4, "() => !document.getElementById('ens-gate')"), "le nouveau mot de passe marche")
 

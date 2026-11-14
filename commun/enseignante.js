@@ -78,7 +78,8 @@ window.ENS_CODES = ["1qpuhkkjl3o"];
     resteConnectee: function () { return !!appareil(); },
     garderJeton: function (j) { if (j) { sEcrire(JETON, j); ecrire({ h: "serveur", t: Date.now() }); } else oublier(); },
     api: function (methode, chemin, corps) { return api(methode, chemin, corps, jeton()); },
-    init: function (jetonInit, nouveau, rester) { return api("POST", "ens/init", { nouveau: nouveau, rester: !!rester }, jetonInit); }
+    init: function (jetonInit, nouveau, rester) { return api("POST", "ens/init", { nouveau: nouveau, rester: !!rester }, jetonInit); },
+    deconnecter: function () { verrouiller(); }
   };
   function verrouiller() {
     var j = jeton();
@@ -94,7 +95,9 @@ window.ENS_CODES = ["1qpuhkkjl3o"];
     });
     setInterval(function () { if (!ouvert()) verrouiller(); }, 30000);
     function bouton() {
-      if (document.getElementById("ens-lock")) return;
+      /* « Rester connectée » : pas de bouton flottant (on se déconnecterait sans le vouloir) ;
+         « Me déconnecter de cet appareil » est en bas de « Mon Espace enseignante ». */
+      if (appareil() || document.getElementById("ens-lock")) return;
       var b = document.createElement("button");
       b.id = "ens-lock"; b.type = "button";
       b.innerHTML = appareil() ? '<span aria-hidden="true">🔒</span> Se déconnecter' : '<span aria-hidden="true">🔒</span> Verrouiller';

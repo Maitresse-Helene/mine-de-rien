@@ -4,8 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mon Espace enseignante</title>
-<link rel="manifest" href="../manifest.webmanifest">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="../icones/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icones/apple-touch-icon.png">
+<meta name="theme-color" content="#c2365e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Maîtresse">
 <link rel="stylesheet" href="../commun/polices/polices.css">
 <style>
 /* L'Espace enseignante : la porte d'entrée de tous les outils de la maîtresse (identifiant + mot de passe). */
@@ -46,6 +51,7 @@ h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.25rem}
 input[type=password]{font:600 1.05rem var(--font-body);color:var(--ink);background:var(--sheet);border:2px solid var(--key-edge);border-radius:12px;padding:7px 11px;outline:none}
 .btn{border:0;border-radius:999px;background:var(--pen);color:var(--sheet);font:800 1.05rem var(--font-num);padding:9px 20px;cursor:pointer;box-shadow:0 3px 0 var(--key-shadow)}
 .msg{margin:0;font-weight:600;min-height:1.2em}
+.lien{border:0;background:none;padding:0;color:var(--pen);font:600 .9rem var(--font-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .msg.ok{color:var(--ok)} .msg.ko{color:var(--warn)}
 @media (prefers-reduced-motion: reduce){.outil{transition:none}.outil:hover{transform:none}}
 </style>
@@ -85,7 +91,12 @@ input[type=password]{font:600 1.05rem var(--font-body);color:var(--ink);backgrou
     <p class="msg" id="msgMdp" role="status"></p>
   </section>
 
-  <p class="aide">Pour venir ici directement : gardez cette page dans vos favoris (crayonnade.pages.dev/enseignante/). Sur votre appareil à vous, cochez « Rester connectée » : vous n'aurez plus rien à taper pendant 30 jours.</p>
+  <section class="fiche">
+    <h2>Mon espace sur l'écran de mon téléphone</h2>
+    <p class="aide">Ouvrez cette page (crayonnade.pages.dev/enseignante/) puis : sur iPhone ou iPad, dans Safari, bouton Partager puis « Sur l'écran d'accueil » ; sur Android, dans Chrome, menu ⋮ puis « Ajouter à l'écran d'accueil ». L'icône s'appelle « Maîtresse » et ouvre directement cet espace. La première fois que vous la touchez, tapez une seule fois votre identifiant et votre mot de passe : ensuite, elle s'ouvre toute seule.</p>
+  </section>
+
+  <p class="aide">Vous restez connectée 30 jours sur cet appareil. <button class="lien" type="button" id="deconnecter">Me déconnecter de cet appareil</button> (sur un appareil qui n'est pas le vôtre).</p>
 </main>
 
 <script>
@@ -96,6 +107,7 @@ input[type=password]{font:600 1.05rem var(--font-body);color:var(--ink);backgrou
     $('bonjour').textContent = nom ? 'Bonjour ' + nom + ' !' : 'Bonjour !';
     $('motDePasse').hidden = !(window.ENS && ENS.jeton());
   }
+  $('deconnecter').addEventListener('click', () => { if (window.ENS) ENS.deconnecter(); });
   $('formMdp').addEventListener('submit', e => {
     e.preventDefault();
     const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
