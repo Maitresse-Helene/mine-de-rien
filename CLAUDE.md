@@ -76,9 +76,11 @@ l'appli (`À INTÉGRER`) : intègre-les ensuite avec `integrer_jeu.py`, puis tes
 
 ## Publier
 
-Dépôt GitHub `Maitresse-Helene/mine-de-rien`, publié par Cloudflare Pages (projet `mine-de-rien`, branche `main`,
-sans commande de construction, racine) : https://mine-de-rien.pages.dev. Après les tests, commit et push sur `main` :
-le site se met à jour tout seul. Garde aussi à jour le dossier de l'enseignante sur son Mac (Documents/jeux web).
+Dépôt GitHub `Maitresse-Helene/mine-de-rien`, publié par Cloudflare Pages (branche `main`, sans commande de
+construction, racine) dans deux projets : `crayonnade` → **https://crayonnade.pages.dev** (l'adresse de l'appli depuis
+le 14/11/2026, celle du QR code) et `mine-de-rien` → https://mine-de-rien.pages.dev (l'ancienne, gardée en route).
+Le stockage (bons points) est propre à chaque adresse. Après les tests, commit et push sur `main` : les deux sites se
+mettent à jour tout seuls (deux vérifications « Cloudflare Pages » sur le commit dans GitHub). Garde aussi à jour le dossier de l'enseignante sur son Mac (Documents/jeux web).
 Cloudflare redirige « .../index.html » vers « .../ » : le service worker suit lui-même ces redirections pour les pages
 (voir `outils/mettre_a_jour_sw.py`), et `outils/tester.py` sert l'appli de la même façon. (GitHub Pages a aussi été
 activé sur le dépôt, mais ses publications restaient bloquées : compte trop récent.)
