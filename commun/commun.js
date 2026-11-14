@@ -99,6 +99,15 @@ window.CMP = (function () {
     return p;
   };
 
+  /* La maîtresse : elle a ouvert l'Espace enseignante dans cet onglet il y a moins de 20 minutes. Dans les jeux, le bouton « Espace enseignante » n'apparaît que pour elle (voir section 6). */
+  C.maitresse = (function () {
+    try {
+      var v = JSON.parse(sessionStorage.getItem("cm1cm2-ens") || "null");
+      return !!(v && v.h && Date.now() - v.t < 20 * 60 * 1000);
+    } catch (e) { return false; }
+  })();
+  if (C.maitresse) document.documentElement.className += " cmp-maitresse";
+
   C.session = C.lire("crayonnade-session", null);
   if (!(C.session && C.session.jeton && C.session.login)) C.session = null;
   if (C.session) {
@@ -106,6 +115,18 @@ window.CMP = (function () {
     else window.CMG_ACCES_COMPTE = true;
   }
   var J = window.CMG_JEU;
+  /* Les élèves montrés à la maîtresse dans ce jeu (section 6) sont retirés de l'appareil quand elle n'est plus là. */
+  if (J && J.stockage && !C.maitresse) {
+    var inj = C.lire("crayonnade-ens-injectes", {}) || {}, liste = inj[J.stockage];
+    if (liste && liste.length) {
+      var st0 = C.store(J.stockage);
+      liste.forEach(function (k) { if (!(C.session && C.session.login === k)) delete st0.profiles[k]; });
+      if (st0.current && !st0.profiles[st0.current]) st0.current = null;
+      try { C.setItem.call(localStorage, J.stockage, JSON.stringify(st0)); } catch (e) {}
+      delete inj[J.stockage];
+      C.ecrire("crayonnade-ens-injectes", inj);
+    }
+  }
   if (J && J.stockage && C.session && window.CMG_ACCES_COMPTE) {
     var st = C.store(J.stockage), k = C.session.login;
     if (!st.profiles[k]) st.profiles[k] = C.profilNeuf(J, C.session.affiche);
@@ -478,8 +499,61 @@ window.CMP = (function () {
     var form = g.querySelector("form");
     if (form) form.addEventListener("submit", function () { setTimeout(function () { if (!document.getElementById("cmg-gate")) proposerComptes(); }, 0); });
   }
+  /* Les phrases des jeux « gardés sur cet appareil » ne sont plus vraies pour un élève connecté. */
+  var PHRASES = [
+    ["Tes résultats sont gardés sur cet appareil : joue toujours sur le même.", "Tes résultats sont gardés dans ton compte : tu les retrouves sur tous tes appareils."],
+    ["Tes bons points sont gardés sur cet appareil. Joue toujours sur le même.", "Tes bons points sont gardés dans ton compte : tu les retrouves sur tous tes appareils."],
+    ["Tes bons points sont gardés sur cet appareil.", "Tes bons points sont gardés dans ton compte : tu les retrouves sur tous tes appareils."],
+    ["Tes bons points restent gardés dans chaque jeu, sur cet appareil.", "Tes bons points sont gardés dans ton compte : tu les retrouves sur tous tes appareils."]
+  ];
+  var PHRASES_MAITRESSE = [["Les bilans sur cet appareil", "Les bilans des élèves"]];
+  function remplacerPhrases(liste) {
+    if (!document.body) return;
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n;
+    while ((n = w.nextNode())) {
+      var t = n.nodeValue, u = t;
+      if (u.indexOf("appareil") < 0) continue;
+      liste.forEach(function (p) { u = u.split(p[0]).join(p[1]); });
+      if (u !== t) n.nodeValue = u;
+    }
+  }
+
+  /* 6. La maîtresse dans un jeu : le bouton « Espace enseignante » du jeu réapparaît, et l'appareil reçoit pour
+        ce jeu les profils de tous les élèves (marqués pour être retirés ensuite), que l'écran du jeu affiche. */
+  function modeMaitresse() {
+    ["click", "keydown"].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        try { var v = JSON.parse(sessionStorage.getItem("cm1cm2-ens") || "null"); if (v) { v.t = Date.now(); sessionStorage.setItem("cm1cm2-ens", JSON.stringify(v)); } } catch (e) {}
+      }, true);
+    });
+    remplacerPhrases(PHRASES_MAITRESSE);
+    if (!JEU) return;
+    var jeton = ""; try { jeton = sessionStorage.getItem("crayonnade-ens") || ""; } catch (e) {}
+    if (!jeton) return; /* porte ouverte sans connexion : le jeu montre seulement ce qui est sur l'appareil */
+    api("GET", "ens/eleves-du-jeu?jeu=" + encodeURIComponent(JEU.stockage), undefined, jeton).then(function (d) {
+      if (d._statut !== 200 || !d.profils) return;
+      var st = C.store(JEU.stockage), avant = JSON.stringify(st), inj = C.lire("crayonnade-ens-injectes", {}) || {}, cles = inj[JEU.stockage] || [];
+      Object.keys(d.profils).forEach(function (login) {
+        var p = d.profils[login].profil;
+        if (!p || typeof p !== "object") return;
+        p.name = d.profils[login].affiche;
+        st.profiles[login] = p;
+        if (cles.indexOf(login) < 0) cles.push(login);
+      });
+      inj[JEU.stockage] = cles;
+      C.ecrire("crayonnade-ens-injectes", inj);
+      if (JSON.stringify(st) === avant) return;
+      try { C.setItem.call(localStorage, JEU.stockage, JSON.stringify(st)); } catch (e) {}
+      var marque = "crayonnade-ens-recharge:" + location.pathname, deja = false;
+      try { deja = sessionStorage.getItem(marque) === "1"; sessionStorage.setItem(marque, "1"); } catch (e) {}
+      if (!deja && !interaction) location.reload();
+    }).catch(function () {});
+  }
+
   function demarrer() {
     if (window.CMG_HORS_CRENEAU) { ecranCreneau(window.CMG_HORS_CRENEAU); return; }
+    if (S && window.CMG_ACCES_COMPTE && !ENS) remplacerPhrases(PHRASES);
+    if (C.maitresse && !ENS) modeMaitresse();
     if (!ENS && document.getElementById("cmg-gate")) lienPorteClasse();
     afficherBadge();
     if (S && !ENS) {

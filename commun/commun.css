@@ -12,8 +12,8 @@
 /* « Envoyer mon score à la maîtresse » (formulaire Google) : pas proposé dans l'appli (demande de l'enseignante, 14/11/2026). */
 .send-box{display:none!important}
 
-/* Lien « Espace enseignante » en bas des jeux : les outils sont dans l'Espace enseignante du portail (demande du 14/11/2026). */
-#teacherLink{display:none!important}
+/* Bouton « Espace enseignante » en bas des jeux : seulement pour la maîtresse, après son code (commun.js, section 6). */
+html:not(.cmp-maitresse) #teacherLink{display:none!important}
 
 /* ===== Comptes élèves (commun.js, sections 1c et 5) ===== */
 /* Élève connecté : le jeu reste sur son login (pas de « Ce n'est pas moi »). */

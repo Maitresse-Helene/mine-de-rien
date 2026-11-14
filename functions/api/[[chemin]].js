@@ -372,6 +372,17 @@ export async function onRequest({ request, env }) {
         return json({ ok: true, login: l.login });
       }
 
+      /* Tous les élèves pour un jeu : l'écran « Espace enseignante » du jeu les affiche (bilans, cartes). */
+      if (chemin === "ens/eleves-du-jeu" && methode === "GET") {
+        const jeu = url.searchParams.get("jeu");
+        if (!jeuValide(jeu)) return erreur(400, "donnees", "Jeu inconnu.");
+        const r = (await db.prepare(`SELECT d.login, c.affiche, d.profil FROM donnees d JOIN comptes c ON c.login = d.login
+            WHERE d.jeu = ?`).bind(jeu).all()).results || [];
+        const profils = {};
+        for (const x of r) { try { profils[x.login] = { affiche: x.affiche, profil: JSON.parse(x.profil) }; } catch (e) {} }
+        return json({ profils });
+      }
+
       const l = lireLogin(corps.login || url.searchParams.get("login"));
       const c = l && await db.prepare("SELECT login, affiche, creneau, cree, vu FROM comptes WHERE login = ?").bind(l.login).first();
       if (!c) return erreur(404, "inconnu", "Compte introuvable.");

@@ -84,8 +84,13 @@ de 4 chiffres. Ses bons points sont gardés en ligne et le suivent sur tous les 
 - Comptes « créneau » (élèves de 6e des devoirs faits, jeudi 16 h – 17 h) : créés par la maîtresse, ils n'ouvrent
   l'appli que pendant le créneau (heure de Paris, 10 min de marge avant), sans code de la classe.
 - Les cartes de bons points d'un élève connecté se vérifient avec son login à la place du prénom.
-- Le formulaire « Envoyer mon score », le lien « Espace enseignante » en bas des jeux et « Ce n'est pas moi » (élève
-  connecté) sont masqués par `commun.css`.
+- Le formulaire « Envoyer mon score » et « Ce n'est pas moi » (élève connecté) sont masqués par `commun.css`. Pour un
+  élève connecté, les phrases « gardés sur cet appareil » des jeux deviennent « gardés dans ton compte » (commun.js).
+- Le bouton « Espace enseignante » en bas des jeux (`#teacherLink`) n'apparaît que pour la maîtresse : porte de
+  l'Espace enseignante ouverte dans l'onglet depuis moins de 20 minutes (classe `cmp-maitresse`, section 6). Le jeu
+  reçoit alors du serveur les profils de tous les élèves (`/api/ens/eleves-du-jeu`), que son propre écran enseignant
+  affiche (bilans de « Je me teste », cartes) ; ils sont retirés de l'appareil ensuite (`crayonnade-ens-injectes`).
+  Plus tard (vente) : un compte par enseignant(e) et par classe, à construire.
 
 ## Mettre à jour le portail
 
