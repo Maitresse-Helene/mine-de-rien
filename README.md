@@ -48,8 +48,8 @@ et la mise à jour arrive sur les tablettes à la connexion suivante.
 
 L'appli est en ligne à l'adresse **https://crayonnade.pages.dev** (hébergement gratuit Cloudflare Pages,
 branché sur le dépôt GitHub `Maitresse-Helene/mine-de-rien`). À chaque ajout de jeu, Claude met à jour le dépôt,
-et le site suit tout seul en moins d'une minute. L'ancienne adresse https://mine-de-rien.pages.dev reçoit les mêmes
-mises à jour, mais les bons points enregistrés sur l'une ne se voient pas sur l'autre : donnez aux élèves la nouvelle.
+et le site suit tout seul en moins d'une minute. L'ancienne adresse https://mine-de-rien.pages.dev renvoie toute seule
+vers la nouvelle (les bons points enregistrés sur l'ancienne ne se voient pas sur la nouvelle).
 
 Si vous changez le portail dans Claude (nom, mascotte, domaines…), demandez à Claude de le reporter dans l'appli.
 

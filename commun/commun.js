@@ -6,7 +6,19 @@
    2. La porte « Code de la classe ».
    3. Le laissez-passer : le portail le transmet aux jeux pour qu'ils ne redemandent pas le code.
    4. Les liens vers les autres pages de l'appli s'ouvrent dans la même fenêtre
-      (indispensable une fois l'appli installée sur une tablette). */
+      (indispensable une fois l'appli installée sur une tablette).
+   0. (ci-dessous) L'ancienne adresse renvoie vers la nouvelle. */
+
+/* 0. Ancienne adresse mine-de-rien.pages.dev : on part sur https://crayonnade.pages.dev, même page.
+      Pas hors ligne (la nouvelle adresse ne serait pas encore gardée sur l'appareil).
+      Les adresses d'essai de Cloudflare (xxxx.mine-de-rien.pages.dev) ne sont pas renvoyées. */
+(function () {
+  if (location.hostname !== "mine-de-rien.pages.dev" || navigator.onLine === false) return;
+  window.CMG_DEMENAGE = true;
+  document.documentElement.style.visibility = "hidden";
+  location.replace("https://crayonnade.pages.dev" + location.pathname + location.search + location.hash);
+})();
+
 window.CMG_CODES = [
   { from: "2026-09-01", to: "2027-01-11", h: "229sbxxdedt" },
   { from: "2026-12-18", to: "2027-03-15", h: "1gxznwzek4g" },
