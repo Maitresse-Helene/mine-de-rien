@@ -135,6 +135,9 @@ def main():
     if outils:
         liens = "".join(f'<a class="ens-lien" href="enseignante/{slug}/index.html"><span aria-hidden="true">✓</span> {nom}</a>'
                         for slug, nom in outils)
+        if (RACINE / "enseignante" / "index.html").exists():
+            liens = ('<a class="ens-lien" href="enseignante/index.html" style="background:#c2365e">'
+                     '<span aria-hidden="true">★</span> Mon Espace enseignante</a>') + liens
         remplacer("<summary>Espace enseignante</summary>",
                   '<summary>Espace enseignante</summary>\n      <div class="ens-outils">' + liens + "</div>",
                   "liens vers les outils de l'enseignante")

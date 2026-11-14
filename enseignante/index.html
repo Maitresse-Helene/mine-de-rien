@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mon Espace enseignante</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icones/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../commun/polices/polices.css">
+<style>
+/* L'Espace enseignante : la porte d'entrée de tous les outils de la maîtresse (identifiant + mot de passe). */
+:root{
+  --paper:#f6f7fd; --sheet:#ffffff; --ink:#1a2358; --ink-soft:#5a628f; --rule:#e4e8f7; --rule-strong:#cad1ef;
+  --pen:#2b45c8; --key-edge:#ccd3f0; --key-shadow:#b5bee6; --ok:#1f8a4c; --warn:#b02a50;
+  --font-title:"Playwrite FR Moderne","Segoe Print","Bradley Hand",cursive;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab; --rule:#1c2925; --rule-strong:#283a35;
+    --pen:#97abff; --key-edge:#3a4d46; --key-shadow:#0e1513; --ok:#6fd89a; --warn:#ff8fb1; color-scheme:dark; }
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5;
+  background-image:linear-gradient(to bottom,var(--rule-strong) 1px,transparent 1px),linear-gradient(to right,var(--rule-strong) 1px,transparent 1px),linear-gradient(to bottom,var(--rule) 1px,transparent 1px);
+  background-size:100% 32px,32px 100%,100% 8px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 96px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{margin:0;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+h1{margin:0;font-family:var(--font-title);font-weight:400;font-size:clamp(1.7rem,6vw,2.3rem);line-height:1.5;color:var(--pen)}
+h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.25rem}
+.lead,.aide{margin:0;color:var(--ink-soft)}
+.aide{font-size:.9rem}
+.outils{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.outil{display:flex;flex-direction:column;gap:4px;padding:14px 16px;background:var(--sheet);border:1.5px solid var(--key-edge);border-left:6px solid var(--pen);border-radius:18px;box-shadow:0 4px 0 var(--key-shadow);color:var(--ink);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.outil:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--key-shadow)}
+.outil b{font-family:var(--font-num);font-weight:800;font-size:1.2rem;line-height:1.2}
+.outil span{color:var(--ink-soft);font-size:.9rem;line-height:1.4}
+.outil.principal{border-left-color:#c2365e}
+.outil:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-offset:3px}
+.fiche{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:18px;box-shadow:0 4px 0 var(--key-shadow);padding:16px;display:flex;flex-direction:column;gap:10px}
+.ligne{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+input[type=password]{font:600 1.05rem var(--font-body);color:var(--ink);background:var(--sheet);border:2px solid var(--key-edge);border-radius:12px;padding:7px 11px;outline:none}
+.btn{border:0;border-radius:999px;background:var(--pen);color:var(--sheet);font:800 1.05rem var(--font-num);padding:9px 20px;cursor:pointer;box-shadow:0 3px 0 var(--key-shadow)}
+.msg{margin:0;font-weight:600;min-height:1.2em}
+.msg.ok{color:var(--ok)} .msg.ko{color:var(--warn)}
+@media (prefers-reduced-motion: reduce){.outil{transition:none}.outil:hover{transform:none}}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="../commun/commun.css"><script src="../commun/commun.js"></script>
+<link rel="stylesheet" href="../commun/enseignante.css"><script src="../commun/enseignante.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../index.html"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Crayonnade</p>
+    <h1>Mon Espace enseignante</h1>
+    <p class="lead" id="bonjour">Bonjour !</p>
+  </header>
+
+  <nav class="outils" aria-label="Les outils de l'enseignante">
+    <a class="outil principal" href="comptes-des-eleves/index.html"><b>Comptes des élèves</b>
+      <span>Les logins et leurs bons points en ligne, les comptes des élèves de 6e, un nouveau code pour un élève, ajouter des bons points.</span></a>
+    <a class="outil" href="verifier-une-carte-de-bons-points/index.html"><b>Vérifier une carte</b>
+      <span>Le code d'une carte de bons points. Tapez le login de l'élève à la place de son prénom.</span></a>
+    <a class="outil" href="../index.html"><b>Les jeux, en mode maîtresse</b>
+      <span>Dans chaque jeu, le bouton « Espace enseignante » tout en bas montre les bilans et les cartes de tous les élèves.</span></a>
+    <a class="outil" href="code-apc/index.html"><b>Code APC d'une heure</b>
+      <span>Un code à écrire au tableau, qui n'ouvre l'appli que pendant une heure.</span></a>
+    <a class="outil" href="ajouter-des-bons-points/index.html"><b>Bons points sur cet appareil</b>
+      <span>Pour un élève qui joue sans compte : à faire sur son appareil.</span></a>
+  </nav>
+
+  <section class="fiche" id="motDePasse" hidden>
+    <h2>Changer mon mot de passe</h2>
+    <form class="ligne" id="formMdp" novalidate>
+      <input id="mdp1" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe">
+      <input id="mdp2" type="password" autocomplete="new-password" placeholder="Encore une fois">
+      <button class="btn" type="submit">Changer</button>
+    </form>
+    <p class="msg" id="msgMdp" role="status"></p>
+  </section>
+
+  <p class="aide">Pour venir ici directement : gardez cette page dans vos favoris (crayonnade.pages.dev/enseignante/). Sur votre appareil à vous, cochez « Rester connectée » : vous n'aurez plus rien à taper pendant 30 jours.</p>
+</main>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  function afficher(){
+    const nom = window.ENS && ENS.affiche();
+    $('bonjour').textContent = nom ? 'Bonjour ' + nom + ' !' : 'Bonjour !';
+    $('motDePasse').hidden = !(window.ENS && ENS.jeton());
+  }
+  $('formMdp').addEventListener('submit', e => {
+    e.preventDefault();
+    const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const a = norm($('mdp1').value), b = norm($('mdp2').value), m = $('msgMdp');
+    m.className = 'msg ko';
+    if (a.length < 6) { m.textContent = 'Au moins 6 lettres ou chiffres.'; return; }
+    if (a !== b) { m.textContent = 'Les deux mots de passe ne sont pas pareils.'; return; }
+    const rester = ENS.resteConnectee();
+    ENS.api('POST', 'ens/nouveau-code', { nouveau: a, rester }).then(d => {
+      if (d._statut === 200 && d.jeton) {
+        ENS.garder(d, rester);
+        $('mdp1').value = $('mdp2').value = '';
+        m.className = 'msg ok'; m.textContent = 'Mot de passe changé. Notez-le bien.';
+      } else m.textContent = d.message || 'Impossible de changer le mot de passe.';
+    }, () => { m.textContent = 'Pas de connexion internet.'; });
+  });
+  if (!document.getElementById('ens-gate')) afficher();
+  else {
+    const obs = new MutationObserver(() => { if (!document.getElementById('ens-gate')) { obs.disconnect(); afficher(); } });
+    obs.observe(document.body, { childList: true });
+  }
+})();
+</script>
+</body>
+</html>

@@ -4,3 +4,8 @@
 #ens-lock:focus-visible{outline:3px solid #2b45c8;outline-offset:2px}
 #ens-gate .cmg-lock{background:#c2365e}
 @media print{#ens-lock{display:none}}
+
+/* Connexion : identifiant + mot de passe + « Rester connectée » */
+#ens-gate .ens-rester{display:flex!important;align-items:flex-start;gap:9px;flex:1 1 100%;font:500 14px/1.4 "Lexend",system-ui,sans-serif!important;color:#3a4270!important;cursor:pointer}
+#ens-gate input[type=checkbox]{flex:none!important;width:20px!important;height:20px!important;min-width:20px!important;margin:1px 0 0!important;padding:0!important;border-radius:5px!important;-webkit-appearance:auto;appearance:auto;accent-color:#2b45c8}
+#ens-gate input::placeholder{text-transform:none;letter-spacing:normal;font-weight:600;color:#8a90b4}

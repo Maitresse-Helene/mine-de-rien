@@ -80,13 +80,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <!-- Connexion au serveur (si la porte s'est ouverte sans connexion) -->
   <section class="fiche" id="connexion" hidden>
     <h2>Se connecter aux comptes</h2>
-    <p class="aide">Les comptes sont sur internet : retapez le code de la maîtresse.</p>
+    <p class="aide">Les comptes sont sur internet : connectez-vous avec votre identifiant et votre mot de passe.</p>
     <form class="ligne" id="formConnexion" novalidate>
-      <input id="codeEns" type="password" autocomplete="current-password" placeholder="Code de la maîtresse">
+      <input id="loginEns" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Identifiant">
+      <input id="codeEns" type="password" autocomplete="current-password" placeholder="Mot de passe">
       <button class="btn" type="submit">Entrer</button>
     </form>
     <form class="ligne" id="formInit" novalidate hidden>
-      <p class="aide" style="flex-basis:100%">Première fois : choisissez votre nouveau code de la maîtresse (au moins 6 lettres ou chiffres), il remplacera l'ancien.</p>
+      <p class="aide" style="flex-basis:100%">Première connexion : choisissez votre mot de passe (au moins 6 lettres ou chiffres), il remplacera l'ancien code de la maîtresse.</p>
       <input id="init1" type="password" autocomplete="new-password" placeholder="Nouveau code">
       <input id="init2" type="password" autocomplete="new-password" placeholder="Encore une fois">
       <button class="btn" type="submit">Valider</button>
@@ -177,7 +178,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   function msg(id, texte, ok){ const m = $(id); m.textContent = texte || ''; m.className = 'msg' + (texte ? (ok ? ' ok' : ' ko') : ''); }
 
   /* ---------- Connexion au serveur ---------- */
-  function sessionPerdue(){ ENS.garderJeton(null); $('contenu').hidden = true; $('connexion').hidden = false; msg('msgConnexion', 'Session terminée : retapez le code.'); }
+  function sessionPerdue(){ ENS.oublier(); $('contenu').hidden = true; $('connexion').hidden = false; msg('msgConnexion', 'Session terminée : reconnectez-vous.'); }
   function appel(methode, chemin, corps){
     return ENS.api(methode, chemin, corps).then(d => { if (d._statut === 401) { sessionPerdue(); throw new Error('session'); } return d; },
       () => { throw new Error('reseau'); });
@@ -190,11 +191,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   $('formConnexion').addEventListener('submit', e => {
     e.preventDefault();
     msg('msgConnexion', '');
-    ENS.verifier($('codeEns').value).then(r => {
+    ENS.verifier($('loginEns').value, $('codeEns').value, false).then(r => {
       $('codeEns').value = '';
       if (r.jeton && r.init) { jetonInit = r.jeton; $('formConnexion').hidden = true; $('formInit').hidden = false; $('init1').focus(); return; }
-      if (r.jeton) { ENS.garderJeton(r.jeton); demarrer(); return; }
-      msg('msgConnexion', r.horsService ? 'Pas de connexion au serveur des comptes. Réessayez dans un moment.' : (r.message || 'Ce code ne marche pas.'));
+      if (r.jeton) { ENS.garder(r, false); demarrer(); return; }
+      msg('msgConnexion', r.horsService ? 'Pas de connexion au serveur des comptes. Réessayez dans un moment.' : (r.message || 'Identifiant ou mot de passe incorrect.'));
     });
   });
   $('formInit').addEventListener('submit', e => {
@@ -203,8 +204,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const a = norm($('init1').value), b = norm($('init2').value);
     if (a.length < 6) { msg('msgConnexion', 'Au moins 6 lettres ou chiffres.'); return; }
     if (a !== b) { msg('msgConnexion', 'Les deux codes ne sont pas pareils.'); return; }
-    ENS.init(jetonInit, a).then(d => {
-      if (d._statut === 200 && d.jeton) { ENS.garderJeton(d.jeton); $('formInit').hidden = true; $('formConnexion').hidden = false; demarrer(); }
+    ENS.init(jetonInit, a, false).then(d => {
+      if (d._statut === 200 && d.jeton) { ENS.garder(d, false); $('formInit').hidden = true; $('formConnexion').hidden = false; demarrer(); }
       else msg('msgConnexion', d.message || 'Impossible d\'enregistrer ce code.');
     }, () => msg('msgConnexion', 'Pas de connexion internet.'));
   });

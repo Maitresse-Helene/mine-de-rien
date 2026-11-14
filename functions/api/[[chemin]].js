@@ -12,6 +12,10 @@
 
 const MINUTE = 60000, HEURE = 60 * MINUTE;
 const DUREE_ENS = 3 * HEURE;            // session enseignante
+const DUREE_ENS_LONGUE = 30 * 24 * HEURE; // « Rester connectée sur cet appareil »
+/* Les comptes enseignants (table enseignants). Pour l'instant un seul : celui de la maîtresse.
+   Son mot de passe de départ : le code de la maîtresse déjà choisi (reglages « ens »), ou l'ancien code (ENS_CODES). */
+const ENSEIGNANTE_DEPART = { login: "helene", affiche: "Hélène" };
 const DUREE_INIT = 15 * MINUTE;         // choix du nouveau code de la maîtresse
 const MARGE_AVANT = 10, MARGE_APRES = 5; // minutes de tolérance autour d'un créneau
 
@@ -22,7 +26,8 @@ const TABLES = [
      maj INTEGER NOT NULL, PRIMARY KEY (login, jeu))`,
   `CREATE TABLE IF NOT EXISTS sessions (jeton TEXT PRIMARY KEY, login TEXT NOT NULL, cree INTEGER NOT NULL, fin INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS essais (cle TEXT PRIMARY KEY, n INTEGER NOT NULL, depuis INTEGER NOT NULL)`,
-  `CREATE TABLE IF NOT EXISTS reglages (cle TEXT PRIMARY KEY, valeur TEXT NOT NULL)`
+  `CREATE TABLE IF NOT EXISTS reglages (cle TEXT PRIMARY KEY, valeur TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS enseignants (login TEXT PRIMARY KEY, affiche TEXT NOT NULL, mdp TEXT NOT NULL, cree INTEGER NOT NULL)`
 ];
 let basePrete = false;
 async function preparer(db) {
@@ -64,6 +69,14 @@ function lireLogin(brut) {
   return { login: affiche.toLowerCase(), affiche };
 }
 const codeEleveValide = c => /^\d{4}$/.test(String(c || ""));
+const normaliserLogin = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+async function empreinteMdp(code) {
+  const sel = hex(hasard(16)), it = 20000;
+  return JSON.stringify({ sel, it, h: await pbkdf2(code, sel, it) });
+}
+async function mdpBon(code, json) {
+  try { const v = JSON.parse(json); return !!code && await pbkdf2(code, v.sel, v.it) === v.h; } catch (e) { return false; }
+}
 
 /* Heure de Paris */
 const JOURS = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };
@@ -170,7 +183,7 @@ async function session(db, request, type) {
   if (!j) return null;
   const r = await db.prepare("SELECT login, fin FROM sessions WHERE jeton = ?").bind(await sha256(j)).first();
   if (!r || (r.fin && r.fin < Date.now())) return null;
-  if (type === "ens" ? r.login !== "#ens" : type === "init" ? r.login !== "#init" : r.login.startsWith("#")) return null;
+  if (type === "ens" ? !r.login.startsWith("#ens") : type === "init" ? !r.login.startsWith("#init:") : r.login.startsWith("#")) return null;
   return r;
 }
 async function eleve(db, request) {
@@ -298,50 +311,70 @@ export async function onRequest({ request, env }) {
     }
 
     /* ===== Enseignante ===== */
+    /* Connexion : identifiant + mot de passe (+ « rester connectée »). Une ancienne page sans identifiant = la maîtresse. */
     if (chemin === "ens/connexion" && methode === "POST") {
       const cleIp = "ens:" + ip;
       if (await bloque(db, cleIp, 8, 30 * MINUTE)) return erreur(429, "attente", "Trop d'essais. Attendez une demi-heure.");
       await db.prepare("DELETE FROM sessions WHERE fin > 0 AND fin < ?").bind(Date.now()).run();
       await db.prepare("DELETE FROM essais WHERE depuis < ?").bind(Date.now() - 24 * HEURE).run();
-      const code = normaliserCode(corps.code);
-      const r = await db.prepare("SELECT valeur FROM reglages WHERE cle = 'ens'").first();
-      if (r) {
-        const v = JSON.parse(r.valeur);
-        if (code && await pbkdf2(code, v.sel, v.it) === v.h) {
+      const login = normaliserLogin(corps.login === undefined ? ENSEIGNANTE_DEPART.login : corps.login);
+      const code = normaliserCode(corps.code), duree = corps.rester ? DUREE_ENS_LONGUE : DUREE_ENS;
+      let ens = login ? await db.prepare("SELECT * FROM enseignants WHERE login = ?").bind(login).first() : null;
+      if (!ens && login === ENSEIGNANTE_DEPART.login) {
+        /* Première connexion de la maîtresse : son code déjà choisi devient son mot de passe ; sinon l'ancien code
+           lui fait choisir un mot de passe. */
+        const r = await db.prepare("SELECT valeur FROM reglages WHERE cle = 'ens'").first();
+        if (r && await mdpBon(code, r.valeur)) {
+          await db.batch([
+            db.prepare("INSERT INTO enseignants (login, affiche, mdp, cree) VALUES (?, ?, ?, ?)").bind(login, ENSEIGNANTE_DEPART.affiche, r.valeur, Date.now()),
+            db.prepare("DELETE FROM reglages WHERE cle = 'ens'")
+          ]);
+          ens = { login, affiche: ENSEIGNANTE_DEPART.affiche, mdp: r.valeur };
+        } else if (!r && code && await ancienCodeMaitresse(env, request, code)) {
           await reussite(db, cleIp);
-          return json({ jeton: await ouvrirSession(db, "#ens", DUREE_ENS) });
+          return json({ init: true, jeton: await ouvrirSession(db, "#init:" + login, DUREE_INIT) });
         }
-      } else if (code && await ancienCodeMaitresse(env, request, code)) {
+      }
+      if (ens && await mdpBon(code, ens.mdp)) {
         await reussite(db, cleIp);
-        return json({ init: true, jeton: await ouvrirSession(db, "#init", DUREE_INIT) });
+        return json({ jeton: await ouvrirSession(db, "#ens:" + ens.login, duree), enseignante: { login: ens.login, affiche: ens.affiche }, duree });
       }
       await echec(db, cleIp, 30 * MINUTE);
-      return erreur(401, "mauvais", "Ce code ne marche pas.");
+      return erreur(401, "mauvais", "Identifiant ou mot de passe incorrect.");
     }
 
+    /* Choisir son mot de passe (première fois) ou en changer. */
     if ((chemin === "ens/init" || chemin === "ens/nouveau-code") && methode === "POST") {
       const s = await session(db, request, chemin === "ens/init" ? "init" : "ens");
-      if (!s) return erreur(401, "session", "Session terminée : retapez le code.");
-      if (chemin === "ens/init" && await db.prepare("SELECT 1 FROM reglages WHERE cle = 'ens'").first())
-        return erreur(409, "deja", "Le code de la maîtresse a déjà été choisi.");
+      if (!s) return erreur(401, "session", "Session terminée : reconnectez-vous.");
+      const login = s.login.replace(/^#(init|ens):?/, "") || ENSEIGNANTE_DEPART.login;
+      const existe = await db.prepare("SELECT 1 FROM enseignants WHERE login = ?").bind(login).first();
+      if (chemin === "ens/init" && existe) return erreur(409, "deja", "Le mot de passe a déjà été choisi.");
       const code = normaliserCode(corps.nouveau);
-      if (code.length < 6) return erreur(400, "court", "Le code doit avoir au moins 6 lettres ou chiffres.");
-      if (await ancienCodeMaitresse(env, request, code)) return erreur(400, "ancien", "Choisissez un code différent de l'ancien.");
-      const sel = hex(hasard(16)), it = 20000;
-      const valeur = JSON.stringify({ sel, it, h: await pbkdf2(code, sel, it) });
-      await db.prepare("INSERT INTO reglages (cle, valeur) VALUES ('ens', ?) ON CONFLICT(cle) DO UPDATE SET valeur = excluded.valeur")
-        .bind(valeur).run();
-      await db.prepare("DELETE FROM sessions WHERE login IN ('#ens', '#init')").run();
-      return json({ jeton: await ouvrirSession(db, "#ens", DUREE_ENS) });
+      if (code.length < 6) return erreur(400, "court", "Le mot de passe doit avoir au moins 6 lettres ou chiffres.");
+      if (await ancienCodeMaitresse(env, request, code)) return erreur(400, "ancien", "Choisissez un mot de passe différent de l'ancien code.");
+      const mdp = await empreinteMdp(code);
+      if (existe) await db.prepare("UPDATE enseignants SET mdp = ? WHERE login = ?").bind(mdp, login).run();
+      else await db.prepare("INSERT INTO enseignants (login, affiche, mdp, cree) VALUES (?, ?, ?, ?)")
+        .bind(login, login === ENSEIGNANTE_DEPART.login ? ENSEIGNANTE_DEPART.affiche : login, mdp, Date.now()).run();
+      await db.prepare("DELETE FROM sessions WHERE login IN (?, ?, '#ens', '#init')").bind("#ens:" + login, "#init:" + login).run();
+      const ens = await db.prepare("SELECT login, affiche FROM enseignants WHERE login = ?").bind(login).first();
+      const duree = corps.rester ? DUREE_ENS_LONGUE : DUREE_ENS;
+      return json({ jeton: await ouvrirSession(db, "#ens:" + login, duree), enseignante: ens, duree });
     }
 
     if (chemin.startsWith("ens/")) {
       if (chemin === "ens/deconnexion" && methode === "POST") {
         const j = jetonDe(request);
-        if (j) await db.prepare("DELETE FROM sessions WHERE jeton = ? AND login = '#ens'").bind(await sha256(j)).run();
+        if (j) await db.prepare("DELETE FROM sessions WHERE jeton = ? AND login LIKE '#ens%'").bind(await sha256(j)).run();
         return json({ ok: true });
       }
-      if (!await session(db, request, "ens")) return erreur(401, "session", "Session terminée : retapez le code de la maîtresse.");
+      const sessEns = await session(db, request, "ens");
+      if (!sessEns) return erreur(401, "session", "Session terminée : reconnectez-vous.");
+      if (chemin === "ens/moi" && methode === "GET") {
+        const e = await db.prepare("SELECT login, affiche FROM enseignants WHERE login = ?").bind(sessEns.login.replace(/^#ens:?/, "")).first();
+        return json({ enseignante: e || { login: ENSEIGNANTE_DEPART.login, affiche: ENSEIGNANTE_DEPART.affiche } });
+      }
 
       if (chemin === "ens/comptes" && methode === "GET") {
         const comptes = (await db.prepare("SELECT login, affiche, creneau, cree, vu FROM comptes").all()).results || [];

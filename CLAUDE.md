@@ -11,8 +11,10 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
   et pour les bons points : `stockage`, `cle`, `sel`, `profilNeuf`, extraits du jeu par `integrer_jeu.py`).
   L'ordre des lignes est l'ordre d'affichage dans chaque domaine.
 - `jeux/<slug>/index.html` : un jeu = une page HTML autonome.
+- `enseignante/index.html` : « Mon Espace enseignante », la page d'accueil de la maîtresse (crayonnade.pages.dev/enseignante/),
+  qui mène à tous ses outils et permet de changer son mot de passe. Lien ★ en tête de l'Espace enseignante du portail.
 - `enseignante/<slug>/index.html` : les outils de l'enseignante, liés depuis l'« Espace enseignante » du portail, hors
-  liste des jeux, protégés par le code de la maîtresse (`commun/enseignante.js` + `.css`) en plus du code de la classe :
+  liste des jeux, protégés par la connexion de l'enseignante (`commun/enseignante.js` + `.css`, sans code de la classe) :
   « Vérifier une carte de bons points » (artefact intégré), « Ajouter des bons points » et « Code APC d'une heure »
   (pages écrites ici, pas d'artefact).
 - `commun/domaines.js` : noms des domaines, généré par `integrer_portail.py` pour les outils.
@@ -145,11 +147,16 @@ du `sel`), accepté par la porte de la classe pendant 6 tranches de plus (60 à 
 l'outil `enseignante/code-apc/`. À l'expiration, `cm1cm2-apc-fin` fait recharger la page, qui redemande le code.
 Pour annuler tous les codes APC déjà donnés : changer le `sel`.
 
-## Le code de la maîtresse
+## La connexion de l'enseignante (identifiant + mot de passe)
 
-Il est vérifié par le serveur (`/api/ens/connexion`), qui n'en garde que l'empreinte PBKDF2 (table `reglages`). La
-toute première fois, l'ancien code (empreintes `window.ENS_CODES` de `commun/enseignante.js`, préfixe `cm1cm2-ens|`)
-fait choisir à la maîtresse un nouveau code d'au moins 6 caractères, introuvable à partir du dépôt public. Sans serveur
-(pas de connexion, tests), la porte vérifie `ENS_CODES` sur l'appareil : seuls les outils locaux s'ouvrent alors.
-Jamais de code en clair dans le dépôt. La porte n'est retenue que dans l'onglet (sessionStorage, avec le jeton du
-serveur, 3 h au plus côté serveur), 20 minutes après la dernière action, et « Verrouiller » referme.
+Table `enseignants` (login, affiche, mdp = empreinte PBKDF2). Pour l'instant un seul compte : identifiant `helene`
+(« Hélène » ; majuscules et accents ignorés). Vérification par le serveur (`/api/ens/connexion`, 8 essais / 30 min).
+Première connexion de `helene` : si un code de maîtresse avait déjà été choisi (ancienne table `reglages`, clé `ens`),
+il devient son mot de passe ; sinon l'ancien code (empreintes `window.ENS_CODES` de `commun/enseignante.js`, préfixe
+`cm1cm2-ens|`) lui fait choisir son mot de passe (6 caractères au moins). Jamais de mot de passe en clair dans le dépôt.
+- Sans « Rester connectée » : session de l'onglet (sessionStorage `crayonnade-ens` + `cm1cm2-ens`), refermée après
+  20 minutes sans action, 3 h au plus côté serveur.
+- « Rester connectée sur cet appareil » : localStorage `crayonnade-ens-appareil` (jeton, nom, fin), 30 jours.
+- Sans serveur (tests, pas de connexion) : la porte vérifie `ENS_CODES` ; seuls les outils locaux s'ouvrent.
+- « Verrouiller » / « Se déconnecter » referme ; `/api/ens/nouveau-code` change le mot de passe (page de l'espace).
+- Plus tard (vente) : d'autres lignes dans `enseignants`, et des comptes élèves rattachés à une classe.

@@ -147,7 +147,19 @@ with sync_playwright() as p:
     if outils:
         print("4b. Outils de l'enseignante (code de la maîtresse)")
         page.goto(BASE + "index.html")
-        ok(page.locator(".ens-outils a").count() == len(outils), f"{len(outils)} outil(s) dans l'Espace enseignante")
+        espace = (COPIE / "enseignante" / "index.html").exists()
+        ok(page.locator(".ens-outils a").count() == len(outils) + espace, f"{len(outils)} outil(s) dans l'Espace enseignante" + (" + « Mon Espace enseignante »" if espace else ""))
+        if espace:
+            errs = []
+            pg = ctx.new_page()
+            pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
+            pg.goto(BASE + "enseignante/index.html"); pg.wait_for_load_state("networkidle")
+            sans_classe = pg.locator("#cmg-gate").count() == 0 and pg.locator("#ens-gate").is_visible()
+            ouvrir_ens(pg)
+            liens = pg.locator(".outil").count()
+            ok(sans_classe and pg.locator("#ens-gate").count() == 0 and liens >= 4 and not errs,
+               f"« Mon Espace enseignante » : porte de l'enseignante seule={sans_classe}, {liens} outils, erreurs={errs[:2]}")
+            pg.close()
         for slug in outils:
             errs = []
             pg = ctx.new_page()
