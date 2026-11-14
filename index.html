@@ -147,6 +147,27 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
 @keyframes mx-trip{0%{transform:rotate(0)}14%{transform:rotate(9deg)}38%{transform:translateX(-4px) rotate(-64deg)}48%{transform:translateX(-4px) rotate(-56deg)}58%{transform:translateX(-4px) rotate(-64deg)}78%{transform:rotate(6deg)}90%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
 @media (max-width:420px){.mascot{width:84px}.tagline{font-size:1rem}}
 @media (prefers-reduced-motion: reduce){.mx-sway,.mx-wave,.mx-eyes,.mascot .mx-doll,.mascot.tripping .mx-trip{animation:none}}
+/* Les humeurs de la mascotte : son visage et ses bras changent selon ce qu'il dit (classe h-… sur le bouton) */
+.mascot .mx-h{display:none}
+.mascot.h-fache .mx-h-fache,.mascot.h-rire .mx-h-rire,.mascot.h-dodo .mx-h-dodo,.mascot.h-sournois .mx-h-sournois,.mascot.h-cherche .mx-h-cherche,.mascot.h-fier .mx-h-fier{display:inline}
+.mascot.h-fache .mx-sourcils,.mascot.h-sournois .mx-sourcils,.mascot.h-fache .mx-bouche,.mascot.h-rire .mx-bouche,.mascot.h-dodo .mx-bouche,.mascot.h-sournois .mx-bouche,.mascot.h-fache .mx-wave,.mascot.h-rire .mx-eyes{display:none}
+.mascot .mx-regle{transform-origin:79px 90px;animation:mx-tape .42s ease-in-out infinite alternate}
+.mascot.h-rire .mx-sway{animation:mx-rire .3s ease-in-out infinite alternate}
+.mascot.h-fier .mx-sway{animation:mx-fier 1.1s ease-in-out infinite alternate}
+.mascot.h-dodo .mx-sway{animation-duration:6s}
+.mascot.h-dodo .mx-eyes{animation:none}
+.mascot.h-cherche .mx-pupilles{animation:mx-regard 1.8s ease-in-out infinite}
+.mascot.h-sournois .mx-pupilles{transform:translateX(2px)}
+.mascot .mx-bulle{animation:mx-flotte 1.6s ease-in-out infinite}
+.mascot .mx-etoiles path{transform-box:fill-box;transform-origin:center;animation:mx-brille .9s ease-in-out infinite alternate}
+.mascot .mx-etoiles path:nth-child(2){animation-delay:-.45s}
+@keyframes mx-tape{from{transform:rotate(-14deg)}to{transform:rotate(10deg)}}
+@keyframes mx-rire{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-3px) rotate(3deg)}}
+@keyframes mx-fier{from{transform:scale(1)}to{transform:translateY(-2px) scale(1.05)}}
+@keyframes mx-regard{0%,100%{transform:translateX(-2.5px)}50%{transform:translateX(2.5px)}}
+@keyframes mx-flotte{0%,100%{transform:translateY(0);opacity:.85}50%{transform:translateY(-4px);opacity:1}}
+@keyframes mx-brille{from{opacity:.35;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}
+@media (prefers-reduced-motion: reduce){.mascot .mx-regle,.mascot.h-rire .mx-sway,.mascot.h-fier .mx-sway,.mascot.h-cherche .mx-pupilles,.mascot .mx-bulle,.mascot .mx-etoiles path{animation:none}}
 @media (prefers-reduced-motion: reduce){.card,.game{transition:none}.card:hover,.game:hover{transform:none}}
 @media (max-width:420px){.game{flex-wrap:wrap}.play{margin-left:auto}}
 </style>
@@ -178,21 +199,33 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
             <path d="M41 93 Q31 98 28.5 107" stroke="#1a2358" stroke-width="3.2" fill="none" stroke-linecap="round"/>
             <circle cx="28" cy="109.5" r="3.8" fill="#1a2358"/>
             <g class="mx-wave"><path d="M79 90 Q90 85 93.5 73" stroke="#1a2358" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="94" cy="70.5" r="3.8" fill="#1a2358"/></g>
+            <g class="mx-h mx-h-fache"><g class="mx-regle"><path d="M79 90 Q90 85 93.5 73" stroke="#1a2358" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+              <g transform="translate(94 70.5) rotate(-28)"><rect x="-3.2" y="-36" width="6.4" height="40" rx="1.3" fill="#ffe08a" stroke="#c99a1e" stroke-width=".8"/><path d="M-3.2 -31 h2.6 M-3.2 -27 h1.6 M-3.2 -23 h2.6 M-3.2 -19 h1.6 M-3.2 -15 h2.6 M-3.2 -11 h1.6 M-3.2 -7 h2.6" stroke="#9a7414" stroke-width=".6"/></g>
+              <circle cx="94" cy="70.5" r="3.8" fill="#1a2358"/></g></g>
             <rect x="40" y="44" width="40" height="76" fill="url(#mx-body)"/>
             <path d="M60 4 L40 44 Q46.67 52 53.33 44 Q60 52 66.67 44 Q73.33 52 80 44 Z" fill="url(#mx-wood)"/>
             <path d="M60 4 L54.5 15 Q60 17.5 65.5 15 Z" fill="#3b3e4c"/>
             <path d="M58.6 8.5 L57 12" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity=".6"/>
-            <path d="M46.5 56 q4.5 -3.5 9 -1.2 M64.5 53.2 q4.5 -1.6 9 1.6" stroke="#1a2358" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+            <path class="mx-sourcils" d="M46.5 56 q4.5 -3.5 9 -1.2 M64.5 53.2 q4.5 -1.6 9 1.6" stroke="#1a2358" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+            <path class="mx-h mx-h-fache" d="M46 53 L56.5 58 M74 53 L63.5 58" stroke="#1a2358" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+            <path class="mx-h mx-h-sournois" d="M46.5 57 q4.5 -1.5 9 .5 M64.5 51.5 q4.5 -3.5 9 0" stroke="#1a2358" stroke-width="1.8" fill="none" stroke-linecap="round"/>
             <g class="mx-eyes">
               <ellipse cx="51.5" cy="64" rx="5.3" ry="6.2" fill="#ffffff" stroke="#1a2358" stroke-width="1.2"/>
               <ellipse cx="68.5" cy="64" rx="5.3" ry="6.2" fill="#ffffff" stroke="#1a2358" stroke-width="1.2"/>
-              <circle cx="53" cy="65.2" r="2.7" fill="#1a2358"/><circle cx="67" cy="65.2" r="2.7" fill="#1a2358"/>
-              <circle cx="53.8" cy="64.2" r=".9" fill="#ffffff"/><circle cx="67.8" cy="64.2" r=".9" fill="#ffffff"/>
+              <g class="mx-pupilles"><circle cx="53" cy="65.2" r="2.7" fill="#1a2358"/><circle cx="67" cy="65.2" r="2.7" fill="#1a2358"/>
+              <circle cx="53.8" cy="64.2" r=".9" fill="#ffffff"/><circle cx="67.8" cy="64.2" r=".9" fill="#ffffff"/></g>
             </g>
+            <path class="mx-h mx-h-rire" d="M46.5 65.5 Q51.5 58.5 56.5 65.5 M63.5 65.5 Q68.5 58.5 73.5 65.5" stroke="#1a2358" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path class="mx-h mx-h-dodo" d="M46.2 64.5 a5.3 6.2 0 0 1 10.6 0 Z M63.2 64.5 a5.3 6.2 0 0 1 10.6 0 Z" fill="#f5c518" stroke="#1a2358" stroke-width="1.2" stroke-linejoin="round"/>
+            <path class="mx-h mx-h-sournois" d="M46.2 63 a5.3 5 0 0 1 10.6 0 Z M63.2 63 a5.3 5 0 0 1 10.6 0 Z" fill="#f5c518" stroke="#1a2358" stroke-width="1.2" stroke-linejoin="round"/>
             <ellipse cx="46" cy="73" rx="3.3" ry="2.1" fill="#ff7f9c" opacity=".75"/>
             <ellipse cx="74" cy="73" rx="3.3" ry="2.1" fill="#ff7f9c" opacity=".75"/>
-            <path d="M53.5 72 Q60 81.5 66.5 72 Z" fill="#1a2358"/>
-            <ellipse cx="60" cy="75" rx="2.7" ry="1.3" fill="#ff8fa3"/>
+            <g class="mx-bouche"><path d="M53.5 72 Q60 81.5 66.5 72 Z" fill="#1a2358"/>
+            <ellipse cx="60" cy="75" rx="2.7" ry="1.3" fill="#ff8fa3"/></g>
+            <path class="mx-h mx-h-fache" d="M54 78 Q60 72.5 66 78" stroke="#1a2358" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <g class="mx-h mx-h-rire"><path d="M51.5 70.5 Q60 86 68.5 70.5 Z" fill="#1a2358"/><ellipse cx="60" cy="78" rx="3.8" ry="2.1" fill="#ff8fa3"/></g>
+            <ellipse class="mx-h mx-h-dodo" cx="60" cy="75.5" rx="2.8" ry="3.4" fill="#1a2358"/>
+            <path class="mx-h mx-h-sournois" d="M53.5 74.5 Q61 79.5 67 71.5" stroke="#1a2358" stroke-width="2" fill="none" stroke-linecap="round"/>
             <path d="M41 80 Q60 96 79 80" stroke="#8a6d1f" stroke-width="1" fill="none"/>
             <g transform="translate(48.6 85.1)"><g class="mx-doll d1"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#f1c7a3"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#7a4a26"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#2b45c8"/></g></g>
             <g transform="translate(56.2 87.7)"><g class="mx-doll d2"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#e0ac7e"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#1a2358"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#2fa84f"/></g></g>
@@ -200,6 +233,10 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
             <g transform="translate(71.4 85.1)"><g class="mx-doll d4"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#b67a52"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#3a2a18"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#f76b15"/></g></g>
             <g transform="translate(72.5 104) rotate(-32)"><rect x="-6.5" y="-2.4" width="13" height="4.8" rx="2.4" fill="#f6d2ae" stroke="#d6a274" stroke-width=".6"/><rect x="-2.2" y="-2.4" width="4.4" height="4.8" fill="#ecb98a"/></g>
             <text x="60" y="115" text-anchor="middle" font-family="'Baloo 2','Arial Rounded MT Bold',sans-serif" font-weight="800" font-size="9.5" fill="#1a2358">HB</text>
+            <text class="mx-h mx-h-rire mx-bulle" x="97" y="40" text-anchor="middle" font-family="'Baloo 2','Arial Rounded MT Bold',sans-serif" font-weight="800" font-size="8.6" fill="#c2365e">ha ! ha !</text>
+            <text class="mx-h mx-h-dodo mx-bulle" x="97" y="42" text-anchor="middle" font-family="'Baloo 2','Arial Rounded MT Bold',sans-serif" font-weight="800" font-size="11" fill="#2b45c8">z Z</text>
+            <text class="mx-h mx-h-cherche mx-bulle" x="96" y="44" text-anchor="middle" font-family="'Baloo 2','Arial Rounded MT Bold',sans-serif" font-weight="800" font-size="17" fill="#2b45c8">?</text>
+            <g class="mx-h mx-h-fier mx-etoiles"><path d="M22 36 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 Z" fill="#f5c518"/><path d="M99 28 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 Z" fill="#c2365e"/></g>
           </g></g>
         </svg>
       </button>
@@ -762,34 +799,42 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     LIVE.forEach(it => { it.parts = makeParts(SEA(), it.cv.closest('.banner') ? 22 : 12); paint(it); });
   });
   /* ---------- La mascotte : un crayon HB maladroit ---------- */
+  /* Chaque phrase a son humeur : trebuche (il tombe), rire, fache (avec sa règle), dodo, sournois, cherche, fier */
   const MX_LINES = [
-    'Oups ! J\'ai encore trébuché…',
-    'Quelqu\'un a vu ma tarte au citron meringuée ?',
-    'Le comble pour un crayon ? Avoir mauvaise mine !',
-    'Pas de bêtises, sinon je te taille en pointe !',
-    'Oui, il faut copier la consigne !',
-    'Non, le nourrisson n\'est pas le petit du hérisson !',
-    'Mon collier ? Ce sont d\'anciens élèves… Ils sèchent dans mon grenier.',
-    'Pas avant mon café !',
-    'Pourquoi le livre de maths est-il triste ? Parce qu\'il a trop de problèmes !',
-    'Il faut recopier ce qui est écrit au tableau ? Non, c\'est pour décorer le tableau…',
-    'On dit rhinocéros, pas ronicéros !',
-    'On ne dit pas « du coup », mais « par conséquent », « subséquemment » ou « donc » !',
-    'Attention, je tire les oreilles jusqu\'à la gare !',
-    'Que dit le 0 au 8 ? Jolie ceinture !',
-    'Bien sûr que oui, il faut prendre la correction !',
-    'Je suis un crayon HB : ni trop dur, ni trop tendre.',
-    'Pourquoi les crayons se couchent-ils tôt ? Pour avoir bonne mine le lendemain !',
-    'Encore une bonne réponse… Je vais avoir besoin d\'une sieste !',
-    'Le stylo est jaloux de moi : j\'ai une gomme pour réparer mes bêtises !',
-    'Avec Crayonnade, tu progresses à chaque jeu !'
+    ['Oups ! J\'ai encore trébuché…', 'trebuche'],
+    ['Quelqu\'un a vu ma tarte au citron meringuée ?', 'cherche'],
+    ['Le comble pour un crayon ? Avoir mauvaise mine !', 'rire'],
+    ['Pas de bêtises, sinon je te taille en pointe !', 'fache'],
+    ['Oui, il faut copier la consigne !', 'fache'],
+    ['Non, le nourrisson n\'est pas le petit du hérisson !', 'fache'],
+    ['Mon collier ? Ce sont d\'anciens élèves… Ils sèchent dans mon grenier.', 'sournois'],
+    ['Pas avant mon café !', 'dodo'],
+    ['Pourquoi le livre de maths est-il triste ? Parce qu\'il a trop de problèmes !', 'rire'],
+    ['Il faut recopier ce qui est écrit au tableau ? Non, c\'est pour décorer le tableau…', 'fache'],
+    ['On dit rhinocéros, pas ronicéros !', 'fache'],
+    ['On ne dit pas « du coup », mais « par conséquent », « subséquemment » ou « donc » !', 'fache'],
+    ['Si je m\'aperçois que tu as mis 2 P à apigeonner, je t\'apostrophe, je t\'aplatis, je t\'aplanis, et tout ceci sans m\'apitoyer ni m\'apaiser.', 'fache'],
+    ['Attention, je tire les oreilles jusqu\'à la gare !', 'fache'],
+    ['Que dit le 0 au 8 ? Jolie ceinture !', 'rire'],
+    ['Bien sûr que oui, il faut prendre la correction !', 'fache'],
+    ['Je suis un crayon HB : ni trop dur, ni trop tendre.', 'fier'],
+    ['Pourquoi les crayons se couchent-ils tôt ? Pour avoir bonne mine le lendemain !', 'rire'],
+    ['Encore une bonne réponse… Je vais avoir besoin d\'une sieste !', 'dodo'],
+    ['Le stylo est jaloux de moi : j\'ai une gomme pour réparer mes bêtises !', 'fier'],
+    ['Avec Crayonnade, tu progresses à chaque jeu !', 'fier']
   ];
-  let mxLine = -1;
+  const MX_HUMEURS = ['h-fache', 'h-rire', 'h-dodo', 'h-sournois', 'h-cherche', 'h-fier'];
+  let mxLine = -1, mxFin = null;
   $('mascot').addEventListener('click', () => {
     const m = $('mascot');
     mxLine = (mxLine + 1) % MX_LINES.length;
-    $('bubble').textContent = MX_LINES[mxLine];
-    m.classList.remove('tripping'); void m.getBoundingClientRect(); m.classList.add('tripping');
+    const [texte, humeur] = MX_LINES[mxLine];
+    $('bubble').textContent = texte;
+    m.classList.remove('tripping', ...MX_HUMEURS);
+    void m.getBoundingClientRect();
+    clearTimeout(mxFin);
+    if (humeur === 'trebuche') m.classList.add('tripping');
+    else { m.classList.add('h-' + humeur); mxFin = setTimeout(() => m.classList.remove('h-' + humeur), 6000); }
   });
   $('mascot').addEventListener('animationend', e => { if (e.animationName === 'mx-trip') $('mascot').classList.remove('tripping'); });
   window.addEventListener('hashchange', render);
