@@ -243,6 +243,9 @@ with sync_playwright() as pw:
     ok(attendre(m4, "() => !document.getElementById('ens-gate') && /Juju37/.test(document.getElementById('liste').textContent)"), "rester connectée : un autre onglet s'ouvre sans rien retaper")
     m4.goto(BASE + "jeux/la-division/index.html"); m4.wait_for_load_state("networkidle"); m4.wait_for_timeout(1200)
     ok(m4.locator("#teacherLink").is_visible(), "rester connectée : le bouton des jeux est visible")
+    m4.goto(BASE + "index.html"); m4.wait_for_load_state("networkidle"); m4.wait_for_timeout(1500)
+    ok(m4.locator("#cmg-gate").count() == 0 and m4.locator("#cmp-porte").count() == 0 and m4.locator("#cmp-joueur .cmp-espace").count() == 1,
+       "maîtresse connectée : le portail s'ouvre sans code de la classe ni « Qui joue ? », avec « ★ Mon Espace enseignante »")
     m4.goto(BASE + "enseignante/index.html"); m4.wait_for_load_state("networkidle")
     m4.fill("#mdp1", "autre-mdp-7"); m4.fill("#mdp2", "AUTREMDP7"); m4.click("#formMdp button")
     ok(attendre(m4, "() => /changé/.test(document.getElementById('msgMdp').textContent)"), "changer le mot de passe")

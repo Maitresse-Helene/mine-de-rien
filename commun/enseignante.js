@@ -128,7 +128,7 @@ window.ENS_CODES = ["1qpuhkkjl3o"];
     '<form novalidate class="ens-form">' +
     '<input id="ens-login" name="login" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Identifiant" style="flex:1 1 100% !important;text-transform:none!important">' +
     '<input id="ens-input" name="code" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Mot de passe" style="flex:1 1 100% !important;text-transform:none!important">' +
-    '<label class="ens-rester"><input type="checkbox" id="ens-rester"> Rester connectée sur cet appareil (seulement sur mon appareil à moi)</label>' +
+    '<label class="ens-rester"><input type="checkbox" id="ens-rester" checked> Rester connectée sur cet appareil (seulement sur mon appareil à moi)</label>' +
     '<button type="submit">Entrer</button></form>' +
     '<p class="cmg-error" id="ens-error" role="alert"></p>' +
     '<p class="cmg-note"><a href="' + (/\/enseignante\/?(index\.html)?$/.test(location.pathname) ? "../index.html" : "../../index.html") + '" style="color:inherit">← Revenir aux jeux</a></p></div>';

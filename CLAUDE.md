@@ -159,4 +159,8 @@ il devient son mot de passe ; sinon l'ancien code (empreintes `window.ENS_CODES`
 - « Rester connectée sur cet appareil » : localStorage `crayonnade-ens-appareil` (jeton, nom, fin), 30 jours.
 - Sans serveur (tests, pas de connexion) : la porte vérifie `ENS_CODES` ; seuls les outils locaux s'ouvrent.
 - « Verrouiller » / « Se déconnecter » referme ; `/api/ens/nouveau-code` change le mot de passe (page de l'espace).
+- « Rester connectée » est coché d'office. Maîtresse connectée (C.maitresse) : ni code de la classe ni « Qui joue ? »
+  sur le portail et dans les jeux, badge « ★ Mon Espace enseignante » à la place du badge élève.
+- Mot de passe oublié : changer `REMISE_A_ZERO_ENS` dans `functions/api/[[chemin]].js` et publier ; à la connexion
+  suivante, `helene` + l'ancien code (ENS_CODES) fait choisir un nouveau mot de passe. Remis à zéro le 14/11/2026.
 - Plus tard (vente) : d'autres lignes dans `enseignants`, et des comptes élèves rattachés à une classe.

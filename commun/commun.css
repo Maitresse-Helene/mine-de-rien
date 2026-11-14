@@ -60,3 +60,5 @@ html.cmp-connecte #changeName{display:none!important}
 @media print{#cmp-joueur{display:none}}
 #allgames a{white-space:nowrap}
 @media (max-width:480px){#cmp-joueur.cmp-dans-nav .cmp-qui{display:none}}
+#cmp-joueur .cmp-espace{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;background:#c2365e;color:#fff;font:700 .8rem/1 "Lexend",system-ui,sans-serif;text-decoration:none;white-space:nowrap}
+#cmp-joueur .cmp-espace:focus-visible{outline:3px solid #2b45c8;outline-offset:2px}

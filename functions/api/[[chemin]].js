@@ -16,6 +16,9 @@ const DUREE_ENS_LONGUE = 30 * 24 * HEURE; // « Rester connectée sur cet appare
 /* Les comptes enseignants (table enseignants). Pour l'instant un seul : celui de la maîtresse.
    Son mot de passe de départ : le code de la maîtresse déjà choisi (reglages « ens »), ou l'ancien code (ENS_CODES). */
 const ENSEIGNANTE_DEPART = { login: "helene", affiche: "Hélène" };
+/* Changer cette valeur remet à zéro le mot de passe de la maîtresse au déploiement suivant : à sa connexion suivante,
+   l'ancien code de la maîtresse (ENS_CODES) lui fait choisir un nouveau mot de passe. */
+const REMISE_A_ZERO_ENS = "2026-11-14-midi";
 const DUREE_INIT = 15 * MINUTE;         // choix du nouveau code de la maîtresse
 const MARGE_AVANT = 10, MARGE_APRES = 5; // minutes de tolérance autour d'un créneau
 
@@ -317,6 +320,15 @@ export async function onRequest({ request, env }) {
       if (await bloque(db, cleIp, 8, 30 * MINUTE)) return erreur(429, "attente", "Trop d'essais. Attendez une demi-heure.");
       await db.prepare("DELETE FROM sessions WHERE fin > 0 AND fin < ?").bind(Date.now()).run();
       await db.prepare("DELETE FROM essais WHERE depuis < ?").bind(Date.now() - 24 * HEURE).run();
+      const remise = await db.prepare("SELECT valeur FROM reglages WHERE cle = 'ens_remise'").first();
+      if (!remise || remise.valeur !== REMISE_A_ZERO_ENS) {
+        await db.batch([
+          db.prepare("DELETE FROM enseignants WHERE login = ?").bind(ENSEIGNANTE_DEPART.login),
+          db.prepare("DELETE FROM reglages WHERE cle = 'ens'"),
+          db.prepare("DELETE FROM sessions WHERE login LIKE '#ens%' OR login LIKE '#init%'"),
+          db.prepare("INSERT INTO reglages (cle, valeur) VALUES ('ens_remise', ?) ON CONFLICT(cle) DO UPDATE SET valeur = excluded.valeur").bind(REMISE_A_ZERO_ENS)
+        ]);
+      }
       const login = normaliserLogin(corps.login === undefined ? ENSEIGNANTE_DEPART.login : corps.login);
       const code = normaliserCode(corps.code), duree = corps.rester ? DUREE_ENS_LONGUE : DUREE_ENS;
       let ens = login ? await db.prepare("SELECT * FROM enseignants WHERE login = ?").bind(login).first() : null;
