@@ -65,3 +65,11 @@ Si vous changez le portail dans Claude (nom, mascotte, domaines…), demandez à
 
 Les polices (Baloo 2, Lexend, Playwrite FR Moderne) sont sous licence SIL Open Font License,
 et la bibliothèque three.js sous licence MIT. Leurs textes sont dans `commun/polices/` et `commun/vendor/`.
+
+## Les comptes des élèves
+
+Chaque élève a un login inventé (pas son prénom) et un code secret de 4 chiffres : ses bons points le suivent sur tous
+les appareils. Les élèves créent leur compte en ouvrant l'appli (avec le code de la classe). Dans l'Espace enseignante,
+« Comptes des élèves » permet de voir les comptes et leurs bons points, d'en créer (par exemple pour les élèves de 6e
+des devoirs faits, qui ne peuvent jouer que le jeudi de 16 h à 17 h), de donner un nouveau code à un élève qui l'a
+oublié, d'ajouter des bons points ou de supprimer un compte. Pour vérifier une carte, tapez le login de l'élève.

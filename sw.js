@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-14-103249';
+const VERSION = '2026-11-14-111526';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -26,6 +26,7 @@ const FICHIERS = [
   "commun/vendor/three.min.js",
   "enseignante/ajouter-des-bons-points/index.html",
   "enseignante/code-apc/index.html",
+  "enseignante/comptes-des-eleves/index.html",
   "enseignante/verifier-une-carte-de-bons-points/index.html",
   "icones/apple-touch-icon.png",
   "icones/icone-192.png",
@@ -128,6 +129,7 @@ self.addEventListener('fetch', event => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return; /* comptes élèves : toujours le serveur, jamais de copie */
   if (req.mode === 'navigate') {
     /* Pages : on suit nous-mêmes la redirection de l'hébergeur et on renvoie une réponse propre,
        toujours fraîche quand le réseau répond, sinon la copie gardée. */

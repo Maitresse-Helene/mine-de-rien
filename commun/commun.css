@@ -11,3 +11,52 @@
 
 /* « Envoyer mon score à la maîtresse » (formulaire Google) : pas proposé dans l'appli (demande de l'enseignante, 14/11/2026). */
 .send-box{display:none!important}
+
+/* Lien « Espace enseignante » en bas des jeux : les outils sont dans l'Espace enseignante du portail (demande du 14/11/2026). */
+#teacherLink{display:none!important}
+
+/* ===== Comptes élèves (commun.js, sections 1c et 5) ===== */
+/* Élève connecté : le jeu reste sur son login (pas de « Ce n'est pas moi »). */
+html.cmp-connecte #changeName{display:none!important}
+/* Lien « J'ai un compte » dans la porte du code de la classe */
+#cmg-gate .cmg-compte{font-size:15px}
+#cmg-gate .cmg-compte a{color:#2b45c8;font-weight:700;text-underline-offset:3px}
+/* La fenêtre des comptes */
+#cmp-porte{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;background-color:#f6f7fd;background-image:linear-gradient(to bottom,#cad1ef 1px,transparent 1px),linear-gradient(to right,#cad1ef 1px,transparent 1px),linear-gradient(to bottom,#e4e8f7 1px,transparent 1px);background-size:100% 32px,32px 100%,100% 8px;color:#1a2358;font-family:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.5;text-align:left;color-scheme:light}
+#cmp-porte *{box-sizing:border-box;margin:0;letter-spacing:normal;text-transform:none}
+#cmp-porte .cmp-carte{width:100%;max-width:440px;margin:auto;background:#fff;border:1.5px solid #ccd3f0;border-radius:20px;box-shadow:0 4px 0 #b5bee6;padding:24px 22px 20px;display:flex;flex-direction:column;gap:14px}
+#cmp-porte .cmp-sur{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5a628f}
+#cmp-porte .cmp-titre{font:800 28px/1.15 "Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;color:#1a2358}
+#cmp-porte .cmp-texte{font-size:15.5px;color:#3a4270}
+#cmp-porte .cmp-gros{font:800 22px/1.4 "Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;color:#2b45c8;letter-spacing:.03em}
+#cmp-porte .cmp-joueurs{display:flex;flex-wrap:wrap;gap:10px}
+#cmp-porte .cmp-joueur{border:2px solid #2b45c8;background:#eef1fd;color:#1a2358;border-radius:999px;padding:9px 18px;font:800 19px/1.1 "Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;cursor:pointer}
+#cmp-porte .cmp-actions{display:flex;flex-direction:column;gap:10px}
+#cmp-porte .cmp-btn{height:50px;padding:0 22px;border:0;border-radius:999px;background:#2b45c8;color:#fff;font:800 19px/1 "Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 0 #1a2358}
+#cmp-porte .cmp-btn2{background:#fff;color:#2b45c8;border:2px solid #2b45c8;box-shadow:0 3px 0 #b5bee6}
+#cmp-porte .cmp-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #1a2358}
+#cmp-porte .cmp-btn:disabled{opacity:.5;cursor:default}
+#cmp-porte .cmp-form{display:flex;flex-direction:column;gap:8px}
+#cmp-porte .cmp-label{font:800 17px/1.2 "Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;margin-top:4px}
+#cmp-porte .cmp-ligne{display:flex;gap:10px;flex-wrap:wrap}
+#cmp-porte .cmp-ligne input{flex:1 1 140px}
+#cmp-porte input{height:50px;min-width:0;width:100%;padding:0 14px;border:2px solid #ccd3f0;border-radius:14px;background:#fff;color:#1a2358;font:700 21px/1 "Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;letter-spacing:.04em;outline:none;-webkit-appearance:none;appearance:none}
+#cmp-porte .cmp-ligne input{width:auto}
+#cmp-porte input:focus{border-color:#2b45c8;box-shadow:0 0 0 3px rgba(43,69,200,.2)}
+#cmp-porte .cmp-aide{font-size:13.5px;color:#5a628f}
+#cmp-porte .cmp-erreur{min-height:1.4em;font-size:15px;font-weight:600;color:#b02a50}
+#cmp-porte .cmp-erreur:empty{min-height:0}
+#cmp-porte .cmp-note{padding-top:12px;border-top:1.5px dashed #ccd3f0;font-size:13.5px;color:#5a628f}
+#cmp-porte .cmp-lien{border:0;background:none;padding:0;color:#2b45c8;font:700 13.5px "Lexend",system-ui,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+#cmp-porte button:focus-visible,#cmp-porte input:focus-visible{outline:3px solid #2b45c8;outline-offset:2px}
+/* Le badge « Juju37 · Changer de joueur » */
+#cmp-joueur{display:flex;align-items:center;gap:8px;font:600 .85rem/1 "Lexend",system-ui,sans-serif;color:#1a2358}
+#cmp-joueur.cmp-dans-nav{margin-left:auto}
+#cmp-joueur.cmp-flottant{position:fixed;top:max(8px,env(safe-area-inset-top,0px));right:max(8px,env(safe-area-inset-right,0px));z-index:60;padding:4px 4px 4px 10px;border-radius:999px;background:rgba(255,255,255,.92);border:1.5px solid #c9d1f0;box-shadow:0 2px 0 #c9d1f0}
+#cmp-joueur .cmp-qui{white-space:nowrap}
+#cmp-joueur button{border:1.5px solid #c9d1f0;background:#fff;color:#2b45c8;border-radius:999px;padding:7px 11px;font:700 .8rem/1 "Lexend",system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+#cmp-joueur button:focus-visible{outline:3px solid #2b45c8;outline-offset:2px}
+@media (max-width:380px){#cmp-joueur .cmp-qui{display:none}}
+@media print{#cmp-joueur{display:none}}
+#allgames a{white-space:nowrap}
+@media (max-width:480px){#cmp-joueur.cmp-dans-nav .cmp-qui{display:none}}

@@ -199,6 +199,41 @@ def preparer_page(html, domaine, artefacts, alertes):
     return html
 
 
+CONFIG_RE = re.compile(r"<script>window\.CMG_JEU=.*?;</script>\n?", re.S)
+
+
+def avec_config(page, entree, alertes=None):
+    """Écrit dans la page du jeu ce que les comptes élèves (commun.js, section 1c) doivent savoir de lui :
+    sa clé de stockage, la façon de faire la clé d'un prénom et le profil d'un nouveau joueur."""
+    conf = {k: entree[k] for k in ("slug", "stockage", "cle", "profilNeuf") if k in entree}
+    page = CONFIG_RE.sub("", page)
+    if "stockage" not in conf:
+        return page
+    ligne = ("<script>window.CMG_JEU=" + json.dumps(conf, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+             + ";</script>\n")
+    if LIENS_COMMUNS not in page:
+        if alertes is not None:
+            alertes.append("liens vers commun/ introuvables : les comptes élèves ne connaîtront pas ce jeu")
+        return page
+    return page.replace(LIENS_COMMUNS, ligne + LIENS_COMMUNS, 1)
+
+
+def reconfigurer_tout():
+    """Réécrit la ligne window.CMG_JEU de tous les jeux, d'après jeux.js."""
+    n = 0
+    for j in lire_jeux():
+        f = RACINE / "jeux" / j["slug"] / "index.html"
+        if not f.exists():
+            print("  ATTENTION : page introuvable pour", j["slug"])
+            continue
+        avant = f.read_text(encoding="utf8")
+        apres = avec_config(avant, j)
+        if apres != avant:
+            f.write_text(apres, encoding="utf8")
+            n += 1
+    print(f"{n} jeu(x) mis à jour (window.CMG_JEU)")
+
+
 def integrer_outil(a, html, titre, slug):
     artefacts = lire_artefacts()
     ident = id_artefact(a.artefact)
@@ -226,7 +261,7 @@ def integrer_outil(a, html, titre, slug):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("fichier", help="la page HTML du jeu")
+    p.add_argument("fichier", nargs="?", help="la page HTML du jeu")
     p.add_argument("--domaine", help="clé du domaine (ex. calcul-mental, orthographe) ; obligatoire pour un jeu")
     p.add_argument("--desc", help="la phrase qui décrit le jeu dans le portail ; obligatoire pour un jeu")
     p.add_argument("--outil", action="store_true", help="outil de l'enseignante : enseignante/<slug>/, hors liste des jeux")
@@ -235,7 +270,18 @@ def main():
     p.add_argument("--ajoute", help="date d'ajout AAAA-MM-JJTHH:MM (par défaut : maintenant)")
     p.add_argument("--artefact", help="lien ou identifiant de l'artefact Claude d'origine")
     p.add_argument("--sans-sw", action="store_true", help="ne pas mettre à jour sw.js (lot de jeux)")
+    p.add_argument("--reconfigurer", action="store_true",
+                   help="réécrire dans tous les jeux la ligne window.CMG_JEU (comptes élèves), d'après jeux.js")
     a = p.parse_args()
+    if a.reconfigurer:
+        reconfigurer_tout()
+        if not a.sans_sw:
+            sys.path.insert(0, str(Path(__file__).parent))
+            import mettre_a_jour_sw
+            mettre_a_jour_sw.main()
+        return
+    if not a.fichier:
+        sys.exit("Indiquez la page HTML du jeu (ou --reconfigurer).")
 
     html = Path(a.fichier).read_text(encoding="utf8")
     titre = a.titre or re.search(r"<title>([^<]*)</title>", html).group(1).strip()
@@ -255,9 +301,6 @@ def main():
 
     alertes = []
     page = preparer_page(html, a.domaine, artefacts, alertes)
-    dossier = RACINE / "jeux" / slug
-    dossier.mkdir(parents=True, exist_ok=True)
-    (dossier / "index.html").write_text(page, encoding="utf8")
 
     jeux = lire_jeux()
     ancien = next((j for j in jeux if j["slug"] == slug), None)
@@ -271,6 +314,10 @@ def main():
     if manque:
         alertes.append("bons points non reconnus (" + ", ".join(manque) + ") : l'outil « Ajouter des bons points » "
                        "et la vérification des cartes risquent de ne pas connaître ce jeu")
+    page = avec_config(page, entree, alertes)
+    dossier = RACINE / "jeux" / slug
+    dossier.mkdir(parents=True, exist_ok=True)
+    (dossier / "index.html").write_text(page, encoding="utf8")
     if ancien:
         jeux[jeux.index(ancien)] = entree
     else:

@@ -22,6 +22,8 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 - `commun/vendor/three.min.js` : three.js r128 (jeu des solides).
 - `sw.js` : généré par `outils/mettre_a_jour_sw.py` (liste hors ligne + version). Ne pas l'éditer à la main.
 - `outils/artefacts.json` : identifiant d'artefact claude.ai → slug (pour réécrire les liens entre jeux).
+- `functions/api/[[chemin]].js` : le serveur des comptes élèves (Cloudflare Pages Functions + base D1 liée sous le
+  nom `DB`). Voir « Les comptes élèves » plus bas. `enseignante/comptes-des-eleves/` : la page de la maîtresse.
 
 ## Ajouter ou mettre à jour un jeu
 
@@ -39,7 +41,9 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
    (`list_artifacts`) et réintègre tous les jeux, le portail et l'outil de vérification modifiés depuis le dernier
    commit de leur page (`updated_at` ou le début du numéro de version = date en secondes). Un artefact peut n'être
    qu'un fragment sans `<head>` : `integrer_jeu.py` ajoute alors l'en-tête (encodage utf-8).
-3. Teste : `python3 outils/tester.py` (Playwright + Chrome). Tout doit être « ok ».
+3. Teste : `python3 outils/tester.py` (Playwright + Chrome). Tout doit être « ok ». Après un changement des comptes
+   (commun.js sections 1c/5, functions/, enseignante.js, page des comptes) : aussi `python3 outils/tester_comptes.py`
+   (vrai serveur local : `npm i wrangler` dans ~/dev).
 4. Nouveau domaine : ajoute-le dans `SUBJECTS[...].domains` et `DOMAINS` de `index.html`
    (avec un univers dans `SCENES`), avant d'intégrer le jeu.
 
@@ -63,6 +67,26 @@ parcours, parc, enseignante: true }`. Le niveau 0 n'existe dans aucun jeu : il n
 « Retirer mes ajouts » n'efface que les points `enseignante: true`. `tester.py` (étape 4d) vérifie que chaque jeu affiche
 ces points sans erreur : si un nouveau jeu échoue, adapte l'outil plutôt que le jeu.
 
+## Les comptes élèves
+
+Depuis le 14/11/2026, chaque élève a un compte : un login inventé (jamais son prénom, pour le RGPD) et un code secret
+de 4 chiffres. Ses bons points sont gardés en ligne et le suivent sur tous les appareils.
+- Serveur : `functions/api/[[chemin]].js` (adresses `/api/...`), base D1 « crayonnade » (juridiction UE) liée au
+  projet Pages `crayonnade` sous le nom `DB`. Les tables se créent seules. Sans base (`DB` absente) ou sans serveur
+  (tests, fichier local), l'appli marche comme avant : tout reste sur l'appareil.
+- Élèves (`commun.js`, sections 1c et 5) : après le code de la classe, « Qui joue ? » (créer mon compte, j'ai déjà un
+  compte, jouer sans compte). Un élève connecté entre sans le code de la classe ; dans un jeu, son profil (clé = login
+  en minuscules, `name` = login) est créé et choisi avant le jeu grâce à `window.CMG_JEU`, que `integrer_jeu.py` écrit
+  dans chaque page (`--reconfigurer` pour réécrire tous les jeux d'après `jeux.js`). Les écritures du jeu dans son
+  stockage partent au serveur (1,5 s après, ou en quittant la page) ; au chargement, la page reprend les données du
+  serveur. Fusion : les `points` des deux côtés sont gardés (sans compter deux fois un même point, en gardant le nombre
+  de points identiques), le reste du profil vient du plus récent. Badge « Changer de joueur » dans la barre des jeux.
+- Comptes « créneau » (élèves de 6e des devoirs faits, jeudi 16 h – 17 h) : créés par la maîtresse, ils n'ouvrent
+  l'appli que pendant le créneau (heure de Paris, 10 min de marge avant), sans code de la classe.
+- Les cartes de bons points d'un élève connecté se vérifient avec son login à la place du prénom.
+- Le formulaire « Envoyer mon score », le lien « Espace enseignante » en bas des jeux et « Ce n'est pas moi » (élève
+  connecté) sont masqués par `commun.css`.
+
 ## Mettre à jour le portail
 
 Le portail existe aussi en artefact (https://claude.ai/artifact/YYHnbnw3vLakiZD2wGVPvF) : l'enseignante le fait
@@ -80,7 +104,7 @@ Dépôt GitHub `Maitresse-Helene/mine-de-rien`, publié par Cloudflare Pages (br
 construction, racine) dans deux projets : `crayonnade` → **https://crayonnade.pages.dev** (l'adresse de l'appli depuis
 le 14/11/2026, celle du QR code) et `mine-de-rien` → https://mine-de-rien.pages.dev (l'ancienne, gardée en route : la section 0 de `commun.js`
 renvoie ses pages vers la même page de crayonnade.pages.dev, sauf hors ligne et sauf les adresses d'essai
-`xxxx.mine-de-rien.pages.dev`). Le stockage (bons points) est propre à chaque adresse. Après les tests, commit et push sur `main` : les deux sites se
+`xxxx.mine-de-rien.pages.dev`). Le stockage (bons points) est propre à chaque adresse ; seule `crayonnade` a la base des comptes. Après les tests, commit et push sur `main` : les deux sites se
 mettent à jour tout seuls (deux vérifications « Cloudflare Pages » sur le commit dans GitHub). Garde aussi à jour le dossier de l'enseignante sur son Mac (Documents/jeux web).
 Cloudflare redirige « .../index.html » vers « .../ » : le service worker suit lui-même ces redirections pour les pages
 (voir `outils/mettre_a_jour_sw.py`), et `outils/tester.py` sert l'appli de la même façon. (GitHub Pages a aussi été
@@ -118,6 +142,9 @@ Pour annuler tous les codes APC déjà donnés : changer le `sel`.
 
 ## Le code de la maîtresse
 
-`window.ENS_CODES` dans `commun/enseignante.js` : les empreintes du code de la maîtresse, même calcul que ci-dessus mais
-avec le préfixe `cm1cm2-ens|` au lieu de `cm1cm2|`. Jamais le code en clair dans le dépôt (il est public). Le code n'est
-retenu que dans l'onglet (sessionStorage), 20 minutes après la dernière action, et le bouton « Verrouiller » referme.
+Il est vérifié par le serveur (`/api/ens/connexion`), qui n'en garde que l'empreinte PBKDF2 (table `reglages`). La
+toute première fois, l'ancien code (empreintes `window.ENS_CODES` de `commun/enseignante.js`, préfixe `cm1cm2-ens|`)
+fait choisir à la maîtresse un nouveau code d'au moins 6 caractères, introuvable à partir du dépôt public. Sans serveur
+(pas de connexion, tests), la porte vérifie `ENS_CODES` sur l'appareil : seuls les outils locaux s'ouvrent alors.
+Jamais de code en clair dans le dépôt. La porte n'est retenue que dans l'onglet (sessionStorage, avec le jeton du
+serveur, 3 h au plus côté serveur), 20 minutes après la dernière action, et « Verrouiller » referme.

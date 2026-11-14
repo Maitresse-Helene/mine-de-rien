@@ -30,8 +30,26 @@ class CommeCloudflare(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def api_absente(self):
+        """Pas de serveur des comptes ici : /api répond « hors service », l'appli marche sur l'appareil seulement
+        (les comptes élèves sont testés à part, par outils/tester_comptes.py)."""
+        corps = b'{"ok": false}'
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(corps)))
+        self.end_headers()
+        self.wfile.write(corps)
+
+    def do_POST(self):
+        return self.api_absente() if self.path.startswith("/api/") else self.send_error(405)
+
+    def do_PUT(self):
+        return self.do_POST()
+
     def do_GET(self):
         chemin, _, requete = self.path.partition("?")
+        if chemin.startswith("/api/"):
+            return self.api_absente()
         if chemin.endswith("/index.html"):
             self.send_response(308)
             self.send_header("Location", chemin[:-len("index.html")] + ("?" + requete if requete else ""))
@@ -46,6 +64,14 @@ BASE = f"http://localhost:{PORT}/"
 CHROME = next((c for c in ["/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"] if os.path.exists(c)), None)
 jeux = json.loads(re.search(r"window\.JEUX = (\[.*\]);", (COPIE / "jeux.js").read_text(encoding="utf8"), re.S).group(1))
 problems = []
+
+def ouvrir_ens(pg, code="test-ens"):
+    """Tape le code de la maîtresse ; la porte vérifie d'abord auprès du serveur, puis se ferme (ou affiche une erreur)."""
+    pg.fill("#ens-input", code); pg.click("#ens-gate button")
+    try:
+        pg.wait_for_function("() => !document.getElementById('ens-gate') || document.getElementById('ens-error').textContent.trim()", timeout=5000)
+    except Exception:
+        pass
 
 def ok(cond, msg):
     print(("  ok   " if cond else "  FAIL ") + msg)
@@ -130,9 +156,10 @@ with sync_playwright() as p:
             pg.goto(BASE + "enseignante/" + slug + "/index.html")
             pg.wait_for_load_state("networkidle")
             porte = pg.locator("#ens-gate").is_visible()
-            pg.fill("#ens-input", "MAUVAIS-CODE"); pg.click("#ens-gate button")
+            ouvrir_ens(pg, "MAUVAIS-CODE")
             refus = pg.locator("#ens-gate").count() == 1 and pg.inner_text("#ens-error").strip() != ""
-            pg.fill("#ens-input", "test-ens"); pg.click("#ens-gate button")
+            pg.evaluate("document.getElementById('ens-error').textContent = ''")
+            ouvrir_ens(pg)
             ouvert = pg.locator("#ens-gate").count() == 0 and pg.locator("#ens-lock").count() == 1
             back = pg.get_attribute("#allgames a", "href")
             ok(porte and refus and ouvert and back == "../../index.html" and not errs,
@@ -145,7 +172,7 @@ with sync_playwright() as p:
             pg = ctx.new_page()
             pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
             pg.goto(BASE + "enseignante/ajouter-des-bons-points/index.html")
-            pg.fill("#ens-input", "test-ens"); pg.click("#ens-gate button")
+            ouvrir_ens(pg)
             pg.fill("#nom", "Léa Test")
             essais = [j for j in jeux if j.get("sel")]
             choix = [essais[0]] + [j for j in essais if j.get("cle") == "apos"][:1]
@@ -179,7 +206,7 @@ with sync_playwright() as p:
         print("4e. Code APC d'une heure")
         pg = ctx.new_page()
         pg.goto(BASE + "enseignante/code-apc/index.html")
-        pg.fill("#ens-input", "test-ens"); pg.click("#ens-gate button")
+        ouvrir_ens(pg)
         code = pg.inner_text("#code").strip()
         ok(len(code) == 4 and "Valable jusqu" in pg.inner_text("#fin"), f"code APC affiché : {code}, " + pg.inner_text("#fin"))
         pg.close()

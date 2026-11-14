@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-EXCLUS_DOSSIERS = {"outils", ".git", ".github", "node_modules"}
+EXCLUS_DOSSIERS = {"outils", ".git", ".github", "node_modules", "functions"}
 EXCLUS_FICHIERS = {"sw.js", "README.md", "CLAUDE.md", ".DS_Store", ".gitignore"}
 EXCLUS_EXTENSIONS = {".md", ".txt", ".py"}
 
@@ -69,6 +69,7 @@ self.addEventListener('fetch', event => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return; /* comptes élèves : toujours le serveur, jamais de copie */
   if (req.mode === 'navigate') {
     /* Pages : on suit nous-mêmes la redirection de l'hébergeur et on renvoie une réponse propre,
        toujours fraîche quand le réseau répond, sinon la copie gardée. */
