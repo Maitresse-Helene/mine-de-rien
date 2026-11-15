@@ -489,6 +489,26 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
 /* ---------- Vérifier son résultat (le mousse étourdi) ---------- */
 .mousse{display:block;margin:8px 0 6px;padding:8px 12px;border-radius:12px;background:var(--div-bg);color:var(--ink);font-family:var(--font-body);font-weight:700;line-height:1.45}
+
+/* ---------- Trier les données : toucher pour surligner ou barrer ---------- */
+.tok{border-radius:7px;padding:1px 0;white-space:nowrap;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-color .15s,opacity .15s,box-shadow .15s}
+.tri-on .tok,.tok.hl,.tok.st{padding:1px 4px}
+.tri-on .tok{cursor:pointer;background:var(--sheet);box-shadow:0 0 0 1.5px var(--key-edge),0 2px 0 var(--key-shadow);touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.tri-on .tok:focus{outline:none}
+.tri-on .tok:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.tok.hl{background:var(--sb);color:var(--sb-ink);box-shadow:0 0 0 1.5px var(--sb-edge)}
+.tri-on .tok.hl{box-shadow:0 0 0 2px var(--sb-edge),0 2px 0 var(--sb-edge)}
+.tok.st{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:3px;opacity:.6}
+.tri-on .tok.st{opacity:.75;background:var(--red-bg);box-shadow:0 0 0 1.5px var(--red)}
+.tri-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.tri-count{color:var(--ink-soft);font-weight:700}
+.tri-bar .tri-ok{width:auto;flex:none;min-height:52px;padding:6px 26px;font-size:1.2rem}
+.ex-cap .tok{font-weight:700}
+
+/* ---------- Le surligneur du tri (la proportionnalité n'avait pas ces couleurs) ---------- */
+:root{ --sb:#fde9b0; --sb-edge:#d29a00; --sb-ink:#4d3900; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --sb:#4a3b10; --sb-edge:#e8b934; --sb-ink:#fff0c4; } }
+:root[data-theme="dark"]{ --sb:#4a3b10; --sb-edge:#e8b934; --sb-ink:#fff0c4; }
 </style>
 
 <div class="app">
@@ -726,6 +746,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>L'île 2 travaille le lien entre les mots et l'opération, dans les deux sens : « fois plus » → ×, « fois moins » → ÷, avec quelques pièges « de plus » / « de moins ».</li>
         <li>Îles 4 et 5 : si l'élève tape l'écart au lieu du rapport (8 − 4 = 4 au lieu de 2 fois), un message lui dit qu'il a calculé un écart. L'indice rappelle de réciter la table à l'envers.</li>
         <li>Vérification : sur environ un problème sur quatre, à partir de l'île 3, le mousse étourdi propose une phrase réponse, juste ou fausse, à contrôler avec les trois questions du détective (la bonne unité ? un nombre possible ? la réponse à la question ?). Comme toutes les erreurs de ce jeu, une erreur à cette étape compte ; elle est aussi notée « vérification à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Mon résultat est-il possible ? ».</li>
+        <li>Trier les données : aux îles 4 et 5, sur environ un problème sur quatre, l'énoncé contient une donnée inutile (parfois deux en parcours orange), que l'élève touche pour la barrer avant de résoudre le problème. Comme toutes les erreurs de ce jeu, une erreur à cette étape compte ; elle est aussi notée « tri des données à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Trier les données d'un problème ».</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
       </ul>
     </div>
@@ -1398,7 +1419,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const c = pick(p.n), o = Object.assign({}, p);
     const f = s => String(s).replace(/\{a\}/g, fmtNum(c[0])).replace(/\{k\}/g, fmtNum(c[1])).replace(/\{f\}/g, fmtNum(c[0])).replace(/\{to\}/g, fmtNum(c[1])).replace(/\{v\}/g, fmtNum(c[2]));
     if (c.length === 2){ o.a = c[0]; o.k = c[1]; } else { o.from = c[0]; o.to = c[1]; o.v = c[2]; }
-    o.t = f(p.t); o.ans = f(p.ans);
+    o.t = f(p.t); o.ans = f(p.ans); o.t0 = p.t;
     return o;
   }
   /* ---------- Vérifier son résultat : les trois questions du détective ----------
@@ -1463,6 +1484,170 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       unit: unitSwap(ans), unitWhy: 'Ce n\'est pas la bonne unité : relis la question.', question: null };
   }
 
+
+  /* ---------- Trier les données : une ou deux données inutiles à barrer (îles 4 et 5) ----------
+     Aux îles 4 et 5, environ un problème sur quatre, tiré au hasard, reçoit une donnée inutile (deux parfois en orange)
+     et commence par « touche les données inutiles pour les barrer ». Comme toutes les erreurs de ce jeu, une erreur
+     à cette étape compte ; elle est aussi notée « tri des données à revoir » et renvoie au jeu « Trier les données d'un problème ».
+     Une donnée inutile : [phrase avec {x}, [min, max], places possibles ('p' : au début ; toujours possible : juste avant la question), raison]. */
+  const DIS4 = {
+    'La farine des crêpes': { j: [['La poêle chauffe pendant {x} minutes.', [3, 8], '']], o: [['Dans le placard, il reste {x} g de farine.', [500, 1000], 'p', 'on demande la farine qu\'il faut, pas celle du placard.']] },
+    'Les cahiers': { j: [['La papeterie ouvre à {x} h.', [8, 10], 'p']], o: [['Un stylo coûte {x} €.', [1, 3], 'p', 'c\'est le prix d\'un stylo, pas celui des cahiers.']] },
+    "L'imprimante": { j: [["L'imprimante pèse {x} kg.", [5, 15], '']], o: [['Hier, elle a imprimé {x} pages.', [100, 400], '', 'ce sont les pages imprimées hier.']] },
+    'Les colliers': { j: [['Léa a {x} ans.', [8, 11], 'p']], o: [['Sa boîte contient {x} perles.', [150, 400], '', 'on demande les perles qu\'il faut, pas celles de la boîte.']] },
+    'Les gâteaux': { j: [['Les gâteaux cuisent pendant {x} minutes.', [25, 45], '']], o: [['Il y a {x} œufs dans le réfrigérateur.', [18, 36], 'p', 'on demande les œufs qu\'il faut, pas ceux du réfrigérateur.']] },
+    "Les bouteilles d'eau": { j: [['La fête commence à {x} h.', [14, 19], 'p']], o: [['Il reste {x} bouteilles de jus dans la cave.', [8, 30], '', 'ce sont des bouteilles de jus, pas d\'eau.']] },
+    'La soupe': { j: [['La soupe cuit pendant {x} minutes.', [20, 45], '']], o: [['Il y a {x} kg de pommes de terre dans le panier.', [2, 6], 'p', 'ce sont des pommes de terre, pas des carottes.']] },
+    'Les graines': { j: [['Le jardin a {x} pommiers.', [3, 9], 'p']], o: [['Le sachet contient {x} graines.', [200, 500], '', 'c\'est ce que contient le sachet, pas ce qu\'il faut.']] },
+    'Le musée': { j: [['Le musée ouvre à {x} h.', [9, 10], 'p']], o: [['Un livre de la boutique du musée coûte {x} €.', [8, 25], '', 'c\'est le prix d\'un livre, pas celui des entrées.']] },
+    'La limonade': { j: [['La limonade reste au frais pendant {x} heures.', [2, 5], '']], o: [['Le panier contient {x} oranges.', [5, 15], 'p', 'ce sont des oranges, pas des citrons.']] },
+    'Le tricot de Mamie': { j: [['Mamie a {x} ans.', [65, 85], 'p']], o: [['Son écharpe rouge, déjà finie, a {x} rangs.', [80, 150], '', 'c\'est une écharpe déjà finie.']] },
+    'Les croissants': { j: [['La boulangerie ouvre à {x} h.', [6, 7], 'p']], o: [['Une baguette coûte {x} €.', [1, 2], 'p', 'c\'est le prix d\'une baguette, pas celui des croissants.']] },
+    'Les pâtes': { j: [['Les pâtes cuisent pendant {x} minutes.', [8, 12], '']], o: [['Le paquet de pâtes pèse {x} g.', [500, 1000], '', 'c\'est le poids du paquet, pas ce qu\'il faut.']] },
+    "L'arrosage": { j: [['Maya a {x} ans.', [8, 11], 'p']], o: [["L'arrosoir contient {x} litres.", [8, 12], '', 'c\'est ce que contient l\'arrosoir, pas l\'eau qu\'il faut.']] },
+    'Le jus de fruits': { j: [['Le magasin ferme à {x} h.', [18, 20], 'p']], o: [['Un paquet de gâteaux coûte {x} €.', [2, 5], 'p', 'c\'est le prix des gâteaux, pas celui du jus.']] },
+    'Les feuilles': { j: [['La récréation dure {x} minutes.', [15, 20], 'p']], o: [['Le paquet contient {x} feuilles.', [400, 500], 'p', 'c\'est ce que contient le paquet, pas ce qu\'il faut préparer.']] },
+    'Le jardinier': { j: [['Le jardinier a {x} ans.', [25, 60], 'p']], o: [['Le parterre a déjà {x} fleurs.', [20, 80], '', 'ce sont les fleurs déjà plantées.']] },
+    'Le concert': { j: [['Le concert commence à {x} h.', [19, 21], 'p']], o: [['Le parking coûte {x} €.', [3, 8], '', 'c\'est le prix du parking, pas celui des places.']] },
+    'Les sandwichs': { j: [['Le pique-nique commence à {x} h.', [11, 13], 'p']], o: [['Le paquet contient {x} tranches de pain.', [20, 40], '', 'c\'est ce que contient le paquet, pas ce qu\'il faut.']] },
+    'Les ballons': { j: [['La salle mesure {x} m de long.', [10, 30], 'p']], o: [['Le paquet contient {x} ballons.', [50, 100], '', 'c\'est ce que contient le paquet, pas ce qu\'il faut.']] },
+    'Les tours de manège': { j: [['Le manège a {x} chevaux de bois.', [12, 30], 'p']], o: [['Une barbe à papa coûte {x} €.', [2, 4], '', 'c\'est le prix d\'une barbe à papa.']] },
+    'La marche de Papi': { j: [['Papi a {x} ans.', [65, 85], 'p']], o: [['Hier, Mamie a marché {x} km.', [3, 10], '', 'c\'est la marche de Mamie, pas celle de Papi.']] },
+    'Le sirop': { j: [['Il fait {x} °C dehors.', [25, 35], 'p']], o: [['La bouteille contient {x} cL de sirop.', [70, 100], '', 'c\'est ce que contient la bouteille, pas ce qu\'il faut.']] },
+    'Les autocollants': { j: [['Une pochette coûte {x} €.', [2, 5], 'p']], o: [['Le classeur peut contenir {x} autocollants.', [200, 500], '', 'c\'est la place dans le classeur.']] },
+
+    'Les pizzas': { j: [['La fête commence à {x} h.', [14, 19], 'p']], o: [['Le congélateur contient {x} pizzas.', [4, 10], '', 'on demande les pizzas qu\'il faut, pas celles du congélateur.']] },
+    'Les oranges': { j: [['Le marché ouvre à {x} h.', [7, 9], 'p']], o: [['Un kilo de bananes coûte {x} €.', [2, 4], 'p', 'c\'est le prix des bananes.']] },
+    'Les billets de train': { j: [['Le train part à {x} h.', [7, 11], 'p']], o: [['Un sandwich au wagon-bar coûte {x} €.', [5, 9], '', 'c\'est le prix d\'un sandwich.']] },
+    'La peinture': { j: [['La peinture sèche en {x} heures.', [2, 6], '']], o: [['Il reste {x} pots de vernis dans le garage.', [2, 6], '', 'ce sont des pots de vernis, pas de peinture.']] },
+    'Les chocolats': { j: [['Une boîte pèse {x} g.', [200, 400], '']], o: [['Il reste {x} bonbons dans le sachet.', [10, 40], 'p', 'ce sont des bonbons, pas des chocolats.']] },
+    'Les fraises': { j: [['Le marché ferme à {x} h.', [12, 13], 'p']], o: [['Un melon coûte {x} €.', [2, 4], 'p', 'c\'est le prix d\'un melon.']] },
+    'Les bracelets': { j: [['Chaque bracelet mesure {x} cm.', [15, 20], '']], o: [['La boîte contient {x} perles.', [150, 400], '', 'c\'est ce que contient la boîte, pas ce qu\'il faut.']] },
+    'La marcheuse': { j: [['La marcheuse a {x} ans.', [30, 60], '']], o: [['Hier, elle a marché {x} km.', [5, 20], '', 'c\'est la marche d\'hier.']] },
+    'Les gourdes': { j: [['La randonnée commence à {x} h.', [8, 10], 'p']], o: [["La grande bouteille contient {x} cL d'eau.", [100, 200], '', 'c\'est ce que contient la bouteille, pas ce qu\'il faut.']] },
+    'Les tartines': { j: [['Le petit-déjeuner commence à {x} h.', [7, 8], 'p']], o: [['La plaquette de beurre pèse {x} g.', [125, 250], '', 'c\'est le poids de la plaquette, pas ce qu\'il faut.']] },
+    'La machine à bouteilles': { j: [["L'usine ouvre à {x} h.", [5, 7], 'p']], o: [['Un carton contient {x} bouteilles.', [6, 12], '', 'c\'est ce que contient un carton, pas ce que remplit la machine.']] },
+    'Les cupcakes': { j: [['Les cupcakes cuisent pendant {x} minutes.', [15, 25], '']], o: [['Le paquet de sucre pèse {x} g.', [500, 1000], '', 'c\'est le poids du paquet, pas ce qu\'il faut.']] },
+    'Les tours de piste': { j: [['Nina a {x} ans.', [8, 11], 'p']], o: [['Son école est à {x} m du stade.', [300, 900], '', 'c\'est la distance jusqu\'à l\'école, pas celle que Nina court.']] },
+    'La cantine': { j: [['Le repas commence à {x} h.', [11, 12], '']], o: [['Un paquet de pâtes pèse {x} kg.', [1, 3], '', 'c\'est le poids d\'un paquet, pas ce qu\'il faut.']] },
+    'Les cagettes de pommes': { j: [['Le verger a {x} pommiers.', [20, 60], 'p']], o: [['Un panier contient {x} pommes.', [10, 30], '', 'c\'est ce que contient un panier, pas une cagette.']] },
+    'Le spectacle': { j: [['Le spectacle commence à {x} h.', [19, 21], 'p']], o: [['Le programme coûte {x} €.', [2, 5], '', 'c\'est le prix du programme, pas celui des places.']] },
+    'La pâte à sel': { j: [['Les figurines sèchent pendant {x} heures.', [24, 48], '']], o: [['Le paquet de farine pèse {x} g.', [500, 1000], '', 'c\'est le poids du paquet, pas ce qu\'il faut.']] },
+    'Le car': { j: [['Le car transporte {x} élèves.', [30, 50], '']], o: [['La ville voisine est à {x} km.', [20, 90], '', 'c\'est la distance jusqu\'à la ville voisine, pas celle que parcourt le car.']] },
+
+    'La confiture': { j: [['La confiture cuit pendant {x} minutes.', [20, 40], '']], o: [['Il y a {x} g de sucre dans le placard.', [500, 2000], 'p', 'c\'est du sucre, pas des fraises.']] },
+    'Le cinéma de la classe': { j: [['Le film dure {x} minutes.', [80, 110], 'p']], o: [['Un paquet de pop-corn coûte {x} €.', [3, 6], '', 'c\'est le prix du pop-corn.']] },
+    'Le robinet qui fuit': { j: [['Le plombier passe dans {x} jours.', [2, 6], '']], o: [['La baignoire contient {x} litres.', [150, 250], '', 'c\'est ce que contient la baignoire, pas l\'eau perdue.']] },
+    'Le mur de briques': { j: [['Le maçon commence à {x} h.', [7, 9], 'p']], o: [['Une palette contient {x} briques.', [200, 500], '', 'c\'est ce que contient une palette, pas ce qu\'il faut.']] },
+    'Le jus de pommes': { j: [['Le pressoir a {x} ans.', [20, 80], '']], o: [['Le verger produit {x} kg de poires.', [100, 300], 'p', 'ce sont des poires, pas des pommes.']] },
+    'Les gradins': { j: [['Le match commence à {x} h.', [14, 20], 'p']], o: [['Le stade voisin accueille {x} spectateurs.', [1000, 5000], 'p', 'c\'est un autre stade.']] },
+    'La source': { j: [['La source est à {x} m du village.', [300, 900], 'p']], o: [['Le seau contient {x} litres.', [8, 12], '', 'c\'est ce que contient le seau, pas l\'eau de la source.']] },
+    "Les tee-shirts de l'école": { j: [["L'école a {x} classes.", [8, 14], 'p']], o: [['Une casquette coûte {x} €.', [4, 9], '', 'c\'est le prix d\'une casquette.']] },
+    'La boulangerie': { j: [['Le boulanger se lève à {x} h.', [3, 5], 'p']], o: [['Le boulanger vend {x} croissants par jour.', [50, 150], '', 'ce sont des croissants, pas des baguettes.']] },
+    'La randonnée': { j: [['Le randonneur porte un sac de {x} kg.', [5, 12], '']], o: [["Le refuge est à {x} m d'altitude.", [1200, 2500], '', 'c\'est l\'altitude du refuge, pas la distance parcourue.']] },
+    'Le chocolat chaud': { j: [['Le lait chauffe pendant {x} minutes.', [3, 8], '']], o: [['Il y a {x} g de sucre dans le pot.', [200, 500], 'p', 'c\'est du sucre, pas du cacao.']] },
+    'Le gâteau géant': { j: [['Le gâteau cuit pendant {x} minutes.', [40, 70], '']], o: [['Le paquet de farine pèse {x} g.', [500, 1000], '', 'c\'est le poids du paquet, pas ce qu\'il faut.']] },
+    "L'imprimante rapide": { j: [["L'imprimante pèse {x} kg.", [8, 20], '']], o: [['Hier, elle a imprimé {x} pages.', [500, 2000], '', 'ce sont les pages imprimées hier.']] },
+    'La sortie scolaire': { j: [['Le car part à {x} h.', [7, 9], 'p']], o: [["La sortie de l'an dernier a coûté {x} €.", [300, 900], '', "c'est la sortie de l'an dernier."]] },
+    'Le riz': { j: [['Le riz cuit pendant {x} minutes.', [10, 20], '']], o: [['Le sac de riz pèse {x} g.', [1000, 5000], '', 'c\'est le poids du sac, pas ce qu\'il faut.']] },
+    'Les guirlandes': { j: [['La fête commence à {x} h.', [14, 19], 'p']], o: [['Le carton contient {x} fleurs en papier.', [100, 300], '', 'c\'est ce que contient le carton, pas ce qu\'il faut.']] },
+    'La consommation de la voiture': { j: [['La voiture a {x} ans.', [2, 12], '']], o: [['Le réservoir contient {x} litres.', [40, 60], '', 'c\'est ce que contient le réservoir, pas ce que consomme la voiture.']] },
+    'Les repas de cantine': { j: [['La cantine ouvre à {x} h.', [11, 12], 'p']], o: [['Un goûter coûte {x} €.', [1, 3], 'p', 'c\'est le prix d\'un goûter.']] },
+    'La pompe': { j: [['La pompe pèse {x} kg.', [10, 40], '']], o: [['La piscine contient {x} litres.', [10000, 50000], '', 'c\'est ce que contient la piscine, pas ce que vide la pompe.']] },
+    'Les cerises': { j: [['Le marché ouvre à {x} h.', [7, 9], 'p']], o: [["Un kilo d'abricots coûte {x} €.", [3, 6], 'p', 'c\'est le prix des abricots.']] },
+    'Le train de marchandises': { j: [['Le train part à {x} h.', [5, 9], 'p']], o: [['La locomotive pèse {x} tonnes.', [80, 120], '', 'c\'est le poids de la locomotive, pas celui du blé.']] },
+    'Les boîtes de crayons': { j: [['Une boîte coûte {x} €.', [2, 5], '']], o: [['La trousse de Léo contient {x} crayons.', [8, 15], '', 'ce sont les crayons de la trousse de Léo.']] },
+
+    'Les crêpes de la kermesse': { j: [['La kermesse commence à {x} h.', [9, 14], 'p']], o: [['Le paquet de farine pèse {x} g.', [500, 1000], '', 'c\'est le poids du paquet, pas ce qu\'il faut.']] },
+    'Le TGV': { j: [['Le train a {x} voitures.', [8, 16], '']], o: [['Le voyage précédent faisait {x} km.', [200, 800], '', 'c\'est un autre voyage.']] },
+    'Les stylos': { j: [['La papeterie ouvre à {x} h.', [8, 10], 'p']], o: [['Une gomme coûte {x} €.', [1, 3], 'p', 'c\'est le prix d\'une gomme.']] },
+    'La peinture du préau': { j: [['La peinture sèche en {x} heures.', [2, 6], '']], o: [['Un pot contient {x} litres.', [5, 10], '', 'c\'est ce que contient un pot, pas ce qu\'il faut.']] },
+    'Les baguettes': { j: [['Le boulanger se lève à {x} h.', [3, 5], 'p']], o: [['Le sac de farine pèse {x} kg.', [10, 25], '', 'c\'est le poids du sac, pas ce qu\'il faut.']] },
+    'Les pots de miel': { j: [['Le miel coûte {x} € le pot.', [5, 9], '']], o: [['Un pot de confiture pèse {x} g.', [300, 450], '', 'c\'est un pot de confiture, pas de miel.']] },
+    'La cycliste': { j: [['La cycliste a {x} ans.', [20, 50], '']], o: [['Hier, elle a roulé {x} km.', [10, 60], '', 'c\'est la sortie d\'hier.']] },
+    'Le zoo': { j: [['Le zoo a {x} girafes.', [3, 8], 'p']], o: [['Une glace coûte {x} €.', [2, 4], '', 'c\'est le prix d\'une glace.']] },
+    'La lavande': { j: [['Le champ de lavande a {x} rangées.', [20, 60], 'p']], o: [['Il reste {x} sachets vides dans le carton.', [20, 80], '', 'ce sont des sachets vides, déjà là.']] },
+    'Les places de concert': { j: [['Le concert commence à {x} h.', [19, 21], 'p']], o: [['Le parking coûte {x} €.', [5, 12], '', 'c\'est le prix du parking, pas celui des places.']] },
+    'Le fromage': { j: [['La fromagerie ouvre à {x} h.', [8, 10], 'p']], o: [['Un kilo de beurre coûte {x} €.', [8, 14], 'p', 'c\'est le prix du beurre.']] },
+    'Les bulbes de tulipes': { j: [['Le jardinier a {x} ans.', [25, 60], 'p']], o: [['Le sac contient {x} bulbes.', [500, 1000], '', 'c\'est ce que contient le sac, pas ce qu\'il plante.']] },
+    'Les bouteilles de lait': { j: [['La ferme a {x} vaches.', [20, 60], 'p']], o: [['La citerne contient {x} litres de lait.', [1000, 3000], '', 'c\'est ce que contient la citerne.']] },
+    'Les colis': { j: [['Le camion part à {x} h.', [6, 9], 'p']], o: [['Le camion vide pèse {x} kg.', [3000, 8000], '', 'c\'est le poids du camion, pas celui des colis.']] },
+    'Le gazon': { j: [['Le jardin a {x} arbres.', [3, 12], 'p']], o: [['Le sac contient {x} g de graines.', [2000, 5000], '', 'c\'est ce que contient le sac, pas ce qu\'il faut.']] },
+    'Les cartons de livres': { j: [['La bibliothèque ouvre à {x} h.', [9, 10], 'p']], o: [['La bibliothèque a déjà {x} livres.', [3000, 8000], 'p', 'ce sont les livres déjà rangés.']] },
+    "L'avion": { j: [["L'avion transporte {x} passagers.", [150, 300], '']], o: [['Le vol précédent faisait {x} km.', [500, 2000], '', 'c\'est un autre vol.']] },
+    "Les cartouches d'encre": { j: [["L'imprimante a {x} ans.", [2, 8], '']], o: [['Un paquet de feuilles coûte {x} €.', [4, 9], 'p', 'c\'est le prix des feuilles.']] }
+  };
+  const TRI4_STOP = /^(aux|des|les|ses|mes|tes|nos|vos|leurs|dans|puis|plus|sans|vers|après|depuis|sous|chez|pas|mais|très|alors|ensuite)$/i;
+  const TRI4_UNIT = /^(kg|g|km|m|cm|mm|€|h|min|km\/h|L|cL|mL|m²|°C)$/;
+  function fill4(t, V){ return esc(t).replace(/\{(\w+)\}/g, (m, k) => k in V ? (typeof V[k] === 'number' ? '<span class="nb">' + fmtNum(V[k]) + '</span>' : esc(V[k])) : m); }
+  function triTok4(html, useless){
+    return html.replace(/<span class="nb">([^<]*)<\/span>( ([A-Za-zÀ-ÖØ-öø-ÿœŒ€\/²°]+))?/g, (m, nb, sp, w) => {
+      const take = !!w && (TRI4_UNIT.test(w) || (/[sx]$/i.test(w) && !TRI4_STOP.test(w)));
+      return '<span class="tok" data-t="@" data-u="' + (useless ? 1 : 0) + '"><span class="nb">' + nb + '</span>' + (take ? ' ' + w : '') + '</span>' + (sp && !take ? sp : '');
+    });
+  }
+  const triDecode4 = s => String(s).replace(/<[^>]+>/g, '').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  function dis4(p){
+    const d = DIS4[p.l];
+    if (!d || !p.t0) return null;
+    const small = Math.min(p.from, p.to), big = Math.max(p.from, p.to), k = big / small, r = p.to > p.from ? p.v * k : p.v / k;
+    return { t0: p.t0, V: { f: p.from, to: p.to, v: p.v }, nums: [p.from, p.to, p.v, k, r], j: d.j, o: d.o };
+  }
+  function triBuild4(D){
+    if (!D) return null;
+    const sents = (D.t0.match(/[^.!?]+[.!?]+(\s+|$)/g) || [D.t0]).map(x => x.trim()).filter(Boolean);
+    if (sents.length < 2 || !/\?$/.test(sents[sents.length - 1])) return null;
+    const data = sents.slice(0, -1), q = sents[sents.length - 1];
+    for (let g = 0; g < 40; g++){
+      let chosen = HARD ? [pick(D.o)] : [pick(D.j)];
+      if (HARD && Math.random() < 0.4) chosen.push(pick(D.j));
+      const V = Object.assign({}, D.V), used = new Set(D.nums);
+      let fail = false;
+      const exs = chosen.map((d, n) => {
+        let v, h = 0;
+        do { v = ri(d[1][0], d[1][1]); if (v >= 1000) v = Math.round(v / 100) * 100; } while (used.has(v) && h++ < 40);
+        if (used.has(v)) fail = true;
+        used.add(v); V['x' + n] = v;
+        return { s: d[0].replace('{x}', '{x' + n + '}'), r: d[3] || '', at: pick(['post'].concat((d[2] || '').includes('p') ? ['pre'] : [])) };
+      });
+      if (fail) continue;
+      const exH = e => triTok4(fill4(e.s, V), true), parts = [];
+      exs.filter(e => e.at === 'pre').forEach(e => parts.push(exH(e)));
+      data.forEach(s => parts.push(triTok4(fill4(s, V), false)));
+      exs.filter(e => e.at === 'post').forEach(e => parts.push(exH(e)));
+      parts.push(triTok4(fill4(q, V), false));
+      let html = '<p class="problem">' + parts.join(' ') + '</p>', i = 0;
+      const want = [];
+      html = html.replace(/data-t="@" data-u="(\d)"/g, (m, u) => { const k = i++; if (u === '1') want.push(k); return 'data-t="' + k + '"'; });
+      const labels = [];
+      html.replace(/<span class="tok" data-t="\d+">(<span class="nb">[^<]*<\/span>[^<]*)<\/span>/g, (m, inner) => { labels.push(triDecode4(inner).trim()); return m; });
+      if (labels.length !== i || new Set(labels).size !== labels.length || want.length !== exs.length || want.length >= labels.length) continue;
+      const order = parts.map(p => exs.find(e => exH(e) === p)).filter(Boolean);
+      const why = want.map((k, j) => '« ' + esc(labels[k]) + ' » : ' + esc(order[j] && order[j].r ? order[j].r : 'cette donnée ne sert pas pour répondre à la question.')).join(' ');
+      const step = { kind: 'tri', mode: 'barrer', want, labels, tri: true, why,
+        q: 'Avant de chercher le calcul, lis la question, puis <b>touche les données inutiles</b> pour les barrer. Valide quand tu as fini.',
+        hint: 'Pour chaque donnée, demande-toi : en ai-je besoin pour répondre à la question ? Il y a ' + (want.length > 1 ? want.length + ' données inutiles.' : 'une donnée inutile.'),
+        okFb: 'Bien trié ! Il ne reste que les données utiles.' };
+      return { html, step };
+    }
+    return null;
+  }
+  function addTri4(items, infos){
+    const hasV = it => it.steps.some(s => s.verif);
+    const idx = items.map((it, k) => k).filter(k => infos[k]);
+    const order = shuffle(idx.filter(k => !hasV(items[k]))).concat(shuffle(idx.filter(k => hasV(items[k]))));
+    let n = Math.min(idx.length, 2);
+    for (const k of order){
+      if (n <= 0) break;
+      const T = triBuild4(infos[k]);
+      if (!T) continue;
+      items[k].stmt = T.html;
+      items[k].steps.unshift(T.step);
+      n--;
+    }
+    return items;
+  }
+
   function buildItems(id){
     const P1 = HARD ? L1PO : L1P, N1 = HARD ? L1NO : L1N, B3 = (HARD ? L3O : L3).map(nfill), B4 = (HARD ? L4O : L4).map(nfill), P5 = (HARD ? L5PO : L5P).map(nfill), N5 = HARD ? L5NO : L5N;
     const F1 = HARD ? FOISO : FOISJ, VF = HARD ? VFO : VFJ;
@@ -1478,13 +1663,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (id === 4){
       const pl = shuffle(B4.filter(p => p.to > p.from)).slice(0, 4), mo = shuffle(B4.filter(p => p.to < p.from)).slice(0, 4);
       const ps = shuffle(pl.concat(mo));
-      return addReflex(ps.map(p => itemRapport(p, false)), ps.map(verif4b));
+      return addTri4(addReflex(ps.map(p => itemRapport(p, false)), ps.map(verif4b)), ps.map(dis4));
     }
     const pl = shuffle(P5.filter(p => p.to > p.from)).slice(0, 3), mo = shuffle(P5.filter(p => p.to < p.from)).slice(0, 3);
     const props = pl.concat(mo).map(p => itemRapport(p, true));
     const n5 = shuffle(N5), nons = n5.slice(0, 1).concat(shuffle(Math.random() < 0.6 ? F1 : n5.slice(1)).slice(0, 1)).map(s => itemProp(s, false));
-    const pinf = pl.concat(mo).map(verif4b), all = shuffle(props.map((it, k) => [it, pinf[k]]).concat(nons.map(it => [it, null])));
-    return addReflex(all.map(x => x[0]), all.map(x => x[1]));
+    const pinf = pl.concat(mo).map(verif4b), pq = pl.concat(mo), all = shuffle(props.map((it, k) => [it, pinf[k], pq[k]]).concat(nons.map(it => [it, null, null])));
+    return addTri4(addReflex(all.map(x => x[0]), all.map(x => x[1])), all.map(x => x[2] ? dis4(x[2]) : null));
   }
 
 
@@ -1501,7 +1686,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     pose: ["L'addition et la soustraction posées", '../l-addition-et-la-soustraction-posees/index.html'],
     mpose: ['La multiplication posée', '../la-multiplication-posee/index.html'],
     div: ['La division', '../la-division/index.html'],
-    verif: ['Mon résultat est-il possible ?', '../mon-resultat-est-il-possible/index.html']
+    verif: ['Mon résultat est-il possible ?', '../mon-resultat-est-il-possible/index.html'],
+    tri: ['Trier les données d\'un problème', '../trier-les-donnees-d-un-probleme/index.html']
   };
   function revueOf(c){
     if (!c) return null;
@@ -1529,13 +1715,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     } catch (e) {}
     return '';
   }
+  function noteTri(R){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes('tri')) R.calcRev.push('tri'); }
   function noteVerif(R){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes('verif')) R.calcRev.push('verif'); }
   function noteRevue(R, st){
     const rv = st && st.calc ? revueOf(st.calc) : null;
     if (rv){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes(rv)) R.calcRev.push(rv); }
   }
-  const revNote = R => { const c = (R.calcRev || []).filter(k => k !== 'verif'), v = (R.calcRev || []).includes('verif');
+  const revNote = R => { const c = (R.calcRev || []).filter(k => k !== 'verif' && k !== 'tri'), v = (R.calcRev || []).includes('verif'), tr = (R.calcRev || []).includes('tri');
     return (c.length ? '<p class="revnote"><b>Erreur de calcul</b> : la démarche compte d\'abord, mais pense à revoir ' + c.map(k => '« ' + esc(revName(k)) + ' »').join(' et ') + '.</p>' : '') +
+      (tr ? '<p class="revnote"><b>Tri des données</b> : avant de chercher le calcul, lis la question, puis barre les données qui ne servent pas pour y répondre. Tu peux t\'entraîner avec « Trier les données d\'un problème ».</p>' : '') +
       (v ? '<p class="revnote"><b>Vérification</b> : avant d\'écrire ta phrase réponse, pose-toi les trois questions du détective : la bonne unité ? un nombre possible ? la réponse à la question ? Tu peux t\'entraîner avec « Mon résultat est-il possible ? ».</p>' : ''); };
   function renderRevBox(r){
     const box = $('revBox'); if (!box) return;
@@ -1544,12 +1732,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
     if (!keys.length){ box.hidden = true; box.innerHTML = ''; return; }
     const pf = passFrag();
-    const hasV = keys.includes('verif'), onlyV = keys.every(k => k === 'verif');
-    box.innerHTML = '<h2 class="det-title">' + (hasV ? (onlyV ? 'La vérification à revoir' : 'Le calcul et la vérification à revoir') : 'Le calcul à revoir') + '</h2><p class="send-note">Ta démarche compte d\'abord. ' + (hasV ? 'Pour progresser, entraîne-toi avec :' : 'Pour ne plus te tromper dans les calculs, entraîne-toi avec :') + '</p>' +
+    const hasV = keys.includes('verif'), hasT = keys.includes('tri'), hasC = keys.some(k => k !== 'verif' && k !== 'tri'), parts = [];
+    if (hasC) parts.push('le calcul'); if (hasT) parts.push('le tri des données'); if (hasV) parts.push('la vérification');
+    const title = (t => t.charAt(0).toUpperCase() + t.slice(1))(parts.length > 1 ? parts.slice(0, -1).join(', ') + ' et ' + parts[parts.length - 1] : parts[0]) + ' à revoir';
+    box.innerHTML = '<h2 class="det-title">' + title + '</h2><p class="send-note">Ta démarche compte d\'abord. ' + (hasV || hasT ? 'Pour progresser, entraîne-toi avec :' : 'Pour ne plus te tromper dans les calculs, entraîne-toi avec :') + '</p>' +
       keys.map(k => '<a class="btn-secondary rev-btn" href="' + REVUE[k][1] + pf + '" target="_blank" rel="noopener"><span>' + esc(REVUE[k][0]) + '</span><small>' + counts[k] + (counts[k] > 1 ? ' erreurs' : ' erreur') + '</small></a>').join('');
     box.hidden = false;
   }
-  const revSend = r => { const ks = []; (r.results || []).forEach(x => (x.rev || []).forEach(k => { if (k !== 'verif' && !ks.includes(k)) ks.push(k); })); return ks.length ? ' ; calcul à revoir : ' + ks.map(revName).join(', ') : ''; };
+  const revSend = r => { const ks = []; (r.results || []).forEach(x => (x.rev || []).forEach(k => { if (k !== 'verif' && k !== 'tri' && !ks.includes(k)) ks.push(k); })); return ks.length ? ' ; calcul à revoir : ' + ks.map(revName).join(', ') : ''; };
 
   /* ---------- Élèves, scores et bons points ---------- */
   function loadStore(){
@@ -2428,8 +2618,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
-  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, verifErr: 0, calcRev: [], itemDone: false, showKw: false }, stepState());
+  const stepState = () => ({ tries: 0, picked: [], marks: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
+  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, verifErr: 0, triErr: 0, triFinal: null, calcRev: [], itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
   function learnStart(){
@@ -2555,6 +2745,52 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     renderPlay();
     setTimeout(nextStep, okFb ? 1400 : 700);
   }
+
+  /* ---------- Trier les données : l'élève touche les données de l'énoncé pour les surligner ou les barrer ---------- */
+  function triToggle(k){
+    const R = S.R, st = curStep();
+    if (!st || st.kind !== 'tri' || R.locked || R.revealed || R.itemDone || R.vals[R.si]) return;
+    const j = R.marks.indexOf(k);
+    if (j >= 0) R.marks.splice(j, 1); else R.marks.push(k);
+    if (R.fb && R.fb.kind === 'info') R.fb = null;
+    renderPlay();
+    const t = $('stmt').querySelector('.tok[data-t="' + k + '"]');
+    if (t) try { t.focus({ preventScroll: true }); } catch (e) {}
+  }
+  const triList = (st, ks) => ks.map(i => '« ' + esc(st.labels[i]) + ' »').join(', ');
+  function triSubmit(){
+    const R = S.R, st = curStep();
+    if (!st || st.kind !== 'tri' || R.locked || R.revealed || R.itemDone || R.vals[R.si]) return;
+    const bar = st.mode === 'barrer';
+    if (!R.marks.length){ R.fb = { kind: 'info', html: bar ? "Touche d'abord les données inutiles pour les barrer." : "Touche d'abord les données utiles pour les surligner." }; renderPlay(); return; }
+    const miss = st.want.filter(k => !R.marks.includes(k)), extra = R.marks.filter(k => !st.want.includes(k));
+    const summ = (bar ? 'Barré : ' : 'Surligné : ') + triList(st, st.want);
+    if (!miss.length && !extra.length){ R.triFinal = { mode: st.mode, want: st.want.slice() }; solveStep(false, summ, st.okFb, '', ''); return; }
+    R.err++; R.itemErr++; R.triErr = (R.triErr || 0) + 1; noteTri(R); R.tries++;
+    runFall();
+    const msg = [];
+    if (extra.length) msg.push(bar ? 'Tu as barré une donnée utile : sans elle, on ne peut plus répondre.' : 'Tu as surligné une donnée qui ne sert pas pour cette question.');
+    if (miss.length) msg.push(bar ? 'Il reste au moins une donnée inutile à barrer.' : 'Il manque au moins une donnée utile.');
+    if (R.tries >= 2){ R.triFinal = { mode: st.mode, want: st.want.slice() }; R.marks = st.want.slice(); solveStep(true, summ, '', msg.join(' '), st.why || ''); }
+    else { R.fb = { kind: 'bad', html: msg.join(' ') + ' Réessaie.' }; R.hint = st.hint || null; renderPlay(); }
+  }
+  /* Les étiquettes de l'énoncé : à toucher pendant le tri, puis surlignées (utiles) ou barrées (inutiles) */
+  function decorTri(el, R, it){
+    const st = it.steps[R.si], on = !!(st && st.kind === 'tri' && !R.vals[R.si] && !R.itemDone && !R.revealed), fin = R.triFinal;
+    el.classList.toggle('tri-on', on);
+    el.querySelectorAll('.tok').forEach(t => {
+      const k = +t.dataset.t;
+      t.classList.remove('hl', 'st');
+      if (on){
+        const m = R.marks.includes(k);
+        t.setAttribute('role', 'button'); t.setAttribute('tabindex', '0'); t.setAttribute('aria-pressed', m ? 'true' : 'false');
+        if (m) t.classList.add(st.mode === 'barrer' ? 'st' : 'hl');
+      } else {
+        t.removeAttribute('role'); t.removeAttribute('tabindex'); t.removeAttribute('aria-pressed');
+        if (fin){ const inW = fin.want.includes(k); t.classList.add((fin.mode === 'barrer' ? !inW : inW) ? 'hl' : 'st'); }
+      }
+    });
+  }
   function nextStep(){
     const R = S.R;
     if (!R || R.itemDone || S.phase !== 'play') return;
@@ -2570,7 +2806,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     R.revealed = false;
     R.showKw = true;
     if (ok) R.ok++;
-    R.results.push({ ok, html: it.sum, rev: (R.calcRev || []).slice(), verif: (R.verifErr || 0) > 0 });
+    R.results.push({ ok, html: it.sum, rev: (R.calcRev || []).slice(), verif: (R.verifErr || 0) > 0, tri: (R.triErr || 0) > 0 });
     renderPlay();
     try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
   }
@@ -2601,7 +2837,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     let outcome = 'notyet';
     if (gained > 0) outcome = firstValid ? 'validate' : 'record';
     else if (R.ok >= need) outcome = 'same';
-    S.res = { verifN: R.results.filter(x => x.verif).length, id, enigme: R.enigme, clues: Math.min(R.ok, R.enigme.clues.length), solved: false, tries: 0, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: newBest, from: before, to: after, results: R.results,
+    S.res = { triN: R.results.filter(x => x.tri).length, verifN: R.results.filter(x => x.verif).length, id, enigme: R.enigme, clues: Math.min(R.ok, R.enigme.clues.length), solved: false, tries: 0, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: newBest, from: before, to: after, results: R.results,
               card: Math.floor(before / 10) < Math.floor(after / 10) ? Math.floor(after / 10) : 0 };
     S.phase = 'result';
     render();
@@ -2699,7 +2935,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   function doneRow(st, v){
     const cls = 'srow done' + (v.fixed ? ' fixed' : '');
-    if (st.kind === 'choice') return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sa">' + (v.fixed ? CROSS : TICK) + '<span>' + v.h + '</span></span></div>';
+    if (st.kind === 'choice' || st.kind === 'tri') return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sa">' + (v.fixed ? CROSS : TICK) + '<span>' + v.h + '</span></span></div>';
     return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', '<span>' + v.h + '</span>') + '</span></div>';
   }
   function activeRow(st, R){
@@ -2707,6 +2943,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return '<div class="srow active"><span class="sq">' + st.q + '</span><div class="choices' + (st.layout ? ' ' + st.layout : '') + '">' +
         st.opts.map((o, k) => '<button class="choice' + (R.picked.includes(k) ? ' wrong' : '') + '" type="button" data-opt="' + k + '"' + (R.picked.includes(k) ? ' disabled' : '') + '>' + o.h + '</button>').join('') +
         '</div></div>';
+    }
+    if (st.kind === 'tri'){
+      const n = R.marks.length, bar = st.mode === 'barrer';
+      const cnt = n ? n + (bar ? (n > 1 ? ' données barrées' : ' donnée barrée') : (n > 1 ? ' données surlignées' : ' donnée surlignée')) : (bar ? 'Aucune donnée barrée' : 'Aucune donnée surlignée');
+      return '<div class="srow active"><span class="sq">' + st.q + '</span><div class="tri-bar"><span class="tri-count" aria-live="polite">' + cnt + '</span><button class="btn-primary tri-ok" type="button" data-tri="ok">Valider</button></div></div>';
     }
     const box = '<span class="abox' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : '') + '" aria-label="Ta réponse">' + esc(R.input) + '<span class="caret" aria-hidden="true"></span></span>';
     return '<div class="srow active"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
@@ -2728,6 +2969,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const stmt = $('stmt');
     stmt.innerHTML = (R.itemDone && it.stmtDone) ? it.stmtDone : it.stmt;
     stmt.classList.toggle('show-kw', !!R.showKw);
+    decorTri(stmt, R, it);
 
     let h = '';
     for (let j = 0; j <= R.si && j < it.steps.length; j++){
@@ -2769,7 +3011,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (!prof) return;
     $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Île ' + lv.id + ' (' + ileOf(lv.id).short + ') : ' + lv.name,
       r.ok + '/' + r.total + ' réussites du premier coup ; ' + nErr(r.err) + (r.ok >= r.need ? ' ; île validée' : ' ; île pas encore validée') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '') +
-      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + (r.verifN ? ' ; ' + r.verifN + (r.verifN > 1 ? ' vérifications' : ' vérification') + ' à revoir' : '') + revSend(r)]);
+      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + (r.triN ? ' ; ' + r.triN + (r.triN > 1 ? ' tris des données' : ' tri des données') + ' à revoir' : '') + (r.verifN ? ' ; ' + r.verifN + (r.verifN > 1 ? ' vérifications' : ' vérification') + ' à revoir' : '') + revSend(r)]);
   }
   function renderEnigma(){
     const r = S.res, E = r.enigme, valid = r.ok >= r.need;
@@ -2851,7 +3093,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     $('resErr').textContent = r.err;
     $('resNeed').textContent = r.need + '/' + r.total;
     $('resDetail').innerHTML = r.results.map(x =>
-      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? '' : ' <span class="tries">· à revoir</span>') + (x.verif ? ' <span class="tries">· vérification à revoir</span>' : '') + '</span></li>').join('');
+      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? '' : ' <span class="tries">· à revoir</span>') + (x.tri ? ' <span class="tries">· tri des données à revoir</span>' : '') + (x.verif ? ' <span class="tries">· vérification à revoir</span>' : '') + '</span></li>').join('');
     renderRevBox(r);
     $('sendBox').hidden = !prof;
     setSendLink();
@@ -2948,7 +3190,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   });
 
   $('playHome').addEventListener('click', goHome);
-  $('steps').addEventListener('click', e => { const b = e.target.closest('[data-opt]'); if (b && !b.disabled && S.R) pickOpt(+b.dataset.opt); });
+  $('steps').addEventListener('click', e => { if (e.target.closest('[data-tri]')){ if (S.R) triSubmit(); return; } const b = e.target.closest('[data-opt]'); if (b && !b.disabled && S.R) pickOpt(+b.dataset.opt); });
+  $('stmt').addEventListener('click', e => { const t = e.target.closest('.tok'); if (t && S.R && S.phase === 'play') triToggle(+t.dataset.t); });
+  $('stmt').addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const t = e.target.closest('.tok'); if (t && S.R && S.phase === 'play' && t.getAttribute('role') === 'button'){ e.preventDefault(); triToggle(+t.dataset.t); } });
   $('pad').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b && S.phase === 'play') numPress(b.dataset.k); });
   $('contBtn').addEventListener('click', () => { if (S.R && S.R.revealed) nextStep(); });
   $('nextBtn').addEventListener('click', nextItem);

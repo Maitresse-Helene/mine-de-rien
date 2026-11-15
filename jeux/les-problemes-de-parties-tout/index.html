@@ -601,6 +601,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
 /* ---------- Vérifier son résultat (le mousse étourdi) ---------- */
 .mousse{display:block;margin:8px 0 6px;padding:8px 12px;border-radius:12px;background:var(--div-bg);color:var(--ink);font-family:var(--font-body);font-weight:700;line-height:1.45}
+
+/* ---------- Trier les données : toucher pour surligner ou barrer ---------- */
+.tok{border-radius:7px;padding:1px 0;white-space:nowrap;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-color .15s,opacity .15s,box-shadow .15s}
+.tri-on .tok,.tok.hl,.tok.st{padding:1px 4px}
+.tri-on .tok{cursor:pointer;background:var(--sheet);box-shadow:0 0 0 1.5px var(--key-edge),0 2px 0 var(--key-shadow);touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.tri-on .tok:focus{outline:none}
+.tri-on .tok:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.tok.hl{background:var(--sb);color:var(--sb-ink);box-shadow:0 0 0 1.5px var(--sb-edge)}
+.tri-on .tok.hl{box-shadow:0 0 0 2px var(--sb-edge),0 2px 0 var(--sb-edge)}
+.tok.st{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:3px;opacity:.6}
+.tri-on .tok.st{opacity:.75;background:var(--red-bg);box-shadow:0 0 0 1.5px var(--red)}
+.tri-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.tri-count{color:var(--ink-soft);font-weight:700}
+.tri-bar .tri-ok{width:auto;flex:none;min-height:52px;padding:6px 26px;font-size:1.2rem}
+.ex-cap .tok{font-weight:700}
 </style>
 
 <div class="app">
@@ -834,6 +849,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>Dès l'île 2, l'élève choisit le schéma en barres avec le « ? » au bon endroit, comme il devra le dessiner en évaluation. Le schéma B dessine les parts égales une à une, qui forment le tout. L'île 3 ajoute le choix du calcul ; l'île 4 commence par « Je cherche… » et finit par la phrase réponse.</li>
         <li>Parcours orange : nombres à trois chiffres, problèmes à trois parties et partages avec un reste (« combien de sacs complets ? »).</li>
         <li>Vérification : sur environ un problème sur quatre, à partir de l'île 3, le mousse étourdi propose une phrase réponse, juste ou fausse, à contrôler avec les trois questions du détective (la bonne unité ? un nombre possible ? la réponse à la question ?). Une erreur à cette étape ne fait pas perdre la question : elle est notée « vérification à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Mon résultat est-il possible ? ».</li>
+        <li>Trier les données : sur environ un problème sur quatre, à partir de l'île 3, l'énoncé contient une donnée inutile (parfois deux en parcours orange), que l'élève touche pour la barrer avant de résoudre le problème. Une erreur à cette étape ne fait pas perdre la question : elle est notée « tri des données à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Trier les données d'un problème ».</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
       </ul>
     </div>
@@ -1329,6 +1345,159 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: P.tpl.bad ? txt(P.tpl.bad, V) : null };
   }
 
+
+  /* ---------- Trier les données : une ou deux données inutiles à barrer ----------
+     À partir de l'île 3, environ un problème sur quatre, tiré au hasard, reçoit une donnée inutile (deux parfois en orange)
+     et commence par « touche les données inutiles pour les barrer ». Une erreur à cette étape ne fait pas perdre
+     la question : elle est notée « tri des données à revoir » et renvoie au jeu « Trier les données d'un problème ».
+     Une donnée inutile : [phrase avec {x}, valeurs ('D' : comme les données ; 'M+' : plus grand que tous les nombres ; ou [min, max]),
+     places possibles ('p' : au début, 'm' : après la première phrase ; toujours possible : juste avant la question), raison]. */
+  /* Une étiquette : le nombre, et le mot qui le suit quand c'est une unité ou un nom au pluriel (« 12 billes », « 45 kg ») */
+  const TRI_STOP = /^(aux|des|les|ses|mes|tes|nos|vos|leurs|dans|puis|plus|sans|vers|après|depuis|sous|chez|pas|mais|très|alors|ensuite)$/i;
+  const TRI_UNIT = /^(kg|g|km|m|cm|mm|€|h|min|km\/h|L|cL|mL)$/;
+  function triTok(html, useless){
+    return html.replace(/<span class="nb">([^<]*)<\/span>( ([A-Za-zÀ-ÖØ-öø-ÿœŒ€\/]+)( de coco| d&#39;or| d&#39;argent| de bronze)?)?/g, (m, nb, sp, w, x) => {
+      const take = !!w && (TRI_UNIT.test(w) || (/[sx]$/i.test(w) && !TRI_STOP.test(w)));
+      return '<span class="tok" data-t="@" data-u="' + (useless ? 1 : 0) + '"><span class="nb">' + nb + '</span>' + (take ? ' ' + w + (x || '') : '') + '</span>' + (sp && !take ? sp : '');
+    });
+  }
+  const triDecode = s => String(s).replace(/<[^>]+>/g, '').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  function triRange(spec, D){
+    if (Array.isArray(spec)) return spec;
+    const g = D.given, lo = Math.min.apply(null, g), hi = Math.max.apply(null, g), all = Math.max.apply(null, D.nums);
+    if (spec === 'M+') return [all + Math.max(8, Math.round(all * 0.15)), all * 2 + 20];
+    return [Math.max(3, Math.floor(lo * 0.7)), Math.max(Math.ceil(hi * 1.25), Math.floor(lo * 0.7) + 8)];
+  }
+  /* D : { t, q, V, kw, given, nums, j: [données inutiles du parcours jaune], o: [pièges du parcours orange] } */
+  function triBuild(D){
+    if (!D || !D.j || !D.j.length) return null;
+    for (let g = 0; g < 40; g++){
+      const o = D.o && D.o.length ? D.o : null;
+      let chosen = HARD && o ? [pick(o)] : [pick(D.j)];
+      if (HARD && o && Math.random() < 0.4){ const second = pick(D.j); if (second[0] !== chosen[0][0]) chosen.push(second); }
+      const V = Object.assign({}, D.V), used = new Set(D.nums);
+      let fail = false;
+      const exs = chosen.map((d, k) => {
+        const r = triRange(d[1], D);
+        let v, h = 0;
+        do { v = ri(r[0], r[1]); } while (used.has(v) && h++ < 40);
+        if (used.has(v) || v <= 0) fail = true;
+        used.add(v); V['x' + k] = v;
+        const places = ['post'].concat((d[2] || '').includes('p') ? ['pre'] : [], (d[2] || '').includes('m') ? ['mid'] : []);
+        return { s: d[0].replace('{x}', '{x' + k + '}'), r: d[3] || '', at: pick(places) };
+      });
+      if (fail) continue;
+      const sents = (D.t.match(/[^.!?]+[.!?]+(\s+|$)/g) || [D.t]).map(x => x.trim()).filter(Boolean);
+      const exH = e => triTok(fill(e.s, V), true);
+      const parts = [];
+      exs.filter(e => e.at === 'pre').forEach(e => parts.push(exH(e)));
+      sents.forEach((s, k) => {
+        parts.push(triTok(fill(s, V), false));
+        if (k === 0) exs.filter(e => e.at === 'mid' && sents.length > 1).forEach(e => parts.push(exH(e)));
+      });
+      exs.filter(e => e.at === 'post' || (e.at === 'mid' && sents.length < 2)).forEach(e => parts.push(exH(e)));
+      let html = '<p class="problem">' + parts.join(' ') + (D.q ? ' <b>' + fill(D.q, V) + '</b>' : '') + '</p>';
+      if (D.kw) html = kwz(html);
+      let i = 0;
+      const want = [];
+      html = html.replace(/data-t="@" data-u="(\d)"/g, (m, u) => { const k = i++; if (u === '1') want.push(k); return 'data-t="' + k + '"'; });
+      const labels = [];
+      html.replace(/<span class="tok" data-t="\d+">(<span class="nb">[^<]*<\/span>[^<]*)<\/span>/g, (m, inner) => { labels.push(triDecode(inner).trim()); return m; });
+      if (labels.length !== i || new Set(labels).size !== labels.length || !want.length || want.length >= labels.length || want.length !== exs.length) continue;
+      /* les données inutiles, dans l'ordre où elles apparaissent dans l'énoncé */
+      const order = parts.map(p => exs.find(e => exH(e) === p)).filter(Boolean);
+      const why = want.map((k, j) => '« ' + esc(labels[k]) + ' » : ' + esc(order[j] && order[j].r ? txt(order[j].r, V) : 'cette donnée ne sert pas pour répondre à la question.')).join(' ');
+      const step = { kind: 'tri', mode: 'barrer', want, labels, tri: true, why,
+        q: 'Avant de chercher le calcul, lis la question, puis <b>touche les données inutiles</b> pour les barrer. Valide quand tu as fini.',
+        hint: 'Pour chaque donnée, demande-toi : en ai-je besoin pour répondre à la question ? Il y a ' + (want.length > 1 ? want.length + ' données inutiles.' : 'une donnée inutile.'),
+        okFb: 'Bien trié ! Il ne reste que les données utiles.' };
+      return { html, step };
+    }
+    return null;
+  }
+  function addTri(items, infos, max){
+    const hasV = it => it.steps.some(s => s.verif);
+    const idx = items.map((it, k) => k).filter(k => infos[k]);
+    const order = shuffle(idx.filter(k => !hasV(items[k]))).concat(shuffle(idx.filter(k => hasV(items[k]))));
+    let n = Math.min(idx.length, max || (items.length >= 10 ? (Math.random() < 0.5 ? 2 : 3) : 2));
+    for (const k of order){
+      if (n <= 0) break;
+      const T = triBuild(infos[k]);
+      if (!T) continue;
+      items[k].stmt = T.html;
+      items[k].steps.unshift(T.step);
+      n--;
+    }
+    return items;
+  }
+
+  /* Les données inutiles de chaque modèle : j (parcours jaune : un âge, un prix, une heure…), o (parcours orange : un piège de la même unité) */
+  const DIS1 = {
+    'Les billes': { j: [['{N} a {x} ans.', [8, 11], 'p']], o: [['Son frère a {x} billes.', 'D', '', 'ce sont les billes de son frère, pas celles {deN}.']] },
+    'Le coffre': { j: [['Le coffre pèse {x} kg.', [12, 40], 'p']], o: [['Le capitaine garde {x} pièces dans sa poche.', [20, 90], 'p', 'ces pièces ne sont pas dans le coffre.']] },
+    'Les coquillages': { j: [['{N} se baigne pendant {x} minutes.', [20, 55], 'p']], o: [['Son cousin a ramassé {x} coquillages.', 'D', '', 'ce sont les coquillages de son cousin.']] },
+    'La lecture': { j: [['{N} lit un livre qui coûte {x} €.', [6, 15], 'p']], o: [['Son livre a {x} pages.', 'M+', '', 'la question demande les pages lues, pas toutes les pages du livre.']] },
+    'Les tonneaux': { j: [['Le bateau a {x} canons.', [6, 24], 'p']], o: [['Au port, {x} tonneaux attendent sur le quai.', 'D', '', 'ces tonneaux sont restés sur le quai.']] },
+    'La volière': { j: [['La volière mesure {x} m de long.', [8, 25], 'p']], o: [['Dans la cage voisine, il y a {x} perroquets bleus.', [8, 60], '', 'ces perroquets ne sont pas dans la volière.']] },
+    'La bibliothèque': { j: [['La classe compte {x} élèves.', [22, 29], 'p']], o: [['La bibliothèque de la ville a {x} livres.', [500, 950], '', 'la question parle de la bibliothèque de la classe.']] },
+    'Le marché': { j: [['Un kilo de pommes coûte {x} €.', [2, 4], 'p']], o: [['Elle a vendu {x} kg de poires dans la journée.', 'D', '', 'la question parle seulement des pommes.']] },
+    "L'école": { j: [["L'école a {x} classes.", [6, 12], 'p']], o: [['Le collège voisin a {x} élèves.', 'D', 'p', 'ces élèves ne sont pas dans cette école.']] },
+    'Le collier': { j: [['Le collier mesure {x} cm.', [30, 60], 'p']], o: [['Il reste {x} perles dans la boîte.', 'D', '', 'ces perles ne sont pas sur le collier.']] },
+
+    "L'étal de fruits": { j: [['Le marché ouvre à {x} h.', [7, 9], 'p']], o: [['Hier, le marchand a vendu {x} fruits.', 'D', '', "ce sont les fruits vendus hier, pas ceux qui sont sur l'étal."]] },
+    'Le trésor': { j: [['Le coffre du trésor pèse {x} kg.', [20, 60], 'p']], o: [["Un autre trésor, caché sur l'île voisine, contient {x} pièces.", 'D', '', "c'est un autre trésor."]] },
+    'Le grand bateau': { j: [['Le bateau a {x} voiles.', [3, 8], 'p']], o: [['Sur le quai, {x} personnes regardent le bateau partir.', 'D', '', 'ces personnes ne sont pas sur le bateau.']] },
+    'Le bowling': { j: [['Une partie coûte {x} €.', [4, 8], 'p']], o: [['Son ami a fait tomber {x} quilles.', 'D', '', 'ce sont les quilles de son ami.']] },
+    'Les timbres': { j: [['{N} a {x} ans.', [8, 11], 'p']], o: [['Son classeur peut contenir {x} timbres.', 'M+', '', "c'est la place dans le classeur, pas le nombre de timbres."]] },
+
+    'Les livres à ranger': { j: [["L'étagère mesure {x} cm.", [80, 150], 'p']], o: [['La bibliothèque a {x} livres.', 'M+', '', 'la question parle seulement des livres que {N} doit ranger.']] },
+    'Le coffre bleu': { j: [['Le coffre rouge pèse {x} kg.', [8, 30], 'm']], o: [['Le mousse a {x} pièces dans sa bourse.', [20, 150], 'pm', 'ces pièces ne sont pas dans les coffres.']] },
+    'La cour': { j: [['La récréation dure {x} minutes.', [15, 20], 'pm']], o: [['Dans la classe, {x} élèves sont restés lire.', [3, 12], 'p', 'ces élèves ne sont pas dans la cour.']] },
+    'Le puzzle': { j: [['Ce puzzle coûte {x} €.', [8, 25], '']], o: [['Hier, {N} a fini un autre puzzle de {x} pièces.', 'D', 'p', "c'est un autre puzzle."]] },
+    'Le bocal': { j: [['Un bonbon coûte {x} centimes.', [5, 20], 'pm']], o: [['Dans le sac, il reste {x} bonbons à la menthe.', [10, 60], 'p', 'ces bonbons ne sont pas dans le bocal.']] },
+    'Le cinéma': { j: [['La séance commence à {x} h.', [14, 20], 'pm']], o: [['La salle voisine a {x} places.', 'D', '', "c'est une autre salle."]] },
+    'Le voyage en mer': { j: [['Le bateau avance à {x} km/h.', [10, 30], 'pm']], o: [['Le voyage précédent faisait {x} km.', 'D', '', "c'est un autre voyage."]] },
+    'Les cartes': { j: [['{N} a {x} ans.', [8, 11], 'p']], o: [['Son amie a {x} cartes de chevaliers.', 'D', '', 'ce sont les cartes de son amie.']] },
+    'Le perroquet': { j: [['Le perroquet a {x} ans.', [5, 40], '']], o: [['Le capitaine connaît {x} mots de pirate.', 'D', 'p', 'ce sont les mots du capitaine, pas ceux du perroquet.']] },
+    'La corde': { j: [['La corde pèse {x} kg.', [2, 9], 'm']], o: [['Le mât du bateau mesure {x} m.', [8, 30], 'p', "c'est le mât, pas la corde."]] },
+
+    'Les biscuits': { j: [['Un paquet coûte {x} €.', [2, 5], 'p']], o: [['Au magasin, il reste {x} paquets.', 'D', '', 'ce sont les paquets du magasin.']] },
+    'Les coffres enterrés': { j: [['Il creuse chaque trou en {x} minutes.', [10, 30], 'm']], o: [['Il garde {x} pièces dans sa poche.', 'D', 'm', 'ces pièces ne sont pas enterrées.']] },
+    'Les chaises': { j: [['Le spectacle dure {x} minutes.', [45, 90], 'p']], o: [['Dans la réserve, {x} chaises sont empilées.', 'D', 'p', 'ces chaises ne sont pas dans la salle.']] },
+    'Les colliers': { j: [['Chaque collier mesure {x} cm.', [30, 50], 'm']], o: [['Il lui reste {x} perles dans sa boîte.', 'D', '', 'ces perles ne sont pas sur les colliers.']] },
+    "Les boîtes d'œufs": { j: [['Le carton pèse {x} kg.', [2, 6], 'm']], o: [['La fermière a {x} poules.', [10, 60], 'p', 'la question demande des œufs, pas des poules.']] },
+    'Les autocollants': { j: [['Son cahier coûte {x} €.', [2, 6], 'm']], o: [['Son cahier a {x} pages.', 'M+', 'm', 'on compte seulement les pages remplies.']] },
+    'Le tournoi': { j: [['Le tournoi commence à {x} h.', [9, 14], 'p']], o: [['{x} personnes regardent le tournoi.', [30, 250], 'p', 'ces personnes regardent : elles ne jouent pas.']] },
+    'Les barques': { j: [['Une barque coûte {x} € de location.', [8, 20], 'pm']], o: [['Il reste {x} pirates sur le bateau.', 'D', 'm', 'ces pirates ne sont pas dans les barques.']] },
+
+    'Le partage des bonbons': { j: [['{N} a {x} ans.', [8, 11], 'p']], o: [['Hier, {N} a mangé {x} bonbons.', [3, 15], 'p', "ce sont les bonbons d'hier."]] },
+    'Le partage du trésor': { j: [['Le coffre pèse {x} kg.', [15, 40], 'p']], o: [["Le trésor de l'an dernier contenait {x} pièces.", 'D', 'p', "c'est le trésor de l'an dernier."]] },
+    'La ficelle': { j: [['La ficelle coûte {x} €.', [1, 4], '']], o: [['Une autre ficelle mesure {x} cm.', 'D', '', "c'est une autre ficelle."]] },
+    'Les équipes': { j: [['Le match dure {x} minutes.', [20, 45], 'pm']], o: [['Sur le banc, {x} parents regardent le match.', [5, 40], '', 'les parents ne jouent pas.']] },
+    'Les étagères': { j: [['Chaque étagère mesure {x} cm.', [60, 120], 'm']], o: [['Sa sœur a {x} livres dans sa chambre.', [10, 80], 'm', 'ce sont les livres de sa sœur.']] },
+    'Le gâteau': { j: [['Le gâteau cuit pendant {x} minutes.', [25, 45], 'm']], o: [['Le plat vide pèse {x} g.', [300, 900], 'p', "c'est le poids du plat, pas celui du gâteau."]] },
+
+    "L'album photo": { j: [["L'album coûte {x} €.", [8, 20], '']], o: [["L'album a {x} pages.", 'M+', '', "c'est le nombre de pages de l'album, pas celui des pages remplies."]] },
+    'Les colliers de perles': { j: [['Chaque collier mesure {x} cm.', [30, 50], '']], o: [['Il a déjà {x} colliers dans son coffre.', [3, 15], 'm', 'ce sont des colliers déjà faits.']] },
+    'Les œufs': { j: [['Elle ramasse les œufs à {x} h.', [7, 9], 'm']], o: [['La fermière a {x} poules.', [10, 60], '', 'la question demande des boîtes, pas des poules.']] },
+    'Le minibus': { j: [['La sortie dure {x} heures.', [2, 6], 'm']], o: [["L'an dernier, {x} enfants étaient partis en sortie.", 'D', 'p', "ce sont les enfants de l'an dernier."]] },
+    'La piste': { j: [['{N} court pendant {x} minutes.', [10, 30], 'm']], o: [['Le stade est à {x} m de son école.', [300, 900], '', "c'est la distance jusqu'au stade, pas celle que {N} court."]] },
+    'Les paquets de cartes': { j: [['{N} a {x} ans.', [8, 11], 'p']], o: [['Son frère a {x} cartes.', 'D', '', 'ce sont les cartes de son frère.']] },
+    'Les bouteilles': { j: [['Une bouteille coûte {x} €.', [1, 3], 'm']], o: [['La marmite contient {x} litres de soupe.', [10, 40], 'pm', "c'est de la soupe, pas du jus."]] },
+
+    'Les galettes': { j: [['Les galettes cuisent pendant {x} minutes.', [10, 25], 'm']], o: [['Hier, il avait préparé {x} galettes.', 'D', '', "ce sont les galettes d'hier."]] },
+    'Les bouquets': { j: [['Un bouquet coûte {x} €.', [8, 20], 'm']], o: [['Dans sa boutique, il y a {x} tulipes.', 'D', 'm', 'les bouquets sont faits avec des roses.']] },
+    'Les sachets de billes': { j: [['{N} a {x} ans.', [8, 11], 'p']], o: [['Son ami a {x} billes.', 'D', '', 'ce sont les billes de son ami.']] },
+    "Les piles d'or": { j: [['Une pièce pèse {x} g.', [5, 12], 'pm']], o: [["Le mousse a {x} pièces d'argent.", 'D', 'p', 'ce sont les pièces du mousse.']] },
+    'Les pots de crayons': { j: [['La classe compte {x} élèves.', [22, 29], 'p']], o: [['Elle a {x} feutres dans son tiroir.', [10, 60], '', 'la question parle des crayons, pas des feutres.']] }
+  };
+  function dis1(P){
+    const d = DIS1[P.tpl.l];
+    if (!d) return null;
+    const given = ['a', 'b', 'c', 'T', 'p', 'n', 's'].filter(k => P[k] !== undefined).map(k => P[k]);
+    return { t: P.tpl.t, q: P.tpl.q, V: P.V, given, nums: given.concat([P.r]), j: d.j, o: d.o };
+  }
+
   /* ---------- Les questions de chaque niveau ---------- */
   const KIND_TXT = { tout: 'je cherche le tout', partie: 'je cherche une partie', part: 'je cherche une partie', nb: 'je cherche une partie' };
   function item1(id, P){
@@ -1373,7 +1542,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     let list = [];
     Object.keys(plan).forEach(t => { list = list.concat(takeDistinct(T1.filter(x => x.type === t && (HARD ? x.o : x.j)), plan[t], used)); });
     const Ps = shuffle(list).map(gen1), items = Ps.map(P => item1(id, P));
-    return id >= 3 ? addReflex(items, Ps.map(verif1)) : items;
+    return id >= 3 ? addTri(addReflex(items, Ps.map(verif1)), Ps.map(dis1)) : items;
   }
 
   /* ---------- Les énigmes du trésor : une par île ---------- */
@@ -1475,7 +1644,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     pose: ["L'addition et la soustraction posées", '../l-addition-et-la-soustraction-posees/index.html'],
     mpose: ['La multiplication posée', '../la-multiplication-posee/index.html'],
     div: ['La division', '../la-division/index.html'],
-    verif: ['Mon résultat est-il possible ?', '../mon-resultat-est-il-possible/index.html']
+    verif: ['Mon résultat est-il possible ?', '../mon-resultat-est-il-possible/index.html'],
+    tri: ['Trier les données d\'un problème', '../trier-les-donnees-d-un-probleme/index.html']
   };
   function revueOf(c){
     if (!c) return null;
@@ -1503,13 +1673,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     } catch (e) {}
     return '';
   }
+  function noteTri(R){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes('tri')) R.calcRev.push('tri'); }
   function noteVerif(R){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes('verif')) R.calcRev.push('verif'); }
   function noteRevue(R, st){
     const rv = st && st.calc ? revueOf(st.calc) : null;
     if (rv){ R.calcRev = R.calcRev || []; if (!R.calcRev.includes(rv)) R.calcRev.push(rv); }
   }
-  const revNote = R => { const c = (R.calcRev || []).filter(k => k !== 'verif'), v = (R.calcRev || []).includes('verif');
+  const revNote = R => { const c = (R.calcRev || []).filter(k => k !== 'verif' && k !== 'tri'), v = (R.calcRev || []).includes('verif'), tr = (R.calcRev || []).includes('tri');
     return (c.length ? '<p class="revnote"><b>Erreur de calcul</b> : la démarche compte d\'abord, mais pense à revoir ' + c.map(k => '« ' + esc(revName(k)) + ' »').join(' et ') + '.</p>' : '') +
+      (tr ? '<p class="revnote"><b>Tri des données</b> : avant de chercher le calcul, lis la question, puis barre les données qui ne servent pas pour y répondre. Tu peux t\'entraîner avec « Trier les données d\'un problème ».</p>' : '') +
       (v ? '<p class="revnote"><b>Vérification</b> : avant d\'écrire ta phrase réponse, pose-toi les trois questions du détective : la bonne unité ? un nombre possible ? la réponse à la question ? Tu peux t\'entraîner avec « Mon résultat est-il possible ? ».</p>' : ''); };
   function renderRevBox(r){
     const box = $('revBox'); if (!box) return;
@@ -1518,12 +1690,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
     if (!keys.length){ box.hidden = true; box.innerHTML = ''; return; }
     const pf = passFrag();
-    const hasV = keys.includes('verif'), onlyV = keys.every(k => k === 'verif');
-    box.innerHTML = '<h2 class="det-title">' + (hasV ? (onlyV ? 'La vérification à revoir' : 'Le calcul et la vérification à revoir') : 'Le calcul à revoir') + '</h2><p class="send-note">Ta démarche compte d\'abord. ' + (hasV ? 'Pour progresser, entraîne-toi avec :' : 'Pour ne plus te tromper dans les calculs, entraîne-toi avec :') + '</p>' +
+    const hasV = keys.includes('verif'), hasT = keys.includes('tri'), hasC = keys.some(k => k !== 'verif' && k !== 'tri'), parts = [];
+    if (hasC) parts.push('le calcul'); if (hasT) parts.push('le tri des données'); if (hasV) parts.push('la vérification');
+    const title = ucf(parts.length > 1 ? parts.slice(0, -1).join(', ') + ' et ' + parts[parts.length - 1] : parts[0]) + ' à revoir';
+    box.innerHTML = '<h2 class="det-title">' + title + '</h2><p class="send-note">Ta démarche compte d\'abord. ' + (hasV || hasT ? 'Pour progresser, entraîne-toi avec :' : 'Pour ne plus te tromper dans les calculs, entraîne-toi avec :') + '</p>' +
       keys.map(k => '<a class="btn-secondary rev-btn" href="' + REVUE[k][1] + pf + '" target="_blank" rel="noopener"><span>' + esc(REVUE[k][0]) + '</span><small>' + counts[k] + (counts[k] > 1 ? ' erreurs' : ' erreur') + '</small></a>').join('');
     box.hidden = false;
   }
-  const revSend = r => { const ks = []; (r.results || []).forEach(x => (x.rev || []).forEach(k => { if (k !== 'verif' && !ks.includes(k)) ks.push(k); })); return ks.length ? ' ; calcul à revoir : ' + ks.map(revName).join(', ') : ''; };
+  const revSend = r => { const ks = []; (r.results || []).forEach(x => (x.rev || []).forEach(k => { if (k !== 'verif' && k !== 'tri' && !ks.includes(k)) ks.push(k); })); return ks.length ? ' ; calcul à revoir : ' + ks.map(revName).join(', ') : ''; };
 
   /* ---------- Élèves, scores et bons points ---------- */
   function loadStore(){
@@ -2290,8 +2464,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
-  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, verifErr: 0, calcErr: 0, calcRev: [], itemDone: false, showKw: false }, stepState());
+  const stepState = () => ({ tries: 0, picked: [], marks: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
+  const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, verifErr: 0, triErr: 0, triFinal: null, calcErr: 0, calcRev: [], itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
   function learnStart(){
@@ -2420,6 +2594,52 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tok = R.uid + ':' + R.i + ':' + R.si;
     setTimeout(() => { const Rn = S.R; if (Rn && Rn.uid + ':' + Rn.i + ':' + Rn.si === tok) nextStep(); }, okFb ? 1400 : 700);
   }
+
+  /* ---------- Trier les données : l'élève touche les données de l'énoncé pour les surligner ou les barrer ---------- */
+  function triToggle(k){
+    const R = S.R, st = curStep();
+    if (!st || st.kind !== 'tri' || R.locked || R.revealed || R.itemDone || R.vals[R.si]) return;
+    const j = R.marks.indexOf(k);
+    if (j >= 0) R.marks.splice(j, 1); else R.marks.push(k);
+    if (R.fb && R.fb.kind === 'info') R.fb = null;
+    renderPlay();
+    const t = $('stmt').querySelector('.tok[data-t="' + k + '"]');
+    if (t) try { t.focus({ preventScroll: true }); } catch (e) {}
+  }
+  const triList = (st, ks) => ks.map(i => '« ' + esc(st.labels[i]) + ' »').join(', ');
+  function triSubmit(){
+    const R = S.R, st = curStep();
+    if (!st || st.kind !== 'tri' || R.locked || R.revealed || R.itemDone || R.vals[R.si]) return;
+    const bar = st.mode === 'barrer';
+    if (!R.marks.length){ R.fb = { kind: 'info', html: bar ? "Touche d'abord les données inutiles pour les barrer." : "Touche d'abord les données utiles pour les surligner." }; renderPlay(); return; }
+    const miss = st.want.filter(k => !R.marks.includes(k)), extra = R.marks.filter(k => !st.want.includes(k));
+    const summ = (bar ? 'Barré : ' : 'Surligné : ') + triList(st, st.want);
+    if (!miss.length && !extra.length){ R.triFinal = { mode: st.mode, want: st.want.slice() }; solveStep(false, summ, st.okFb, '', ''); return; }
+    R.err++; R.triErr = (R.triErr || 0) + 1; noteTri(R); R.tries++;
+    runFall();
+    const msg = [];
+    if (extra.length) msg.push(bar ? 'Tu as barré une donnée utile : sans elle, on ne peut plus répondre.' : 'Tu as surligné une donnée qui ne sert pas pour cette question.');
+    if (miss.length) msg.push(bar ? 'Il reste au moins une donnée inutile à barrer.' : 'Il manque au moins une donnée utile.');
+    if (R.tries >= 2){ R.triFinal = { mode: st.mode, want: st.want.slice() }; R.marks = st.want.slice(); solveStep(true, summ, '', msg.join(' '), st.why || ''); }
+    else { R.fb = { kind: 'bad', html: msg.join(' ') + ' Réessaie.' }; R.hint = st.hint || null; renderPlay(); }
+  }
+  /* Les étiquettes de l'énoncé : à toucher pendant le tri, puis surlignées (utiles) ou barrées (inutiles) */
+  function decorTri(el, R, it){
+    const st = it.steps[R.si], on = !!(st && st.kind === 'tri' && !R.vals[R.si] && !R.itemDone && !R.revealed), fin = R.triFinal;
+    el.classList.toggle('tri-on', on);
+    el.querySelectorAll('.tok').forEach(t => {
+      const k = +t.dataset.t;
+      t.classList.remove('hl', 'st');
+      if (on){
+        const m = R.marks.includes(k);
+        t.setAttribute('role', 'button'); t.setAttribute('tabindex', '0'); t.setAttribute('aria-pressed', m ? 'true' : 'false');
+        if (m) t.classList.add(st.mode === 'barrer' ? 'st' : 'hl');
+      } else {
+        t.removeAttribute('role'); t.removeAttribute('tabindex'); t.removeAttribute('aria-pressed');
+        if (fin){ const inW = fin.want.includes(k); t.classList.add((fin.mode === 'barrer' ? !inW : inW) ? 'hl' : 'st'); }
+      }
+    });
+  }
   function nextStep(){
     const R = S.R;
     if (!R || R.itemDone || S.phase !== 'play') return;
@@ -2435,7 +2655,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     R.revealed = false;
     R.showKw = true;
     if (ok) R.ok++;
-    R.results.push({ ok, html: it.sum, calc: (R.calcErr || 0) > 0, rev: (R.calcRev || []).slice(), verif: (R.verifErr || 0) > 0 });
+    R.results.push({ ok, html: it.sum, calc: (R.calcErr || 0) > 0, rev: (R.calcRev || []).slice(), verif: (R.verifErr || 0) > 0, tri: (R.triErr || 0) > 0 });
     renderPlay();
     try { $('nextBtn').focus({ preventScroll: true }); } catch (e) {}
   }
@@ -2466,7 +2686,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     let outcome = 'notyet';
     if (gained > 0) outcome = firstValid ? 'validate' : 'record';
     else if (R.ok >= need) outcome = 'same';
-    S.res = { verifN: R.results.filter(x => x.verif).length, calcN: R.results.filter(x => x.calc).length, id, enigme: R.enigme, clues: Math.min(R.ok, R.enigme.clues.length), solved: false, tries: 0, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: newBest, from: before, to: after, results: R.results,
+    S.res = { triN: R.results.filter(x => x.tri).length, verifN: R.results.filter(x => x.verif).length, calcN: R.results.filter(x => x.calc).length, id, enigme: R.enigme, clues: Math.min(R.ok, R.enigme.clues.length), solved: false, tries: 0, ok: R.ok, total, err: R.err, need, outcome, gained, prevBest, best: newBest, from: before, to: after, results: R.results,
               card: Math.floor(before / 10) < Math.floor(after / 10) ? Math.floor(after / 10) : 0 };
     S.phase = 'result';
     render();
@@ -2564,7 +2784,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   function doneRow(st, v){
     const cls = 'srow done' + (v.fixed ? ' fixed' : '');
-    if (st.kind === 'choice') return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sa">' + (v.fixed ? CROSS : TICK) + '<span>' + v.h + '</span></span></div>';
+    if (st.kind === 'choice' || st.kind === 'tri') return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sa">' + (v.fixed ? CROSS : TICK) + '<span>' + v.h + '</span></span></div>';
     return '<div class="' + cls + '"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', '<span>' + v.h + '</span>') + '</span></div>';
   }
   function activeRow(st, R){
@@ -2576,6 +2796,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return '<div class="srow active"><span class="sq">' + st.q + '</span><div class="choices' + (st.layout ? ' ' + st.layout : '') + '">' +
         st.opts.map((o, k) => '<button class="choice' + (R.picked.includes(k) ? ' wrong' : '') + '" type="button" data-opt="' + k + '"' + (R.picked.includes(k) ? ' disabled' : '') + '>' + o.h + '</button>').join('') +
         '</div></div>';
+    }
+    if (st.kind === 'tri'){
+      const n = R.marks.length, bar = st.mode === 'barrer';
+      const cnt = n ? n + (bar ? (n > 1 ? ' données barrées' : ' donnée barrée') : (n > 1 ? ' données surlignées' : ' donnée surlignée')) : (bar ? 'Aucune donnée barrée' : 'Aucune donnée surlignée');
+      return '<div class="srow active"><span class="sq">' + st.q + '</span><div class="tri-bar"><span class="tri-count" aria-live="polite">' + cnt + '</span><button class="btn-primary tri-ok" type="button" data-tri="ok">Valider</button></div></div>';
     }
     const box = '<span class="abox' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : '') + '" aria-label="Ta réponse">' + esc(R.input) + '<span class="caret" aria-hidden="true"></span></span>';
     return '<div class="srow active"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
@@ -2597,6 +2822,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const stmt = $('stmt');
     stmt.innerHTML = (R.itemDone && it.stmtDone) ? it.stmtDone : it.stmt;
     stmt.classList.toggle('show-kw', !!R.showKw);
+    decorTri(stmt, R, it);
 
     let h = '';
     for (let j = 0; j <= R.si && j < it.steps.length; j++){
@@ -2638,7 +2864,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (!prof) return;
     $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Île ' + lv.id + ' (' + ileOf(lv.id).short + ') : ' + lv.name,
       r.ok + '/' + r.total + ' démarches justes du premier coup ; ' + (r.calcN ? r.calcN + (r.calcN > 1 ? ' calculs' : ' calcul') + ' à revoir ; ' : '') + nErr(r.err) + (r.ok >= r.need ? ' ; île validée' : ' ; île pas encore validée') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '') +
-      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + (r.verifN ? ' ; ' + r.verifN + (r.verifN > 1 ? ' vérifications' : ' vérification') + ' à revoir' : '') + revSend(r)]);
+      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + (r.triN ? ' ; ' + r.triN + (r.triN > 1 ? ' tris des données' : ' tri des données') + ' à revoir' : '') + (r.verifN ? ' ; ' + r.verifN + (r.verifN > 1 ? ' vérifications' : ' vérification') + ' à revoir' : '') + revSend(r)]);
   }
   function renderEnigma(){
     const r = S.res, E = r.enigme, valid = r.ok >= r.need;
@@ -2720,7 +2946,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     $('resErr').textContent = r.err;
     $('resNeed').textContent = r.need + '/' + r.total;
     $('resDetail').innerHTML = r.results.map(x =>
-      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? (x.calc ? ' <span class="tries">· démarche juste, calcul à revoir</span>' : '') : ' <span class="tries">· à revoir</span>') + (x.verif ? ' <span class="tries">· vérification à revoir</span>' : '') + '</span></li>').join('');
+      '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? (x.calc ? ' <span class="tries">· démarche juste, calcul à revoir</span>' : '') : ' <span class="tries">· à revoir</span>') + (x.tri ? ' <span class="tries">· tri des données à revoir</span>' : '') + (x.verif ? ' <span class="tries">· vérification à revoir</span>' : '') + '</span></li>').join('');
     renderRevBox(r);
     $('sendBox').hidden = !prof;
     setSendLink();
@@ -2817,7 +3043,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   });
 
   $('playHome').addEventListener('click', goHome);
-  $('steps').addEventListener('click', e => { const b = e.target.closest('[data-opt]'); if (b && !b.disabled && S.R) pickOpt(+b.dataset.opt); });
+  $('steps').addEventListener('click', e => { if (e.target.closest('[data-tri]')){ if (S.R) triSubmit(); return; } const b = e.target.closest('[data-opt]'); if (b && !b.disabled && S.R) pickOpt(+b.dataset.opt); });
+  $('stmt').addEventListener('click', e => { const t = e.target.closest('.tok'); if (t && S.R && S.phase === 'play') triToggle(+t.dataset.t); });
+  $('stmt').addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const t = e.target.closest('.tok'); if (t && S.R && S.phase === 'play' && t.getAttribute('role') === 'button'){ e.preventDefault(); triToggle(+t.dataset.t); } });
   $('pad').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b && S.phase === 'play') numPress(b.dataset.k); });
   $('contBtn').addEventListener('click', () => { if (S.R && S.R.revealed) nextStep(); });
   $('nextBtn').addEventListener('click', nextItem);
