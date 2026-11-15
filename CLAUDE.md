@@ -9,7 +9,8 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 - `index.html` : le portail. Matières (`SUBJECTS`), domaines et univers peints (`DOMAINS`, `SCENES`), saisons.
 - `jeux.js` : `window.JEUX`, une ligne JSON par jeu (`slug`, `domaine`, `titre`, `desc`, `ajoute`, `artefact`,
   et pour les bons points : `stockage`, `cle`, `sel`, `profilNeuf`, extraits du jeu par `integrer_jeu.py`).
-  L'ordre des lignes est l'ordre d'affichage dans chaque domaine.
+  L'ordre des lignes est l'ordre d'affichage dans chaque domaine. `vedette: true` : jeu « à la une » (en grand, en tête de
+  son domaine, « Commence par ici ! » ; aujourd'hui « Je me teste »), repris du `feature: true` du portail par `integrer_portail.py`.
 - `jeux/<slug>/index.html` : un jeu = une page HTML autonome.
 - `enseignante/index.html` : « Mon Espace enseignante », la page d'accueil de la maîtresse (crayonnade.pages.dev/enseignante/),
   qui mène à tous ses outils et permet de changer son mot de passe. Lien ★ en tête de l'Espace enseignante du portail.

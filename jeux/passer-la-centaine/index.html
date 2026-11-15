@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Passer la centaine</title>
 <!-- Code de la classe (CM1-CM2) : ne pas modifier à la main, demander à Claude. -->
 <script>window.CMG_JEU={"slug":"passer-la-centaine","stockage":"passer-la-centaine-bons-points","cle":"std","profilNeuf":{"name":"__NOM__","parcours":"jaune","records":{"jaune":null,"orange":null},"points":[]}};</script>
@@ -468,6 +468,23 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 <div class="app">
 
   <!-- Accueil -->
+<style id="practice-style">
+/* Entraînement libre : entre l'étape 1 et le défi chrono, sans chrono ni bons points */
+.practice-card{border-style:dashed}
+.practice-card .eyebrow{color:var(--good)}
+.pr-go{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:40px;padding:4px 14px 4px 10px;border:0;border-radius:999px;background:var(--pen);color:var(--pen-ink);font-family:var(--font-num);font-weight:800;font-size:1.05rem;line-height:1.1;cursor:pointer;box-shadow:0 3px 0 var(--pen-deep);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.pr-go:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pen-deep)}
+.pr-go svg{width:20px;height:20px;flex:none}
+.practice-foot{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.practice-txt{margin:0;font-size:.92rem;line-height:1.45;color:var(--ink-soft)}
+.practice-txt b{color:var(--ink);font-family:var(--font-num)}
+.pr-go[hidden],.practice-foot[hidden]{display:none}
+#game.practice .count .label{color:var(--good)}
+#game.practice .chrono{display:none}
+#game.practice .bar{flex-wrap:wrap;row-gap:8px}
+#game.practice .head-btns{margin-left:auto}
+#game.practice .count .of{display:none}
+</style>
   <section id="start" class="screen" aria-labelledby="startTitle">
     <div class="title-block">
       <span class="eyebrow">Calcul mental · Entraînement en plus</span>
@@ -515,6 +532,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       </div>
       <p>Tu t'entraînes sur 6 calculs, sans chrono.</p>
       <button class="btn-primary" id="learnBtn" type="button">Commencer l'étape 1</button>
+    </div>
+
+    <div class="fiche step-card practice-card">
+      <span class="eyebrow">Entre l'étape 1 et l'étape 2 · si tu veux</span>
+      <h2>L'entraînement libre</h2>
+      <p>Des calculs comme ceux du défi, sans chrono et sans bons points. Entraîne-toi autant que tu veux, puis lance le défi quand tu te sens à l'aise. Tu peux aussi sauter cet entraînement.</p>
+      <button class="btn-secondary" id="practiceBtn" type="button">M'entraîner sans chrono</button>
     </div>
 
     <div class="fiche step-card">
@@ -599,8 +623,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     <p class="choices" id="learnChoices"></p>
 
     <div class="stack push-bottom">
-      <button class="btn-primary" id="toGameBtn" type="button">Passer au défi chrono</button>
-      <button class="btn-secondary" id="learnAgainBtn" type="button">Refaire l'entraînement</button>
+      <p class="send-note">Si tu veux, entraîne-toi d'abord sans chrono, autant que tu veux. Ce n'est pas obligatoire : tu peux passer directement au défi.</p>
+      <button class="btn-primary" id="toPracticeBtn" type="button">M'entraîner sans chrono</button>
+      <button class="btn-secondary" id="toGameBtn" type="button">Passer directement au défi chrono</button>
+      <button class="btn-ghost" id="learnAgainBtn" type="button">Refaire l'étape 1</button>
     </div>
   </section>
 
@@ -616,7 +642,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       <div class="chrono" role="timer" aria-label="Chrono">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" stroke="currentColor" stroke-width="2.2"/><path d="M12 13.5V9.8M10 2.8h4M18.4 6.6l1.4-1.4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
         <span id="clock">00:00</span>
-      </div></div>
+      </div><button class="pr-go" id="practiceReadyBtn" type="button" hidden aria-label="Je me sens prêt : lancer le défi chrono"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" stroke="currentColor" stroke-width="2.2"/><path d="M12 13.5V9.8M10 2.8h4M18.4 6.6l1.4-1.4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Lancer le défi</button></div>
     </header>
 
     <ol class="track" id="track" aria-hidden="true" style="display:none"></ol>
@@ -631,6 +657,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     </div>
 
     <div class="pad" id="pad"></div>
+
+    <div class="practice-foot" id="practiceBar" hidden>
+      <p class="practice-txt" id="practiceTxt"></p>
+      <button class="btn-ghost" id="practiceStopBtn" type="button">Arrêter l'entraînement</button>
+    </div>
   </section>
 
   <!-- Fin du défi -->
@@ -721,6 +752,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     </form>
     <div class="fiche">
       <ul class="howto">
+        <li>Entre l'étape 1 et le défi chrono, l'élève peut s'entraîner librement s'il le veut : des calculs du défi, dans le parcours choisi, sans chrono. Il passe au défi quand il se sent prêt (bouton « Lancer le défi », en haut à la place du chrono) ou s'arrête quand il veut (« Arrêter l'entraînement »). Cet entraînement ne donne ni bon point ni record et n'envoie pas de score.</li>
         <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
         <li>Un bon point est gagné chaque fois que l'élève bat son record d'au moins une seconde. Le premier défi sert de temps de départ.</li>
         <li>Le défi est un slalom : une porte par calcul, et le skieur tombe à chaque erreur. La piste suit les bons points de la carte en cours : blanche (0 ou 1), verte (2 ou 3), bleue (4 ou 5), rouge (6 ou 7), noire (8 ou 9). À chaque record battu, le skieur est applaudi, par de plus en plus de monde ; le 10<sup>e</sup> bon point déclenche le saut périlleux et le feu d'artifice.</li>
@@ -1063,6 +1095,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     $('nameInput').focus();
   }
   function startGame(){
+    S.practice = false;
     if (!profile()){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
     S.gameParcours = currentParcours();
     S.problems = makeProblems(S.gameParcours);
@@ -1078,6 +1111,53 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function resetQuestion(){
     S.errors = 0; S.hintUsed = false; S.hintOpen = false; S.input = ''; S.wrong = false; S.locked = false;
+  }
+  /* ---------- Entraînement libre : sans chrono, sans bons points, l'élève l'arrête quand il veut ---------- */
+  function startPractice(){
+    S.practice = true;
+    S.gameParcours = currentParcours();
+    S.problems = makeProblems(S.gameParcours);
+    S.i = 0;
+    S.results = [];
+    S.prDone = 0;
+    S.prFirst = 0;
+    S.gameStart = Date.now();
+    S.qStart = S.gameStart;
+    S.finalMs = 0;
+    resetQuestion();
+    S.phase = 'game';
+    render();
+  }
+  // Après 15 calculs, une nouvelle descente commence, avec 15 nouveaux calculs.
+  function nextPractice(){
+    if (S.phase !== 'game' || !S.practice) return;
+    if (S.i >= S.problems.length - 1){
+      const last = JSON.stringify(S.problems[S.i]);
+      const fresh = makeProblems(S.gameParcours);
+      if (fresh.length > 1 && JSON.stringify(fresh[0]) === last) fresh.push(fresh.shift());
+      S.problems = fresh;
+      S.i = -1;
+      S.results = [];
+      S.gameStart = Date.now();
+      S.qStart = S.gameStart;
+    }
+    nextQuestion();
+  }
+  function renderPractice(){
+    const on = !!S.practice;
+    $('game').classList.toggle('practice', on);
+    $('practiceBar').hidden = !on;
+    const lab = document.querySelector('#game .count .label');
+    if (lab) lab.textContent = on ? 'Entraînement' : 'Calcul';
+    $('practiceReadyBtn').hidden = !on;
+    if (!on) return;
+    const d = S.prDone || 0, f = S.prFirst || 0;
+    $('qNum').textContent = d + 1;
+    if (d === 0 && !S.wrong && !S.locked) setFeedback('info', 'Sans chrono : prends ton temps !');
+    $('practiceTxt').innerHTML = (d === 0
+      ? 'Entraînement libre : pas de chrono, pas de bons points.'
+      : '<b>' + d + '</b> calcul' + (d > 1 ? 's' : '') + ' réussi' + (d > 1 ? 's' : '') + ', dont <b>' + f + '</b> du premier coup.') +
+      ' Quand tu te sens à l\'aise, touche « Lancer le défi ».';
   }
   function nextQuestion(){
     S.i++;
@@ -1134,7 +1214,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       setFeedback('good', pick(GOOD));
       renderAnswer('good');
       renderTrack();
-      if (S.i === N - 1){
+      if (S.practice){
+        S.prDone = (S.prDone || 0) + 1;
+        if (!S.errors) S.prFirst = (S.prFirst || 0) + 1;
+        setTimeout(nextPractice, 650);
+      } else if (S.i === N - 1){
         S.finalMs = now - S.gameStart;
         stopTicking();
         updateClock();
@@ -1250,6 +1334,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     else { $('hint').hidden = true; $('hint').innerHTML = ''; }
     renderTrack();
     updateClock();
+    renderPractice();
   }
 
   function renderLearn(){
@@ -2044,6 +2129,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   $('learnHome').addEventListener('click', goHome);
   $('toGameBtn').addEventListener('click', startGame);
   $('startBtn').addEventListener('click', startGame);
+  $('practiceBtn').addEventListener('click', startPractice);
+  $('toPracticeBtn').addEventListener('click', startPractice);
+  $('practiceReadyBtn').addEventListener('click', startGame);
+  $('practiceStopBtn').addEventListener('click', goHome);
   $('againBtn').addEventListener('click', startGame);
   $('endHomeBtn').addEventListener('click', goHome);
   $('hintBtn').addEventListener('click', showHint);
@@ -2075,7 +2164,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (S.phase === 'game' && S.problems.length !== N) S.phase = 'start';
     render();
     if (S.phase === 'learn' && S.L.locked) advanceStep();
-    if (S.phase === 'game'){
+    if (S.phase === 'game' && S.practice){
+      if (S.results.length > S.i) nextPractice();
+    } else if (S.phase === 'game'){
       if (S.results.length > S.i){ if (S.i === N - 1) finish(); else nextQuestion(); }
       if (S.phase === 'game' && !S.finalMs) startTicking();
     }

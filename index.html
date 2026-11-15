@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Crayonnade – Des jeux bien taillés pour le CM1-CM2</title><meta name="description" content="Crayonnade : des jeux bien taillés pour le CM1-CM2."><meta name="theme-color" content="#2b45c8"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone.svg" type="image/svg+xml"><link rel="icon" href="icones/icone-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Crayonnade"><meta name="apple-mobile-web-app-status-bar-style" content="default"><style>.ens-outils{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.ens-lien{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--pen);color:var(--sheet);font-family:var(--font-num);font-weight:800;font-size:1rem;text-decoration:none}.ens-lien:focus-visible{outline:3px solid var(--pen);outline-offset:3px}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Crayonnade – Des jeux bien taillés pour le CM1-CM2</title><meta name="description" content="Crayonnade : des jeux bien taillés pour le CM1-CM2."><meta name="theme-color" content="#2b45c8"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone.svg" type="image/svg+xml"><link rel="icon" href="icones/icone-192.png" sizes="192x192" type="image/png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Crayonnade"><meta name="apple-mobile-web-app-status-bar-style" content="default"><style>.ens-outils{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.ens-lien{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--pen);color:var(--sheet);font-family:var(--font-num);font-weight:800;font-size:1rem;text-decoration:none}.ens-lien:focus-visible{outline:3px solid var(--pen);outline-offset:3px}</style></head><body>
 <!-- Le code de la classe et le code commun à toutes les pages sont dans commun/ : ne pas modifier à la main, demander à Claude. -->
 <link rel="stylesheet" href="commun/commun.css"><script src="commun/commun.js"></script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -111,6 +111,15 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
 .gdesc{color:var(--ink-soft);font-size:.92rem;line-height:1.4}
 .play{flex:none;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:var(--c);color:#ffffff;font-family:var(--font-num);font-weight:800;font-size:1.05rem}
 .play svg{width:14px;height:14px}
+.game.featured{flex-direction:column;align-items:flex-start;gap:10px;padding:18px 20px 20px;border:2.5px solid var(--c);box-shadow:0 5px 0 var(--c);background:linear-gradient(135deg, color-mix(in srgb, var(--c) 10%, var(--sheet)), var(--sheet) 70%)}
+.game.featured:hover{box-shadow:0 7px 0 var(--c)}
+.game.featured .gtitle{font-size:clamp(1.6rem, 6vw, 2.1rem);line-height:1.15}
+.game.featured .gdesc{font-size:1.02rem;color:var(--ink)}
+.game.featured .play{margin-left:0;padding:10px 22px;font-size:1.25rem}
+.game.featured .play svg{width:16px;height:16px}
+.feat-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:999px;background:var(--c);color:#ffffff;font-family:var(--font-num);font-weight:800;font-size:.95rem}
+.feat-tag svg{width:15px;height:15px;flex:none}
+.games-next{margin:6px 2px -2px;font-family:var(--font-num);font-weight:700;font-size:1.05rem;color:var(--ink-soft)}
 .empty{padding:18px;border-radius:18px;background:var(--sheet);border:1.5px dashed var(--key-edge);text-align:center;color:var(--ink-soft)}
 .empty b{display:block;color:var(--ink);font-family:var(--font-num);font-size:1.2rem}
 
@@ -284,7 +293,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
   Object.keys(SUBJECTS).forEach(s => SUBJECTS[s].domains.forEach(d => DOMAINS[d].subject = s));
 
   /* ---------- Les jeux : la liste est dans jeux.js (un dossier par jeu dans jeux/) ---------- */
-  const GAMES = (window.JEUX || []).map(j => ({ domain: j.domaine, title: j.titre, desc: j.desc, url: 'jeux/' + j.slug + '/index.html', added: j.ajoute }));
+  const GAMES = (window.JEUX || []).map(j => ({ domain: j.domaine, title: j.titre, feature: !!j.vedette, desc: j.desc, url: 'jeux/' + j.slug + '/index.html', added: j.ajoute }));
   const LAUNCH = '2026-11-06T12:00', NEW_DAYS = 14;
   const isNew = gm => { if (gm.added <= LAUNCH) return false; const d = (Date.now() - new Date(gm.added.length > 10 ? gm.added : gm.added + 'T00:00:00').getTime()) / 86400000; return d >= -1 && d <= NEW_DAYS; };
   const gamesOf = d => GAMES.filter(gm => gm.domain === d);
@@ -758,7 +767,16 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
       '<div class="dhead"><h2 class="vtitle">' + D.name + '</h2><p class="world">' + D.world + '</p></div>';
     if (!gs.length) return h + '<div class="empty"><b>Bientôt !</b>Il n\'y a pas encore de jeu ici. La maîtresse en prépare un.</div>';
     h += '<ul class="games">';
-    gs.forEach(gm => {
+    // Le jeu marqué « feature » (Je me teste) passe en premier, en grand : c'est par lui qu'on commence.
+    const feat = gs.filter(gm => gm.feature), rest = gs.filter(gm => !gm.feature);
+    feat.forEach(gm => {
+      h += '<li><a class="game featured" href="' + esc(gm.url) + '" style="--c:' + s.color + '">' +
+        '<span class="feat-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor"/></svg>Commence par ici !</span>' +
+        '<span class="gtext"><span class="gtitle">' + esc(gm.title) + (isNew(gm) ? '<span class="badge-new">Nouveau</span>' : '') + '</span><span class="gdesc">' + esc(gm.desc) + '</span></span>' +
+        '<span class="play">' + PLAY_ICON + 'Je commence</span></a></li>';
+    });
+    if (feat.length && rest.length) h += '<li class="games-next">Ensuite, choisis un jeu :</li>';
+    rest.forEach(gm => {
       h += '<li><a class="game" href="' + esc(gm.url) + '" style="--c:' + s.color + '"><span class="gtext"><span class="gtitle">' + esc(gm.title) + (isNew(gm) ? '<span class="badge-new">Nouveau</span>' : '') + '</span><span class="gdesc">' + esc(gm.desc) + '</span></span><span class="play">' + PLAY_ICON + 'Jouer</span></a></li>';
     });
     return h + '</ul>';

@@ -50,6 +50,7 @@ ENTETE_JEUX_JS = """/* La liste des jeux de l'appli : une ligne par jeu, dans l'
    slug : le dossier du jeu dans jeux/ ; domaine : la clé du domaine dans index.html ;
    ajoute : la date d'ajout (le badge « Nouveau » s'affiche 14 jours) ;
    stockage, cle, sel, profilNeuf : les bons points du jeu (pour l'outil « Ajouter des bons points »).
+   vedette : jeu « à la une » en tête de son domaine (« Commence par ici ! »), repris du portail par integrer_portail.py.
    Ne pas modifier à la main : demander à Claude (outils/integrer_jeu.py). */
 window.JEUX = [
 """

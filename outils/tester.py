@@ -109,6 +109,11 @@ with sync_playwright() as p:
     n = page.locator("a.game").count()
     ok(n == sum(1 for j in jeux if j["domaine"] == "calcul-mental"), f"{n} jeux en calcul mental")
     ok(page.locator("a.game[target]").count() == 0, "les jeux s'ouvrent dans la même fenêtre")
+    vedettes = [j["slug"] for j in jeux if j["domaine"] == "calcul-mental" and j.get("vedette")]
+    if vedettes:
+        ok(page.locator("a.game.featured").count() == len(vedettes)
+           and vedettes[0] in (page.locator("a.game").first.get_attribute("href") or ""),
+           "le jeu à la une (« Commence par ici ! ») est en tête : " + vedettes[0])
     with page.expect_navigation():
         page.locator("a.game").nth(2).click()
     ok("/jeux/" in page.url, "le jeu s'ouvre : " + page.url.replace(BASE, ""))

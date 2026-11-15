@@ -9,7 +9,8 @@ Les jeux, eux, s'intègrent avec integrer_jeu.py : ce script signale ceux du por
 Ce que fait le script :
   - met le titre, l'icône, le manifeste et les réglages pour tablette dans <head> ;
   - le code de la classe vient de commun/ ; les polices de commun/polices/ ;
-  - la liste des jeux vient de jeux.js (les jeux s'ouvrent dans la même fenêtre) ;
+  - la liste des jeux vient de jeux.js (les jeux s'ouvrent dans la même fenêtre) ; les jeux « à la une » du
+    portail (feature: true) y sont notés "vedette" ;
   - ajoute le mode d'emploi pour installer l'appli et le mode hors ligne ;
   - met à jour sw.js.
 """
@@ -19,6 +20,8 @@ import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RACINE / "outils"))
+from integrer_jeu import lire_jeux, ecrire_jeux  # noqa: E402
 NOM_COURT = "Crayonnade"
 DESCRIPTION = "Crayonnade : des jeux bien taillés pour le CM1-CM2."
 
@@ -35,7 +38,7 @@ TETE = ('<meta name="description" content="{desc}"><meta name="theme-color" cont
         '.ens-lien:focus-visible{{outline:3px solid var(--pen);outline-offset:3px}}</style>')
 
 LISTE_JEUX = """  /* ---------- Les jeux : la liste est dans jeux.js (un dossier par jeu dans jeux/) ---------- */
-  const GAMES = (window.JEUX || []).map(j => ({ domain: j.domaine, title: j.titre, desc: j.desc, url: 'jeux/' + j.slug + '/index.html', added: j.ajoute }));
+  const GAMES = (window.JEUX || []).map(j => ({ domain: j.domaine, title: j.titre, feature: !!j.vedette, desc: j.desc, url: 'jeux/' + j.slug + '/index.html', added: j.ajoute }));
 """
 
 INSTALLER = ("<p>Pour installer l'appli sur une tablette ou un téléphone : sur iPad ou iPhone, ouvrez cette page "
@@ -101,10 +104,25 @@ def main():
     if not m:
         sys.exit("Liste des jeux (const GAMES) introuvable dans le portail : rien n'a été écrit.")
     ids_portail = re.findall(r"claude\.ai/artifact/([A-Za-z0-9]+)", m.group(1))
+    # jeux « à la une » (feature: true dans le portail, ex. « Je me teste » : « Commence par ici ! ») -> "vedette" dans jeux.js
+    ids_vedettes = {i.group(1) for l in m.group(1).splitlines() if re.search(r"\bfeature:\s*true\b", l)
+                    for i in [re.search(r"claude\.ai/artifact/([A-Za-z0-9]+)", l)] if i}
     s = s[:m.start()] + LISTE_JEUX + s[m.end():]
     artefacts = json.loads((RACINE / "outils" / "artefacts.json").read_text(encoding="utf8"))
     manquants = [i for i in ids_portail if i not in artefacts]
-    remplacer(""" target="_blank" rel="noopener" style=""", " style=", "ouverture des jeux dans la même fenêtre")
+    jeux = lire_jeux()
+    avant = [j.get("vedette") for j in jeux]
+    for j in jeux:
+        if j.get("artefact") in ids_vedettes:
+            j["vedette"] = True
+        else:
+            j.pop("vedette", None)
+    if [j.get("vedette") for j in jeux] != avant:
+        ecrire_jeux(jeux)
+    # (un modèle de lien par sorte de carte de jeu : normale, et « à la une »)
+    if s.count(' target="_blank" rel="noopener" style=') == 0:
+        alertes.append("ouverture des jeux dans la même fenêtre : lien des jeux introuvable, non modifié")
+    s = s.replace(' target="_blank" rel="noopener" style=', " style=")
 
     # textes
     remplacer("Les jeux s'ouvrent dans un nouvel onglet. Ils ne te redemandent pas le code. ",
