@@ -302,7 +302,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
   /* ---------- Les matières, les domaines et leurs univers ---------- */
   const SUBJECTS = {
     maths: { name: 'Mathématiques', color: '#2b45c8', scene: 'cover-maths', domains: ['calcul-mental', 'calcul', 'problemes', 'numeration', 'grandeurs-et-mesures', 'espace-et-geometrie', 'donnees'] },
-    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'scrabble'] }
+    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'tirelettres'] }
   };
   const DOMAINS = {
     'calcul-mental': { name: 'Calcul mental', world: 'La station de ski', scene: 'ski' },
@@ -316,7 +316,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     'conjugaison': { name: 'Conjugaison', world: 'La montagne', scene: 'montagne' },
     'orthographe': { name: 'Orthographe', world: 'Les fonds marins', scene: 'mer' },
     'vocabulaire': { name: 'Vocabulaire', world: 'Le jardin des mots', scene: 'jardin' },
-    'scrabble': { name: 'Scrabble scolaire', world: 'Le plateau des lettres', scene: 'lettres' }
+    'tirelettres': { name: 'Tirelettres', world: 'Le plateau des lettres', scene: 'lettres' }
   };
   Object.keys(SUBJECTS).forEach(s => SUBJECTS[s].domains.forEach(d => DOMAINS[d].subject = s));
 

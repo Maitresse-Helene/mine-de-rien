@@ -59,7 +59,8 @@ Si vous changez le portail dans Claude (nom, mascotte, domaines…), demandez à
   à la maîtresse par un formulaire Google. C'est très bien pour la classe, mais pour une appli vendue
   à des familles ou à d'autres écoles, il faudra le remplacer : données d'enfants, RGPD.
 - **Le code de la classe** n'est pas une vraie protection : pour un accès payant, il faudra de vrais comptes.
-- **Le nom « Scrabble »** est une marque déposée : le domaine « Scrabble scolaire » devra changer de nom.
+- **Le domaine « Tirelettres »** (« Scrabble scolaire » jusqu'au 17 novembre 2026, nom abandonné car c'est
+  une marque déposée) : vérifier à l'INPI que « Tirelettres » est libre, comme « Crayonnade ».
 
 ## Licences
 
