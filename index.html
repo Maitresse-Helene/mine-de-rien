@@ -302,7 +302,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
   /* ---------- Les matières, les domaines et leurs univers ---------- */
   const SUBJECTS = {
     maths: { name: 'Mathématiques', color: '#2b45c8', scene: 'cover-maths', domains: ['calcul-mental', 'calcul', 'problemes', 'numeration', 'grandeurs-et-mesures', 'espace-et-geometrie', 'donnees'] },
-    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'tirelettres'] }
+    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'lecture', 'tirelettres'] }
   };
   const DOMAINS = {
     'calcul-mental': { name: 'Calcul mental', world: 'La station de ski', scene: 'ski' },
@@ -316,6 +316,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     'conjugaison': { name: 'Conjugaison', world: 'La montagne', scene: 'montagne' },
     'orthographe': { name: 'Orthographe', world: 'Les fonds marins', scene: 'mer' },
     'vocabulaire': { name: 'Vocabulaire', world: 'Le jardin des mots', scene: 'jardin' },
+    'lecture': { name: 'Lire et comprendre', world: 'La bibliothèque enchantée', scene: 'bibliotheque' },
     'tirelettres': { name: 'Tirelettres', world: 'Le plateau des lettres', scene: 'lettres' }
   };
   Object.keys(SUBJECTS).forEach(s => SUBJECTS[s].domains.forEach(d => DOMAINS[d].subject = s));
@@ -699,6 +700,51 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     g.fillStyle = '#a0622d'; rr(g, 112, 132, 96, 9, 2.5); g.fill(); g.fillStyle = '#7a4a26'; g.fillRect(112, 139, 96, 3);
     const hop = REDUCED ? 0 : Math.max(0, Math.sin(t * 2.4)) * 5;
     [['J', 8], ['E', 1], ['U', 1], ['X', 10]].forEach((p, k) => tuile(g, 122 + k * 20, 117 - (k === Math.floor(t / 1.3) % 4 ? hop : 0), 15, p[0], p[1]));
+  };
+  SCENES.bibliotheque = (g, S, t) => {
+    const tt = REDUCED ? 0 : t;
+    sky(g, S); sun(g, S, 292, 24, t); cloud(g, drift(t, 20, 3.5), 26, 0.85);
+    hill(g, 112, 6, S.far, 0.8, 0.02); ground(g, S, 126);
+    tree(g, S, 30, 126, 1.05); tree(g, S, 62, 128, 0.7);
+    // les marches et la façade
+    g.fillStyle = '#cbbfa8'; g.fillRect(90, 121, 140, 6); g.fillStyle = '#ddd2bd'; g.fillRect(96, 116, 128, 6);
+    g.fillStyle = '#f1e7d2'; g.fillRect(102, 66, 116, 50);
+    // le fronton, avec sa fenêtre ronde allumée
+    poly(g, [[96, 66], [160, 36], [224, 66]], '#e6d7b8');
+    g.strokeStyle = '#b9a47c'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(96, 66); g.lineTo(160, 36); g.lineTo(224, 66); g.closePath(); g.stroke();
+    if (S.id === 'hiver'){ g.strokeStyle = '#ffffff'; g.lineWidth = 3; g.lineCap = 'round'; seg(g, 99, 63, 160, 37); seg(g, 160, 37, 221, 63); }
+    g.fillStyle = '#ffd36b'; circ(g, 160, 55, 6); g.strokeStyle = '#b9a47c'; g.lineWidth = 1; g.beginPath(); g.arc(160, 55, 6, 0, TAU); g.stroke(); seg(g, 154, 55, 166, 55); seg(g, 160, 49, 160, 61);
+    // l'enseigne
+    g.fillStyle = '#7a4a26'; rr(g, 116, 68, 88, 10, 2); g.fill();
+    g.fillStyle = '#ffe9b0'; g.font = '800 7.5px ' + FONT; g.textAlign = 'center'; g.fillText('BIBLIOTHÈQUE', 160, 75.6);
+    // les colonnes
+    [108, 126, 186, 204].forEach(x => { g.fillStyle = '#e6d7b8'; g.fillRect(x - 1.5, 79, 11, 3); g.fillStyle = '#fbf6ea'; g.fillRect(x, 82, 8, 34); g.fillStyle = 'rgba(0,0,0,.08)'; g.fillRect(x + 5, 82, 3, 34); });
+    // la porte ouverte, avec des livres dans la lumière
+    g.fillStyle = '#5e3818'; g.beginPath(); g.moveTo(147, 116); g.lineTo(147, 95); g.arc(160, 95, 13, Math.PI, 0); g.lineTo(173, 116); g.closePath(); g.fill();
+    g.fillStyle = '#ffcf5a'; g.beginPath(); g.moveTo(150, 116); g.lineTo(150, 96); g.arc(160, 96, 10, Math.PI, 0); g.lineTo(170, 116); g.closePath(); g.fill();
+    [['#2b45c8', 0], ['#e5484d', 3], ['#12a594', 1], ['#8e4ec6', 4]].forEach((b, i) => { g.fillStyle = b[0]; g.fillRect(152 + i * 4.2, 101 + b[1], 3.2, 15 - b[1]); });
+    // la chouette bibliothécaire, sur le toit
+    const blink = !REDUCED && (t % 3.6) < 0.15;
+    g.save(); g.translate(160, 37);
+    g.fillStyle = '#9a6234'; ell(g, 0, -7, 6, 7.5); poly(g, [[-5, -12], [-3.5, -17], [-1.5, -12]], '#9a6234'); poly(g, [[5, -12], [3.5, -17], [1.5, -12]], '#9a6234');
+    g.fillStyle = '#ecd2a8'; ell(g, 0, -4, 3.8, 4);
+    [-2.6, 2.6].forEach(ex => { g.fillStyle = '#ffffff'; ell(g, ex, -9.5, 2.5, blink ? 0.4 : 2.5); if (!blink){ g.fillStyle = '#1a2358'; circ(g, ex, -9.3, 1.2); } });
+    poly(g, [[-1.1, -7.2], [1.1, -7.2], [0, -5.4]], '#f5a524');
+    g.restore();
+    // le grand livre qui vole, et les lettres qui s'en échappent
+    const bx = 262 + Math.sin(tt * 0.6) * 10, by = 58 + Math.sin(tt * 1.3) * 5, up = 7 + Math.sin(tt * 5) * 5;
+    for (let k = 0; k < 6; k++){
+      const u = ((tt * 0.35 + k / 6) % 1), x = bx - 6 + Math.sin(k * 2.1 + tt) * 10 - u * 26, y = by - 6 - u * 34;
+      g.fillStyle = 'rgba(194,54,94,' + (0.9 * (1 - u)).toFixed(2) + ')'; g.font = '800 ' + (9 + (k % 3)) + 'px ' + FONT; g.textAlign = 'center';
+      g.fillText(['a', 'B', 'é', '?', '!', 'm'][k], x, y);
+    }
+    g.save(); g.translate(bx, by); g.rotate(-0.1);
+    g.fillStyle = '#c2365e'; poly(g, [[0, 2], [-21, -up + 2], [-21, -up + 13], [0, 13]]); poly(g, [[0, 2], [21, -up + 2], [21, -up + 13], [0, 13]]);
+    g.fillStyle = '#fffaf0'; poly(g, [[0, 0], [-19, -up], [-19, -up + 10], [0, 10]]); poly(g, [[0, 0], [19, -up], [19, -up + 10], [0, 10]]);
+    g.strokeStyle = 'rgba(90,98,143,.5)'; g.lineWidth = 0.7;
+    for (let l = 0; l < 3; l++){ seg(g, -16, -up + 3 + l * 2.4, -3, 2 + l * 2.4); seg(g, 3, 2 + l * 2.4, 16, -up + 3 + l * 2.4); }
+    g.restore();
+    if (S.id === 'hiver'){ fir(g, 292, 128, 0.9, true); } else tree(g, S, 294, 126, 1);
   };
   const INSIDE = { mer: true };
 

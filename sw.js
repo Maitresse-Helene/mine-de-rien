@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-17-203905';
+const VERSION = '2026-11-17-213053';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -37,6 +37,7 @@ const FICHIERS = [
   "icones/icone.svg",
   "index.html",
   "jeux/additionner-deux-nombres/index.html",
+  "jeux/comprendre-un-texte/index.html",
   "jeux/estimer-un-resultat/index.html",
   "jeux/je-me-teste/index.html",
   "jeux/l-addition-et-la-soustraction-posees/index.html",

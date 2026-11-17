@@ -11,5 +11,6 @@ window.DOMAINES = {
  "conjugaison": "Conjugaison",
  "orthographe": "Orthographe",
  "vocabulaire": "Vocabulaire",
+ "lecture": "Lire et comprendre",
  "tirelettres": "Tirelettres"
 };

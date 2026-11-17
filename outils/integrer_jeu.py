@@ -133,7 +133,22 @@ ENTETE_FRAGMENT = ('<!DOCTYPE html>\n<html lang="fr">\n<head>\n<meta charset="ut
                    '<style>body{margin:0}</style>\n</head>\n<body>\n')
 
 
+def retirer_enveloppe(html):
+    """Depuis le 17/11/2026, certains artefacts arrivent dans une page « enveloppe » de claude.ai : une première ligne
+    <!doctype html><html><head>…</head><body>, puis la vraie page (avec son propre <!doctype>), puis un </body></html>
+    de trop. On garde la vraie page seule."""
+    premiere, _, reste = html.lstrip("﻿").partition("\n")
+    if (re.match(r"<!doctype html><html><head>", premiere, re.I) and premiere.rstrip().endswith("<body>")
+            and re.match(r"\s*<!doctype html", reste, re.I)):
+        reste = reste.rstrip()
+        if reste.endswith("</body></html>") and reste.count("</body></html>") >= 2:
+            reste = reste[:-len("</body></html>")].rstrip() + "\n"
+        return reste.lstrip()
+    return html
+
+
 def preparer_page(html, domaine, artefacts, alertes):
+    html = retirer_enveloppe(html)
     # Certains artefacts ne sont qu'un fragment (pas de <head>, pas d'encodage) : claude.ai l'ajoute
     # en les affichant. Sans « charset », le navigateur lit mal les accents et des scripts plantent.
     if not re.search(r"<meta[^>]+charset", html[:4096], re.I):

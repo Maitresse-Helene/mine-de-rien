@@ -21,7 +21,7 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RACINE / "outils"))
-from integrer_jeu import lire_jeux, ecrire_jeux  # noqa: E402
+from integrer_jeu import lire_jeux, ecrire_jeux, retirer_enveloppe  # noqa: E402
 NOM_COURT = "Crayonnade"
 DESCRIPTION = "Crayonnade : des jeux bien taillés pour le CM1-CM2."
 
@@ -58,7 +58,7 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
 def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
-    s = Path(sys.argv[1]).read_text(encoding="utf8")
+    s = retirer_enveloppe(Path(sys.argv[1]).read_text(encoding="utf8"))
     alertes = []
 
     def remplacer(ancien, nouveau, quoi, regex=False):

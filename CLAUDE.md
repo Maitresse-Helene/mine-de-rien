@@ -46,7 +46,9 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
    L'enseignante modifie souvent plusieurs jeux à la fois dans Claude : à chaque passage, liste ses artefacts
    (`list_artifacts`) et réintègre tous les jeux, le portail et l'outil de vérification modifiés depuis le dernier
    commit de leur page (`updated_at` ou le début du numéro de version = date en secondes). Un artefact peut n'être
-   qu'un fragment sans `<head>` : `integrer_jeu.py` ajoute alors l'en-tête (encodage utf-8).
+   qu'un fragment sans `<head>` : `integrer_jeu.py` ajoute alors l'en-tête (encodage utf-8). Depuis le 17/11/2026, certains
+   arrivent dans une page « enveloppe » de claude.ai (deux `<!doctype>`) : `integrer_jeu.py` et `integrer_portail.py` la retirent.
+   Un artefact dont seule la date change (partage retiré) garde son numéro de version : rien à refaire.
 3. Teste : `python3 outils/tester.py` (Playwright + Chrome). Tout doit être « ok ». Après un changement des comptes
    (commun.js sections 1c/5, functions/, enseignante.js, page des comptes) : aussi `python3 outils/tester_comptes.py`
    (vrai serveur local : `npm i wrangler` dans ~/dev).
