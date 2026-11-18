@@ -562,6 +562,17 @@ b.tgt{color:var(--stamp)}
 .brows{display:grid;grid-template-rows:repeat(15,minmax(0,1fr));gap:1px;padding:5px 0}
 .bcols span,.brows span{display:flex;align-items:center;justify-content:center;font-family:var(--font-num);font-weight:700;font-size:clamp(8px,2.2vw,12px);line-height:1;color:var(--ink-soft)}
 .brows span{min-width:1.1em}
+.cell.liftable{cursor:pointer}
+.cell.lift{flex-direction:column;gap:1px;box-shadow:inset 0 0 0 2px #c98a00;cursor:pointer;animation:liftUp .22s ease-out}
+.cell.lift.lift-top{box-shadow:inset 0 0 0 2px var(--good)}
+.cell.lift .gl{display:block;padding:0 2px;border-radius:2px;background:rgba(255,236,170,.95);color:var(--tile-ink);font-size:clamp(7px,2.1vw,12.5px);font-weight:800;line-height:1.05;box-shadow:0 1px 2px rgba(0,0,0,.35);transform:translateY(-1px);pointer-events:none}
+.cell.lift.lift-top .gl{background:rgba(205,240,214,.97)}
+.cell.lift .lab{font-size:clamp(5.5px,1.55vw,9.5px)}
+.lifttools{margin-top:2px}
+.tool.on{background:var(--pen-soft)}
+@keyframes liftUp{0%{transform:translateY(2px)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){.cell.lift{animation:none}}
+.cell.lift .gl small{font-size:.62em;font-weight:700;margin-left:1px}
 
 </style>
 <div class="app">
@@ -1598,7 +1609,7 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
   function newItem(){
     const R = S.R, it = curItem();
     R.c = { steps: stepsFor(R.level), si: 0, tries: 0, itemErr: 0, vals: [], P: plState(), wb: [], order: [0, 1, 2, 3, 4, 5, 6].slice(0, it.r.length), cnt: '', acc: null, accWord: null, pron: null,
-            fb: null, hint: null, revealed: false, itemDone: false, notes: [], move: null, word: null, showTop: false, moveFirst: true, countFirst: true, my: 0, noMove: false };
+            fb: null, hint: null, revealed: false, itemDone: false, notes: [], move: null, word: null, showTop: false, moveFirst: true, countFirst: true, my: 0, noMove: false, lift: false };
     if (R.level === 1){
       const t = it.m.t; R.c.P.start = { r: t[0][0], c: t[0][1] }; R.c.P.dir = t.length > 1 && t[1][0] === t[0][0] ? 'H' : 'V';
       R.c.word = { w: it.m.w, forms: [it.a], persons: [it.p], v: it.v };
@@ -1702,7 +1713,11 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
   }
   function tapCell(k){
     const c = S.R.c;
-    if (curStep() !== 'move' || c.revealed || c.itemDone) return;
+    if (curStep() !== 'move' || c.revealed || c.itemDone){
+      const m = boardMaps();
+      if (m.liftable && !m.board[Math.floor(k / 15)][k % 15] && (m.placed.has(k) || m.top.has(k))) toggleLift();
+      return;
+    }
     const r = Math.floor(k / 15), cc = k % 15, P = c.P;
     if (P.start && P.start.r === r && P.start.c === cc && !P.tiles.length) P.dir = P.dir === 'H' ? 'V' : 'H';
     else if (P.tiles.some(t => t.r === r && t.c === cc)){ const i = P.tiles.findIndex(t => t.r === r && t.c === cc); P.tiles = P.tiles.slice(0, i); }
@@ -1899,7 +1914,7 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
   // Parties : on montre le meilleur coup
   function doReveal(){
     const R = S.R, c = R.c, it = curItem();
-    c.showTop = true; c.P.tiles = [];
+    c.showTop = true; c.P.tiles = []; c.lift = false;
     R.my += c.my; R.best += it.s;
     const pct = it.s ? Math.round(100 * c.my / it.s) : 0;
     c.pct = pct;
@@ -2027,7 +2042,9 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
   }
   function renderLearnEnd(){ const L = S.Lr; $('learnScore').textContent = 'Tu as trouvé la bonne réponse du premier coup à ' + L.first + ' questions sur ' + L.total + '.'; }
 
-  function boardHTML(){
+  // Les lettres sur le plateau : celles de l'élève (placed), le meilleur coup (top), les cases à remplir (target).
+  // Une fois le mot validé, les lettres posées peuvent être soulevées pour voir les cases de couleur dessous.
+  function boardMaps(){
     const R = S.R, c = R.c, it = curItem(), st = curStep(), board = curBoard();
     const placed = new Map(), top = new Map(), target = new Set();
     let mine = c.P.tiles;
@@ -2037,21 +2054,36 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
     if (R.level === 3 && c.showTop && c.move) c.move.tiles.forEach(t => top.set(t.r * 15 + t.c, t.l));
     if (R.level >= 4 && c.showTop) it.top.t.forEach(x => top.set(x[0] * 15 + x[1], x[2]));
     if (R.level === 1) it.m.t.forEach(x => target.add(x[0] * 15 + x[1]));
+    const validated = (st !== 'move' && st !== 'form') || c.revealed || c.itemDone;
+    const liftable = validated && (placed.size + top.size) > 0;
+    return { R, c, it, st, board, placed, top, target, liftable };
+  }
+  function toggleLift(){ const c = S.R.c; c.lift = !c.lift; renderPlay(); }
+  function boardHTML(){
+    const { R, c, it, st, board, placed, top, target, liftable } = boardMaps();
+    const lifted = liftable && c.lift;
     let cur = null;
     if ((st === 'move' || st === 'form') && !c.revealed && !c.itemDone){ const p = nextPos(board, c.P); if (p) cur = p.r * 15 + p.c; }
     const pickable = st === 'move' && !c.revealed && !c.itemDone;
     let h = '<div class="bwrap"><span></span><div class="bcols" aria-hidden="true">' + Array.from({ length: 15 }, (_, i) => '<span>' + (i + 1) + '</span>').join('') + '</div><div class="brows" aria-hidden="true">' + T.ROWS.split('').map(l => '<span>' + l + '</span>').join('') + '</div><div class="board' + (pickable ? ' pick' : '') + '" id="board">';
     for (let r = 0; r < N; r++) for (let cc = 0; cc < N; cc++){
       const k = r * 15 + cc, b = BONUS[r][cc], old = board[r][cc], L = old || placed.get(k) || top.get(k);
+      const up = lifted && !old && (placed.has(k) || top.has(k));
       let cls = 'cell';
-      if (L) cls += ' tile' + (placed.has(k) ? ' new' : '') + (top.has(k) ? ' top' : '');
-      else { if (b) cls += ' ' + b; if (r === 7 && cc === 7) cls += ' MD ctr'; if (target.has(k)) cls += ' target'; }
+      if (L && !up) cls += ' tile' + (placed.has(k) ? ' new' : '') + (top.has(k) ? ' top' : '');
+      else { if (b) cls += ' ' + b; if (r === 7 && cc === 7) cls += ' MD ctr'; if (target.has(k) && !up) cls += ' target'; }
+      if (up) cls += ' lift' + (top.has(k) ? ' lift-top' : '');
+      else if (liftable && !old && L) cls += ' liftable';
       if (k === cur) cls += ' cur';
-      const lab = L ? '<span class="L">' + L + '</span><span class="V">' + VAL[L] + '</span>' : '<span class="lab">' + (r === 7 && cc === 7 ? '★' : (BLAB[b] || '')) + '</span>';
-      const name = T.ROWS[r] + (cc + 1) + (L ? ', lettre ' + L : (b ? ', ' + BNAME[b] : (r === 7 && cc === 7 ? ', étoile, mot compte double' : '')));
+      const sq = '<span class="lab">' + (r === 7 && cc === 7 ? '★' : (BLAB[b] || '')) + '</span>';
+      const lab = up ? '<span class="gl">' + L + '<small>' + VAL[L] + '</small></span>' + sq : (L ? '<span class="L">' + L + '</span><span class="V">' + VAL[L] + '</span>' : sq);
+      const under = b ? BNAME[b] : (r === 7 && cc === 7 ? 'étoile, mot compte double' : 'case sans couleur');
+      const name = T.ROWS[r] + (cc + 1) + (L ? ', lettre ' + L + (up ? ', soulevée : ' + under : '') : (b ? ', ' + BNAME[b] : (r === 7 && cc === 7 ? ', étoile, mot compte double' : '')));
       h += '<button class="' + cls + '" type="button" data-cell="' + k + '"' + (k === cur ? ' data-arrow="' + (c.P.dir === 'H' ? '→' : '↓') + '"' : '') + ' aria-label="' + name + '"' + (pickable ? '' : ' tabindex="-1"') + '>' + lab + '</button>';
     }
-    h += '</div></div><div class="legend"><span><i style="background:var(--LD)"></i>lettre ×2</span><span><i style="background:var(--LT)"></i>lettre ×3</span><span><i style="background:var(--MD)"></i>mot ×2</span><span><i style="background:var(--MT)"></i>mot ×3</span>' +
+    h += '</div></div>';
+    if (liftable) h += '<div class="tools lifttools"><button class="tool' + (c.lift ? ' on' : '') + '" type="button" data-act="lift" aria-pressed="' + c.lift + '">' + (c.lift ? '↓ Reposer les lettres' : '↑ Soulever les lettres posées') + '</button></div>';
+    h += '<div class="legend"><span><i style="background:var(--LD)"></i>lettre ×2</span><span><i style="background:var(--LT)"></i>lettre ×3</span><span><i style="background:var(--MD)"></i>mot ×2</span><span><i style="background:var(--MT)"></i>mot ×3</span>' +
          (pickable ? '<span class="coords">Touche une case pour commencer ; touche-la encore pour changer de sens.</span>' : '') + '</div>';
     return h;
   }
@@ -2092,7 +2124,8 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
     if (c.itemDone || c.revealed) return '';
     if (st === 'count'){
       const lbl = R.level === 2 ? 'Combien de points rapporte ' + esc(c.word.w) + ' ?' : (R.level >= 4 ? 'Combien de points rapporte ton coup ?' : 'Combien de points rapporte ce coup ?');
-      return '<p class="sq">' + lbl + '</p><div class="numbox"><span class="abox">' + (c.cnt || '') + '<span class="caret"></span></span> points</div>' +
+      const tip = R.level === 2 ? '' : '<p class="acc-note">Pour voir les cases de couleur, soulève les lettres posées (bouton sous le plateau, ou touche une lettre).</p>';
+      return '<p class="sq">' + lbl + '</p>' + tip + '<div class="numbox"><span class="abox">' + (c.cnt || '') + '<span class="caret"></span></span> points</div>' +
         '<div class="pad">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => '<button class="key" type="button" data-key="' + n + '">' + n + '</button>').join('') +
         '<button class="key del" type="button" data-key="del" aria-label="Effacer"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-6-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10l4 4M16 10l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>' +
         '<button class="key" type="button" data-key="0">0</button><button class="key ok" type="button" data-key="ok">OK</button></div>';
@@ -2293,6 +2326,7 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
     const ak = e.target.closest('[data-acc]'); if (ak && !ak.disabled){ cycleAcc(+ak.dataset.acc); return; }
     const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
     const act = a.dataset.act, st = curStep();
+    if (act === 'lift'){ toggleLift(); return; }
     if (act === 'back') backspace();
     if (act === 'clear') clearAll();
     if (act === 'mix') mix();
