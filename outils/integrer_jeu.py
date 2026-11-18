@@ -118,6 +118,10 @@ def extraire_infos(html):
     infos["cle"] = "apos" if utilise_apos(html, fn) else "std"
     m = re.search(r"function cardCode\(name, k\)\{\s*let h = fnv\(\w+\(name\) \+ '\|' \+ k \+ '\|([^']+)'\);", html)
     if m: infos["sel"] = m.group(1)
+    else:  # sel rangé dans une constante : fnv(key(name) + '|' + k + '|' + CARD_SALT)
+        m = re.search(r"function cardCode\(name, k\)\{\s*let h = fnv\(\w+\(name\) \+ '\|' \+ k \+ '\|' \+ (\w+)\);", html)
+        c = m and re.search(r"\b%s = '([^']+)'" % m.group(1), html)
+        if c: infos["sel"] = c.group(1)
     m = re.search(r"store\.profiles\[(?:key|k)\] = (\{.*?\});", corps, re.S)
     if m:
         js = "const clean='__NOM__', S={parcours:'jaune'}, PARC0='jaune'; process.stdout.write(JSON.stringify(%s))" % m.group(1)

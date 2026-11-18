@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-17-213053';
+const VERSION = '2026-11-18-062126';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -38,6 +38,7 @@ const FICHIERS = [
   "index.html",
   "jeux/additionner-deux-nombres/index.html",
   "jeux/comprendre-un-texte/index.html",
+  "jeux/comprendre-une-consigne/index.html",
   "jeux/estimer-un-resultat/index.html",
   "jeux/je-me-teste/index.html",
   "jeux/l-addition-et-la-soustraction-posees/index.html",
@@ -74,6 +75,7 @@ const FICHIERS = [
   "jeux/les-problemes-de-proportionnalite/index.html",
   "jeux/les-tables-d-addition/index.html",
   "jeux/les-tables-de-multiplication/index.html",
+  "jeux/lire-un-document/index.html",
   "jeux/mon-resultat-est-il-possible/index.html",
   "jeux/multiplier-par-10-100-1000/index.html",
   "jeux/multiplier-par-4-par-8/index.html",
