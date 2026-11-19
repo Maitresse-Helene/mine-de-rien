@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-19-072806';
+const VERSION = '2026-11-19-082710';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -87,6 +87,9 @@ const FICHIERS = [
   "jeux/tirelettres-le-passe-simple/index.html",
   "jeux/tirelettres-le-plus-que-parfait/index.html",
   "jeux/tirelettres-le-present/index.html",
+  "jeux/tirelettres-les-adjectifs/index.html",
+  "jeux/tirelettres-les-adverbes/index.html",
+  "jeux/tirelettres-prefixes-et-suffixes/index.html",
   "jeux/trier-les-donnees-d-un-probleme/index.html",
   "jeux.js",
   "manifest.webmanifest"
