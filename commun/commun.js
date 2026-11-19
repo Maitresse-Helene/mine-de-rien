@@ -118,6 +118,8 @@ window.CMP = (function () {
     } catch (e) { return false; }
   })();
   if (C.maitresse) document.documentElement.className += " cmp-maitresse";
+  /* Maîtresse connectée : tous les niveaux des jeux sont ouverts (integrer_jeu.py le fait lire à unlocked()) */
+  if (C.maitresse) window.CMG_TOUT_OUVERT = true;
 
   C.session = C.lire("crayonnade-session", null);
   if (!(C.session && C.session.jeton && C.session.login)) C.session = null;
@@ -136,6 +138,16 @@ window.CMP = (function () {
       try { C.setItem.call(localStorage, J.stockage, JSON.stringify(st0)); } catch (e) {}
       delete inj[J.stockage];
       C.ecrire("crayonnade-ens-injectes", inj);
+    }
+  }
+  /* Maîtresse connectée, sans joueur choisi dans ce jeu : profil « Maîtresse » choisi d'office, pour qu'elle voie tout
+     de suite tous les niveaux ouverts (CMG_TOUT_OUVERT) sans taper de prénom. Un prénom déjà choisi est gardé. */
+  if (J && J.stockage && C.maitresse && !C.session) {
+    var stm = C.store(J.stockage);
+    if (!stm.current || !stm.profiles[stm.current]) {
+      if (!stm.profiles.maitresse) stm.profiles.maitresse = C.profilNeuf(J, "Maîtresse");
+      stm.current = "maitresse";
+      try { C.setItem.call(localStorage, J.stockage, JSON.stringify(stm)); } catch (e) {}
     }
   }
   if (J && J.stockage && C.session && window.CMG_ACCES_COMPTE) {

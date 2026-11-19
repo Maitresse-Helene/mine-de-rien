@@ -1539,7 +1539,7 @@ img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10p
     for (let k = 0; k < g; k++) prof.points.push({ at: Date.now(), level: +id, parc: pOf(prof), score: st.best + '/' + n });
     return g;
   }
-  function unlocked(prof, id){ return id === 1 || (!!prof && lvlStat(prof, id - 1).validated); }
+  function unlocked(prof, id){ if (window.CMG_TOUT_OUVERT) return true; return id === 1 || (!!prof && lvlStat(prof, id - 1).validated); }
   function setName(raw){
     const clean = String(raw || '').replace(/\s+/g, ' ').trim().slice(0, 30);
     const k = key(clean);

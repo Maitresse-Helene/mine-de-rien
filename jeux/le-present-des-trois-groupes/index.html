@@ -1222,7 +1222,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     if (!levelsOf(prof)[id]) levelsOf(prof)[id] = { bestOk: null, bestTotal: null, validated: false, plays: 0 };
     return levelsOf(prof)[id];
   }
-  function unlocked(prof, id){ return id === 1 || (prof && lvlStat(prof, id - 1).validated); }
+  function unlocked(prof, id){ if (window.CMG_TOUT_OUVERT) return true; return id === 1 || (prof && lvlStat(prof, id - 1).validated); }
   // Paliers d'un niveau : 80 % (validé) → 1 bon point, 90 % → 2, sans-faute → 3.
   function tier(ok, total){
     if (!total) return 0;

@@ -1864,7 +1864,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const needFor = total => Math.ceil(total * 0.8);
   const maxPts = total => total - needFor(total) + 1;
   const ptsFor = (best, total) => (best === null || best === undefined) ? 0 : Math.max(0, best - needFor(total) + 1);
-  function unlocked(prof, id){ return id === 1 || (!!prof && lvlStat(prof, id - 1).validated); }
+  function unlocked(prof, id){ if (window.CMG_TOUT_OUVERT) return true; return id === 1 || (!!prof && lvlStat(prof, id - 1).validated); }
   function setName(raw){
     const clean = String(raw || '').replace(/\s+/g, ' ').trim().slice(0, 30);
     const k = key(clean);

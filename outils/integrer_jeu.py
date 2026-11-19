@@ -222,11 +222,22 @@ def preparer_page(html, domaine, artefacts, alertes):
 CONFIG_RE = re.compile(r"<script>window\.CMG_JEU=.*?;</script>\n?", re.S)
 
 
+# Maîtresse connectée (commun.js, section 1c : window.CMG_TOUT_OUVERT) : tous les niveaux du jeu sont ouverts,
+# sans avoir à valider le niveau d'avant. Les jeux à niveaux ont tous une fonction unlocked(prof, id).
+OUVERT = "if (window.CMG_TOUT_OUVERT) return true; "
+UNLOCKED_RE = re.compile(r"(function unlocked\(\w+, \w+\)\{)(?!\s*if \(window\.CMG_TOUT_OUVERT\))\s*")
+
+
+def avec_niveaux_ouverts(page):
+    return UNLOCKED_RE.sub(lambda m: m.group(1) + " " + OUVERT, page, count=1)
+
+
 def avec_config(page, entree, alertes=None):
     """Écrit dans la page du jeu ce que les comptes élèves (commun.js, section 1c) doivent savoir de lui :
-    sa clé de stockage, la façon de faire la clé d'un prénom et le profil d'un nouveau joueur."""
+    sa clé de stockage, la façon de faire la clé d'un prénom et le profil d'un nouveau joueur.
+    Ouvre aussi tous les niveaux quand la maîtresse est connectée (avec_niveaux_ouverts)."""
     conf = {k: entree[k] for k in ("slug", "stockage", "cle", "profilNeuf") if k in entree}
-    page = CONFIG_RE.sub("", page)
+    page = avec_niveaux_ouverts(CONFIG_RE.sub("", page))
     if "stockage" not in conf:
         return page
     ligne = ("<script>window.CMG_JEU=" + json.dumps(conf, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -251,7 +262,7 @@ def reconfigurer_tout():
         if apres != avant:
             f.write_text(apres, encoding="utf8")
             n += 1
-    print(f"{n} jeu(x) mis à jour (window.CMG_JEU)")
+    print(f"{n} jeu(x) mis à jour (window.CMG_JEU, niveaux ouverts pour la maîtresse)")
 
 
 def integrer_outil(a, html, titre, slug):

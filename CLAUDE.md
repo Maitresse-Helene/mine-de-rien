@@ -168,6 +168,9 @@ il devient son mot de passe ; sinon l'ancien code (empreintes `window.ENS_CODES`
   « Me déconnecter de cet appareil » en bas de l'espace déconnecte. `/api/ens/nouveau-code` change le mot de passe.
 - « Rester connectée » est coché d'office. Maîtresse connectée (C.maitresse) : ni code de la classe ni « Qui joue ? »
   sur le portail et dans les jeux, badge « ★ Mon Espace enseignante » à la place du badge élève.
+- Maîtresse connectée : tous les niveaux des jeux sont ouverts (`window.CMG_TOUT_OUVERT`, commun.js section 1c, lu par la
+  fonction `unlocked(prof, id)` des jeux, que `integrer_jeu.py` complète à chaque intégration ; `--reconfigurer` l'applique à
+  tous les jeux). Sans joueur choisi dans un jeu, le profil « Maîtresse » (clé `maitresse`) est choisi d'office.
 - Mot de passe oublié : changer `REMISE_A_ZERO_ENS` dans `functions/api/[[chemin]].js` et publier ; à la connexion
   suivante, `helene` + l'ancien code (ENS_CODES) fait choisir un nouveau mot de passe. Remis à zéro le 14/11/2026.
 - Plus tard (vente) : d'autres lignes dans `enseignants`, et des comptes élèves rattachés à une classe.
