@@ -1755,7 +1755,7 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
     const w = c.P.tiles.map(t => t.l).join('');
     const who = pron(it.p, it.a, it.id);
     if (w === it.m.w){ good(esc(withP(who, it.a))); return; }
-    miss('« ' + esc(withP(who, w.toLowerCase())) + ' » : ce n\'est pas la bonne forme.', formHint(it.v, it.p, it.a), () => {
+    miss('« ' + esc(withP(who, w)) + ' » : ce n\'est pas la bonne forme.', formHint(it.v, it.p, it.a), () => {
       c.P.tiles = []; const used = new Set();
       it.m.t.forEach(x => { const ri = it.r.split('').findIndex((l, i) => l === x[2] && !used.has(i)); used.add(ri); c.P.tiles.push({ r: x[0], c: x[1], l: x[2], ri }); });
       done(esc(withP(who, it.a)), true);
@@ -2140,6 +2140,15 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
     }
     return '';
   }
+  // Tant que l'étape « Avec ses accents » n'est pas faite, le mot s'écrit comme sur les jetons
+  // (en capitales, sans accents) : la réponse ne s'affiche pas au-dessus de la question.
+  function accMask(){
+    const c = S.R.c, ai = c.steps.indexOf('acc');
+    if (ai < 0 || c.vals[ai] || !c.word || !c.word.forms.some(needsAcc)) return null;
+    return [...new Set(c.word.forms.filter(needsAcc))].sort((a, b) => b.length - a.length)
+      .map(f => [new RegExp('(^|[^\\p{L}])' + f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\p{L}])', 'gu'), PLAIN(f).toUpperCase()]);
+  }
+  const masked = (html, M) => M ? M.reduce((t, x) => t.replace(x[0], (m, p) => p + x[1]), html) : html;
   function stepLabel(st){
     const R = S.R;
     return { form: 'Le verbe conjugué', word: 'Ton mot', move: R.level >= 4 ? 'Ton coup' : 'Le meilleur coup', pron: 'Le sujet', acc: 'Avec ses accents', count: 'Les points' }[st] || '';
@@ -2158,17 +2167,18 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
     if (showBoard) $('boardBox').innerHTML = boardHTML();
     $('rackBox').innerHTML = (c.itemDone && R.level !== 2) ? '' : rackHTML();
     // les étapes déjà faites
+    const M = accMask();
     let h = '';
-    c.steps.forEach((s, i) => { const v = c.vals[i]; if (!v || s === 'reveal') return; h += '<div class="srow done' + (v.fixed ? ' fixed' : '') + '"><span class="sq">' + stepLabel(s) + '</span><span class="sa">' + (v.fixed ? CROSS : TICK) + '<span>' + v.html + '</span></span></div>'; });
+    c.steps.forEach((s, i) => { const v = c.vals[i]; if (!v || s === 'reveal') return; h += '<div class="srow done' + (v.fixed ? ' fixed' : '') + '"><span class="sq">' + stepLabel(s) + '</span><span class="sa">' + (v.fixed ? CROSS : TICK) + '<span>' + masked(v.html, M) + '</span></span></div>'; });
     $('steps').innerHTML = h;
-    $('active').innerHTML = activeHTML();
+    $('active').innerHTML = masked(activeHTML(), M);
     $('stepBox').hidden = !h && !$('active').innerHTML;
     const fb = $('feedback');
     fb.className = 'feedback' + (c.fb ? ' ' + c.fb.cls : '');
-    fb.innerHTML = c.fb ? nbp(c.fb.html) : '';
+    fb.innerHTML = c.fb ? masked(nbp(c.fb.html), M) : '';
     const hn = $('hint');
     hn.hidden = !c.hint;
-    hn.innerHTML = c.hint ? nbp(c.hint) : '';
+    hn.innerHTML = c.hint ? masked(nbp(c.hint), M) : '';
     $('contBtn').hidden = !c.revealed;
     const eb = $('endBox');
     if (c.itemDone){
