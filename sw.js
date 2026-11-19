@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-19-103622';
+const VERSION = '2026-11-19-112001';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -39,6 +39,7 @@ const FICHIERS = [
   "jeux/additionner-deux-nombres/index.html",
   "jeux/comprendre-un-texte/index.html",
   "jeux/comprendre-une-consigne/index.html",
+  "jeux/est-es-ou-et/index.html",
   "jeux/estimer-un-resultat/index.html",
   "jeux/je-me-teste/index.html",
   "jeux/l-addition-et-la-soustraction-posees/index.html",
@@ -50,10 +51,12 @@ const FICHIERS = [
   "jeux/la-polysemie/index.html",
   "jeux/le-dictionnaire-l-ordre-alphabetique/index.html",
   "jeux/le-dictionnaire-lire-un-article/index.html",
+  "jeux/le-feminin-des-noms-et-des-adjectifs-1/index.html",
   "jeux/le-nom-et-le-groupe-nominal/index.html",
   "jeux/le-perimetre/index.html",
   "jeux/le-present-des-trois-groupes/index.html",
   "jeux/le-son-e/index.html",
+  "jeux/le-son-g/index.html",
   "jeux/le-son-j/index.html",
   "jeux/le-sujet/index.html",
   "jeux/le-verbe/index.html",
@@ -64,6 +67,7 @@ const FICHIERS = [
   "jeux/les-familles-de-mots/index.html",
   "jeux/les-fractions-decimales/index.html",
   "jeux/les-moities/index.html",
+  "jeux/les-mots-commencant-par-acc-app-aff/index.html",
   "jeux/les-nombres-termines-par-8-ou-9/index.html",
   "jeux/les-parentheses/index.html",
   "jeux/les-prefixes/index.html",
