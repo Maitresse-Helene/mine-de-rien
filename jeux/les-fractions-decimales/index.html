@@ -831,7 +831,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       html: '<p>Quand on partage une unité en <b>parts égales</b>, une fraction dit combien de parts on prend.</p>' +
             '<div class="lrow">' + figBox(figUnits('dix', 3, 1, '3 parts coloriées sur 10'), 'mini') + '<p class="calc">' + FR(3, 10) + '</p><ul class="evlist"><li>en haut, le <b>numérateur</b> : les parts prises ;</li><li>en bas, le <b>dénominateur</b> : le nombre de parts.</li></ul></div>' +
             '<p>Une fraction est <b>décimale</b> quand son dénominateur est <b>10</b>, <b>100</b>, <b>1 000</b>…</p>',
-      checks: [{ q: 'Laquelle est une fraction décimale ?', c: ['3/4', '7/100', '5/12'], a: 1, why: 'Le dénominateur de 7/100 est 100 : c\'est une fraction décimale.' }]
+      checks: [{ q: 'Laquelle est une fraction décimale ?', c: ['7/100', '3/4', '5/12'], a: 0, why: 'Le dénominateur de 7/100 est 100 : c\'est une fraction décimale.' }]
     },
     {
       title: 'Dixièmes, centièmes, millièmes',
@@ -839,7 +839,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
             '<li><b>Dixièmes</b> : l\'unité est partagée en <b>10</b> parts égales. ' + FR(6, 10) + ' se lit « six dixièmes ».</li>' +
             '<li><b>Centièmes</b> : l\'unité est partagée en <b>100</b> parts égales. ' + FR(27, 100) + ' se lit « vingt-sept centièmes ».</li>' +
             '<li><span class="ptag">parcours orange</span> <b>Millièmes</b> : l\'unité est partagée en <b>1 000</b> parts égales. ' + FR(315, 1000) + ' se lit « trois-cent-quinze millièmes ».</li></ul>',
-      checks: [{ q: 'Comment lit-on 27/100 ?', c: ['vingt-sept dixièmes', 'vingt-sept centièmes', 'deux-cent-sept'], a: 1, why: 'Le dénominateur est 100 : ce sont des centièmes. On lit « vingt-sept centièmes ».' }]
+      checks: [{ q: 'Comment lit-on 48/100 ?', c: ['quarante-huit dixièmes', 'quatre-cent-huit', 'quarante-huit centièmes'], a: 2, why: 'Le dénominateur est 100 : ce sont des centièmes. On lit « quarante-huit centièmes ».' }]
     },
     {
       title: 'Des fractions égales',
@@ -854,7 +854,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       html: '<p>Je regarde d\'abord <b>comment la droite est graduée</b> : en combien de parts égales chaque unité est partagée.</p>' +
             figBox(figLine({ T: 20, lab: [{ at: 0, t: '3' }, { at: 10, t: '4' }, { at: 20, t: '5' }], pts: [{ at: 6, l: 'A' }] }, 'Droite graduée de 3 à 5 en dixièmes, avec le point A'), 'wide') +
             '<p>Ici, chaque unité a 10 parts : la droite est graduée en <b>dixièmes</b>. 3, c\'est ' + FR(30, 10) + '. J\'avance de 6 graduations : A = ' + FR(36, 10) + '.</p>',
-      checks: [{ q: 'Sur une droite graduée en dixièmes, le nombre 2 s\'écrit…', c: ['2/10', '20/10', '200/10'], a: 1, why: '1 unité = 10 dixièmes, donc 2 unités = 20 dixièmes : 2 = 20/10.' }]
+      checks: [{ q: 'Sur une droite graduée en dixièmes, le nombre 2 s\'écrit…', c: ['2/10', '200/10', '20/10'], a: 2, why: '1 unité = 10 dixièmes, donc 2 unités = 20 dixièmes : 2 = 20/10.' }]
     }
   ];
 
