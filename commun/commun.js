@@ -596,3 +596,80 @@ window.CMP = (function () {
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
 })();
+
+/* 7. Les jeux tiennent dans l'écran (21/11/2026). Tous les jeux ont la même mise en page : .app haute comme l'écran,
+   clavier (.pad) poussé en bas. La barre « ← Tous les jeux » s'y ajoutait et poussait le bas hors de l'écran : sa hauteur
+   (--cmg-barre) est maintenant retirée (commun.css). Quand la page dépasse l'écran (téléphone, tablette, longue
+   question), le clavier reste collé en bas (commun.css) et la page défile toute seule : à chaque nouvelle question pour
+   montrer la carte de la question en entier au-dessus du clavier, et après une réponse pour montrer le commentaire et
+   le bouton « Question suivante ». */
+(function () {
+  if (!/\/jeux\/[^\/]+\//.test(location.pathname)) return;
+  var root = document.documentElement;
+  root.classList.add("cmg-jeu");
+  function barre() { var n = document.getElementById("allgames"); return n ? n.getBoundingClientRect().height : 0; }
+  function majBarre() { root.style.setProperty("--cmg-barre", Math.round(barre()) + "px"); }
+  function visible(el) { return !!(el && !el.hidden && el.getClientRects().length && el.getBoundingClientRect().height > 0); }
+  function ecranActif() {
+    var l = document.querySelectorAll(".app .screen");
+    for (var i = 0; i < l.length; i++) if (visible(l[i])) return l[i];
+    return null;
+  }
+  function clavier(scr) {
+    for (var i = 0; i < scr.children.length; i++) {
+      var c = scr.children[i];
+      if (c.classList.contains("pad") && visible(c)) return c;
+    }
+    return null;
+  }
+  /* Amène le morceau de page [haut, bas] (positions à l'écran) entre la barre du haut et le clavier, en gardant le haut
+     visible en priorité. */
+  function montrer(scr, haut, bas) {
+    var p = clavier(scr), zBas = window.innerHeight - 8, zHaut = barre() + 8, d = 0;
+    if (p) zBas = Math.min(zBas, p.getBoundingClientRect().top - 8);
+    if (bas > zBas) d = bas - zBas;
+    if (haut - d < zHaut) d = haut - zHaut;
+    if (Math.abs(d) > 2) window.scrollBy({ top: d, behavior: "smooth" });
+  }
+  function colle() {
+    var scr = ecranActif(), p = scr && clavier(scr), se = document.scrollingElement || root;
+    root.classList.toggle("cmg-pad-colle", !!p && se.scrollTop + window.innerHeight < se.scrollHeight - 4);
+  }
+  var derniereQ = null, dernierRetour = "", prevu = false;
+  function examiner() {
+    prevu = false;
+    var scr = ecranActif();
+    colle();
+    if (!scr || !(clavier(scr) || /^(play|game|learn)$/.test(scr.id))) return;   /* écrans de jeu seulement */
+    var q = scr.querySelector("#stmt, #qCalc, #lcalcText, .calc");
+    var texteQ = q ? scr.id + "|" + q.textContent : scr.id;
+    var fb = null, l = scr.querySelectorAll(".feedback"), i;
+    for (i = 0; i < l.length; i++) if (visible(l[i]) && l[i].textContent.trim()) { fb = l[i]; break; }
+    var suite = [].filter.call(scr.querySelectorAll(".feedback, .hint, .endbox, .btn-primary"), visible);
+    var retour = fb ? fb.textContent + "|" + suite.map(function (e) { return e.id || e.className; }).join(",") : "";
+    if (texteQ !== derniereQ) {
+      /* Nouvelle question (ou nouvel écran) : la carte de la question en entier, au-dessus du clavier. */
+      derniereQ = texteQ; dernierRetour = retour;
+      var carte = q && q.closest(".fiche");
+      if (carte && !fb) { var r = carte.getBoundingClientRect(); montrer(scr, r.top, r.bottom); }
+      return;
+    }
+    if (retour && retour !== dernierRetour) {
+      /* Après une réponse : le commentaire, l'aide et le bouton pour continuer. */
+      var h = fb.getBoundingClientRect().top, b = fb.getBoundingClientRect().bottom;
+      suite.forEach(function (e) { var r = e.getBoundingClientRect(); if (r.top >= h - 1) b = Math.max(b, r.bottom); });
+      montrer(scr, h, b);
+    }
+    dernierRetour = retour;
+  }
+  function prevoir() { if (!prevu) { prevu = true; (window.requestAnimationFrame || setTimeout)(function () { setTimeout(examiner, 30); }); } }
+  function lancer() {
+    majBarre();
+    if (window.MutationObserver) new MutationObserver(prevoir).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden", "class"] });
+    window.addEventListener("resize", function () { majBarre(); prevoir(); });
+    window.addEventListener("scroll", colle, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(majBarre);
+    prevoir();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", lancer); else lancer();
+})();
