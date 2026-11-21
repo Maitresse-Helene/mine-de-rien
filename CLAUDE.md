@@ -136,7 +136,7 @@ activé sur le dépôt, mais ses publications restaient bloquées : compte trop 
 - Après toute modification hors `integrer_jeu.py`, lance `python3 outils/mettre_a_jour_sw.py`, sinon
   les tablettes garderont l'ancienne version.
 - Les jeux tiennent dans l'écran (commun.js section 7 + commun.css, 21/11/2026) : tous les jeux ont `.app` haute comme
-  l'écran et le clavier `.screen > .pad` poussé en bas. La hauteur de la barre « ← Tous les jeux » (`--cmg-barre`) est
+  l'écran et le clavier `.screen > .pad` (ou la case réponse `.screen > .answer-box`) poussé en bas. La hauteur de la barre « ← Tous les jeux » (`--cmg-barre`) est
   retirée de `.app` ; le clavier reste collé en bas quand la page dépasse l'écran ; la page défile seule pour montrer la
   carte de la question (`#stmt`, `#qCalc`, `.calc` dans une `.fiche`) au-dessus du clavier, puis `.feedback`, `.hint`,
   `.endbox` et le `.btn-primary` après une réponse. Un nouveau jeu construit autrement : vérifier sur petit écran.

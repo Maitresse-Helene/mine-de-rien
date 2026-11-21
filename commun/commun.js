@@ -600,7 +600,7 @@ window.CMP = (function () {
 /* 7. Les jeux tiennent dans l'écran (21/11/2026). Tous les jeux ont la même mise en page : .app haute comme l'écran,
    clavier (.pad) poussé en bas. La barre « ← Tous les jeux » s'y ajoutait et poussait le bas hors de l'écran : sa hauteur
    (--cmg-barre) est maintenant retirée (commun.css). Quand la page dépasse l'écran (téléphone, tablette, longue
-   question), le clavier reste collé en bas (commun.css) et la page défile toute seule : à chaque nouvelle question pour
+   question), le clavier (ou la case réponse .answer-box du « présent des trois groupes ») reste collé en bas (commun.css) et la page défile toute seule : à chaque nouvelle question pour
    montrer la carte de la question en entier au-dessus du clavier, et après une réponse pour montrer le commentaire et
    le bouton « Question suivante ». */
 (function () {
@@ -618,15 +618,17 @@ window.CMP = (function () {
   function clavier(scr) {
     for (var i = 0; i < scr.children.length; i++) {
       var c = scr.children[i];
-      if (c.classList.contains("pad") && visible(c)) return c;
+      if ((c.classList.contains("pad") || c.classList.contains("answer-box")) && visible(c)) return c;
     }
     return null;
   }
   /* Amène le morceau de page [haut, bas] (positions à l'écran) entre la barre du haut et le clavier, en gardant le haut
      visible en priorité. */
-  function montrer(scr, haut, bas) {
+  function montrer(scr, haut, bas, el) {
     var p = clavier(scr), zBas = window.innerHeight - 8, zHaut = barre() + 8, d = 0;
-    if (p) zBas = Math.min(zBas, p.getBoundingClientRect().top - 8);
+    /* Le clavier collé en bas cache ce qui est au-dessus de lui ; ce qui vient après lui dans la page (commentaire
+       sous la case réponse) apparaît quand on arrive en bas, le clavier reprenant alors sa place. */
+    if (p && !(el && (p.compareDocumentPosition(el) & 4))) zBas = Math.min(zBas, p.getBoundingClientRect().top - 8);
     if (bas > zBas) d = bas - zBas;
     if (haut - d < zHaut) d = haut - zHaut;
     if (Math.abs(d) > 2) window.scrollBy({ top: d, behavior: "smooth" });
@@ -658,7 +660,7 @@ window.CMP = (function () {
       /* Après une réponse : le commentaire, l'aide et le bouton pour continuer. */
       var h = fb.getBoundingClientRect().top, b = fb.getBoundingClientRect().bottom;
       suite.forEach(function (e) { var r = e.getBoundingClientRect(); if (r.top >= h - 1) b = Math.max(b, r.bottom); });
-      montrer(scr, h, b);
+      montrer(scr, h, b, fb);
     }
     dernierRetour = retour;
   }
