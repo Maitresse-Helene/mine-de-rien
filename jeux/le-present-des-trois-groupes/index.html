@@ -11,7 +11,8 @@
 <style>
 /* Mise en page : une seule colonne posée sur un cahier Seyès, comme les jeux de calcul.
    Étape 1 : cinq fiches de leçon avec une petite question chacune.
-   Étape 2 : cinq niveaux, des phrases à trous jusqu'à la transposition d'un texte.
+   Étape 2 : cinq niveaux, des phrases à trous jusqu'à la transposition d'un texte
+   (l'élève repère lui-même les verbes, puis les autres mots qui changent, avant de les écrire).
    Le verbe est marqué en rouge, le sujet en bleu ; les terminaisons en rouge. */
 :root{
   --paper:#f6f7fd;
@@ -320,6 +321,15 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .tok.is-verb{background:var(--end-bg);border-color:var(--end);color:var(--end);font-weight:700}
 .tok.is-subj{background:var(--pen-soft);border-color:var(--pen);color:var(--pen);font-weight:700}
 .tok.is-wrong{background:var(--red-bg);border-color:var(--red)}
+.tok.is-miss{border-style:dashed;border-width:2.5px}
+.tok.is-out{background:var(--sheet);border-style:dashed;border-color:var(--ink-soft);color:var(--ink-soft);text-decoration:line-through}
+.ov.fixed{color:var(--red);border-bottom-color:var(--red)}
+.tokens.long{font-size:clamp(1.05rem, 4.4vw, 1.2rem);line-height:2.35}
+.tokens .orig-label,.sentence .orig-label{color:var(--ink-soft);line-height:1.4}
+.instr b{display:block;color:var(--ink);font-weight:700}
+.instr .step{display:block;margin-top:2px}
+.nw{color:var(--pen);font-weight:600}
+.ov.sub{font-weight:500;color:var(--ink-soft);border-bottom:2px dotted var(--rule-strong)}
 .tok:disabled{cursor:default}
 .legend-row{display:flex;flex-wrap:wrap;gap:12px;font-size:.85rem;color:var(--ink-soft)}
 .legend-row span{display:inline-flex;align-items:center;gap:6px}
@@ -531,6 +541,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
       <p class="orig" id="orig" hidden></p>
       <div id="unit"></div>
       <div class="legend-row" id="spotLegend" hidden><span><i class="sw v"></i>verbe</span><span><i class="sw s"></i>sujet</span></div>
+      <p class="feedback" id="tpFb" aria-live="assertive" hidden></p>
+      <p class="hint" id="tpHint" hidden></p>
     </div>
 
     <form class="answer-box" id="answerForm" novalidate>
@@ -638,6 +650,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
         <li>Les niveaux sont 5 sommets de plus en plus hauts, du Petit Rocher (800 m) au Mont Géant (4 000 m). Un sommet est atteint avec au moins 80 % de réussites du premier coup (8 sur 10). Il ouvre le sommet suivant. À chaque erreur, l'alpiniste glisse et sa corde le retient.</li>
         <li>Bons points : chaque sommet en rapporte jusqu'à 3, à 80 % de réussite (sommet atteint), à 90 % et au sans-faute, soit 15 en tout. Un élève qui fait mieux d'un coup reçoit d'un coup tous les bons points correspondants. Les bons points déjà gagnés avec l'ancienne règle sont conservés.</li>
         <li>Les erreurs d'accent sur le radical (ecris pour écris) sont acceptées, avec un rappel. Les terminaisons doivent être exactes.</li>
+        <li>Au dernier sommet (transposer un texte), rien n'est surligné : l'élève touche d'abord les verbes conjugués qui vont changer, puis les autres mots qui changent (mots du sujet, mon, ton, son…, accords). Chaque repérage compte comme une question. Les mots du sujet se réécrivent alors tout seuls, et l'élève écrit chacun des autres mots transformés.</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
       </ul>
     </div>
@@ -837,7 +850,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     { id: 2, name: 'Phrases complexes', desc: 'Le sujet est un groupe de mots, parfois loin du verbe.', kind: 'cloze', instr: 'Trouve le sujet, puis écris le verbe au présent.' },
     { id: 3, name: 'Texte à trous', desc: 'Un petit texte avec des verbes à conjuguer.', kind: 'text', instr: 'Complète le texte avec les verbes au présent.' },
     { id: 4, name: 'Sujet et verbe', desc: 'Repère le verbe conjugué, son sujet et son groupe.', kind: 'spot', instr: '' },
-    { id: 5, name: 'Transposer un texte', desc: 'Réécris un texte en changeant le sujet ou le temps.', kind: 'transpo', instr: '' }
+    { id: 5, name: 'Transposer un texte', desc: 'Repère les mots qui changent, puis réécris le texte avec un autre sujet ou au présent.', kind: 'transpo', instr: '' }
   ];
   const L1 = [
     "Je {mettre|0} mon goûter dans mon sac.", "Tu {fermer|1} la porte du garage.", "Il {faire|2} un gâteau au chocolat.",
@@ -953,19 +966,30 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     "[Nous] {plongeons|plonger} dans la piscine.",
     "Au-dessus des toits {volent|voler} [les hirondelles]."
   ];
+  /* Transposer un texte (sommet 5).
+     Dans chaque texte : [ancien>nouveau] = un mot du sujet (réécrit tout seul une fois repéré) ;
+     (ancien>nouveau|sorte) = un autre mot qui change, à écrire (poss : mon, ton, son… ; pron : me, te… ; acc : un adjectif qui s'accorde) ;
+     {ancien>infinitif|personne|sujet} = un verbe qui change, à écrire (le sujet est retrouvé tout seul s'il n'est pas donné).
+     Les autres mots ne changent pas. « pieges » : ce que dit le jeu si l'élève touche ces mots-là. */
   const TRANSPO_O = [
     { title: 'Le bateau', instr: 'Réécris le texte avec « Ils » à la place de « Il ».',
-      orig: "Il *part* tôt le matin. Il *jette* l'ancre près de l'île. Il *plonge* et il *découvre* des poissons de toutes les couleurs. Il *prend* des photos. Le soir, il *rentre* au port et il *appelle* sa famille.",
-      t: "Ils {partir|5} tôt le matin. Ils {jeter|5} l'ancre près de l'île. Ils {plonger|5} et ils {découvrir|5} des poissons de toutes les couleurs. Ils {prendre|5} des photos. Le soir, ils {rentrer|5} au port et ils {appeler|5} leur famille." },
+      t: "[Il>Ils] {part>partir|5} tôt le matin. [Il>Ils] {jette>jeter|5} l'ancre près de l'île. [Il>Ils] {plonge>plonger|5} et [il>ils] {découvre>découvrir|5} des poissons qui brillent comme des bijoux. [Il>Ils] {prend>prendre|5} des photos. Le soir, [il>ils] {rentre>rentrer|5} au port et [il>ils] {appelle>appeler|5} (sa>leur|poss) famille.",
+      pieges: { brillent: "« brillent » est bien un verbe conjugué, mais son sujet est « qui » (les poissons) : il ne change pas." } },
     { title: 'Le pique-nique', instr: 'Réécris le texte au présent.',
-      orig: "Dimanche dernier, nous *mangions* au bord du lac. Papa *ouvrait* le panier et nous *buvions* du jus de pomme. Mes cousins *lançaient* des cailloux dans l'eau. Moi, je *peignais* le paysage. Le soir, nous *rangions* tout et nous *rentrions* fatigués.",
-      t: "Ce dimanche, nous {manger|3} au bord du lac. Papa {ouvrir|2|Papa} le panier et nous {boire|3} du jus de pomme. Mes cousins {lancer|5|Mes cousins} des cailloux dans l'eau. Moi, je {peindre|0} le paysage. Le soir, nous {ranger|3} tout et nous {rentrer|3} fatigués." },
+      t: "Le dimanche, nous {mangions>manger|3} au bord du lac. Papa {ouvrait>ouvrir|2|Papa} le panier et nous {buvions>boire|3} du jus de pomme. Mes cousins {lançaient>lancer|5|Mes cousins} des cailloux pour les faire ricocher. Moi, je {peignais>peindre|0} le paysage. Le soir, nous {rangions>ranger|3} tout et nous {rentrions>rentrer|3} fatigués.",
+      pieges: { faire: "« faire » est un verbe à l'infinitif : il ne change pas.", ricocher: "« ricocher » est un verbe à l'infinitif : il ne change pas.", 'fatigués': "« fatigués » ne change pas : on change seulement le temps, pas le sujet." } },
     { title: 'Les apprentis pâtissiers', instr: 'Réécris le texte avec « vous » à la place de « tu ».',
-      orig: "Tu *commences* par te laver les mains. Tu *pèses* la farine et tu *casses* les œufs. Tu *mélanges* sans t'arrêter. Tu *dois* attendre que le four chauffe. Puis tu *mets* le gâteau au four et tu *nettoies* la table.",
-      t: "Vous {commencer|4} par vous laver les mains. Vous {peser|4} la farine et vous {casser|4} les œufs. Vous {mélanger|4} sans vous arrêter. Vous {devoir|4} attendre que le four chauffe. Puis vous {mettre|4} le gâteau au four et vous {nettoyer|4} la table." },
+      t: "[Tu>Vous] {commences>commencer|4} par (te>vous|pron) laver les mains. [Tu>Vous] {pèses>peser|4} la farine et [tu>vous] {casses>casser|4} les œufs. [Tu>Vous] {mélanges>mélanger|4} sans (t'>vous|pron)arrêter. [Tu>Vous] {dois>devoir|4} attendre que le four chauffe. Puis [tu>vous] {mets>mettre|4} le gâteau au four et [tu>vous] {nettoies>nettoyer|4} la table.",
+      pieges: { laver: "« laver » est un verbe à l'infinitif : il ne change pas.", 'arrêter': "« arrêter » est un verbe à l'infinitif : il ne change pas.", attendre: "« attendre » est un verbe à l'infinitif : il ne change pas.", chauffe: "« chauffe » est bien un verbe conjugué, mais son sujet est « le four » : il ne change pas." } },
     { title: 'La lettre', instr: 'Réécris le texte avec « nous » à la place de « je ».',
-      orig: "Je *reçois* une lettre de ma correspondante. Je *lis* chaque mot et je *ris* beaucoup. Je *connais* bien sa famille. Je *réponds* tout de suite et j'*envoie* des dessins. Je *mange* ensuite un goûter.",
-      t: "Nous {recevoir|3} une lettre de notre correspondante. Nous {lire|3} chaque mot et nous {rire|3} beaucoup. Nous {connaître|3} bien sa famille. Nous {répondre|3} tout de suite et nous {envoyer|3} des dessins. Nous {manger|3} ensuite un goûter." }
+      t: "[Je>Nous] {reçois>recevoir|3} une lettre de (ma>notre|poss) correspondante. [Je>Nous] {lis>lire|3} chaque mot et [je>nous] {ris>rire|3} beaucoup. [Je>Nous] {connais>connaître|3} bien sa famille. [Je>Nous] {réponds>répondre|3} tout de suite et [j'>nous]{envoie>envoyer|3} des dessins. [Je>Nous] {mange>manger|3} ensuite un goûter.",
+      pieges: { sa: "« sa famille », c'est la famille de la correspondante : « sa » ne change pas." } },
+    { title: 'Le voyage en train', instr: 'Réécris le texte avec « nous » à la place de « je ».',
+      t: "[Je>Nous] {voyage>voyager|3} en train pour la première fois. [Je>Nous] {place>placer|3} (ma>notre|poss) valise en haut. [Je>Nous] {mange>manger|3} un sandwich et [je>nous] {bois>boire|3} de l'eau. Puis [j'>nous]{appelle>appeler|3} (mon>notre|poss) père. [Je>Nous] {reçois>recevoir|3} sa réponse et [je>nous] {ris>rire|3}.",
+      pieges: { sa: "« sa réponse », c'est la réponse du père : « sa » ne change pas." } },
+    { title: 'Les pompiers', instr: 'Réécris le texte avec « Les pompiers » à la place de « Le pompier ».',
+      t: "[Le>Les] [pompier>pompiers] {reçoit>recevoir|5} un appel. [Il>Ils] {court>courir|5} vers le camion et [il>ils] {met>mettre|5} (son>leur|poss) casque. [Il>Ils] {éteint>éteindre|5} le feu qui menace la grange et [il>ils] {ouvre>ouvrir|5} les fenêtres. [Il>Ils] {jette>jeter|5} un dernier coup d'œil, puis [il>ils] {rentre>rentrer|5} à la caserne, (épuisé>épuisés|acc).",
+      pieges: { menace: "« menace » est bien un verbe conjugué, mais son sujet est « qui » (le feu) : il ne change pas." } }
   ];
   const TEXTS = [
     { title: 'La classe verte', t: "Aujourd'hui, les élèves de CM1 {partir|5|les élèves de CM1} en classe verte. Le car {arriver|2|Le car} devant l'école à huit heures. Les enfants {mettre|5|Les enfants} leurs valises dans la soute. Mia et moi {choisir|3|Mia et moi} des places près de la fenêtre. Pendant le trajet, la maîtresse nous {lire|2|la maîtresse} une histoire. « Tu {voir|1} les montagnes ? » demande Mia. « Oui, je les {voir|0|je} ! » Nous {applaudir|3} quand le car {ralentir|2|le car} devant le chalet." },
@@ -1002,23 +1026,23 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   ];
   const TRANSPO = [
     { title: 'À la piscine', instr: 'Réécris le texte avec « nous » à la place de « je ».',
-      orig: "Le dimanche, je *vais* à la piscine. Je *prends* mon sac et je *pars* à vélo. Dans l'eau, je *fais* des longueurs et je *finis* par un plongeon. Je *choisis* toujours le plongeoir le plus haut. Je *rentre* fatigué mais content.",
-      t: "Le dimanche, nous {aller|3} à la piscine. Nous {prendre|3} notre sac et nous {partir|3} à vélo. Dans l'eau, nous {faire|3} des longueurs et nous {finir|3} par un plongeon. Nous {choisir|3} toujours le plongeoir le plus haut. Nous {rentrer|3} fatigués mais contents." },
+      t: "Le dimanche, [je>nous] {vais>aller|3} nager à la piscine. [Je>Nous] {prends>prendre|3} (mon>notre|poss) sac et [je>nous] {pars>partir|3} à vélo. Dans l'eau, [je>nous] {fais>faire|3} des longueurs. [Je>Nous] {choisis>choisir|3} toujours le plongeoir le plus haut. [Je>Nous] {rentre>rentrer|3} (fatigué>fatigués|acc) mais (content>contents|acc).",
+      pieges: { nager: "« nager » est un verbe à l'infinitif : il ne change pas." } },
     { title: 'Au fournil', instr: 'Réécris le texte avec « Les boulangers » à la place de « Le boulanger ».',
-      orig: "Le boulanger *arrive* à quatre heures du matin. Il *met* son tablier, il *prend* la farine et il *pétrit* la pâte. Il *remplit* les étagères de pains dorés. Puis il *dit* bonjour aux premiers clients.",
-      t: "Les boulangers {arriver|5|Les boulangers} à quatre heures du matin. Ils {mettre|5} leur tablier, ils {prendre|5} la farine et ils {pétrir|5} la pâte. Ils {remplir|5} les étagères de pains dorés. Puis ils {dire|5} bonjour aux premiers clients." },
+      t: "[Le>Les] [boulanger>boulangers] {arrive>arriver|5} à quatre heures du matin. [Il>Ils] {met>mettre|5} (son>leur|poss) tablier, [il>ils] {prend>prendre|5} la farine et [il>ils] {pétrit>pétrir|5} la pâte. [Il>Ils] {remplit>remplir|5} les étagères de pains dorés. Puis [il>ils] {dit>dire|5} bonjour aux premiers clients.",
+      pieges: { 'dorés': "« dorés » parle des pains, pas du boulanger : il ne change pas." } },
     { title: 'À la ferme', instr: 'Réécris le texte au présent.',
-      orig: "L'été dernier, je *passais* mes vacances à la ferme. Le matin, je *nourrissais* les poules et je *prenais* le lait encore chaud. Mon oncle *faisait* les foins avec ses voisins. Le soir, nous *dormions* dans la grange et nous *entendions* les chouettes.",
-      t: "Cet été, je {passer|0} mes vacances à la ferme. Le matin, je {nourrir|0} les poules et je {prendre|0} le lait encore chaud. Mon oncle {faire|2|Mon oncle} les foins avec ses voisins. Le soir, nous {dormir|3} dans la grange et nous {entendre|3} les chouettes." },
+      t: "Chaque été, je {passais>passer|0} mes vacances à la ferme. Le matin, je {nourrissais>nourrir|0} les poules et je {partais>partir|0} chercher le lait encore chaud. Mon oncle {faisait>faire|2|Mon oncle} les foins avec ses voisins. Le soir, nous {dormions>dormir|3} dans la grange et nous {entendions>entendre|3} les chouettes.",
+      pieges: { chercher: "« chercher » est un verbe à l'infinitif : il ne change pas." } },
     { title: 'Au théâtre', instr: 'Réécris le texte au présent.',
-      orig: "Demain, les élèves *iront* au théâtre. Ils *prendront* le métro avec leur maîtresse. Pendant la pièce, ils *rougiront* de plaisir et ils *applaudiront* les comédiens. Après, nous *écrirons* un article pour le journal de l'école. Tu *pourras* le lire !",
-      t: "Aujourd'hui, les élèves {aller|5|les élèves} au théâtre. Ils {prendre|5} le métro avec leur maîtresse. Pendant la pièce, ils {rougir|5} de plaisir et ils {applaudir|5} les comédiens. Après, nous {écrire|3} un article pour le journal de l'école. Tu {pouvoir|1} le lire !" },
+      t: "Jeudi, les élèves {iront>aller|5|les élèves} au théâtre. Ils {prendront>prendre|5} le métro avec leur maîtresse. Pendant la pièce, ils {rougiront>rougir|5} de plaisir et ils {applaudiront>applaudir|5} les comédiens. Après, nous {écrirons>écrire|3} un article pour le journal de l'école. Tu {pourras>pouvoir|1} le lire !",
+      pieges: { lire: "« lire » est un verbe à l'infinitif : il ne change pas." } },
     { title: 'La recette des crêpes', instr: 'Réécris la recette avec « vous » à la place de « tu ».',
-      orig: "Pour faire des crêpes, tu *prends* un saladier. Tu *mets* la farine et tu *ajoutes* les œufs. Tu *mélanges* doucement. Tu *remplis* une louche de pâte et tu *fais* cuire la crêpe. Tu *peux* la garnir de sucre !",
-      t: "Pour faire des crêpes, vous {prendre|4} un saladier. Vous {mettre|4} la farine et vous {ajouter|4} les œufs. Vous {mélanger|4} doucement. Vous {remplir|4} une louche de pâte et vous {faire|4} cuire la crêpe. Vous {pouvoir|4} la garnir de sucre !" },
+      t: "Pour faire des crêpes, [tu>vous] {prends>prendre|4} un saladier. [Tu>Vous] {mets>mettre|4} la farine et [tu>vous] {ajoutes>ajouter|4} les œufs. [Tu>Vous] {mélanges>mélanger|4} doucement avec (ton>votre|poss) fouet. [Tu>Vous] {remplis>remplir|4} une louche de pâte et [tu>vous] {fais>faire|4} cuire la crêpe. [Tu>Vous] {peux>pouvoir|4} la garnir de sucre !",
+      pieges: { faire: "« faire » est un verbe à l'infinitif : il ne change pas.", cuire: "« cuire » est un verbe à l'infinitif : il ne change pas.", garnir: "« garnir » est un verbe à l'infinitif : il ne change pas." } },
     { title: 'Le bus', instr: 'Réécris le texte avec « Elles » à la place de « Elle ».',
-      orig: "Elle *sort* de l'école en courant. Elle *voit* le bus au coin de la rue. Elle *court*, elle *saisit* la barre et elle *monte* juste à temps. Elle *réussit* toujours à l'attraper !",
-      t: "Elles {sortir|5} de l'école en courant. Elles {voir|5} le bus au coin de la rue. Elles {courir|5}, elles {saisir|5} la barre et elles {monter|5} juste à temps. Elles {réussir|5} toujours à l'attraper !" }
+      t: "[Elle>Elles] {sort>sortir|5} de l'école en courant. [Elle>Elles] {voit>voir|5} le bus au coin de la rue. [Elle>Elles] {court>courir|5}, [elle>elles] {saisit>saisir|5} la barre et [elle>elles] {monte>monter|5} juste à temps. [Elle>Elles] {réussit>réussir|5} toujours à l'attraper !",
+      pieges: { courant: "« courant » ne change pas : ce n'est pas un verbe conjugué (on ne peut pas dire « elle ne courant pas »).", "l'attraper": "« attraper » est un verbe à l'infinitif : il ne change pas." } }
   ];
 
   /* Réserves agrandies : environ 5 séries différentes par niveau */
@@ -1083,14 +1107,6 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     { title: 'La classe de neige', t: "Ce matin, nous {partir|3} en classe de neige. Le moniteur {appeler|2|Le moniteur} chaque élève. Nous {mettre|3} nos skis et nous {commencer|3} la descente. Mes amis {rire|5|Mes amis} quand je tombe dans la neige. « Tu {devoir|1} plier les genoux ! » me {dire|2|le moniteur} le moniteur. À midi, nous {boire|3} un chocolat chaud. Le soir, les enfants {écrire|5|les enfants} une carte à leurs parents et ils {recevoir|5} des nouvelles de la maison." },
     { title: 'Le potager', t: "Au printemps, mon grand-père et moi {préparer|3|mon grand-père et moi} le potager. Grand-père {jeter|2|Grand-père} les mauvaises herbes sur le tas de compost. Moi, je {planter|0} des radis. Nous {arroser|3} les salades. Les limaces {manger|5|Les limaces} les feuilles, alors nous {placer|3} des coquilles d'œufs autour des plants. Tu {connaître|1} cette astuce ? Le samedi, ma grand-mère {acheter|2|ma grand-mère} des graines au marché et elle {offrir|2} des fleurs à la voisine." }
   );
-  TRANSPO_O.push(
-    { title: 'Le voyage en train', instr: 'Réécris le texte avec « nous » à la place de « je ».',
-      orig: "Je *voyage* en train avec ma tante. Je *place* ma valise en haut. Je *mange* un sandwich et je *bois* de l'eau. Je *lis* un livre puis j'*appelle* mon père. Je *reçois* sa réponse et je *ris*.",
-      t: "Nous {voyager|3} en train avec notre tante. Nous {placer|3} notre valise en haut. Nous {manger|3} un sandwich et nous {boire|3} de l'eau. Nous {lire|3} un livre puis nous {appeler|3} notre père. Nous {recevoir|3} sa réponse et nous {rire|3}." },
-    { title: 'Les pompiers', instr: 'Réécris le texte avec « Les pompiers » à la place de « Le pompier ».',
-      orig: "Le pompier *reçoit* un appel. Il *court* vers le camion et il *met* son casque. Il *éteint* le feu et il *ouvre* les fenêtres. Il *jette* un dernier coup d'œil puis il *rentre* à la caserne.",
-      t: "Les pompiers {recevoir|5|Les pompiers} un appel. Ils {courir|5} vers le camion et ils {mettre|5} leur casque. Ils {éteindre|5} le feu et ils {ouvrir|5} les fenêtres. Ils {jeter|5} un dernier coup d'œil puis ils {rentrer|5} à la caserne." }
-  );
   SPOT.push(
     "[Le boulanger] {prépare|préparer} les baguettes.", "Le mercredi, [mes cousins] {viennent|venir} à la maison.", "[Nous] {finissons|finir} la peinture du mur.", "[La chatte] {nourrit|nourrir} ses chatons.",
     "Dans la cour, [les petits] {jouent|jouer} à chat.", "[Tu] {dis|dire} toujours merci.", "[Le maître] {écrit|écrire} la date au tableau.", "Ce soir, [mes parents] {sortent|sortir} au restaurant.",
@@ -1136,6 +1152,58 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
       g.subj = w || PRO1[g.p];
     });
     return { segs, gaps };
+  }
+  /* Transposition : découpe le texte en mots ; chaque mot garde sa forme de départ (w) et sa nouvelle forme (nw). */
+  const TP_RE = /\[([^>\]]+)>([^\]]+)\]|\(([^>)]+)>([^|)]+)\|(\w+)\)|\{([^>}]+)>([^|}]+)\|(\d)(?:\|([^}]*))?\}|(\s+)|([^\s[({]+)/g;
+  const TP_PUNCT = /^[.,;:!?…»]+$/;
+  const TP_PRON = ['je', "j'", 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles'];
+  function parseTranspo(x){
+    const toks = [];
+    let m, space = true, pre = '';
+    TP_RE.lastIndex = 0;
+    while ((m = TP_RE.exec(x.t))){
+      if (m[10]){ space = true; continue; }
+      let tk;
+      if (m[1] !== undefined) tk = { w: m[1], nw: m[2], role: 'subj' };
+      else if (m[3] !== undefined) tk = { w: m[3], nw: m[4], role: 'mot', k: m[5] };
+      else if (m[6] !== undefined) tk = { w: m[6], nw: conj(m[7], +m[8]), role: 'verbe', inf: m[7], p: +m[8], subj: m[9] || null };
+      else {
+        const s = m[11];
+        if (TP_PUNCT.test(s) && toks.length){ toks[toks.length - 1].post += (space ? ' ' : '') + s; space = false; continue; }
+        if (s === '«'){ pre = '« '; space = false; continue; }
+        const mm = s.match(/^(.*?)([.,;:!?…»]*)$/);
+        tk = { w: mm[1], nw: mm[1], role: null, post: mm[2] };
+      }
+      tk.pre = pre; pre = '';
+      if (tk.post === undefined) tk.post = '';
+      toks.push(tk);
+      space = false;
+    }
+    // Le sujet de chaque verbe et de chaque mot à écrire : le dernier sujet réécrit avant lui, ou le pronom juste avant.
+    let lastSubj = null;
+    toks.forEach((tk, i) => {
+      if (tk.role === 'subj'){
+        const prev = toks[i - 1];
+        lastSubj = (prev && prev.role === 'subj' && lastSubj) ? lastSubj + ' ' + tk.nw : tk.nw;
+        return;
+      }
+      if (tk.role !== 'verbe' && tk.role !== 'mot') return;
+      if (tk.role === 'verbe' && !tk.subj){
+        const prev = toks[i - 1];
+        if (prev && prev.role === 'subj') tk.subj = lastSubj;
+        else if (prev && TP_PRON.includes(norm(prev.w))) tk.subj = prev.w;
+        else tk.subj = PRO1[tk.p];
+      }
+      if (tk.role === 'mot') tk.subj = lastSubj;
+    });
+    const gaps = [];
+    toks.forEach((tk, i) => {
+      if (tk.role === 'verbe') gaps.push({ tok: i, kind: 'verbe', orig: tk.w, inf: tk.inf, p: tk.p, subj: tk.subj, answer: tk.nw });
+      if (tk.role === 'mot') gaps.push({ tok: i, kind: 'mot', orig: tk.w, k: tk.k, subj: tk.subj, answer: tk.nw, next: toks[i + 1] ? toks[i + 1].nw : '' });
+    });
+    const chV = [], chO = [];
+    toks.forEach((tk, i) => { if (tk.role === 'verbe') chV.push(i); else if (tk.role) chO.push(i); });
+    return { title: x.title, instr: x.instr, toks, gaps, chV, chO, pieges: x.pieges || {} };
   }
   function parseSpot(str){
     const toks = [], subj = [];
@@ -1350,20 +1418,14 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     if (lv.kind === 'cloze') units = shuffle(id === 1 ? (HARD ? L1O : L1) : (HARD ? L2O : L2)).slice(0, 10).map(parseTemplate);
     const TX = HARD ? TEXTS_O : TEXTS, TP = HARD ? TRANSPO_O : TRANSPO;
     if (lv.kind === 'text'){ const t = TX[pickIndex(id, TX.length)]; const u = parseTemplate(t.t); u.title = t.title; units = [u]; }
-    if (lv.kind === 'transpo'){
-      const x = TP[pickIndex(id, TP.length)];
-      const u = parseTemplate(x.t);
-      u.title = x.title; u.instr = x.instr; u.orig = x.orig;
-      const ov = [...x.orig.matchAll(/\*([^*]+)\*/g)].map(m => m[1]);
-      u.gaps.forEach((g, k) => { g.orig = ov[k]; });
-      units = [u];
-    }
+    if (lv.kind === 'transpo') units = [parseTranspo(TP[pickIndex(id, TP.length)])];
     if (lv.kind === 'spot') units = shuffle(HARD ? SPOT_O : SPOT).slice(0, 10).map(parseSpot);
-    const total = lv.kind === 'spot' ? units.length : units.reduce((s, u) => s + u.gaps.length, 0);
+    let total = lv.kind === 'spot' ? units.length : units.reduce((s, u) => s + u.gaps.length, 0);
+    if (lv.kind === 'transpo') total += units[0].chO.length ? 2 : 1; // repérer les verbes, puis les autres mots
     return {
       level: id, kind: lv.kind, units, total, u: 0, g: 0,
       input: '', tries: 0, wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false,
-      step: 'verb', sel: [], stepTries: 0, unitFirst: true, wrongTok: -1,
+      step: 'verb', sel: [], stepTries: 0, unitFirst: true, wrongTok: -1, tp: 'A', missed: [], wrongToks: [],
       results: [], ok: 0, err: 0
     };
   }
@@ -1396,7 +1458,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     S.R.uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     S.phase = 'play';
     render();
-    if (S.R.kind !== 'spot') $('answerInput').focus();
+    if (S.R.kind !== 'spot' && S.R.kind !== 'transpo') $('answerInput').focus();
   }
   const curUnit = () => S.R.units[S.R.u];
   const curGap = () => curUnit().gaps[S.R.g];
@@ -1410,8 +1472,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     const R = S.R;
     if (R.revealed){ advanceGap(); return; }
     if (R.locked) return;
+    if (R.kind === 'transpo' && R.tp !== 'W') return;
     const g = curGap();
-    if (!norm(R.input)){ R.fb = { kind: 'info', html: "Écris d'abord le verbe." }; renderPlay(); return; }
+    if (!norm(R.input)){ R.fb = { kind: 'info', html: g.kind === 'mot' ? "Écris d'abord le mot." : "Écris d'abord le verbe." }; renderPlay(); return; }
     if (R.wrong) return;
     const typed = norm(R.input);
     const ok = typed === norm(g.answer) ? 'exact' : (bare(typed) === bare(g.answer) ? 'accent' : 'no');
@@ -1434,18 +1497,18 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
         g.done = true; g.ok = false; g.fixed = true; g.shown = g.answer;
         R.results.push(gapResult(g, false, R.tries));
         R.revealed = true;
-        R.fb = { kind: 'bad', html: 'La bonne réponse est : <b>' + esc(answerWithSubject(g)) + '</b>.' };
-        R.hint = hintHTML(g, R.kind);
+        R.fb = { kind: 'bad', html: 'La bonne réponse est : <b>' + esc(g.kind === 'mot' ? g.answer : answerWithSubject(g)) + '</b>.' };
+        R.hint = g.kind === 'mot' ? wordHint(g) : hintHTML(g, R.kind);
       } else {
         R.fb = { kind: 'bad', html: pick(BAD) + ' Lis l\'indice et réessaie.' };
-        R.hint = hintHTML(g, R.kind);
+        R.hint = g.kind === 'mot' ? wordHint(g) : hintHTML(g, R.kind);
       }
       renderPlay();
     }
   }
   function gapResult(g, ok, tries){
     let html;
-    if (S.R.kind === 'transpo') html = esc(g.orig) + ' → <b>' + esc(answerWithSubject(g)) + '</b> <span class="tries">(' + g.inf + ')</span>';
+    if (S.R.kind === 'transpo') html = g.kind === 'mot' ? esc(g.orig) + ' → <b>' + esc(g.answer) + '</b>' : esc(g.orig) + ' → <b>' + esc(answerWithSubject(g)) + '</b> <span class="tries">(' + g.inf + ')</span>';
     else html = '<b>' + esc(answerWithSubject(g)) + '</b> <span class="tries">(' + g.inf + ', ' + ORD(group(g.inf)) + ' groupe)</span>';
     return { html, ok, tries };
   }
@@ -1459,6 +1522,203 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     $('answerInput').focus();
     const act = document.querySelector('#unit .gap.active');
     if (act && act.scrollIntoView) act.scrollIntoView({ block: 'nearest' });
+  }
+
+  // Transposer un texte : repérer les verbes qui changent (A), puis les autres mots qui changent (B), puis écrire (W).
+  const tpWant = (u, R) => R.tp === 'A' ? u.chV : u.chO;
+  const tpPlural = (n, one, many) => n + ' ' + (n > 1 ? many : one);
+  function tpTap(i){
+    const R = S.R, u = curUnit();
+    if ((R.tp !== 'A' && R.tp !== 'B') || R.locked || R.revealed) return;
+    if (R.tp === 'B' && u.chV.includes(i)) return;
+    const k = R.sel.indexOf(i);
+    if (k >= 0) R.sel.splice(k, 1); else R.sel.push(i);
+    R.wrongToks = [];
+    if (R.fb && R.fb.kind !== 'good') R.fb = null;
+    renderPlay();
+  }
+  function tpWhy(u, R, i){
+    const tk = u.toks[i], w = '« ' + esc(tk.w) + ' »';
+    if (R.tp === 'A' && u.chO.includes(i)) return w + ' va changer aussi, mais ce n\'est pas un verbe : tu le toucheras juste après.';
+    const p = u.pieges[norm(tk.w)];
+    if (p) return esc(p);
+    return w + ' ne change pas.';
+  }
+  function tpRule(u, R){
+    if (R.tp === 'A') return 'Pour trouver un verbe conjugué, encadre-le avec « ne … pas ». Un verbe à l\'infinitif ne change jamais' + (u.chO.length ? ', ni un verbe qui a un autre sujet.' : '.');
+    return 'Les mots qui changent sont les mots du sujet, et les mots qui désignent le sujet ou qui s\'accordent avec lui : mon, ton, son, me, te, se…, et les adjectifs.';
+  }
+  function tpValidate(){
+    const R = S.R, u = curUnit();
+    if ((R.tp !== 'A' && R.tp !== 'B') || R.locked || R.revealed) return;
+    if (!R.sel.length){ R.fb = { kind: 'info', html: R.tp === 'A' ? 'Touche d\'abord les verbes qui vont changer.' : 'Touche d\'abord les mots qui vont changer.' }; renderPlay(); return; }
+    const want = tpWant(u, R);
+    const wrong = R.sel.filter(i => !want.includes(i)).sort((a, b) => a - b);
+    const missing = want.filter(i => !R.sel.includes(i));
+    if (!wrong.length && !missing.length){ tpSpotDone(); return; }
+    R.err++;
+    runFall();
+    R.stepTries++;
+    const why = wrong.slice(0, 3).map(i => tpWhy(u, R, i));
+    if (R.stepTries >= 2){
+      R.missed = missing.slice();
+      R.wrongToks = wrong.filter(i => !u.chO.includes(i));
+      R.sel = want.slice();
+      R.revealed = true;
+      tpRecord(false);
+      R.fb = { kind: 'bad', html: (R.tp === 'A' ? 'Voici les verbes qui changent' : 'Voici les autres mots qui changent') + (missing.length ? ' : ceux que tu avais oubliés sont en pointillés.' : '.') };
+      R.hint = why.length ? why.join('<br>') : null;
+      renderPlay();
+      return;
+    }
+    R.wrongToks = wrong.filter(i => !u.chO.includes(i)); // un mot qui changera à l'étape suivante n'est pas barré
+    R.sel = R.sel.filter(i => want.includes(i));
+    let miss = '';
+    if (missing.length){
+      if (R.tp === 'A') miss = 'Il te manque encore ' + tpPlural(missing.length, 'verbe qui change.', 'verbes qui changent.');
+      else {
+        const ns = missing.filter(i => u.toks[i].role === 'subj').length, no = missing.length - ns;
+        miss = 'Il te manque encore ' + [ns ? tpPlural(ns, 'mot du sujet', 'mots du sujet') : '', no ? tpPlural(no, 'autre mot', 'autres mots') : ''].filter(Boolean).join(' et ') + '.';
+      }
+    } else miss = R.tp === 'A' ? 'Tu as trouvé tous les verbes qui changent, mais tu as touché un mot de trop.' : 'Tu as trouvé tous les mots qui changent, mais tu as touché un mot de trop.';
+    R.fb = { kind: 'bad', html: pick(BAD) + ' Lis l\'indice et réessaie.' };
+    R.hint = why.concat([miss, tpRule(u, R)]).join('<br>');
+    renderPlay();
+  }
+  function tpRecord(ok){
+    const R = S.R, u = curUnit(), seen = new Set(), list = [];
+    tpWant(u, R).forEach(i => { const w = u.toks[i].w, k = norm(w); if (!seen.has(k)){ seen.add(k); list.push(w); } });
+    R.results.push({ html: (R.tp === 'A' ? 'Repérer les verbes qui changent : ' : 'Repérer les autres mots qui changent : ') + '<b>' + esc(list.join(', ')) + '</b>', ok, tries: ok ? 0 : R.stepTries });
+    if (ok) R.ok++;
+  }
+  function tpSpotDone(){
+    const R = S.R, u = curUnit(), first = R.stepTries === 0;
+    tpRecord(first);
+    R.locked = true;
+    R.wrongToks = [];
+    const n = tpWant(u, R).length;
+    R.fb = { kind: first ? 'good' : 'info', html: (first ? pick(GOOD) + ' ' : 'Bien corrigé. ') +
+      (R.tp === 'A' ? 'Tu as trouvé les ' + tpPlural(n, 'verbe qui change.', 'verbes qui changent.') : 'Tu as trouvé tous les mots qui changent.') };
+    R.hint = null;
+    renderPlay();
+    setTimeout(tpNext, 1400);
+  }
+  function tpNext(){
+    const R = S.R;
+    if (!R || R.kind !== 'transpo' || (R.tp !== 'A' && R.tp !== 'B') || (!R.locked && !R.revealed)) return;
+    const u = curUnit();
+    R.tp = (R.tp === 'A' && u.chO.length) ? 'B' : 'W';
+    R.sel = []; R.stepTries = 0; R.locked = false; R.revealed = false; R.missed = []; R.wrongToks = [];
+    R.fb = null; R.hint = null;
+    if (R.tp === 'W'){
+      resetGap();
+      R.fb = { kind: 'info', html: u.chO.length ? 'Les mots du sujet sont déjà réécrits. Écris les autres mots qui changent, un par un.' : 'Écris chaque verbe au présent, un par un.' };
+    }
+    renderPlay();
+    window.scrollTo(0, 0);
+    if (R.tp === 'W') $('answerInput').focus();
+  }
+  const OWN = { mon: 'à moi', ma: 'à moi', mes: 'à moi', ton: 'à toi', ta: 'à toi', tes: 'à toi', son: 'à lui ou à elle', sa: 'à lui ou à elle', ses: 'à lui ou à elle',
+                notre: 'à nous', nos: 'à nous', votre: 'à vous', vos: 'à vous', leur: 'à eux ou à elles', leurs: 'à eux ou à elles' };
+  function wordHint(g){
+    const s = g.subj ? norm(g.subj) : '';
+    if (g.k === 'poss') return '« ' + esc(g.orig) + ' » veut dire « ' + OWN[norm(g.orig)] + ' ». Dans le nouveau texte, cela veut dire « ' + OWN[norm(g.answer)] + ' ». Le mot qui suit (« ' + esc(g.next) + ' ») ne change pas.';
+    if (g.k === 'pron') return '« ' + esc(g.orig) + ' » désigne la même personne que le sujet. Le sujet est maintenant « ' + esc(s) + ' ».';
+    if (g.k === 'acc') return '« ' + esc(g.orig) + ' » s\'accorde avec le sujet. Le sujet est maintenant « ' + esc(s) + ' » : il est au pluriel.';
+    return 'Regarde le sujet du nouveau texte : « ' + esc(s) + ' ».';
+  }
+  // Une ligne de mots, avec les espaces du français (pas d'espace après l'apostrophe).
+  function tpJoin(parts){
+    let h = '';
+    parts.forEach((p, k) => { if (k && !/['’]$/.test(parts[k - 1].txt)) h += ' '; h += p.html; });
+    return h;
+  }
+  function tpOrigHTML(u, R){
+    const cur = u.gaps[R.g];
+    return tpJoin(u.toks.map((tk, i) => {
+      const txt = tk.pre + tk.w + tk.post;
+      if (!tk.role) return { txt, html: esc(txt) };
+      let cls = 'ov';
+      if (tk.role === 'subj') cls += ' sub';
+      else { const g = u.gaps.find(x => x.tok === i); if (g && g.done) cls += g.fixed ? ' fixed' : ' done'; else if (cur && cur.tok === i) cls += ' cur'; }
+      return { txt, html: esc(tk.pre) + '<span class="' + cls + '">' + esc(tk.w) + '</span>' + esc(tk.post) };
+    }));
+  }
+  function tpNewHTML(u, R){
+    return tpJoin(u.toks.map((tk, i) => {
+      if (!tk.role) { const txt = tk.pre + tk.w + tk.post; return { txt, html: esc(txt) }; }
+      if (tk.role === 'subj') return { txt: tk.nw + tk.post, html: esc(tk.pre) + '<span class="nw">' + esc(tk.nw) + '</span>' + esc(tk.post) };
+      const k = u.gaps.findIndex(x => x.tok === i);
+      return { txt: tk.nw + tk.post, html: esc(tk.pre) + gapHTML(u.gaps[k], k, R, R.u, false) + esc(tk.post) };
+    }));
+  }
+  function tpSentenceHTML(u, R){
+    // la phrase du nouveau texte qui contient le mot en cours
+    const g = u.gaps[R.g];
+    const plain = tpJoin(u.toks.map((tk, i) => {
+      let txt;
+      if (!tk.role) txt = tk.pre + tk.w + tk.post;
+      else if (tk.role === 'subj') txt = tk.pre + tk.nw + tk.post;
+      else if (i === g.tok) txt = tk.pre + '\u0001' + tk.post;
+      else { const x = u.gaps.find(y => y.tok === i); txt = tk.pre + (x.done ? x.shown : '……') + tk.post; }
+      return { txt, html: txt };
+    }));
+    const pos = plain.indexOf('\u0001');
+    let a = 0;
+    for (let k = pos - 1; k > 0; k--){ if (/[.!?]/.test(plain[k]) && /\s/.test(plain[k + 1] || '')){ a = k + 1; break; } }
+    let b = plain.length;
+    const m = /[.!?]/.exec(plain.slice(pos));
+    if (m) b = pos + m.index + 1;
+    return esc(plain.slice(a, b).trim()).replace('\u0001', '<b>' + (esc(R.input) || '…') + '</b>');
+  }
+  function renderTp(R, u){
+    const spotting = R.tp === 'A' || R.tp === 'B';
+    const step = R.tp === 'A' ? 'D\'abord, touche tous les verbes conjugués qui vont changer, puis valide.'
+      : R.tp === 'B' ? 'Ensuite, touche les autres mots qui vont changer, puis valide.'
+      : (u.chO.length ? 'Enfin, écris chaque mot qui change.' : 'Enfin, écris chaque verbe qui change.');
+    $('instr').innerHTML = '<b>' + esc(u.instr) + '</b><span class="step">' + step + '</span>';
+    $('textTitle').hidden = false;
+    $('textTitle').textContent = u.title;
+    const leg = $('spotLegend');
+    leg.hidden = !spotting;
+    leg.innerHTML = '<span><i class="sw v"></i>verbe qui change</span>' + (R.tp === 'B' ? '<span><i class="sw s"></i>autre mot qui change</span>' : '');
+    const orig = $('orig'), unit = $('unit');
+    if (spotting){
+      orig.hidden = true;
+      unit.className = 'tokens long';
+      const off = R.locked || R.revealed;
+      const parts = u.toks.map((tk, i) => {
+        let cls = 'tok', dis = off;
+        if (R.tp === 'B' && u.chV.includes(i)){ cls += ' is-verb'; dis = true; }
+        else if (R.sel.includes(i)) cls += R.tp === 'A' ? ' is-verb' : ' is-subj';
+        if (R.missed && R.missed.includes(i)) cls += ' is-miss';
+        if (R.wrongToks && R.wrongToks.includes(i)) cls += ' is-out';
+        const txt = tk.pre + tk.w + tk.post;
+        if (/['’]$/.test(txt)) cls += ' elide';
+        return { txt, html: '<button class="' + cls + '" type="button" data-tok="' + i + '"' + (dis ? ' disabled' : '') + '>' + esc(txt) + '</button>' };
+      });
+      unit.innerHTML = '<span class="orig-label">Texte de départ</span>' + tpJoin(parts);
+    } else {
+      orig.hidden = false;
+      orig.innerHTML = '<span class="orig-label">Texte de départ</span>' + tpOrigHTML(u, R);
+      unit.className = 'sentence long';
+      unit.innerHTML = '<span class="orig-label">Nouveau texte</span>' + tpNewHTML(u, R);
+    }
+    const now = $('now'), g = u.gaps[R.g];
+    if (!spotting && g && !g.done){
+      now.innerHTML = '<span class="label">Phrase en cours</span>' + tpSentenceHTML(u, R) + '<br><span class="label">Dans le texte de départ</span>« ' + esc(g.orig) + ' »';
+      now.hidden = false;
+    } else now.hidden = true;
+    $('answerRow').hidden = spotting;
+    const inp = $('answerInput');
+    inp.placeholder = g && g.kind === 'mot' ? 'Écris le mot' : 'Écris le verbe';
+    inp.classList.toggle('bad', !spotting && R.wrong);
+    inp.disabled = spotting || R.locked || R.revealed;
+    $('answerBtn').disabled = spotting || R.locked || R.revealed;
+    const vb = $('subjBtn');
+    vb.textContent = R.tp === 'A' ? 'Valider les verbes' : 'Valider les mots';
+    vb.hidden = !spotting || R.locked || R.revealed;
+    $('groupBtns').hidden = true;
   }
 
   // Repérage : verbe, puis sujet, puis groupe.
@@ -2441,7 +2701,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     $('playLevel').textContent = 'Sommet ' + lv.id + ' · ' + sommetOf(lv.id).alt;
     $('playName').textContent = lv.name;
     const done = R.results.length;
-    $('playCount').textContent = (R.kind === 'spot' || R.kind === 'cloze' ? 'Question ' : 'Verbe ') + Math.min(done + 1, R.total) + ' sur ' + R.total;
+    $('playCount').textContent = (R.kind === 'text' ? 'Verbe ' : 'Question ') + Math.min(done + 1, R.total) + ' sur ' + R.total;
     $('tOk').textContent = R.ok;
     $('tErr').textContent = R.err;
     const tr = $('ptrack');
@@ -2450,22 +2710,18 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     runUpdate(R);
 
     const u = curUnit();
-    const isSpot = R.kind === 'spot', isText = R.kind === 'text' || R.kind === 'transpo';
-    $('instr').textContent = R.kind === 'transpo' ? u.instr : (isSpot ? spotInstr(R) : lv.instr);
+    if (R.kind === 'transpo') renderTp(R, u);
+    else {
+    const isSpot = R.kind === 'spot', isText = R.kind === 'text';
+    $('instr').textContent = isSpot ? spotInstr(R) : lv.instr;
     $('textTitle').hidden = !isText;
     if (isText) $('textTitle').textContent = u.title;
     $('spotLegend').hidden = !isSpot;
+    $('spotLegend').innerHTML = LEGEND0;
+    $('subjBtn').textContent = 'Valider le sujet';
+    $('answerInput').placeholder = 'Écris le verbe';
 
-    const orig = $('orig');
-    if (R.kind === 'transpo'){
-      let k = -1;
-      orig.innerHTML = '<span class="orig-label">Texte de départ</span>' + esc(u.orig).replace(/\*([^*]+)\*/g, (m, w) => {
-        k++;
-        const g = u.gaps[k];
-        return '<span class="ov' + (g && g.done ? ' done' : (k === R.g ? ' cur' : '')) + '">' + w + '</span>';
-      });
-      orig.hidden = false;
-    } else orig.hidden = true;
+    $('orig').hidden = true;
 
     const unit = $('unit');
     if (isSpot){
@@ -2482,14 +2738,13 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
       R.wrongTok = -1;
     } else {
       unit.className = 'sentence' + (isText ? ' long' : '');
-      unit.innerHTML = unitHTML(u, R, R.kind !== 'transpo');
+      unit.innerHTML = unitHTML(u, R, true);
     }
 
     const now = $('now');
     if (isText && !curGap().done){
       const g = curGap();
-      now.innerHTML = '<span class="label">Phrase en cours</span>' + currentSentenceHTML(u, R, R.kind !== 'transpo') +
-        (R.kind === 'transpo' ? '<br><span class="label">Dans le texte de départ</span>« ' + esc(g.orig) + ' »' : '');
+      now.innerHTML = '<span class="label">Phrase en cours</span>' + currentSentenceHTML(u, R, true);
       now.hidden = false;
     } else now.hidden = true;
 
@@ -2500,15 +2755,22 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     $('answerBtn').disabled = !isSpot && (R.locked || R.revealed);
     $('subjBtn').hidden = !(isSpot && R.step === 'subject');
     $('groupBtns').hidden = !(isSpot && R.step === 'group');
+    }
 
-    const fb = $('feedback');
+    // Pendant le repérage du sommet 5, le commentaire et l'indice s'affichent sous le texte.
+    const inCard = R.kind === 'transpo' && R.tp !== 'W';
+    const fb = $(inCard ? 'tpFb' : 'feedback'), fb0 = $(inCard ? 'feedback' : 'tpFb');
     fb.className = 'feedback' + (R.fb ? ' ' + R.fb.kind : '');
     fb.innerHTML = R.fb ? R.fb.html : '';
-    const hint = $('hint');
+    fb0.className = 'feedback'; fb0.innerHTML = '';
+    $('tpFb').hidden = !(inCard && R.fb);
+    const hint = $(inCard ? 'tpHint' : 'hint');
+    $(inCard ? 'hint' : 'tpHint').hidden = true;
     if (R.hint){ hint.innerHTML = (R.revealed ? '' : '<b>Indice :</b> ') + R.hint; hint.hidden = false; } else hint.hidden = true;
     $('continueBtn').hidden = !R.revealed;
     R.shake = false;
   }
+  const LEGEND0 = '<span><i class="sw v"></i>verbe</span><span><i class="sw s"></i>sujet</span>';
   function spotInstr(R){
     if (R.step === 'verb') return 'Touche le verbe conjugué.';
     if (R.step === 'subject') return 'Touche tous les mots du sujet, puis valide.';
@@ -2642,7 +2904,13 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   });
 
   $('playHome').addEventListener('click', goHome);
-  $('answerForm').addEventListener('submit', e => { e.preventDefault(); if (S.R && S.R.kind !== 'spot') submitAnswer(); else if (S.R && S.R.revealed) spotNext(); });
+  $('answerForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const R = S.R;
+    if (!R) return;
+    if (R.kind === 'transpo' && R.tp !== 'W'){ if (R.revealed) tpNext(); return; }
+    if (R.kind !== 'spot') submitAnswer(); else if (R.revealed) spotNext();
+  });
   $('answerInput').addEventListener('input', e => {
     const R = S.R;
     if (!R || R.kind === 'spot') return;
@@ -2651,10 +2919,20 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     if (R.fb && R.fb.kind === 'info') R.fb = null;
     renderPlay();
   });
-  $('unit').addEventListener('click', e => { const t = e.target.closest('[data-tok]'); if (t && S.R && S.R.kind === 'spot') spotTap(+t.dataset.tok); });
-  $('subjBtn').addEventListener('click', spotSubject);
+  $('unit').addEventListener('click', e => {
+    const t = e.target.closest('[data-tok]');
+    if (!t || !S.R) return;
+    if (S.R.kind === 'spot') spotTap(+t.dataset.tok);
+    else if (S.R.kind === 'transpo') tpTap(+t.dataset.tok);
+  });
+  $('subjBtn').addEventListener('click', () => { if (S.R && S.R.kind === 'transpo') tpValidate(); else spotSubject(); });
   $('groupBtns').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (b) spotGroup(+b.dataset.group); });
-  $('continueBtn').addEventListener('click', () => { if (!S.R) return; if (S.R.kind === 'spot') spotNext(); else advanceGap(); });
+  $('continueBtn').addEventListener('click', () => {
+    if (!S.R) return;
+    if (S.R.kind === 'spot') spotNext();
+    else if (S.R.kind === 'transpo' && S.R.tp !== 'W') tpNext();
+    else advanceGap();
+  });
 
   $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
   $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
@@ -2670,7 +2948,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     render();
     if (S.phase === 'play'){
       $('answerInput').value = S.R.input || '';
-      if (S.R.kind !== 'spot' && S.R.locked && !S.R.revealed) advanceGap();
+      if (S.R.kind === 'transpo' && S.R.tp !== 'W'){ if (S.R.locked && !S.R.revealed) tpNext(); }
+      else if (S.R.kind !== 'spot' && S.R.locked && !S.R.revealed) advanceGap();
       if (S.R.kind === 'spot' && S.R.step === 'done' && !S.R.revealed) spotNext();
     }
   }
