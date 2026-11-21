@@ -194,6 +194,15 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
 @keyframes mx-main{from{transform:rotate(-3deg)}to{transform:rotate(5deg)}}
 @media (prefers-reduced-motion: reduce){.mascot.h-cartable .mx-trip,.mascot .mx-cartable,.mascot .mx-bulle-cartable,.mascot .mx-main,.mascot .mx-colere{animation:none}.mascot.h-cartable .mx-sourcils{animation:none;display:none}}
 @media (prefers-reduced-motion: reduce){.mascot .mx-regle,.mascot.h-rire .mx-sway,.mascot.h-fier .mx-sway,.mascot.h-cherche .mx-pupilles,.mascot .mx-bulle,.mascot .mx-etoiles path{animation:none}}
+/* Bienveillante (elle rappelle une règle gentiment) et cheveux dressés (elle n'en revient pas) : humeurs du 21 novembre */
+.mascot.h-gentil .mx-h-gentil,.mascot.h-herisse .mx-h-herisse{display:inline}
+.mascot.h-gentil .mx-bouche,.mascot.h-herisse .mx-bouche,.mascot.h-herisse .mx-sourcils{display:none}
+.mascot.h-gentil .mx-sway{animation-duration:4.5s}
+.mascot.h-herisse .mx-pupilles{transform-box:fill-box;transform-origin:center;transform:scale(.75)}
+.mascot .mx-cheveux{transform-origin:60px 24px;animation:mx-dresse .45s ease-out both,mx-frisson .16s .45s ease-in-out 8 alternate}
+@keyframes mx-dresse{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes mx-frisson{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+@media (prefers-reduced-motion: reduce){.mascot .mx-cheveux{animation:none}}
 @media (prefers-reduced-motion: reduce){.card,.game{transition:none}.card:hover,.game:hover{transform:none}}
 @media (max-width:420px){.game{flex-wrap:wrap}.play{margin-left:auto}}
 </style>
@@ -262,6 +271,11 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
             <ellipse class="mx-h mx-h-dodo" cx="60" cy="75.5" rx="2.8" ry="3.4" fill="#1a2358"/>
             <g class="mx-h mx-h-cartable"><ellipse cx="60" cy="76" rx="4" ry="4.6" fill="#1a2358"/><ellipse cx="60" cy="78.3" rx="2.4" ry="1.4" fill="#ff8fa3"/></g>
             <path class="mx-h mx-h-sournois" d="M53.5 74.5 Q61 79.5 67 71.5" stroke="#1a2358" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path class="mx-h mx-h-gentil" d="M53 73 Q60 79.5 67 73" stroke="#1a2358" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <text class="mx-h mx-h-gentil mx-bulle" x="97" y="44" text-anchor="middle" font-family="'Baloo 2','Arial Rounded MT Bold',sans-serif" font-weight="800" font-size="15" fill="#ff7f9c">♥</text>
+            <path class="mx-h mx-h-herisse" d="M46 51.5 q5 -5 10 -1.5 M64 50 q5 -3.5 10 1.5" stroke="#1a2358" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <ellipse class="mx-h mx-h-herisse" cx="60" cy="76" rx="3.2" ry="3.9" fill="#1a2358"/>
+            <g class="mx-h mx-h-herisse"><g class="mx-cheveux"><path d="M60 2.5 V-7 M57 9 L51.5 0.5 M63 9 L68.5 0.5 M54.5 15 L45.5 9 M65.5 15 L74.5 9 M51.5 21 L41.5 18 M68.5 21 L78.5 18" stroke="#1a2358" stroke-width="1.7" fill="none" stroke-linecap="round"/></g></g>
             <path d="M41 80 Q60 96 79 80" stroke="#8a6d1f" stroke-width="1" fill="none"/>
             <g transform="translate(48.6 85.1)"><g class="mx-doll d1"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#f1c7a3"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#7a4a26"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#2b45c8"/></g></g>
             <g transform="translate(56.2 87.7)"><g class="mx-doll d2"><path d="M0 0 V2.2" stroke="#8a6d1f" stroke-width=".8"/><circle cx="0" cy="4" r="1.9" fill="#e0ac7e"/><path d="M-1.9 4 a1.9 1.9 0 0 1 3.8 0 Z" fill="#1a2358"/><path d="M0 5.6 L-2.7 10.6 H2.7 Z" fill="#2fa84f"/></g></g>
@@ -895,41 +909,71 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
   const MX_LINES = [
     ['Oups ! J\'ai encore trébuché…', 'trebuche'],
     ['Quelqu\'un a vu ma tarte au citron meringuée ?', 'cherche'],
+    ['Je suis en manque de sucre.', 'cherche'],
     ['Le comble pour un crayon ? Avoir mauvaise mine !', 'rire'],
     ['Qui a voulu m\'assassiner\u00a0?!', 'cartable'],
     ['Pas de bêtises, sinon je te taille en pointe !', 'fache'],
-    ['Oui, il faut copier la consigne !', 'fache'],
-    ['Non, le nourrisson n\'est pas le petit du hérisson !', 'fache'],
+    ['Oui, il faut copier la consigne !', 'gentil'],
+    ['N\'oubliez pas vos prénoms sur vos copies.', 'gentil'],
+    ['Non, le nourrisson n\'est pas le petit du hérisson !', 'herisse'],
     ['Mon collier ? Ce sont d\'anciens élèves… Ils sèchent dans mon grenier.', 'sournois'],
     ['Pas avant mon café !', 'dodo'],
+    ['Je suis en manque de caféine.', 'dodo'],
     ['Taisez-vous !', 'fache'],
-    ['Nom d\'un schtroumpf à roulettes !', 'fache'],
+    ['Nom d\'un schtroumpf à roulettes !', 'herisse'],
     ['Pourquoi le livre de maths est-il triste ? Parce qu\'il a trop de problèmes !', 'rire'],
-    ['Il faut recopier ce qui est écrit au tableau ? Non, c\'est pour décorer le tableau…', 'fache'],
-    ['On dit rhinocéros, pas ronicéros !', 'fache'],
-    ['On ne dit pas « du coup », mais « par conséquent », « subséquemment » ou « donc » !', 'fache'],
-    ['Si je m\'aperçois que tu as mis 2 P à apigeonner, je t\'apostrophe, je t\'aplatis, je t\'aplanis, et tout ceci sans m\'apitoyer ni m\'apaiser.', 'fache'],
-    ['Les noms féminins en -té ou -tié ne prennent pas de e : la beauté, l\'amitié ! Sauf la dictée, la montée, la remontée, la jetée, la portée, la pâtée, la butée, la tétée, la nuitée et tous les noms de quantité !', 'fache'],
-    ['L\'orthographe et la grammaire, c\'est aussi valable quand on résout un problème en maths ! On a le droit de mettre les s quand il y en a plusieurs et d\'accorder les verbes.', 'fache'],
+    ['Il faut recopier ce qui est écrit au tableau ? Non, c\'est pour décorer le tableau…', 'sournois'],
+    ['On dit rhinocéros, pas ronicéros !', 'herisse'],
+    ['On ne dit pas « du coup », mais « par conséquent », « subséquemment » ou « donc » !', 'herisse'],
+    ['Si je m\'aperçois que tu as mis 2 P à apigeonner, je t\'apostrophe, je t\'aplatis, je t\'aplanis, et tout ceci sans m\'apitoyer ni m\'apaiser.', 'herisse'],
+    ['Les noms féminins en -té ou -tié ne prennent pas de e : la beauté, l\'amitié ! Sauf la dictée, la montée, la remontée, la jetée, la portée, la pâtée, la butée, la tétée, la nuitée et tous les noms de quantité !', 'gentil'],
+    ['L\'orthographe et la grammaire, c\'est aussi valable quand on résout un problème en maths ! On a le droit de mettre les s quand il y en a plusieurs et d\'accorder les verbes.', 'gentil'],
     ['Moi, j\'aime les élèves souriants parce qu\'on apprend mieux en souriant et surtout, en souriant, on ne peut pas bavarder.', 'sournois'],
     ['On lève la main pour demander la parole !', 'main'],
     ['Quand on se trompe, on apprend en corrigeant ses erreurs. C\'est pour ça que c\'est important de suivre les corrections et de bien comprendre pourquoi on s\'est trompé.', 'calme'],
     ['Avant de me dire « Maîtresse, je n\'ai pas compris la consigne », lis la consigne. Souvent, ça peut aider.', 'sournois'],
     ['Attention, je tire les oreilles jusqu\'à la gare !', 'fache'],
     ['Que dit le 0 au 8 ? Jolie ceinture !', 'rire'],
-    ['Bien sûr que oui, il faut prendre la correction !', 'fache'],
+    ['Bien sûr que oui, il faut prendre la correction !', 'gentil'],
     ['Je suis un crayon HB : ni trop dur, ni trop tendre.', 'fier'],
     ['Pourquoi les crayons se couchent-ils tôt ? Pour avoir bonne mine le lendemain !', 'rire'],
+    ['Pourquoi le crayon a-t-il toujours raison ? Parce qu\'il a une bonne pointe de vue !', 'rire'],
+    ['Le comble pour une règle ? Ne pas savoir se tenir droite !', 'rire'],
+    ['Le comble pour une gomme ? Avoir des trous de mémoire !', 'rire'],
+    ['Le comble pour un dictionnaire ? Ne pas trouver ses mots !', 'rire'],
+    ['Que dit le stylo au crayon ? Tu es bien taillé aujourd\'hui !', 'fier'],
     ['Encore une bonne réponse… Je vais avoir besoin d\'une sieste !', 'dodo'],
     ['Le stylo est jaloux de moi : j\'ai une gomme pour réparer mes bêtises !', 'fier'],
     ['Avec Crayonnade, tu progresses à chaque jeu !', 'fier']
   ];
-  const MX_HUMEURS = ['h-fache', 'h-rire', 'h-dodo', 'h-sournois', 'h-cherche', 'h-fier', 'h-calme', 'h-cartable', 'h-main'];
-  let mxLine = -1, mxFin = null, mxTexte = null;
+  const MX_HUMEURS = ['h-fache', 'h-rire', 'h-dodo', 'h-sournois', 'h-cherche', 'h-fier', 'h-calme', 'h-cartable', 'h-main', 'h-gentil', 'h-herisse'];
+  // Les phrases arrivent dans un ordre tiré au hasard, et aucune ne revient avant que toutes soient passées.
+  // La pioche est gardée sur l'appareil : la visite suivante continue là où on s'était arrêté.
+  // Les phrases où la mascotte se fâche (ou trébuche sur le cartable) sont espacées, et jamais en premier.
+  const MX_FORTE = h => h === 'fache' || h === 'cartable';
+  const MX_CLE = 'crayonnade-mascotte-pioche-' + MX_LINES.length;
+  const mxMelange = t => { for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+  function mxNouvellePioche() {
+    const tous = MX_LINES.map((_, i) => i);
+    const pioche = mxMelange(tous.filter(i => !MX_FORTE(MX_LINES[i][1])));
+    const fortes = mxMelange(tous.filter(i => MX_FORTE(MX_LINES[i][1])));
+    const pas = Math.floor(pioche.length / (fortes.length + 1));
+    fortes.forEach((f, n) => pioche.splice((n + 1) * pas + n, 0, f));
+    return pioche;
+  }
+  let mxPioche = null;
+  try { mxPioche = JSON.parse(localStorage.getItem(MX_CLE)); } catch (e) {}
+  if (!Array.isArray(mxPioche)) mxPioche = [];
+  mxPioche = mxPioche.filter(i => Number.isInteger(i) && i >= 0 && i < MX_LINES.length);
+  let mxFin = null, mxTexte = null, mxDernier = 0;
   $('mascot').addEventListener('click', () => {
     const m = $('mascot');
-    mxLine = (mxLine + 1) % MX_LINES.length;
-    const [texte, humeur] = MX_LINES[mxLine];
+    // Une phrase reste au moins 2 secondes : toucher plus vite ne la change pas.
+    if (Date.now() - mxDernier < 2000) return;
+    mxDernier = Date.now();
+    if (!mxPioche.length) mxPioche = mxNouvellePioche();
+    const [texte, humeur] = MX_LINES[mxPioche.shift()];
+    try { localStorage.setItem(MX_CLE, JSON.stringify(mxPioche)); } catch (e) {}
     clearTimeout(mxTexte);
     if (humeur === 'cartable' && !REDUCED) mxTexte = setTimeout(() => { $('bubble').textContent = texte; }, 800);
     else $('bubble').textContent = texte;
