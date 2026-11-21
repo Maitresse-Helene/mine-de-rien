@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-21-182550';
+const VERSION = '2026-11-21-194924';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -37,8 +37,10 @@ const FICHIERS = [
   "icones/icone.svg",
   "index.html",
   "jeux/additionner-deux-nombres/index.html",
+  "jeux/comparer-et-calculer-avec-les-fractions/index.html",
   "jeux/comprendre-un-texte/index.html",
   "jeux/comprendre-une-consigne/index.html",
+  "jeux/decomposer-et-comparer-les-fractions-decimales/index.html",
   "jeux/encadrer-et-placer-les-fractions/index.html",
   "jeux/est-es-ou-et/index.html",
   "jeux/estimer-un-resultat/index.html",
@@ -67,8 +69,10 @@ const FICHIERS = [
   "jeux/les-doubles/index.html",
   "jeux/les-familles-de-mots/index.html",
   "jeux/les-fractions-decimales/index.html",
+  "jeux/les-grands-nombres/index.html",
   "jeux/les-moities/index.html",
   "jeux/les-mots-commencant-par-acc-app-aff/index.html",
+  "jeux/les-nombres-decimaux/index.html",
   "jeux/les-nombres-entiers-chiffres-et-unites/index.html",
   "jeux/les-nombres-termines-par-8-ou-9/index.html",
   "jeux/les-parentheses/index.html",
@@ -84,6 +88,7 @@ const FICHIERS = [
   "jeux/lire-et-ecrire-les-fractions/index.html",
   "jeux/lire-un-document/index.html",
   "jeux/mon-resultat-est-il-possible/index.html",
+  "jeux/multiples-et-diviseurs/index.html",
   "jeux/multiplier-par-10-100-1000/index.html",
   "jeux/multiplier-par-4-par-8/index.html",
   "jeux/passer-la-centaine/index.html",
