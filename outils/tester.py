@@ -83,7 +83,8 @@ with sync_playwright() as p:
     ctx = browser.new_context(viewport={"width": 820, "height": 1180}, locale="fr-FR")
     external, failed, errors = [], [], []
     ctx.on("request", lambda r: external.append(r.url) if not r.url.startswith(("http://localhost", "data:", "blob:")) else None)
-    ctx.on("requestfailed", lambda r: failed.append(r.url))
+    # une vidéo interrompue par le lecteur (il ne lit que le début, ou la page se ferme) n'est pas une ressource manquante
+    ctx.on("requestfailed", lambda r: None if (re.search(r"\.(mp4|webm)$", r.url) and "ABORTED" in (r.failure or "")) else failed.append(r.url))
     page = ctx.new_page()
     page.on("pageerror", lambda e: errors.append(("portail", str(e))))
 
@@ -147,6 +148,18 @@ with sync_playwright() as p:
         good = gate == 0 and back == "../../index.html#" + j["domaine"] and not errs and visible > 50 and title == j["titre"]
         ok(good, f"{j['slug']:<45} porte={gate} retour={back} polices={fonts} texte={visible} erreurs={errs[:2]}")
         pg.close()
+
+    videos = [j for j in jeux if j.get("video")]
+    if videos:
+        print("4e. Les vidéos")
+        for j in videos:
+            pg = ctx.new_page()
+            pg.goto(BASE + "jeux/" + j["slug"] + "/index.html"); pg.wait_for_load_state("networkidle")
+            lecteur = pg.locator("video").count() == 1
+            taille = pg.evaluate("() => fetch('video.mp4', {method: 'HEAD'}).then(r => r.ok ? +r.headers.get('content-length') : 0)")
+            affiche = pg.evaluate("() => fetch('affiche.jpg').then(r => r.ok)")
+            ok(lecteur and 0 < taille < 25 * 1024 * 1024 and affiche, f"{j['slug']:<45} lecteur={lecteur} vidéo={taille / 1e6:.1f} Mo affiche={affiche}")
+            pg.close()
 
     outils = sorted(d.name for d in (COPIE / "enseignante").glob("*") if (d / "index.html").exists()) if (COPIE / "enseignante").exists() else []
     if outils:
@@ -253,6 +266,8 @@ with sync_playwright() as p:
     POINT = {"at": 1794400000000, "ms": 60000, "level": 0, "score": "reporté", "parcours": "jaune", "parc": "jaune", "enseignante": True}
     pbs = []
     for j in jeux:
+        if j.get("video"):
+            continue  # une vidéo n'a pas de bons points
         if not j.get("profilNeuf"):
             pbs.append(j["slug"] + " (profil inconnu)"); continue
         prof = json.loads(json.dumps(j["profilNeuf"]).replace("__NOM__", "Zoé Essai"))

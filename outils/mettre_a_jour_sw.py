@@ -11,7 +11,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parent.parent
 EXCLUS_DOSSIERS = {"outils", ".git", ".github", "node_modules", "functions"}
 EXCLUS_FICHIERS = {"sw.js", "README.md", "CLAUDE.md", ".DS_Store", ".gitignore"}
-EXCLUS_EXTENSIONS = {".md", ".txt", ".py"}
+EXCLUS_EXTENSIONS = {".md", ".txt", ".py", ".mp4", ".webm"}  # vidéos : trop lourdes pour être gardées hors ligne
 
 MODELE = """/* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
@@ -70,6 +70,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return; /* comptes élèves : toujours le serveur, jamais de copie */
+  if (/\\.(mp4|webm)$/.test(url.pathname)) return; /* vidéos : directement le réseau (le navigateur les lit par morceaux) */
   if (req.mode === 'navigate') {
     /* Pages : on suit nous-mêmes la redirection de l'hébergeur et on renvoie une réponse propre,
        toujours fraîche quand le réseau répond, sinon la copie gardée. */

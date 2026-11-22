@@ -55,6 +55,18 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 4. Nouveau domaine : ajoute-le dans `SUBJECTS[...].domains` et `DOMAINS` de `index.html`
    (avec un univers dans `SCENES`), avant d'intégrer le jeu.
 
+## Ajouter une vidéo
+
+Les vidéos (dessins animés faits avec Claude, par exemple « Le crayon qui rangeait ses crayons ») se rangent dans la
+liste des jeux de leur domaine, avec `"video": true` dans `jeux.js` (pas de bons points, pas d'artefact) :
+```
+python3 outils/integrer_video.py <video.mp4> --titre "Vidéo – <titre> (épisode 1)" --domaine <clé> --desc "<phrase du portail>" [--apres <slug>]
+```
+Sans `--apres`, la vidéo se place en tête du domaine. La page `jeux/<slug>/index.html` (lecteur, image d'attente
+`affiche.jpg`, code de la classe) est écrite par le script. Moins de 25 Mo par vidéo (limite de Cloudflare Pages) :
+recompresser si besoin (`-preset slow -tune animation -crf 27`). Les vidéos ne sont pas gardées hors ligne (le service
+worker les laisse au réseau). Sur le portail, la carte d'une vidéo affiche le même bouton « Jouer » que les jeux.
+
 ## Ajouter ou mettre à jour un outil de l'enseignante
 
 Même chose qu'un jeu, avec `--outil` (ni `--domaine` ni `--desc`) :

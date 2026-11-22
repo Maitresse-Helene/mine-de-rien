@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-21-220218';
+const VERSION = '2026-11-22-133805';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -52,6 +52,8 @@ const FICHIERS = [
   "jeux/la-multiplication-posee/index.html",
   "jeux/la-phrase-et-ses-constituants/index.html",
   "jeux/la-polysemie/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-1/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-1/index.html",
   "jeux/le-dictionnaire-l-ordre-alphabetique/index.html",
   "jeux/le-dictionnaire-lire-un-article/index.html",
   "jeux/le-feminin-des-noms-et-des-adjectifs-1/index.html",
@@ -158,6 +160,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return; /* comptes élèves : toujours le serveur, jamais de copie */
+  if (/\.(mp4|webm)$/.test(url.pathname)) return; /* vidéos : directement le réseau (le navigateur les lit par morceaux) */
   if (req.mode === 'navigate') {
     /* Pages : on suit nous-mêmes la redirection de l'hébergeur et on renvoie une réponse propre,
        toujours fraîche quand le réseau répond, sinon la copie gardée. */
