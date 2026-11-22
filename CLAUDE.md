@@ -57,15 +57,17 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
 
 ## Ajouter une vidéo
 
-Les vidéos (dessins animés faits avec Claude, par exemple « Le crayon qui rangeait ses crayons ») se rangent dans la
-liste des jeux de leur domaine, avec `"video": true` dans `jeux.js` (pas de bons points, pas d'artefact) :
+Les vidéos (dessins animés faits avec Claude, par exemple « Le crayon qui rangeait ses crayons ») se rangent dans
+l'espace « Je comprends » du portail (matière `comprendre`, décor « Le petit cinéma du crayon ») : domaine
+`comprendre-maths` ou `comprendre-francais`, avec `"video": true` dans `jeux.js` (pas de bons points, pas d'artefact) :
 ```
-python3 outils/integrer_video.py <video.mp4> --titre "Vidéo – <titre> (épisode 1)" --domaine <clé> --desc "<phrase du portail>" [--apres <slug>]
+python3 outils/integrer_video.py <video.mp4> --titre "Vidéo – <titre> (épisode 1)" --domaine comprendre-maths --desc "<phrase du portail>" [--apres <slug>]
 ```
 Sans `--apres`, la vidéo se place en tête du domaine. La page `jeux/<slug>/index.html` (lecteur, image d'attente
 `affiche.jpg`, code de la classe) est écrite par le script. Moins de 25 Mo par vidéo (limite de Cloudflare Pages) :
 recompresser si besoin (`-preset slow -tune animation -crf 27`). Les vidéos ne sont pas gardées hors ligne (le service
-worker les laisse au réseau). Sur le portail, la carte d'une vidéo affiche le même bouton « Jouer » que les jeux.
+worker les laisse au réseau). Sur le portail, dans « Je comprends », les cartes affichent « Regarder » (réglages `unit`, `play`, `lead`, `vide`, `alt` de la
+matière dans `SUBJECTS`, à modifier dans la page d'accueil claude.ai).
 
 ## Ajouter ou mettre à jour un outil de l'enseignante
 

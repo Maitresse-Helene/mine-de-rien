@@ -12,5 +12,7 @@ window.DOMAINES = {
  "orthographe": "Orthographe",
  "vocabulaire": "Vocabulaire",
  "lecture": "Lire et comprendre",
- "tirelettres": "Tirelettres"
+ "tirelettres": "Tirelettres",
+ "comprendre-maths": "Mathématiques",
+ "comprendre-francais": "Français"
 };

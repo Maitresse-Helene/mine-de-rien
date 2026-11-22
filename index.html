@@ -316,7 +316,10 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
   /* ---------- Les matières, les domaines et leurs univers ---------- */
   const SUBJECTS = {
     maths: { name: 'Mathématiques', color: '#2b45c8', scene: 'cover-maths', domains: ['calcul-mental', 'calcul', 'problemes', 'numeration', 'grandeurs-et-mesures', 'espace-et-geometrie', 'donnees'] },
-    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'lecture', 'tirelettres'] }
+    francais: { name: 'Français', color: '#c2365e', scene: 'cover-fr', domains: ['grammaire', 'conjugaison', 'orthographe', 'vocabulaire', 'lecture', 'tirelettres'] },
+    comprendre: { name: 'Je comprends', color: '#0e7c71', scene: 'cover-comprendre', domains: ['comprendre-maths', 'comprendre-francais'],
+      unit: ['vidéo', 'vidéos'], play: 'Regarder', lead: 'Des dessins animés pour bien comprendre. Choisis une matière.',
+      vide: 'Il n\'y a pas encore de vidéo ici. La maîtresse en prépare une.', alt: 'Un cinéma en plein air, avec un grand écran' }
   };
   const DOMAINS = {
     'calcul-mental': { name: 'Calcul mental', world: 'La station de ski', scene: 'ski' },
@@ -331,7 +334,9 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     'orthographe': { name: 'Orthographe', world: 'Les fonds marins', scene: 'mer' },
     'vocabulaire': { name: 'Vocabulaire', world: 'Le jardin des mots', scene: 'jardin' },
     'lecture': { name: 'Lire et comprendre', world: 'La bibliothèque enchantée', scene: 'bibliotheque' },
-    'tirelettres': { name: 'Tirelettres', world: 'Le plateau des lettres', scene: 'lettres' }
+    'tirelettres': { name: 'Tirelettres', world: 'Le plateau des lettres', scene: 'lettres' },
+    'comprendre-maths': { name: 'Mathématiques', world: 'Le petit cinéma du crayon', scene: 'cinema' },
+    'comprendre-francais': { name: 'Français', world: 'Le petit cinéma du crayon', scene: 'cinema' }
   };
   Object.keys(SUBJECTS).forEach(s => SUBJECTS[s].domains.forEach(d => DOMAINS[d].subject = s));
 
@@ -411,6 +416,56 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
   const SCENES = {};
   SCENES['cover-maths'] = (g, S, t) => cover(g, S, t, '#2b45c8', '1 2 3', '+ ×');
   SCENES['cover-fr'] = (g, S, t) => cover(g, S, t, '#c2365e', 'A b c', 'é è');
+  SCENES['cover-comprendre'] = (g, S, t) => SCENES.cinema(g, S, t);
+  /* Le petit cinéma du crayon : un cinéma en plein air ; sur l'écran, le crayon HB et ses paquets de dix */
+  SCENES.cinema = (g, S, t) => {
+    const tt = REDUCED ? 0 : t;
+    sky(g, S); sun(g, S, 36, 26, t);
+    cloud(g, drift(t, 120, 3), 22, 0.8, 0.8); cloud(g, drift(t, 260, 2), 40, 0.6, 0.7);
+    hill(g, 108, 6, S.far, 0.6, 0.022); hill(g, 118, 4, S.ground2, 2.2, 0.03); ground(g, S, 122);
+    tree(g, S, 16, 124, 0.85); tree(g, S, 304, 123, 0.95);
+    if (S.id === 'hiver') fir(g, 282, 126, 0.7, true);
+    // l'écran, sur deux poteaux
+    g.fillStyle = '#4a5470'; g.fillRect(152, 90, 4, 34); g.fillRect(286, 90, 4, 34);
+    g.fillStyle = '#1a2358'; rr(g, 144, 18, 154, 78, 4); g.fill();
+    g.fillStyle = '#fffdf5'; rr(g, 148, 22, 146, 70, 3); g.fill();
+    snowCap(g, S, 144, 18, 154);
+    // sur l'écran : le crayon HB qui se promène, et les paquets 1, 10, 100 qui défilent
+    const px = 176 + (Math.sin(tt * 0.8) + 1) * 0.5 * 86, py = 88;
+    g.save(); g.translate(px, py);
+    g.fillStyle = '#f7a8c4'; rr(g, -5, -6, 10, 6, 2); g.fill();
+    g.fillStyle = '#b8bcc8'; g.fillRect(-5, -9, 10, 3);
+    g.fillStyle = '#f5c518'; g.fillRect(-5, -31, 10, 22);
+    poly(g, [[-5, -31], [5, -31], [0, -42]], '#efc28c'); poly(g, [[-1.8, -38.5], [1.8, -38.5], [0, -42]], '#3b3e4c');
+    const bl = !REDUCED && (t % 3.2) < 0.14;
+    [-2.2, 2.2].forEach(ex => { g.fillStyle = '#ffffff'; ell(g, ex, -24, 1.9, bl ? 0.3 : 1.9); if (!bl){ g.fillStyle = '#1a2358'; circ(g, ex, -23.8, 0.9); } });
+    g.strokeStyle = '#1a2358'; g.lineWidth = 0.9; g.beginPath(); g.arc(0, -20.5, 1.8, 0.2, Math.PI - 0.2); g.stroke();
+    g.restore();
+    const k = Math.floor((REDUCED ? 1 : tt / 2.4)) % 3, lab = ['1', '10', '100'][k];
+    g.fillStyle = ['#2fa84f', '#2b45c8', '#c2365e'][k]; g.font = '800 22px ' + FONT; g.textAlign = 'center';
+    g.fillText(lab, 221, 41);
+    // le projecteur et son faisceau
+    g.fillStyle = 'rgba(255,240,180,.30)'; poly(g, [[70, 98], [148, 26], [148, 90]]);
+    g.strokeStyle = '#4a5470'; g.lineWidth = 2; seg(g, 58, 108, 52, 124); seg(g, 64, 108, 64, 124); seg(g, 70, 108, 76, 124);
+    g.fillStyle = '#1a2358'; rr(g, 50, 96, 24, 14, 3); g.fill(); g.fillStyle = '#ffe9a8'; circ(g, 73, 103, 3);
+    [[55, 91], [69, 91]].forEach((c, i) => {
+      g.fillStyle = '#3b3e4c'; circ(g, c[0], c[1], 6.5);
+      g.strokeStyle = '#cfd5ea'; g.lineWidth = 1; const a = tt * 3 + i;
+      seg(g, c[0] + Math.cos(a) * 5, c[1] + Math.sin(a) * 5, c[0] - Math.cos(a) * 5, c[1] - Math.sin(a) * 5);
+      seg(g, c[0] + Math.cos(a + 1.57) * 5, c[1] + Math.sin(a + 1.57) * 5, c[0] - Math.cos(a + 1.57) * 5, c[1] - Math.sin(a + 1.57) * 5);
+    });
+    snowCap(g, S, 50, 96, 24);
+    // les spectateurs : des crayons de couleur dans les fauteuils
+    const pc = ['#e63946', '#2b45c8', '#2fa84f', '#8e4ec6', '#f4a261', '#1fa3c4'];
+    [[112, 128, 0], [138, 128, 1], [190, 128, 2], [242, 128, 3], [124, 140, 4], [176, 140, 5], [228, 140, 0]].forEach((s, i) => {
+      const [x, y, c] = s, bob = REDUCED ? 0 : Math.sin(t * 2 + i) * 0.6;
+      g.fillStyle = pc[c]; g.fillRect(x + 4, y - 16 + bob, 8, 12);
+      poly(g, [[x + 4, y - 16 + bob], [x + 12, y - 16 + bob], [x + 8, y - 24 + bob]], '#efc28c');
+      poly(g, [[x + 6.6, y - 21.2 + bob], [x + 9.4, y - 21.2 + bob], [x + 8, y - 24 + bob]], pc[c]);
+    });
+    for (let x = 100; x < 280; x += 26){ g.fillStyle = '#c42b35'; rr(g, x, 120, 20, 11, 3); g.fill(); g.fillStyle = '#9e1f28'; g.fillRect(x + 2, 129, 16, 3); }
+    for (let x = 112; x < 270; x += 26){ g.fillStyle = '#d8343c'; rr(g, x, 132, 22, 13, 3); g.fill(); g.fillStyle = '#a8222b'; g.fillRect(x + 2, 142, 18, 3); }
+  };
   function balloon(g, x, y, r, col, label){
     g.strokeStyle = 'rgba(26,35,88,.6)'; g.lineWidth = 0.9; seg(g, x - r * 0.55, y + r * 0.8, x - 6, y + r + 14); seg(g, x + r * 0.55, y + r * 0.8, x + 6, y + r + 14);
     g.fillStyle = '#a0622d'; rr(g, x - 7, y + r + 13, 14, 9, 2); g.fill();
@@ -834,18 +889,18 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     let h = '<p class="lead">Choisis une matière.</p><div class="subjects">';
     Object.keys(SUBJECTS).forEach(id => {
       const s = SUBJECTS[id], n = s.domains.reduce((a, d) => a + gamesOf(d).length, 0);
-      h += '<a class="card" href="#' + id + '" style="--c:' + s.color + '"><div class="pic"><canvas data-scene="' + s.scene + '" role="img" aria-label="Une montgolfière au-dessus d\'un paysage"></canvas></div>' +
-        '<div class="sbody"><div><h2>' + s.name + '</h2><p>' + plural(s.domains.length, 'domaine', 'domaines') + ' · ' + plural(n, 'jeu', 'jeux') + '</p></div><span class="go">Entrer</span></div></a>';
+      h += '<a class="card" href="#' + id + '" style="--c:' + s.color + '"><div class="pic"><canvas data-scene="' + s.scene + '" role="img" aria-label="' + esc(s.alt || 'Une montgolfière au-dessus d\'un paysage') + '"></canvas></div>' +
+        '<div class="sbody"><div><h2>' + s.name + '</h2><p>' + plural(s.domains.length, 'domaine', 'domaines') + ' · ' + plural(n, ...(s.unit || ['jeu', 'jeux'])) + '</p></div><span class="go">Entrer</span></div></a>';
     });
     return h + '</div>';
   }
   function viewSubject(id){
     const s = SUBJECTS[id];
-    let h = '<h2 class="vtitle">' + s.name + '</h2><p class="lead">Choisis un domaine.</p><div class="domains">';
+    let h = '<h2 class="vtitle">' + s.name + '</h2><p class="lead">' + (s.lead || 'Choisis un domaine.') + '</p><div class="domains">';
     s.domains.forEach(d => {
       const D = DOMAINS[d], gs = gamesOf(d), nw = gs.some(isNew);
       h += '<a class="card" href="#' + d + '" style="--c:' + s.color + '"><div class="pic"><canvas data-scene="' + D.scene + '" role="img" aria-label="' + esc(D.world) + '"></canvas></div>' +
-        '<div class="dbody"><h3>' + D.name + '</h3><p class="world">' + D.world + '</p><span class="count' + (gs.length ? '' : ' soon') + '">' + (gs.length ? plural(gs.length, 'jeu', 'jeux') : 'Bientôt') + '</span>' + (nw ? '<span class="badge-new">Nouveau</span>' : '') + '</div></a>';
+        '<div class="dbody"><h3>' + D.name + '</h3><p class="world">' + D.world + '</p><span class="count' + (gs.length ? '' : ' soon') + '">' + (gs.length ? plural(gs.length, ...(s.unit || ['jeu', 'jeux'])) : 'Bientôt') + '</span>' + (nw ? '<span class="badge-new">Nouveau</span>' : '') + '</div></a>';
     });
     return h + '</div>';
   }
@@ -853,7 +908,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     const D = DOMAINS[d], s = SUBJECTS[D.subject], gs = gamesOf(d);
     let h = '<div class="banner"><canvas data-scene="' + D.scene + '" role="img" aria-label="' + esc(D.world) + '"></canvas></div>' +
       '<div class="dhead"><h2 class="vtitle">' + D.name + '</h2><p class="world">' + D.world + '</p></div>';
-    if (!gs.length) return h + '<div class="empty"><b>Bientôt !</b>Il n\'y a pas encore de jeu ici. La maîtresse en prépare un.</div>';
+    if (!gs.length) return h + '<div class="empty"><b>Bientôt !</b>' + esc(s.vide || 'Il n\'y a pas encore de jeu ici. La maîtresse en prépare un.') + '</div>';
     h += '<ul class="games">';
     // Le jeu marqué « feature » (Je me teste) passe en premier, en grand : c'est par lui qu'on commence.
     const feat = gs.filter(gm => gm.feature), rest = gs.filter(gm => !gm.feature);
@@ -865,7 +920,7 @@ h2.vtitle{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.8rem;
     });
     if (feat.length && rest.length) h += '<li class="games-next">Ensuite, choisis un jeu :</li>';
     rest.forEach(gm => {
-      h += '<li><a class="game" href="' + esc(gm.url) + '" style="--c:' + s.color + '"><span class="gtext"><span class="gtitle">' + esc(gm.title) + (isNew(gm) ? '<span class="badge-new">Nouveau</span>' : '') + '</span><span class="gdesc">' + esc(gm.desc) + '</span></span><span class="play">' + PLAY_ICON + 'Jouer</span></a></li>';
+      h += '<li><a class="game" href="' + esc(gm.url) + '" style="--c:' + s.color + '"><span class="gtext"><span class="gtitle">' + esc(gm.title) + (isNew(gm) ? '<span class="badge-new">Nouveau</span>' : '') + '</span><span class="gdesc">' + esc(gm.desc) + '</span></span><span class="play">' + PLAY_ICON + (s.play || 'Jouer') + '</span></a></li>';
     });
     return h + '</ul>';
   }

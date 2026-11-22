@@ -98,7 +98,7 @@ with sync_playwright() as p:
     page.fill("#cmg-input", "test")
     page.click("#cmg-gate button")
     ok(page.locator("#cmg-gate").count() == 0, "le bon code ouvre le portail")
-    ok(page.locator(".subjects .card").count() == 2, "deux matières à l'accueil")
+    ok(page.locator(".subjects .card").count() == 3, "trois espaces à l'accueil (Mathématiques, Français, Je comprends)")
     txt = page.locator(".subjects").inner_text()
     print("    ", txt.replace("\n", " | "))
     
