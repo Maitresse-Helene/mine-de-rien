@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-23-151253';
+const VERSION = '2026-11-23-173112';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -54,6 +54,8 @@ const FICHIERS = [
   "jeux/la-polysemie/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-1/affiche.jpg",
   "jeux/le-crayon-qui-rangeait-ses-crayons-1/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-10/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-10/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-2/affiche.jpg",
   "jeux/le-crayon-qui-rangeait-ses-crayons-2/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-3/affiche.jpg",
@@ -62,6 +64,14 @@ const FICHIERS = [
   "jeux/le-crayon-qui-rangeait-ses-crayons-4/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-5/affiche.jpg",
   "jeux/le-crayon-qui-rangeait-ses-crayons-5/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-6/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-6/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-7/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-7/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-8/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-8/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-9/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-9/index.html",
   "jeux/le-dictionnaire-l-ordre-alphabetique/index.html",
   "jeux/le-dictionnaire-lire-un-article/index.html",
   "jeux/le-feminin-des-noms-et-des-adjectifs-1/index.html",
