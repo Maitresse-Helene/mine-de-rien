@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Le crayon qui habille ses noms : le groupe nominal et ses expansions (épisode 12)</title>
+<!-- Vidéo de l'appli : page écrite par outils/integrer_video.py (ne pas modifier à la main). -->
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<style>
+  :root{--encre:#1a2358;--papier:#fbf5e6;--rose:#c2365e;--bleu:#2b45c8}
+  html,body{margin:0;background:var(--papier);color:var(--encre)}
+  body{font:17px/1.5 Lexend,system-ui,sans-serif;min-height:100vh}
+  main{max-width:1100px;margin:0 auto;padding:18px 16px 40px}
+  h1{font-family:'Playwrite FR Moderne',cursive;font-weight:400;font-size:clamp(1.5rem,4.5vw,2.4rem);line-height:1.5;
+     margin:6px 0 14px;text-decoration:underline;text-decoration-color:#f5c518;text-decoration-thickness:6px;
+     text-underline-offset:10px;text-decoration-skip-ink:none}
+  .sous-titre{font-family:'Baloo 2',sans-serif;font-weight:800;color:var(--bleu);font-size:1.25rem;margin:0 0 14px}
+  .ecran{background:#fff;border:3px solid var(--encre);border-radius:18px;padding:8px;box-shadow:0 5px 0 var(--encre)}
+  video{display:block;width:100%;height:auto;border-radius:11px;background:var(--papier);aspect-ratio:16/9}
+  .texte{margin:18px 2px 0;font-size:1.05rem}
+  .hors-ligne{margin:12px 2px 0;font-size:.95rem;color:var(--rose)}
+</style>
+</head>
+<body>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html#comprendre-francais"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+<main>
+  <h1>Le crayon qui habille ses noms : le groupe nominal et ses expansions</h1>
+  <p class="sous-titre">Épisode 12</p>
+  <div class="ecran">
+    <video controls playsinline preload="metadata" poster="affiche.jpg">
+      <source src="video.mp4" type="video/mp4">
+      Ton navigateur ne sait pas lire cette vidéo.
+    </video>
+  </div>
+  <p class="texte"></p>
+  <p class="hors-ligne" id="hors-ligne" hidden>Pas de connexion internet : la vidéo ne peut pas se lancer. Reviens quand l'appareil est connecté.</p>
+</main>
+<script>
+  (function () {
+    var v = document.querySelector('video'), msg = document.getElementById('hors-ligne');
+    function verifier() { msg.hidden = navigator.onLine !== false; }
+    window.addEventListener('online', verifier); window.addEventListener('offline', verifier); verifier();
+    v.addEventListener('error', function () { msg.hidden = false; }, true);
+  })();
+</script>
+</body>
+</html>
