@@ -61,8 +61,10 @@ Les vidéos (dessins animés faits avec Claude, par exemple « Le crayon qui ran
 l'espace « Je comprends » du portail (matière `comprendre`, décor « Le petit cinéma du crayon ») : domaine
 `comprendre-maths` ou `comprendre-francais`, avec `"video": true` dans `jeux.js` (pas de bons points, pas d'artefact) :
 ```
-python3 outils/integrer_video.py <video.mp4> --titre "Vidéo – <titre> (épisode 1)" --domaine comprendre-maths --desc "<phrase du portail>" [--apres <slug>]
+python3 outils/integrer_video.py <video.mp4> --titre "<titre> : <notion> (épisode N)" --domaine comprendre-maths --desc "<phrase du portail>" [--slug <dossier>] [--apres <slug>]
 ```
+Depuis le 23/11/2026, le titre dit la notion (« Le crayon qui partage : la division (épisode 5) ») ; les dossiers gardent
+leur nom (`le-crayon-qui-rangeait-ses-crayons-N`) : passer `--slug` pour remplacer une vidéo déjà là.
 Sans `--apres`, la vidéo se place en tête du domaine. La page `jeux/<slug>/index.html` (lecteur, image d'attente
 `affiche.jpg`, code de la classe) est écrite par le script. Moins de 25 Mo par vidéo (limite de Cloudflare Pages) :
 recompresser si besoin (`-preset slow -tune animation -crf 27`). Les vidéos ne sont pas gardées hors ligne (le service
