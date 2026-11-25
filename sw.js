@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-24-173108';
+const VERSION = '2026-11-25-135438';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -64,6 +64,8 @@ const FICHIERS = [
   "jeux/le-crayon-qui-rangeait-ses-crayons-13/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-14/affiche.jpg",
   "jeux/le-crayon-qui-rangeait-ses-crayons-14/index.html",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-15/affiche.jpg",
+  "jeux/le-crayon-qui-rangeait-ses-crayons-15/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-2/affiche.jpg",
   "jeux/le-crayon-qui-rangeait-ses-crayons-2/index.html",
   "jeux/le-crayon-qui-rangeait-ses-crayons-3/affiche.jpg",
