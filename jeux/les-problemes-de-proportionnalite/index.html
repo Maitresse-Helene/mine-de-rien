@@ -267,6 +267,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .warn{padding:10px 12px;border-radius:12px;background:var(--div-bg);color:var(--ink)}
 .inv-box{margin:10px 0 6px;border-left:5px solid var(--div);line-height:1.5}
 .inv-calc{margin:6px 0 0}
+.p1-line{margin:8px 0 4px;padding:8px 10px;border-radius:10px;background:var(--mul-bg, var(--div-bg))}
 .ptable{display:grid;grid-template-columns:auto repeat(3, minmax(0,1fr));border:1.5px solid var(--key-edge);border-radius:12px;overflow:hidden;background:var(--sheet)}
 .ptable span{padding:6px 10px;text-align:center;font-family:var(--font-num);font-weight:700;font-size:1.1rem;border-right:1px solid var(--key-edge)}
 .ptable span:nth-child(4n){border-right:0}
@@ -560,7 +561,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         </span>
       </div>
       <h2>Comprendre la leçon</h2>
-      <p>5 fiches courtes : reconnaître la proportionnalité, trouver le rapport, se méfier du mot « fois », faire le bon calcul et dire la phrase qui résout. Une petite question à chaque fiche.</p>
+      <p>7 fiches courtes : reconnaître la proportionnalité (2 fois plus… 2 fois plus, et la valeur pour 1), trouver le rapport, se méfier du mot « fois », faire le bon calcul, dire la phrase qui résout et éviter les pièges du rapport. Des petites questions à chaque fiche.</p>
       <div class="rule-strip" aria-label="La règle à retenir">
         <div class="rs mul"><i aria-hidden="true">×</i><span><b>fois plus</b>je multiplie</span></div>
         <div class="rs div"><i aria-hidden="true">÷</i><span><b>fois moins</b>je divise</span></div>
@@ -842,6 +843,18 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       ]
     },
     {
+      title: 'La valeur pour 1',
+      html: "<p>Une deuxième façon de vérifier : je cherche <b>la valeur pour 1</b>. Si elle est <b>toujours la même</b>, c'est proportionnel.</p>" +
+            '<div class="ptable"><span>Cahiers</span><span>1</span><span>2</span><span>5</span><span>Prix</span><span>3 €</span><span>6 €</span><span>15 €</span></div>' +
+            "<p>Pour 1 cahier : 6 € ÷ 2 = 3 €, et 15 € ÷ 5 = 3 €. Toujours <b>3 € pour 1 cahier</b> : c'est proportionnel.</p>" +
+            "<p class=\"warn\">Au bowling, on loue des chaussures 4 €, une seule fois, puis chaque partie coûte 5 €. 1 partie : 9 €. 2 parties : 14 €, donc 14 ÷ 2 = 7 € pour 1 partie. <b>La valeur pour 1 change</b> : ce n'est pas proportionnel.</p>" +
+            "<p>Deux façons de vérifier : <b>2 fois plus… 2 fois plus ?</b> ou <b>la valeur pour 1 est-elle toujours la même ?</b> Quand on ne peut pas parler de « pour 1 » (l'âge et la taille, par exemple), j'utilise la première.</p>",
+      checks: [
+        { q: '4 stylos coûtent 8 €. 6 stylos coûtent 12 €. Le nombre de stylos et le prix sont-ils proportionnels ?', c: ["Oui, c'est proportionnel", "Non, ce n'est pas proportionnel"], a: 0, why: "Pour 1 stylo : 8 ÷ 4 = 2 € et 12 ÷ 6 = 2 €. La valeur pour 1 est toujours la même : <b>c'est proportionnel</b>." },
+        { q: 'Au détail, 2 croissants coûtent 4 €. En lot, 5 croissants coûtent 5 €. Le nombre de croissants et le prix sont-ils proportionnels ?', c: ["Oui, c'est proportionnel", "Non, ce n'est pas proportionnel"], a: 1, why: "Au détail : 4 ÷ 2 = 2 € pour 1 croissant. En lot : 5 ÷ 5 = 1 €. La valeur pour 1 change : <b>ce n'est pas proportionnel</b>." }
+      ]
+    },
+    {
       title: 'Le rapport multiplicatif',
       html: '<p>Pour résoudre, je compare deux nombres <b>de la même sorte</b> : des sachets avec des sachets, des personnes avec des personnes.</p>' +
             "<p>Je cherche <b>combien de fois</b> l'un va dans l'autre. C'est le <b>rapport multiplicatif</b>.</p>" +
@@ -904,7 +917,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   /* ---------- Étape 2 : les niveaux ---------- */
   const LEVELS = [
-    { id: 1, n: 10, name: 'Proportionnel ou pas ?', desc: 'Proportionnel ou pas ? Vrai ou faux, et pourquoi ? Attention au mot « fois ».', rules: false },
+    { id: 1, n: 10, name: 'Proportionnel ou pas ?', desc: 'Proportionnel ou pas ? Vrai ou faux, et pourquoi ? La valeur pour 1. Attention au mot « fois ».', rules: false },
     { id: 2, n: 10, name: 'Fois plus, fois moins', desc: 'Je dis « fois plus » : je multiplie. Je dis « fois moins » : je divise.', rules: true },
     { id: 3, n: 10, name: 'Petits problèmes', desc: 'Que cherches-tu ? Quel nombre change ? Choisis le calcul, calcule, puis la phrase réponse.', rules: true },
     { id: 4, n: 8, name: 'Trouver le rapport', desc: 'Compare les deux nombres de même sorte : combien de fois ? Puis les phrases, le calcul et la phrase réponse.', rules: true },
@@ -1088,24 +1101,24 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     { l: 'La marche régulière', t: 'En marchant régulièrement, on fait 5 km en une heure. Combien de kilomètres fait-on en 3 heures de marche régulière ?', why: 'La marche est régulière : en 3 fois plus de temps, on fait 3 fois plus de chemin.' }
   ];
   const L1NO = [
-    { l: 'Le taxi', t: 'Un taxi fait payer 4 € au départ, puis 2 € par kilomètre. Un trajet de 5 km coûte 14 €. Combien coûte un trajet de 10 km ?', why: 'À cause des 4 € du départ, le prix ne double pas : 10 km coûtent 24 €, pas 28 €.' },
+    { l: 'Le taxi', t: 'Un taxi fait payer 4 € au départ, puis 2 € par kilomètre. Un trajet de 5 km coûte 14 €. Combien coûte un trajet de 10 km ?', why: 'À cause des 4 € du départ, le prix ne double pas : 10 km coûtent 24 €, pas 28 €.', p1: '1 km seul coûte 6 € (4 € + 2 €), alors que 5 km coûtent 14 € : la valeur pour 1 km n\'est pas toujours la même.' },
     { l: 'La taille de Malo', t: 'À 5 ans, Malo mesurait 110 cm. Combien mesurera-t-il à 10 ans ?', why: 'On ne grandit pas toujours de la même façon : à 10 ans, Malo ne mesurera pas 220 cm !' },
-    { l: 'La carte de piscine', t: 'À la piscine, la carte coûte 10 €, puis chaque entrée coûte 3 €. Avec 4 entrées, Léa paie 22 €. Combien paiera-t-elle avec 8 entrées ?', why: 'Les 10 € de la carte ne se paient qu\'une fois : 8 entrées coûtent 34 €, pas 44 €.' },
-    { l: 'La promotion', t: 'Un paquet de biscuits coûte 2 €. Le magasin propose « 3 paquets pour 5 € ». Combien coûtent 6 paquets ?', why: 'Avec la promotion, chaque paquet n\'a pas le même prix : ce n\'est pas proportionnel.' },
+    { l: 'La carte de piscine', t: 'À la piscine, la carte coûte 10 €, puis chaque entrée coûte 3 €. Avec 4 entrées, Léa paie 22 €. Combien paiera-t-elle avec 8 entrées ?', why: 'Les 10 € de la carte ne se paient qu\'une fois : 8 entrées coûtent 34 €, pas 44 €.', p1: '1 entrée seule coûte 13 € (10 € + 3 €), alors que 4 entrées coûtent 22 € : la valeur pour 1 entrée n\'est pas toujours la même.' },
+    { l: 'La promotion', t: 'Un paquet de biscuits coûte 2 €. Le magasin propose « 3 paquets pour 5 € ». Combien coûtent 6 paquets ?', why: 'Avec la promotion, chaque paquet n\'a pas le même prix : ce n\'est pas proportionnel.', p1: '1 paquet seul coûte 2 €, mais dans le lot, 3 paquets coûtent 5 € : la valeur pour 1 paquet n\'est pas toujours la même.' },
     { l: 'La longue course', t: 'Un coureur fait 10 km en 50 minutes. Combien de temps met-il pour courir 40 km ?', why: 'Sur une très longue course, on se fatigue et on ralentit : le temps n\'est pas forcément 4 fois plus long.' },
     { l: 'La machine à laver', t: 'Une machine lave 3 kg de linge en 1 heure. Combien de temps faut-il pour laver 6 kg de linge en une seule fois, dans la même machine ?', why: 'Le linge est lavé en une seule fois : il faut toujours environ 1 heure.' },
-    { l: 'Le parking', t: 'Au parking, la première heure coûte 3 €, puis chaque heure suivante coûte 2 €. 2 heures coûtent 5 €. Combien coûtent 4 heures ?', why: 'La première heure n\'a pas le même prix que les autres : ce n\'est pas proportionnel.' },
+    { l: 'Le parking', t: 'Au parking, la première heure coûte 3 €, puis chaque heure suivante coûte 2 €. 2 heures coûtent 5 €. Combien coûtent 4 heures ?', why: 'La première heure n\'a pas le même prix que les autres : ce n\'est pas proportionnel.', p1: 'La première heure coûte 3 €, les suivantes 2 € : la valeur pour 1 heure n\'est pas toujours la même.' },
     { l: 'Le four', t: 'Un four chauffe jusqu\'à 100 °C en 5 minutes. Quelle température aura-t-il au bout de 50 minutes ?', why: 'Un four ne chauffe pas sans s\'arrêter : il ne fera pas 1 000 °C !' },
     { l: 'Les glaçons', t: 'Au soleil, un glaçon fond en 10 minutes. Combien de temps mettent 5 glaçons posés côte à côte ?', why: 'Les glaçons fondent en même temps : il faut toujours environ 10 minutes.' },
-    { l: 'Le cours de danse', t: "Le club demande 20 € d'inscription, puis 5 € par cours. 4 cours coûtent 40 €. Combien coûtent 8 cours ?", why: "Les 20 € d'inscription ne se paient qu'une fois : 8 cours coûtent 60 €, pas 80 €." },
-    { l: 'La livraison', t: 'Un livre coûte 10 €, et la livraison coûte 5 € quel que soit le nombre de livres. 2 livres livrés coûtent 25 €. Combien coûtent 4 livres livrés ?', why: 'Les 5 € de livraison ne se paient qu’une fois : 4 livres coûtent 45 €, pas 50 €.' },
+    { l: 'Le cours de danse', t: "Le club demande 20 € d'inscription, puis 5 € par cours. 4 cours coûtent 40 €. Combien coûtent 8 cours ?", why: "Les 20 € d'inscription ne se paient qu'une fois : 8 cours coûtent 60 €, pas 80 €.", p1: '1 cours seul coûte 25 € (20 € + 5 €), alors que 4 cours coûtent 40 €, soit 10 € par cours : la valeur pour 1 cours n\'est pas toujours la même.' },
+    { l: 'La livraison', t: 'Un livre coûte 10 €, et la livraison coûte 5 € quel que soit le nombre de livres. 2 livres livrés coûtent 25 €. Combien coûtent 4 livres livrés ?', why: 'Les 5 € de livraison ne se paient qu’une fois : 4 livres coûtent 45 €, pas 50 €.', p1: '1 livre livré coûte 15 € (10 € + 5 €), alors que 2 livres coûtent 25 € : la valeur pour 1 livre n\'est pas toujours la même.' },
     { l: 'La bougie', t: 'Une bougie de 20 cm brûle pendant 2 heures : il en reste 15 cm. Combien en restera-t-il après 4 heures ?', why: "C'est la partie brûlée qui double (10 cm), pas ce qui reste : il restera 10 cm, pas 30 cm." },
     { l: 'Le saut en longueur', t: 'À 8 ans, Yanis saute 2 m en longueur. Combien sautera-t-il à 16 ans ?', why: 'On ne progresse pas toujours de la même façon : il ne sautera pas forcément 4 m.' },
     { l: 'Le thermomètre', t: 'À 10 h, il fait 12 °C. À 11 h, il fait 14 °C. Quelle température fera-t-il à 22 h ?', why: "La température ne suit pas l'heure : il ne fera pas 28 °C à 22 h, la nuit il fait souvent plus frais." },
     { l: 'La baguette coupée', t: 'Pour couper une baguette en 2 morceaux, il faut 1 coup de couteau. Combien de coups faut-il pour la couper en 6 morceaux ?', why: 'Il faut toujours un coup de moins que de morceaux : 5 coups, pas 3.' },
     { l: 'Les poteaux', t: 'Pour une clôture droite de 10 m, avec un poteau tous les 2 m du début à la fin, il faut 6 poteaux. Combien en faut-il pour 20 m ?', why: "Il y a toujours un poteau de plus que d'espaces : 11 poteaux, pas 12." },
     { l: 'La photo de classe', t: 'La photo de classe se prend en 1 seconde avec 25 élèves. Combien de temps faut-il avec 50 élèves ?', why: "La photo se prend en une seule fois : toujours 1 seconde, quel que soit le nombre d'élèves." },
-    { l: 'La carte de fidélité', t: 'Au cinéma, avec la carte de fidélité, la 5e place est offerte. 4 places coûtent 36 €. Combien coûtent 5 places ?', why: 'La 5e place est offerte : 5 places coûtent toujours 36 €. Ce n’est pas proportionnel.' },
+    { l: 'La carte de fidélité', t: 'Au cinéma, avec la carte de fidélité, la 5e place est offerte. 4 places coûtent 36 €. Combien coûtent 5 places ?', why: 'La 5e place est offerte : 5 places coûtent toujours 36 €. Ce n’est pas proportionnel.', p1: '4 places coûtent 36 €, soit 9 € la place, et 5 places coûtent aussi 36 € : la valeur pour 1 place n\'est pas toujours la même.' },
     { l: 'Le pot de miel', t: 'Un pot vide pèse 200 g. Rempli de 300 g de miel, il pèse 500 g. Combien pèse-t-il rempli de 600 g de miel ?', why: 'Le pot pèse toujours 200 g : il pèsera 800 g, pas 1 000 g.' },
     { l: 'La cuisson des pâtes', t: 'Pour faire cuire 100 g de pâtes, il faut 10 minutes. Combien de temps faut-il pour 400 g de pâtes dans une grande casserole ?', why: 'Les pâtes cuisent toutes en même temps : il faut toujours environ 10 minutes.' },
     { l: 'Les téléphones', t: 'Avec un chargeur, un téléphone se charge en 1 heure. Combien de temps faut-il pour charger 2 téléphones en même temps, chacun avec son chargeur ?', why: 'Ils se chargent en même temps : il faut toujours environ 1 heure.' },
@@ -1271,7 +1284,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const mkChoice = (q, opts, o) => Object.assign({ kind: 'choice', q, opts, hint: '', okFb: '', why: '' }, o || {});
   const mkNum = (q, expr, a, o) => Object.assign({ kind: 'num', q, expr, a, hint: '', okFb: '' }, o || {});
   const YES = "Oui, c'est proportionnel", NO = "Non, ce n'est pas proportionnel";
-  const PROP_HINT = "Demande-toi : si l'un devient 2 fois plus grand, est-ce que l'autre devient forcément 2 fois plus grand ?";
+  const PROP_HINT = "Demande-toi : si l'un devient 2 fois plus grand, est-ce que l'autre devient forcément 2 fois plus grand ? Ou bien : la valeur pour 1 est-elle toujours la même ?";
 
   function propChoice(isProp, why, o){
     return mkChoice('Est-ce une situation de proportionnalité ?', [{ h: YES, ok: isProp }, { h: NO, ok: !isProp }], Object.assign({ hint: PROP_HINT, why: why }, o || {}));
@@ -1356,7 +1369,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return {
       stmt: '<p class="problem">' + esc(s.t) + '</p>',
       steps: [propChoice(isProp, esc(s.why))],
-      end: '<b>' + (isProp ? YES : NO) + '.</b> ' + esc(s.why) + (isProp ? '' : ' On ne peut pas répondre avec un calcul de proportionnalité.'),
+      end: '<b>' + (isProp ? YES : NO) + '.</b> ' + esc(s.why) + (isProp ? '' : ' On ne peut pas répondre avec un calcul de proportionnalité.') + (s.p1 ? '<p class="p1-line"><b>La valeur pour 1 :</b> ' + esc(s.p1) + '</p>' : ''),
       sum: esc(s.l) + ' : <b>' + (isProp ? 'proportionnel' : 'pas proportionnel') + '</b>'
     };
   }
@@ -1809,10 +1822,103 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return items;
   }
 
+  /* ---------- Île 1 : « la valeur pour 1 » (25 novembre au soir, à la demande de l'enseignante) ----------
+     Deux données de la même situation ; l'élève écrit la valeur pour 1 dans chaque cas, puis décide.
+     C'est proportionnel quand la valeur pour 1 est toujours la même. Les nombres tombent toujours juste. */
+  const rint = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const rpick = arr => arr[Math.floor(Math.random() * arr.length)];
+  function twoDiff(list){ const a = rpick(list); let b = rpick(list); while (b === a) b = rpick(list); return a < b ? [a, b] : [b, a]; }
+  /* Chaque modèle renvoie { a, X, b, Y } (a objets valent X, b objets valent Y) et les mots de la situation. */
+  const U1J = [
+    { l: 'Les cahiers', prop: true, one: 'cahier', many: 'cahiers', u: '€', v: 'coûtent', gen(){ const u = rint(2, 5), [a, b] = twoDiff([2, 3, 4, 5, 6]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Les sachets de billes', prop: true, one: 'sachet', many: 'sachets', u: 'billes', v: 'contiennent', gen(){ const u = rint(5, 9), [a, b] = twoDiff([2, 3, 4, 5]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Les tickets de manège', prop: true, one: 'ticket', many: 'tickets', u: '€', v: 'coûtent', gen(){ const u = rint(2, 4), [a, b] = twoDiff([2, 3, 4, 5, 6]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Les boîtes de feutres', prop: true, one: 'boîte', many: 'boîtes', u: 'feutres', v: 'contiennent', gen(){ const u = rpick([6, 8, 10]), [a, b] = twoDiff([2, 3, 4, 5]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Les bouquets', prop: true, one: 'bouquet', many: 'bouquets', u: 'fleurs', v: 'ont', gen(){ const u = rint(5, 9), [a, b] = twoDiff([2, 3, 4]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'La location de vélo', prop: false, one: 'heure', many: 'heures', u: '€', v: 'coûtent', pre: 'Location de vélo : ',
+      gen(){ const f = rpick([4, 6]), u = rint(2, 4), [a, b] = twoDiff(f === 6 ? [2, 3, 6] : [2, 4]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },
+      why: o => 'Le prix comprend le casque, ' + o.f + ' €, payé une seule fois, puis ' + o.uu + ' € par heure.' },
+    { l: 'Les yaourts en lot', prop: false, one: 'yaourt', many: 'yaourts', u: '€', v: 'coûtent',
+      gen(){ const p = rint(2, 3), n = rpick([4, 5, 6]); return { a: 2, X: 2 * p, b: n, Y: n * (p - 1), lot: true }; },
+      text: o => 'Au détail, 2 yaourts coûtent ' + o.X + ' €. En lot, ' + o.b + ' yaourts coûtent ' + o.Y + ' €.',
+      lead1: o => 'quand 2 yaourts au détail coûtent ' + o.X + ' €', lead2: o => 'dans le lot de ' + o.b + ' yaourts à ' + o.Y + ' €',
+      why: () => 'Dans le lot, chaque yaourt coûte moins cher qu\'au détail.' },
+    { l: 'Le parc de jeux', prop: false, one: 'manège', many: 'manèges', u: '€', v: 'coûtent', pre: 'Au parc de jeux, ',
+      gen(){ const f = rpick([6, 8]), u = rint(1, 3), [a, b] = twoDiff(f === 6 ? [2, 3, 6] : [2, 4, 8]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },
+      text: o => 'Au parc de jeux, ' + o.a + ' manèges coûtent ' + o.X + ' € en tout. ' + o.b + ' manèges coûtent ' + o.Y + ' € en tout.',
+      why: o => 'Le prix comprend l\'entrée du parc, ' + o.f + ' €, payée une seule fois, puis ' + o.uu + ' € par manège.' }
+  ];
+  const U1O = [
+    { l: 'Les livres', prop: true, one: 'livre', many: 'livres', u: '€', v: 'coûtent', gen(){ const u = rpick([6, 7, 8, 9, 12, 15]), [a, b] = twoDiff([3, 4, 5, 6, 8]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Le train', prop: true, one: 'heure', many: 'heures', u: 'km', v: '', gen(){ const u = rpick([60, 70, 80, 90]), [a, b] = twoDiff([2, 3, 4, 5]); return { a, X: a * u, b, Y: b * u }; },
+      text: o => 'Un train roule toujours à la même vitesse. En ' + o.a + ' heures, il parcourt ' + o.X + ' km. En ' + o.b + ' heures, il parcourt ' + o.Y + ' km.', q: 'Combien de km en 1 heure',
+      lead1: o => 's\'il parcourt ' + o.X + ' km en ' + o.a + ' heures', lead2: o => 's\'il parcourt ' + o.Y + ' km en ' + o.b + ' heures' },
+    { l: 'Les paquets de farine', prop: true, one: 'paquet', many: 'paquets', u: 'g', v: 'pèsent', gen(){ const u = rpick([250, 500]), [a, b] = twoDiff([2, 3, 4, 6]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Les places de concert', prop: true, one: 'place', many: 'places', u: '€', v: 'coûtent', gen(){ const u = rpick([12, 15, 18, 25]), [a, b] = twoDiff([2, 3, 4, 5]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'Les rouleaux de ruban', prop: true, one: 'rouleau', many: 'rouleaux', u: 'm', v: 'mesurent', gen(){ const u = rpick([12, 15, 25]), [a, b] = twoDiff([2, 3, 4, 6]); return { a, X: a * u, b, Y: b * u }; } },
+    { l: 'La location de kayak', prop: false, one: 'heure', many: 'heures', u: '€', v: 'coûtent', pre: 'Location de kayak : ',
+      gen(){ const f = rpick([12, 18]), u = rpick([7, 8, 9]), [a, b] = twoDiff(f === 12 ? [2, 3, 4, 6] : [2, 3, 6]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },
+      why: o => 'Le prix comprend le gilet, ' + o.f + ' €, payé une seule fois, puis ' + o.uu + ' € par heure.' },
+    { l: 'Le taxi', prop: false, one: 'km', many: 'km', u: '€', v: 'coûtent', pre: 'En taxi, ',
+      gen(){ const f = rpick([6, 12]), u = rpick([2, 3]), [a, b] = twoDiff(f === 6 ? [2, 3, 6] : [3, 4, 6, 12]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },
+      text: o => 'En taxi, un trajet de ' + o.a + ' km coûte ' + o.X + ' €. Un trajet de ' + o.b + ' km coûte ' + o.Y + ' €.',
+      lead1: o => 'quand un trajet de ' + o.a + ' km coûte ' + o.X + ' €', lead2: o => 'quand un trajet de ' + o.b + ' km coûte ' + o.Y + ' €',
+      why: o => 'Le prix comprend la prise en charge, ' + o.f + ' €, payée une seule fois, puis ' + o.uu + ' € par kilomètre.' },
+    { l: 'Les cahiers en promotion', prop: false, one: 'cahier', many: 'cahiers', u: '€', v: 'coûtent',
+      gen(){ const p = rpick([3, 4]), n = rpick([6, 8, 10]); return { a: 3, X: 3 * p, b: n, Y: n * (p - 1) }; },
+      text: o => 'Au détail, 3 cahiers coûtent ' + o.X + ' €. En promotion, le lot de ' + o.b + ' cahiers coûte ' + o.Y + ' €.',
+      lead1: o => 'quand 3 cahiers au détail coûtent ' + o.X + ' €', lead2: o => 'dans le lot de ' + o.b + ' cahiers à ' + o.Y + ' €',
+      why: () => 'Dans le lot en promotion, chaque cahier coûte moins cher qu\'au détail.' },
+    { l: 'L\'abonnement à la piscine', prop: false, one: 'entrée', many: 'entrées', u: '€', v: 'coûtent',
+      gen(){ const f = rpick([10, 20]), u = rpick([3, 4, 5]), [a, b] = twoDiff(f === 10 ? [2, 5, 10] : [2, 4, 5, 10]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },
+      text: o => 'À la piscine, ' + o.a + ' entrées coûtent ' + o.X + ' € en tout. ' + o.b + ' entrées coûtent ' + o.Y + ' € en tout.',
+      why: o => 'Le prix comprend la carte, ' + o.f + ' €, payée une seule fois, puis ' + o.uu + ' € par entrée.' }
+  ];
+  const uw = (u, v) => (u === '€' ? fmtNum(v) + ' €' : fmtNum(v) + ' ' + u);
+  function pour1Step(m, n, tot, lead){
+    const v = tot / n, word = n > 1 ? m.many : m.one;
+    const traps = {}, trap = (x, msg) => { if (x !== v && x > 0 && !(x in traps)) traps[x] = msg; };
+    trap(tot, uw(m.u, tot) + ', c\'est pour ' + n + ' ' + word + '. Pour 1 ' + m.one + ', partage en ' + n + '.');
+    trap(tot * n, 'Tu as multiplié. Pour 1 ' + m.one + ', c\'est moins que pour ' + n + ' : partage ' + uw(m.u, tot) + ' en ' + n + '.');
+    trap(n, n + ', c\'est le nombre de ' + m.many + '. Combien pour 1 ' + m.one + ' ?');
+    const q = (m.q || 'Combien pour 1 ' + m.one) + ', ' + lead + ' ?';
+    return mkNum(q, '1 ' + m.one + ' : □ ' + m.u, v, {
+      traps, calc: { x: tot, op: '÷', y: n },
+      hint: 'Partage ' + uw(m.u, tot) + ' entre les ' + n + ' ' + word + ' : ' + fmtNum(tot) + ' ÷ ' + n + '. ' + arithHint(tot, '÷', n),
+      okFb: 'Oui : ' + fmtNum(tot) + ' ÷ ' + n + ' = ' + uw(m.u, v) + ' pour 1 ' + m.one + '.'
+    });
+  }
+  function itemPour1(m){
+    const o = m.gen(), v1 = o.X / o.a, v2 = o.Y / o.b;
+    const t = m.text ? m.text(o) : (m.pre || '') + o.a + ' ' + m.many + ' ' + m.v + ' ' + uw(m.u, o.X) + '. ' + o.b + ' ' + m.many + ' ' + m.v + ' ' + uw(m.u, o.Y) + '.';
+    const lead1 = (m.lead1 ? m.lead1(o) : 'quand ' + o.a + ' ' + m.many + (m.u === 'km' && m.one === 'heure' ? ' donnent ' : ' ' + (m.v || 'font') + ' ') + uw(m.u, o.X));
+    const lead2 = (m.lead2 ? m.lead2(o) : 'quand ' + o.b + ' ' + m.many + (m.u === 'km' && m.one === 'heure' ? ' donnent ' : ' ' + (m.v || 'font') + ' ') + uw(m.u, o.Y));
+    const same = v1 === v2, vals = uw(m.u, v1) + ' et ' + uw(m.u, v2);
+    const yesFb = same ? '' : vals + ' : la valeur pour 1 change. Ce n\'est pas proportionnel.';
+    const noFb = same ? vals + ' : la valeur pour 1 est toujours la même. C\'est proportionnel.' : '';
+    const steps = [
+      pour1Step(m, o.a, o.X, lead1),
+      pour1Step(m, o.b, o.Y, lead2),
+      mkChoice('La valeur pour 1 est-elle toujours la même ? Est-ce une situation de proportionnalité ?', [
+        { h: YES, ok: same, fb: yesFb }, { h: NO, ok: !same, fb: noFb }
+      ], { hint: 'Compare les deux valeurs pour 1 : ' + vals + '.', why: '',
+           okFb: same ? 'Oui ! Toujours ' + uw(m.u, v1) + ' pour 1 ' + m.one + ' : c\'est proportionnel.' : 'Oui ! ' + vals + ' : la valeur pour 1 change, ce n\'est pas proportionnel.' })
+    ];
+    const calcTxt = 'Pour 1 ' + m.one + ' : ' + fmtNum(o.X) + ' ÷ ' + o.a + ' = ' + uw(m.u, v1) + ' et ' + fmtNum(o.Y) + ' ÷ ' + o.b + ' = ' + uw(m.u, v2) + '.';
+    const end = same ? '<b>' + YES + '.</b> ' + calcTxt + ' <b>La valeur pour 1 est toujours la même.</b>'
+      : '<b>' + NO + '.</b> ' + calcTxt + ' <b>La valeur pour 1 change.</b>' + (m.why ? ' ' + m.why(o) : '');
+    return { stmt: '<p class="problem">' + t + '</p>', steps, end,
+      sum: esc(m.l) + ' : ' + o.a + ' → ' + fmtNum(o.X) + ', ' + o.b + ' → ' + fmtNum(o.Y) + ' (valeur pour 1)' };
+  }
+  function pour1Items(){
+    const L = HARD ? U1O : U1J;
+    return [itemPour1(rpick(L.filter(m => m.prop))), itemPour1(rpick(L.filter(m => !m.prop)))];
+  }
+
   function buildItems(id){
     const P1 = HARD ? L1PO : L1P, N1 = HARD ? L1NO : L1N, B3 = (HARD ? L3O : L3).map(nfill), B4 = (HARD ? L4O : L4).map(nfill), P5 = (HARD ? L5PO : L5P).map(nfill), N5 = HARD ? L5NO : L5N;
     const F1 = HARD ? FOISO : FOISJ, VF = HARD ? VFO : VFJ;
-    if (id === 1) return shuffle(shuffle(P1).slice(0, 4).map(s => itemProp(s, true)).concat(shuffle(N1).slice(0, 2).map(s => itemProp(s, false)), shuffle(F1).slice(0, 1).map(s => itemProp(s, false)), shuffle(VF).slice(0, 3).map(itemVF)));
+    if (id === 1) return shuffle(shuffle(P1).slice(0, 3).map(s => itemProp(s, true)).concat(shuffle(N1).slice(0, 2).map(s => itemProp(s, false)), shuffle(F1).slice(0, 1).map(s => itemProp(s, false)), shuffle(VF).slice(0, 2).map(itemVF), pour1Items()));
     if (id === 2) return genL2();
     if (id === 3){
       /* La moitié : comparer deux quantités (« 4 fois plus âgé ») ; l'autre moitié : le rapport est donné, avec deux quantités. */
