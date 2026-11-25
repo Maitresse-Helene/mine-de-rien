@@ -265,6 +265,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .lesson h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.4rem;line-height:1.25;color:var(--pen)}
 .lesson p{margin:0;line-height:1.6}
 .warn{padding:10px 12px;border-radius:12px;background:var(--div-bg);color:var(--ink)}
+.inv-box{margin:10px 0 6px;border-left:5px solid var(--div);line-height:1.5}
+.inv-calc{margin:6px 0 0}
 .ptable{display:grid;grid-template-columns:auto repeat(3, minmax(0,1fr));border:1.5px solid var(--key-edge);border-radius:12px;overflow:hidden;background:var(--sheet)}
 .ptable span{padding:6px 10px;text-align:center;font-family:var(--font-num);font-weight:700;font-size:1.1rem;border-right:1px solid var(--key-edge)}
 .ptable span:nth-child(4n){border-right:0}
@@ -831,10 +833,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       html: "<p>Deux grandeurs sont <b>proportionnelles</b> quand elles grandissent ou diminuent <b>de la même façon</b> : si l'une devient 2 fois plus grande, l'autre aussi.</p>" +
             '<div class="ptable"><span>Sachets</span><span>1</span><span>2</span><span>4</span><span>Bonbons</span><span>5</span><span>10</span><span>20</span></div>' +
             "<p>2 fois plus de sachets, c'est 2 fois plus de bonbons.</p>" +
-            "<p class=\"warn\">Ce n'est pas toujours le cas : un enfant de 10 ans n'est pas 2 fois plus grand qu'un enfant de 5 ans. L'âge et la taille ne sont pas proportionnels.</p>",
+            "<p class=\"warn\">Ce n'est pas toujours le cas : un enfant de 10 ans n'est pas 2 fois plus grand qu'un enfant de 5 ans. L'âge et la taille ne sont pas proportionnels.</p>" +
+            "<p class=\"warn inv-box\"><b>Attention au piège « 2 fois plus… 2 fois moins » !</b> 12 bonbons partagés entre 2 enfants : 6 bonbons chacun. Entre 4 enfants : 3 bonbons chacun. Quand le nombre d'enfants est <span class=\"fk plus\">multiplié par 2</span>, la part de chacun est <span class=\"fk moins\">divisée par 2</span>. On dit que la part est <b>inversement proportionnelle</b> au nombre d'enfants. Ce n'est pas une situation de proportionnalité : dans la proportionnalité, les deux nombres sont <b>multipliés par le même nombre</b>.</p>",
       checks: [
         { q: 'Un timbre coûte 2 €. Le nombre de timbres et le prix sont-ils proportionnels ?', c: ["Oui, c'est proportionnel", "Non, ce n'est pas proportionnel"], a: 0, why: "Chaque timbre coûte 2 € : 2 fois plus de timbres, c'est <b>2 fois plus cher</b>." },
-        { q: 'Un spectacle dure 1 heure. Avec 2 fois plus de spectateurs, dure-t-il 2 fois plus longtemps ?', c: ["Oui, c'est proportionnel", "Non, ce n'est pas proportionnel"], a: 1, why: "Le spectacle dure toujours 1 heure : <b>ce n'est pas proportionnel</b>." }
+        { q: 'Un spectacle dure 1 heure. Avec 2 fois plus de spectateurs, dure-t-il 2 fois plus longtemps ?', c: ["Oui, c'est proportionnel", "Non, ce n'est pas proportionnel"], a: 1, why: "Le spectacle dure toujours 1 heure : <b>ce n'est pas proportionnel</b>." },
+        { q: "À vélo, Zoé va 3 fois plus vite qu'à pied. Le temps du trajet et la vitesse sont-ils proportionnels ?", c: ["Oui, c'est proportionnel", "Non, ce n'est pas proportionnel"], a: 1, why: "3 fois plus vite, c'est <b>3 fois moins</b> de temps : le temps est <b>inversement proportionnel</b> à la vitesse. <b>Ce n'est pas proportionnel.</b>" }
       ]
     },
     {
@@ -1106,9 +1110,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     { l: 'La cuisson des pâtes', t: 'Pour faire cuire 100 g de pâtes, il faut 10 minutes. Combien de temps faut-il pour 400 g de pâtes dans une grande casserole ?', why: 'Les pâtes cuisent toutes en même temps : il faut toujours environ 10 minutes.' },
     { l: 'Les téléphones', t: 'Avec un chargeur, un téléphone se charge en 1 heure. Combien de temps faut-il pour charger 2 téléphones en même temps, chacun avec son chargeur ?', why: 'Ils se chargent en même temps : il faut toujours environ 1 heure.' },
     { l: 'Le prix des livres', t: 'Un livre de 100 pages coûte 8 €. Combien coûte un livre de 300 pages ?', why: 'Le prix d’un livre ne dépend pas seulement du nombre de pages : on ne peut pas le calculer.' },
-    { l: 'La vitesse et la durée', t: 'À 50 km par heure, un trajet dure 2 heures. Combien de temps dure-t-il à 100 km par heure ?', why: 'En allant 2 fois plus vite, on met 2 fois moins de temps : 1 heure, pas 4 heures. Ce n’est pas proportionnel.' },
-    { l: 'Le partage du gâteau', t: 'À 4 enfants, chacun a 2 parts du gâteau. À 8 enfants, combien de parts chacun aura-t-il ?', why: 'Plus on est nombreux, moins chacun a de parts : 1 part chacun, pas 4.' },
-    { l: 'Les ouvriers', t: '2 ouvriers construisent un mur en 6 jours. Combien de jours mettent 4 ouvriers pour le même mur ?', why: 'Avec 2 fois plus d’ouvriers, le travail va plus vite : environ 3 jours, pas 12.' }
+    { l: 'La vitesse et la durée', t: 'À 50 km par heure, un trajet dure 2 heures. Combien de temps dure-t-il à 100 km par heure ?', why: 'En allant 2 fois plus vite, on met 2 fois moins de temps : 1 heure, pas 4 heures.', inv: true }
   ];
   const L3O = [
     { t: 'Un livre coûte {a} €. Une console de jeux coûte [[{k} fois plus]]. Combien coûte la console ?', op: '×', ans: 'La console coûte {r} €.', n: [[12, 25], [15, 20], [14, 25], [16, 15], [18, 20]] },
@@ -1336,7 +1338,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     ];
     return { stmt: '<p class="lead-q">Vrai ou faux ?</p><p class="problem">« ' + esc(s.t) + ' »</p>', steps, end: '<b>' + (s.v ? 'Vrai' : 'Faux') + '.</b> ' + esc(s.ok), sum: esc(s.l) + ' : <b>' + (s.v ? 'vrai' : 'faux') + '</b>' };
   }
+  const INV_BOX = '<p class="warn inv-box"><b>Le piège à retenir :</b> quand la vitesse est <span class="fk plus">multipliée par 2</span>, la durée est <span class="fk moins">divisée par 2</span>. On dit que la durée est <b>inversement proportionnelle</b> à la vitesse.<br>Ce n\'est pas une situation de proportionnalité : dans la proportionnalité, quand l\'un est multiplié par 2, l\'autre est <b>aussi multiplié par 2</b>.</p>' +
+    '<p class="inv-calc">Ici, on peut quand même trouver la réponse : 100 km par heure, c\'est 2 fois plus vite que 50 km par heure, donc <span class="fk moins">2 fois moins</span> de temps. 2 ÷ 2 = <b>1 heure</b>.</p>';
+  function itemPropInv(s){
+    return {
+      stmt: '<p class="problem">' + esc(s.t) + '</p>',
+      steps: [mkChoice('Est-ce une situation de proportionnalité ?', [
+        { h: YES, ok: false, fb: 'Attention : 2 fois plus vite, ce n\'est pas 2 fois plus de temps ! On arrive plus tôt : il faut <b>2 fois moins</b> de temps.' },
+        { h: NO, ok: true }
+      ], { hint: PROP_HINT, why: esc(s.why), okFb: 'Oui ! 2 fois plus vite, c\'est 2 fois <b>moins</b> de temps : ce n\'est pas de la proportionnalité.' })],
+      end: '<b>' + NO + '.</b> ' + esc(s.why) + INV_BOX,
+      sum: esc(s.l) + ' : <b>pas proportionnel</b> (inversement proportionnel)'
+    };
+  }
   function itemProp(s, isProp){
+    if (s.inv) return itemPropInv(s);
     return {
       stmt: '<p class="problem">' + esc(s.t) + '</p>',
       steps: [propChoice(isProp, esc(s.why))],
