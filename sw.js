@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-25-215505';
+const VERSION = '2026-11-26-172408';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -97,6 +97,7 @@ const FICHIERS = [
   "jeux/les-cubes-les-paves-et-les-prismes-droits/index.html",
   "jeux/les-determinants/index.html",
   "jeux/les-doubles/index.html",
+  "jeux/les-experiences-aleatoires/index.html",
   "jeux/les-familles-de-mots/index.html",
   "jeux/les-fractions-decimales/index.html",
   "jeux/les-grands-nombres/index.html",
@@ -122,6 +123,7 @@ const FICHIERS = [
   "jeux/multiplier-par-10-100-1000/index.html",
   "jeux/multiplier-par-4-par-8/index.html",
   "jeux/passer-la-centaine/index.html",
+  "jeux/remettre-les-informations-dans-l-ordre/index.html",
   "jeux/soustractions-de-tete/index.html",
   "jeux/tirelettres-l-imparfait/index.html",
   "jeux/tirelettres-le-futur/index.html",
