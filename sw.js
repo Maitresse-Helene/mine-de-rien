@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-26-172408';
+const VERSION = '2026-11-26-233452';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -41,6 +41,7 @@ const FICHIERS = [
   "jeux/comprendre-un-texte/index.html",
   "jeux/comprendre-une-consigne/index.html",
   "jeux/decomposer-et-comparer-les-fractions-decimales/index.html",
+  "jeux/determinant-preposition-ou-adverbe/index.html",
   "jeux/encadrer-et-placer-les-fractions/index.html",
   "jeux/est-es-ou-et/index.html",
   "jeux/estimer-un-resultat/index.html",
@@ -108,12 +109,14 @@ const FICHIERS = [
   "jeux/les-nombres-termines-par-8-ou-9/index.html",
   "jeux/les-parentheses/index.html",
   "jeux/les-prefixes/index.html",
+  "jeux/les-prepositions/index.html",
   "jeux/les-probabilites/index.html",
   "jeux/les-problemes-a-etapes/index.html",
   "jeux/les-problemes-de-comparaison/index.html",
   "jeux/les-problemes-de-logique/index.html",
   "jeux/les-problemes-de-parties-tout/index.html",
   "jeux/les-problemes-de-proportionnalite/index.html",
+  "jeux/les-synonymes/index.html",
   "jeux/les-tables-d-addition/index.html",
   "jeux/les-tables-de-multiplication/index.html",
   "jeux/lire-et-ecrire-les-fractions/index.html",
