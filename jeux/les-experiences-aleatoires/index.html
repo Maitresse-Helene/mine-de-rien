@@ -284,6 +284,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .why{margin:0;padding:10px 12px;border-radius:12px;line-height:1.5}
 .why.good{background:var(--good-bg);color:var(--good)}
 .why.bad{background:var(--red-bg);color:var(--red)}
+.relire{border:1.5px solid var(--rule-strong);border-radius:12px;background:var(--paper)}
+.relire summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:8px 12px;cursor:pointer;list-style:none;font-weight:600;color:var(--pen);-webkit-tap-highlight-color:transparent}
+.relire summary::-webkit-details-marker{display:none}
+.relire summary::before{content:'';width:0;height:0;border-left:7px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+.relire[open] summary::before{transform:rotate(90deg)}
+.relire[open] summary{border-bottom:1.5px dashed var(--rule-strong)}
+.relire-in{display:flex;flex-direction:column;gap:12px;padding:12px}
+#learnReadBtn{margin-top:4px}
 
 /* Les phrases clés */
 .fk{font-weight:700}
@@ -2360,7 +2368,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function learnNext(){
     const L = S.Lr;
     if (L.check < LEARN[L.card].checks.length - 1) L.check++;
-    else if (L.card < LEARN.length - 1){ L.card++; L.check = 0; window.scrollTo(0, 0); }
+    else if (L.card < LEARN.length - 1){ L.card++; L.check = 0; L.read = false; L.split = undefined; window.scrollTo(0, 0); }
     else { setLearnDone(); S.phase = 'learnEnd'; render(); return; }
     L.picked = [];
     L.solved = false;
@@ -2629,7 +2637,20 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     $('learnCount').textContent = 'Fiche ' + (L.card + 1) + ' sur ' + LEARN.length;
     const tr = $('ltrack');
     for (let k = 0; k < tr.children.length; k++) tr.children[k].className = k < L.card ? 'done' : (k === L.card ? 'current' : '');
-    let h = '<h2>' + card.title + '</h2>' + card.html;
+    if (L.split === undefined && L.check === 0 && !L.read){
+      /* Premier affichage de la fiche : tient-elle dans l'écran avec sa question ? */
+      L.split = false; renderLearn();
+      const c = $('lesson').querySelector('.choices');
+      if (c && c.getBoundingClientRect().height && c.getBoundingClientRect().bottom + window.scrollY > window.innerHeight){ L.split = true; renderLearn(); }
+      return;
+    }
+    let h = '<h2>' + card.title + '</h2>';
+    if (L.split && !L.read){
+      h += card.html + '<button class="btn-primary" id="learnReadBtn" type="button">J\'ai lu la fiche : à la question !</button>';
+      $('lesson').innerHTML = h;
+      return;
+    }
+    h += L.split ? '<details class="relire"><summary>Relire la fiche</summary><div class="relire-in">' + card.html + '</div></details>' : card.html;
     h += '<div class="check"><span class="eyebrow">Question ' + (L.check + 1) + ' sur ' + card.checks.length + '</span><p class="check-q">' + esc(ch.q) + '</p><div class="choices">';
     ch.c.forEach((c, k) => {
       let cls = 'choice';
@@ -2647,6 +2668,29 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     }
     h += '</div>';
     $('lesson').innerHTML = h;
+    learnPlace();
+  }
+  /* La page défile seule : la nouvelle question en haut de l'écran, puis le commentaire et le bouton après une réponse. */
+  function learnBar(){ const n = document.getElementById('allgames'); if (!n) return 0; const r = n.getBoundingClientRect(); return r.top < 4 && r.bottom > 0 ? r.bottom : 0; }
+  function learnShow(top, bottom){
+    const zH = learnBar() + 8, zB = window.innerHeight - 8; let d = 0;
+    if (bottom > zB) d = bottom - zB;
+    if (top - d < zH) d = top - zH;
+    if (Math.abs(d) > 2) window.scrollBy({ top: d, behavior: 'smooth' });
+  }
+  function learnPlace(){
+    const L = S.Lr, box = $('lesson'), chk = box.querySelector('.check'), cs = box.querySelector('.choices');
+    if (!chk || !cs || !cs.getBoundingClientRect().height) return;
+    if (L.picked.length){
+      const w = box.querySelector('.why'), b = $('learnNextBtn');
+      if (w) learnShow(w.getBoundingClientRect().top, (b || w).getBoundingClientRect().bottom);
+      return;
+    }
+    if (!L.split && L.check === 0) return;
+    const zone = window.innerHeight - learnBar() - 16, bot = cs.getBoundingClientRect().bottom;
+    let top = (L.split ? box : chk).getBoundingClientRect().top;
+    if (bot - top > zone) top = chk.getBoundingClientRect().top;
+    learnShow(top, bot);
   }
   function renderLearnEnd(){
     const L = S.Lr;
@@ -2834,6 +2878,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   $('lesson').addEventListener('click', e => {
     const c = e.target.closest('[data-choice]');
     if (c){ learnPick(+c.dataset.choice); return; }
+    if (e.target.closest('#learnReadBtn')){ S.Lr.read = true; renderLearn(); return; }
     if (e.target.closest('#learnNextBtn')) learnNext();
   });
 
