@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-27-110928';
+const VERSION = '2026-11-27-174519';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -88,6 +88,7 @@ const FICHIERS = [
   "jeux/le-feminin-des-noms-et-des-adjectifs-1/index.html",
   "jeux/le-nom-et-le-groupe-nominal/index.html",
   "jeux/le-perimetre/index.html",
+  "jeux/le-pluriel-s-ou-nt/index.html",
   "jeux/le-present-des-trois-groupes/index.html",
   "jeux/le-son-e/index.html",
   "jeux/le-son-g/index.html",
