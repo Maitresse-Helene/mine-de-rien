@@ -511,7 +511,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .schema{display:flex;flex-direction:column;gap:6px;width:100%;padding:2px 0;font-family:var(--font-num);color:var(--ink)}
 .brow{display:flex;align-items:flex-end;gap:8px;min-width:0}
 .bname{flex:0 0 5.7em;font-family:var(--font-body);font-weight:600;font-size:.78rem;line-height:1.15;color:var(--ink-soft);padding-bottom:9px;overflow-wrap:normal;hyphens:auto}
-.brow.has-bot .bname{padding-bottom:38px}
+.brow.has-bot .bname{padding-bottom:42px}
 .btrack{flex:1 1 auto;display:flex;align-items:flex-end;min-width:0}
 .grp{display:flex;flex-direction:column;min-width:0}
 .segs{display:flex;min-width:0}
@@ -528,14 +528,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .brace{position:relative;display:flex;justify-content:center;height:22px}
 .brace::before{content:"";position:absolute;left:1px;right:1px;height:7px;border:2px solid var(--ink-soft)}
 .brace.up{align-items:flex-start;margin-bottom:3px;height:26px}
-.brace.up::before{bottom:0;border-bottom:0;border-radius:4px 4px 0 0}
-.brace.up::after{content:"";position:absolute;left:50%;bottom:7px;width:2px;height:5px;margin-left:-1px;background:var(--ink-soft)}
-.brace.down{align-items:flex-end;margin-top:3px;height:26px}
-.brace.down::before{top:0;border-top:0;border-radius:0 0 4px 4px}
-.brace.down::after{content:"";position:absolute;left:50%;top:7px;width:2px;height:5px;margin-left:-1px;background:var(--ink-soft)}
+.brace.up::before{bottom:0;height:8px;border:2.5px solid var(--ink);border-bottom:0;border-radius:2px 2px 0 0}
+.brace.up::after{content:none}
+.brace.down{align-items:flex-end;margin-top:3px;height:30px}
+.brace.down::before{content:none}
+.brace.down::after{content:none}
+.brace.down .bbr{position:absolute;left:1px;top:0;width:calc(100% - 2px);height:12px;overflow:visible}
+.bbr path{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .bt{position:relative;z-index:1;padding:0 6px;background:var(--sheet);border-radius:6px;font-size:.98rem;line-height:1.2;white-space:nowrap}
-.brace.up .bt{top:-2px}
-.brace.down .bt{bottom:-2px}
+.brace.up .bt{top:-4px;background:transparent}
+.brace.down .bt{bottom:-3px;background:transparent}
 .bt b{font-weight:800}
 .bt small{font-family:var(--font-body);font-weight:600;font-size:.74rem;color:var(--ink-soft)}
 .choice .bt,.srow.done .bt{background:transparent}
@@ -974,12 +976,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return '<span class="' + cls + '" style="flex:' + s.w + ' 1 0px">' + SV(s.v) + '</span>';
   }
   function braceLabel(b){ return (b.pre ? '<small>' + esc(b.pre) + '</small> ' : '') + '<b class="' + (isQ(b.v) ? 'q' : '') + '">' + SV(b.v) + '</b>' + (b.l ? ' <small>' + esc(b.l) + '</small>' : ''); }
+  const BRACE_SVG = '<svg class="bbr" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M1 1 Q1 6 7 6 L44 6 Q50 6 50 11 Q50 6 56 6 L93 6 Q99 6 99 1" vector-effect="non-scaling-stroke"/></svg>';
   function barRow(row, W){
     const sw = row.segs.reduce((s, x) => s + x.w, 0);
     let grp = '<span class="grp" style="flex:' + sw + ' 1 0px">';
     if (row.top) grp += '<span class="brace up"><span class="bt">' + braceLabel(row.top) + '</span></span>';
     grp += '<span class="segs">' + row.segs.map(segHTML).join('') + '</span>';
-    if (row.bot) grp += '<span class="brace down"><span class="bt">' + braceLabel(row.bot) + '</span></span>';
+    if (row.bot) grp += '<span class="brace down">' + BRACE_SVG + '<span class="bt">' + braceLabel(row.bot) + '</span></span>';
     grp += '</span>';
     const rest = Math.max(0, W - sw);
     let tail = '';
@@ -993,21 +996,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* Les largeurs suivent les vraies quantités, avec un minimum pour rester lisibles */
   const wOf = (v, real) => Math.max(1, typeof v === 'number' ? v : (real || 1));
   function evenW(ws){ const tot = ws.reduce((s, x) => s + x, 0); return ws.map(x => Math.max(x, tot * 0.2)); }
-  /* Schéma A : des parties inégales. parts : [[valeur ou '?', vraie valeur], …] */
+  /* Un schéma avec des parts inégales. parts : [[valeur ou '?', vraie valeur], …] */
   function schemaA(tout, parts){
     const ws = evenW(parts.map(p => wOf(p[0], p[1])));
     const segs = parts.map((p, i) => ({ v: p[0], w: ws[i], c: ['a', 'b', 'c'][i] }));
-    return schema([{ segs, top: { v: tout, pre: 'tout' } }], ws.reduce((s, x) => s + x, 0), 'Schéma A : des parties inégales');
+    return schema([{ segs, top: { v: tout, pre: 'tout' } }], ws.reduce((s, x) => s + x, 0), 'Un schéma avec des parts inégales');
   }
-  /* Schéma B : des parts égales */
+  /* Un schéma avec des parts égales */
   function schemaB(tout, part, count){
     const shown = (typeof count === 'number' && count <= 8) ? count : 3;
     const segs = [];
     for (let i = 0; i < shown; i++) segs.push({ v: part, w: 1, c: 'p' });
     if (shown !== count) segs.push({ v: '…', w: 1, c: 'x' });
-    return schema([{ segs, top: { v: tout, pre: 'tout' }, bot: { v: count, l: count === 1 ? 'part' : 'parts' } }], segs.length, 'Schéma B : des parts égales');
+    return schema([{ segs, top: { v: tout, pre: 'tout' }, bot: { v: count, l: 'fois' } }], segs.length, 'Un schéma avec des parts égales');
   }
-  /* Schéma C : comparer avec un écart. big, small : { name, v, real } */
+  /* Un schéma pour comparer avec un écart. big, small : { name, v, real } */
   function schemaC(big, small, diff){
     let wb = wOf(big.v, big.real), ws = wOf(small.v, small.real);
     if (ws > wb * 0.84) ws = wb * 0.84;
@@ -1015,9 +1018,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schema([
       { name: big.name, segs: [{ v: big.v, w: wb, c: 'a' }] },
       { name: small.name, segs: [{ v: small.v, w: ws, c: 'b' }], diff: { v: diff } }
-    ], wb, 'Schéma C : comparer avec un écart');
+    ], wb, 'Un schéma pour comparer avec un écart');
   }
-  /* Schéma D : comparer avec un nombre de fois. one : la petite quantité, many : la grande */
+  /* Un schéma pour comparer avec un nombre de fois. one : la petite quantité, many : la grande */
   function schemaD(one, many, k){
     const shown = (typeof k === 'number' && k <= 8) ? k : 3;
     const segs = [];
@@ -1026,7 +1029,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schema([
       { name: one.name, segs: [{ v: one.v, w: 1, c: 'p' }] },
       { name: many.name, segs, top: { v: many.v }, bot: { v: k, l: 'fois' } }
-    ], segs.length, 'Schéma D : comparer avec un nombre de fois');
+    ], segs.length, 'Un schéma pour comparer avec un nombre de fois');
   }
 
   /* ---------- La ligne du temps ---------- */

@@ -511,7 +511,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .schema{display:flex;flex-direction:column;gap:6px;width:100%;padding:2px 0;font-family:var(--font-num);color:var(--ink)}
 .brow{display:flex;align-items:flex-end;gap:8px;min-width:0}
 .bname{flex:0 0 5.7em;font-family:var(--font-body);font-weight:600;font-size:.78rem;line-height:1.15;color:var(--ink-soft);padding-bottom:9px;overflow-wrap:normal;hyphens:auto}
-.brow.has-bot .bname{padding-bottom:38px}
+.brow.has-bot .bname{padding-bottom:42px}
 .btrack{flex:1 1 auto;display:flex;align-items:flex-end;min-width:0}
 .grp{display:flex;flex-direction:column;min-width:0}
 .segs{display:flex;min-width:0}
@@ -528,14 +528,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .brace{position:relative;display:flex;justify-content:center;height:22px}
 .brace::before{content:"";position:absolute;left:1px;right:1px;height:7px;border:2px solid var(--ink-soft)}
 .brace.up{align-items:flex-start;margin-bottom:3px;height:26px}
-.brace.up::before{bottom:0;border-bottom:0;border-radius:4px 4px 0 0}
-.brace.up::after{content:"";position:absolute;left:50%;bottom:7px;width:2px;height:5px;margin-left:-1px;background:var(--ink-soft)}
-.brace.down{align-items:flex-end;margin-top:3px;height:26px}
-.brace.down::before{top:0;border-top:0;border-radius:0 0 4px 4px}
-.brace.down::after{content:"";position:absolute;left:50%;top:7px;width:2px;height:5px;margin-left:-1px;background:var(--ink-soft)}
+.brace.up::before{bottom:0;height:8px;border:2.5px solid var(--ink);border-bottom:0;border-radius:2px 2px 0 0}
+.brace.up::after{content:none}
+.brace.down{align-items:flex-end;margin-top:3px;height:30px}
+.brace.down::before{content:none}
+.brace.down::after{content:none}
+.brace.down .bbr{position:absolute;left:1px;top:0;width:calc(100% - 2px);height:12px;overflow:visible}
+.bbr path{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .bt{position:relative;z-index:1;padding:0 6px;background:var(--sheet);border-radius:6px;font-size:.98rem;line-height:1.2;white-space:nowrap}
-.brace.up .bt{top:-2px}
-.brace.down .bt{bottom:-2px}
+.brace.up .bt{top:-4px;background:transparent}
+.brace.down .bt{bottom:-3px;background:transparent}
 .bt b{font-weight:800}
 .bt small{font-family:var(--font-body);font-weight:600;font-size:.74rem;color:var(--ink-soft)}
 .choice .bt,.srow.done .bt{background:transparent}
@@ -662,7 +664,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         </span>
       </div>
       <h2>Comprendre la leçon</h2>
-      <p>4 fiches courtes : le tout et les parties, le schéma A, le schéma B et les 5 étapes pour résoudre. Une petite question à chaque fiche.</p>
+      <p>4 fiches courtes : le tout et les parties, le schéma avec des parts inégales, le schéma avec des parts égales et les 5 étapes pour résoudre. Une petite question à chaque fiche.</p>
       <div class="rule-strip" aria-label="La règle à retenir">
         <div class="rs mul"><i aria-hidden="true">A</i><span><b>parties inégales</b>j'additionne ou je soustrais</span></div>
         <div class="rs div"><i aria-hidden="true">B</i><span><b>parts égales</b>je multiplie ou je divise</span></div>
@@ -702,8 +704,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       <h2>À retenir</h2>
       <p><b>Le tout</b> : toutes les parties réunies. <b>Une partie</b> : un morceau du tout.</p>
       <div class="rulebig">
-        <div class="rb mul"><b>Schéma A</b><span>parties inégales</span><i aria-hidden="true">+ −</i></div>
-        <div class="rb div"><b>Schéma B</b><span>parts égales</span><i aria-hidden="true">× ÷</i></div>
+        <div class="rb mul"><b>Parts inégales</b><span>des parties de tailles différentes</span><i aria-hidden="true">+ −</i></div>
+        <div class="rb div"><b>Parts égales</b><span>des parts toutes pareilles</span><i aria-hidden="true">× ÷</i></div>
       </div>
       <p><b>Le « ? »</b> se met à la place de ce que je cherche. Le tout ? Il va au-dessus de la barre.</p>
       <p><b>La phrase réponse</b> reprend la question : « Sami doit encore coller 15 images. »</p>
@@ -846,7 +848,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>Parmi les indices, un nombre ne sert à rien. Aux îles 1 et 2, l'indice le dit (« ça ne sert à rien ici ! »). À partir de l'île 3, il ne le dit plus : l'élève trie lui-même les informations utiles.</li>
         <li>Bons points : 1 à la validation d'une île, puis 1 par réussite de plus sur le meilleur score, jusqu'au sans-faute. On peut en gagner 13 en tout : une carte de 10 montre que le chapitre est bien maîtrisé.</li>
         <li>L'île 1 cache les nombres : l'élève range chaque problème dans le tableau « je cherche une partie / le tout » et « parties inégales / parts égales ». Il regarde ainsi l'histoire du problème et ce qu'il cherche, pas les nombres (piste de remédiation de la fiche). Les nombres apparaissent après la réponse.</li>
-        <li>Dès l'île 2, l'élève choisit le schéma en barres avec le « ? » au bon endroit, comme il devra le dessiner en évaluation. Le schéma B dessine les parts égales une à une, qui forment le tout. L'île 3 ajoute le choix du calcul ; l'île 4 commence par « Je cherche… » et finit par la phrase réponse.</li>
+        <li>Dès l'île 2, l'élève choisit le schéma en barres avec le « ? » au bon endroit, comme il devra le dessiner en évaluation. Le schéma avec des parts égales dessine les parts une à une, qui forment le tout ; le tout est marqué par un trait au-dessus de la barre, et l'accolade, en dessous, dit combien de fois il y a la même part. Les schémas n'ont pas de lettres. L'île 3 ajoute le choix du calcul ; l'île 4 commence par « Je cherche… » et finit par la phrase réponse.</li>
         <li>Parcours orange : nombres à trois chiffres, problèmes à trois parties et partages avec un reste (« combien de sacs complets ? »).</li>
         <li>Vérification : sur environ un problème sur quatre, à partir de l'île 3, le mousse étourdi propose une phrase réponse, juste ou fausse, à contrôler avec les trois questions du détective (la bonne unité ? un nombre possible ? la réponse à la question ?). Une erreur à cette étape ne fait pas perdre la question : elle est notée « vérification à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Mon résultat est-il possible ? ».</li>
         <li>Trier les données : sur environ un problème sur quatre, à partir de l'île 3, l'énoncé contient une donnée inutile (parfois deux en parcours orange), que l'élève touche pour la barrer avant de résoudre le problème. Une erreur à cette étape ne fait pas perdre la question : elle est notée « tri des données à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Trier les données d'un problème ».</li>
@@ -941,12 +943,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return '<span class="' + cls + '" style="flex:' + s.w + ' 1 0px">' + SV(s.v) + '</span>';
   }
   function braceLabel(b){ return (b.pre ? '<small>' + esc(b.pre) + '</small> ' : '') + '<b class="' + (isQ(b.v) ? 'q' : '') + '">' + SV(b.v) + '</b>' + (b.l ? ' <small>' + esc(b.l) + '</small>' : ''); }
+  const BRACE_SVG = '<svg class="bbr" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M1 1 Q1 6 7 6 L44 6 Q50 6 50 11 Q50 6 56 6 L93 6 Q99 6 99 1" vector-effect="non-scaling-stroke"/></svg>';
   function barRow(row, W){
     const sw = row.segs.reduce((s, x) => s + x.w, 0);
     let grp = '<span class="grp" style="flex:' + sw + ' 1 0px">';
     if (row.top) grp += '<span class="brace up"><span class="bt">' + braceLabel(row.top) + '</span></span>';
     grp += '<span class="segs">' + row.segs.map(segHTML).join('') + '</span>';
-    if (row.bot) grp += '<span class="brace down"><span class="bt">' + braceLabel(row.bot) + '</span></span>';
+    if (row.bot) grp += '<span class="brace down">' + BRACE_SVG + '<span class="bt">' + braceLabel(row.bot) + '</span></span>';
     grp += '</span>';
     const rest = Math.max(0, W - sw);
     let tail = '';
@@ -960,21 +963,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* Les largeurs suivent les vraies quantités, avec un minimum pour rester lisibles */
   const wOf = (v, real) => Math.max(1, typeof v === 'number' ? v : (real || 1));
   function evenW(ws){ const tot = ws.reduce((s, x) => s + x, 0); return ws.map(x => Math.max(x, tot * 0.2)); }
-  /* Schéma A : des parties inégales. parts : [[valeur ou '?', vraie valeur], …] */
+  /* Un schéma avec des parts inégales. parts : [[valeur ou '?', vraie valeur], …] */
   function schemaA(tout, parts){
     const ws = evenW(parts.map(p => wOf(p[0], p[1])));
     const segs = parts.map((p, i) => ({ v: p[0], w: ws[i], c: ['a', 'b', 'c'][i] }));
-    return schema([{ segs, top: { v: tout, pre: 'tout' } }], ws.reduce((s, x) => s + x, 0), 'Schéma A : des parties inégales');
+    return schema([{ segs, top: { v: tout, pre: 'tout' } }], ws.reduce((s, x) => s + x, 0), 'Un schéma avec des parts inégales');
   }
-  /* Schéma B : des parts égales */
+  /* Un schéma avec des parts égales */
   function schemaB(tout, part, count){
     const shown = (typeof count === 'number' && count <= 8) ? count : 3;
     const segs = [];
     for (let i = 0; i < shown; i++) segs.push({ v: part, w: 1, c: 'p' });
     if (shown !== count) segs.push({ v: '…', w: 1, c: 'x' });
-    return schema([{ segs, top: { v: tout, pre: 'tout' }, bot: { v: count, l: count === 1 ? 'part' : 'parts' } }], segs.length, 'Schéma B : des parts égales');
+    return schema([{ segs, top: { v: tout, pre: 'tout' }, bot: { v: count, l: 'fois' } }], segs.length, 'Un schéma avec des parts égales');
   }
-  /* Schéma C : comparer avec un écart. big, small : { name, v, real } */
+  /* Un schéma pour comparer avec un écart. big, small : { name, v, real } */
   function schemaC(big, small, diff){
     let wb = wOf(big.v, big.real), ws = wOf(small.v, small.real);
     if (ws > wb * 0.84) ws = wb * 0.84;
@@ -982,9 +985,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schema([
       { name: big.name, segs: [{ v: big.v, w: wb, c: 'a' }] },
       { name: small.name, segs: [{ v: small.v, w: ws, c: 'b' }], diff: { v: diff } }
-    ], wb, 'Schéma C : comparer avec un écart');
+    ], wb, 'Un schéma pour comparer avec un écart');
   }
-  /* Schéma D : comparer avec un nombre de fois. one : la petite quantité, many : la grande */
+  /* Un schéma pour comparer avec un nombre de fois. one : la petite quantité, many : la grande */
   function schemaD(one, many, k){
     const shown = (typeof k === 'number' && k <= 8) ? k : 3;
     const segs = [];
@@ -993,7 +996,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schema([
       { name: one.name, segs: [{ v: one.v, w: 1, c: 'p' }] },
       { name: many.name, segs, top: { v: many.v }, bot: { v: k, l: 'fois' } }
-    ], segs.length, 'Schéma D : comparer avec un nombre de fois');
+    ], segs.length, 'Un schéma pour comparer avec un nombre de fois');
   }
 
   /* ---------- La ligne du temps ---------- */
@@ -1056,7 +1059,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
      Remédiations de la fiche de préparation intégrées :
      - « cacher les nombres » : au niveau 1, les nombres sont masqués, l'élève range le problème dans le tableau ;
      - « schématiser pour identifier ce qu'on cherche » : niveaux 2 et 5, choisir le schéma avec le « ? » au bon endroit ;
-     - « des unités constituées de parts égales qui forment un tout » : le schéma B dessine les parts une à une.
+     - « des unités constituées de parts égales qui forment un tout » : le schéma avec des parts égales dessine les parts une à une.
      ===================================================================== */
 
   function arithHint(x, op, y){
@@ -1084,8 +1087,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       ]
     },
     {
-      title: 'Schéma A : des parties inégales',
-      html: '<p>Quand les parties <b>ne sont pas de la même taille</b>, je dessine le <b>schéma A</b>. Je mets un « ? » à la place de ce que je cherche.</p>' +
+      title: 'Un schéma avec des parts inégales',
+      html: '<p>Quand les parties <b>ne sont pas de la même taille</b>, je dessine <b>un schéma avec des parts inégales</b>. Le tout est marqué par <b>le trait au-dessus de la barre</b>. Je mets un « ? » à la place de ce que je cherche.</p>' +
             '<p class="ex-cap">Je cherche <b>le tout</b> : j\'additionne les parties.</p>' + schemaA('?', [[17], [8]]) + '<p class="ex-line">17 + 8 = 25</p>' +
             '<p class="ex-cap">Je cherche <b>une partie</b> : j\'enlève l\'autre partie au tout.</p>' + schemaA(25, [[17], ['?', 8]]) + '<p class="ex-line">25 − 17 = 8</p>',
       checks: [
@@ -1094,8 +1097,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       ]
     },
     {
-      title: 'Schéma B : des parts égales',
-      html: '<p>Quand toutes les parts ont <b>la même taille</b> (des paquets de…, chaque…, en parts égales), je dessine le <b>schéma B</b>. Les parts égales, mises bout à bout, forment le tout.</p>' +
+      title: 'Un schéma avec des parts égales',
+      html: '<p>Quand toutes les parts ont <b>la même taille</b> (des paquets de…, chaque…, en parts égales), je dessine <b>un schéma avec des parts égales</b>. Les parts égales, mises bout à bout, forment le tout, marqué par le trait au-dessus de la barre. <b>L\'accolade</b>, en dessous, dit combien de fois il y a la même part.</p>' +
             '<p class="ex-cap">Je cherche <b>le tout</b> : je multiplie.</p>' + schemaB('?', 6, 4) + '<p class="ex-line">6 × 4 = 24</p>' +
             '<p class="ex-cap">Je cherche <b>la valeur d\'une part</b> ou <b>le nombre de parts</b> : je divise.</p>' + schemaB(24, 6, '?') + '<p class="ex-line">24 ÷ 6 = 4 : il y a 4 parts.</p>',
       checks: [
@@ -1108,7 +1111,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       html: '<ol class="recipe">' +
             '<li><b>Comprendre</b> : je me raconte l\'histoire du problème.</li>' +
             '<li><b>Chercher</b> : je dis « Je cherche… » : le tout, une partie, la valeur d\'une part ou le nombre de parts.</li>' +
-            '<li><b>Schématiser</b> : schéma A ou B, avec un « ? » à la place de ce que je cherche.</li>' +
+            '<li><b>Schématiser</b> : des parts inégales ou des parts égales ? Je dessine le schéma, avec un « ? » à la place de ce que je cherche.</li>' +
             '<li><b>Calculer</b> : le schéma me donne le calcul.</li>' +
             '<li><b>Répondre</b> : une phrase qui répond exactement à la question.</li></ol>' +
             '<p class="ex-cap">Sami a 36 images. Il en a déjà collé 21 dans son album. <b>Combien d\'images doit-il encore coller ?</b></p>' +
@@ -1123,8 +1126,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* ---------- Étape 2 : les niveaux ---------- */
   const LEVELS = [
     { id: 1, n: 10, name: 'Que cherche-t-on ?', desc: 'Les nombres sont cachés : range chaque problème dans le tableau.', tip: '<b>Ligne</b> : je cherche le tout (tout ensemble) ou une partie (un morceau) ? <b>Colonne</b> : les parties sont-elles toutes égales ?' },
-    { id: 2, n: 10, name: 'Le bon schéma', desc: 'Choisis le schéma qui raconte le problème, avec le « ? » au bon endroit.', tip: '<b>Schéma A</b> : des parties inégales. <b>Schéma B</b> : des parts égales. Le « ? » se met là où est ce que je cherche.' },
-    { id: 3, n: 10, name: 'Du schéma au calcul', desc: 'Choisis le schéma, puis le calcul, puis calcule.', tip: '<b>Schéma A</b> : le tout ? j\'additionne ; une partie ? je soustrais. <b>Schéma B</b> : le tout ? je multiplie ; une part ou le nombre de parts ? je divise.' },
+    { id: 2, n: 10, name: 'Le bon schéma', desc: 'Choisis le schéma qui raconte le problème, avec le « ? » au bon endroit.', tip: 'Les parts sont-elles égales ? Le tout va sur le trait, au-dessus de la barre. Le « ? » se met là où est ce que je cherche.' },
+    { id: 3, n: 10, name: 'Du schéma au calcul', desc: 'Choisis le schéma, puis le calcul, puis calcule.', tip: '<b>Parts inégales</b> : le tout ? j\'additionne ; une partie ? je soustrais. <b>Parts égales</b> : le tout ? je multiplie ; une part ou le nombre de parts ? je divise.' },
     { id: 4, n: 8, name: 'Résous et réponds', desc: 'Ce que je cherche, le schéma, le calcul, puis la phrase réponse.', tip: 'Je cherche… → le schéma → le calcul → la phrase réponse. C\'est la démarche qui compte !' },
     { id: 5, n: 8, name: 'Le grand mélange', desc: 'Le schéma, le calcul et la phrase réponse, sans rappel.', tip: '' }
   ];
@@ -1227,12 +1230,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schemaA(T, [[p], ['?', T - p]]);
   }
   const SCH_FB1 = {
-    At: ['Ici, le « ? » est sur une partie. Mais la question demande tout ensemble : le « ? » va au-dessus, sur le tout.', 'Ce schéma a des parts égales. Ici, les deux parties ne sont pas égales : c\'est le schéma A.'],
+    At: ['Ici, le « ? » est sur une partie. Mais la question demande tout ensemble : le « ? » va au-dessus, sur le tout.', 'Ce schéma a des parts égales. Ici, les deux parties ne sont pas égales : il faut un schéma avec des parts inégales.'],
     A3: ['Il manque une partie : il y en a trois dans l\'énoncé.', 'On cherche tout ensemble : le « ? » va au-dessus, sur le tout.'],
-    Ap: ['Le tout est déjà connu : il va au-dessus de la barre, et le « ? » sur la partie qu\'on cherche.', 'Les parties ne sont pas égales : ce n\'est pas le schéma B.'],
-    Bt: ['Les parts sont égales : c\'est le schéma B, avec des parts toutes pareilles.', 'On cherche le tout : le « ? » va au-dessus, sur le tout.'],
-    Bp: ['Le tout est déjà connu : il va au-dessus, et le « ? » dans les parts.', 'Les parts sont égales : c\'est le schéma B.'],
-    Bn: ['Le tout est déjà connu : il va au-dessus. On cherche le nombre de parts : le « ? » va en dessous.', 'Les parts sont égales : c\'est le schéma B.']
+    Ap: ['Le tout est déjà connu : il va au-dessus de la barre, et le « ? » sur la partie qu\'on cherche.', 'Les parties ne sont pas égales : ce n\'est pas un schéma avec des parts égales.'],
+    Bt: ['Les parts sont égales : il faut un schéma avec des parts toutes pareilles.', 'On cherche le tout : le « ? » va au-dessus, sur le tout.'],
+    Bp: ['Le tout est déjà connu : il va au-dessus, et le « ? » dans les parts.', 'Les parts sont égales : il faut un schéma avec des parts égales.'],
+    Bn: ['Le tout est déjà connu : il va au-dessus. On cherche le nombre de parts : le « ? » va en dessous.', 'Les parts sont égales : il faut un schéma avec des parts égales.']
   };
   SCH_FB1.Br = SCH_FB1.Bn;
   function schemaStep1(P){
@@ -1241,13 +1244,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       { h: sch1(P, 'ok'), ok: true },
       { h: sch1(P, 'd1'), ok: false, fb: fb[0] },
       { h: sch1(P, 'd2'), ok: false, fb: fb[1] }
-    ]), { layout: 'schemas', hint: 'Le schéma A a des parties de tailles différentes, le schéma B des parts égales. Le « ? » se met là où est ce que tu cherches.', okFb: 'Oui ! Le « ? » est bien à la place de ce que tu cherches.' });
+    ]), { layout: 'schemas', hint: 'Les parts sont-elles égales ? Le tout va sur le trait, au-dessus de la barre. Le « ? » se met là où est ce que tu cherches.', okFb: 'Oui ! Le « ? » est bien à la place de ce que tu cherches.' });
   }
   /* Le calcul juste et ses pièges */
   function calc1(P){
     const { type: t, a, b, c, T, p, n } = P;
-    const W_A = 'Les parties ne sont pas égales (schéma A) : je fais une addition ou une soustraction.';
-    const W_B = 'Les parts sont égales (schéma B) : je fais une multiplication ou une division.';
+    const W_A = 'Les parties ne sont pas égales : je fais une addition ou une soustraction.';
+    const W_B = 'Les parts sont égales : je fais une multiplication ou une division.';
     if (t === 'At') return { op: '+', x: a, y: b, opts: [calcOpt(a, '+', b, true), calcOpt(Math.max(a, b), '−', Math.min(a, b), false, 'Je cherche le tout : je réunis les parties, j\'additionne.'), calcOpt(a, '×', b, false, W_A)] };
     if (t === 'A3'){ const s3 = fmtNum(a) + ' + ' + fmtNum(b) + ' + ' + fmtNum(c); return { op: '+', expr: s3, opts: [{ h: s3, ok: true }, { h: cx(a, '+', b), ok: false, fb: 'Il y a trois parties : il faut les additionner toutes les trois.' }, { h: fmtNum(a) + ' + ' + fmtNum(b) + ' − ' + fmtNum(c), ok: false, fb: 'Je cherche le tout : j\'additionne les trois parties.' }] }; }
     if (t === 'Ap') return { op: '−', x: T, y: a, opts: [calcOpt(T, '−', a, true), calcOpt(T, '+', a, false, 'Le tout (' + fmtNum(T) + ') est déjà connu. Je cherche une partie : j\'enlève l\'autre partie au tout.'), calcOpt(T, '÷', a, false, W_A)] };
@@ -1516,12 +1519,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return {
         stmt: P.masked, stmtDone: P.stmt,
         steps: [mkChoice('Dans quelle case du tableau ranges-tu ce problème ?', opts, { layout: 'table', rows: RW, cols: ['Parties inégales', 'Parts égales'], hint: 'Lis la question en gras : demande-t-elle tout ensemble, ou un morceau ? Puis cherche les mots « chaque », « paquets de », « parts égales ».' })],
-        end: '<b>' + ucf(k === 'tout' ? 'je cherche le tout' : 'je cherche une partie') + '</b>, ' + (isA ? 'les parties sont inégales : schéma A.' : 'les parts sont égales : schéma B.') + sch1(P, 'ok'),
+        end: '<b>' + ucf(k === 'tout' ? 'je cherche le tout' : 'je cherche une partie') + '</b>, ' + (isA ? 'les parties ne sont pas égales.' : 'les parts sont égales.') + sch1(P, 'ok'),
         sum: sum1(P, '<b>' + (k === 'tout' ? 'le tout' : 'une partie') + ', ' + (isA ? 'parties inégales' : 'parts égales') + '</b>')
       };
     }
     if (id === 2){
-      return { stmt: P.stmt, steps: [schemaStep1(P)], end: 'Le « ? » est à la place de ce que je cherche.' + endText1(P, C), sum: sum1(P, 'schéma ' + (isA ? 'A' : 'B') + ', ' + calcText1(C) + ' = <b>' + fmtNum(P.r) + '</b>') };
+      return { stmt: P.stmt, steps: [schemaStep1(P)], end: 'Le « ? » est à la place de ce que je cherche.' + endText1(P, C), sum: sum1(P, (isA ? 'parts inégales' : 'parts égales') + ', ' + calcText1(C) + ' = <b>' + fmtNum(P.r) + '</b>') };
     }
     const calcS = () => calcStep('Quel calcul fais-tu ?', C.opts, { hint: 'Regarde ton schéma : le « ? » est-il sur le tout, ou dans une partie ? Les parts sont-elles égales ?' });
     if (id === 3){
@@ -1572,7 +1575,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Il y a ' + n + ' nids sur la plage.',
           'Dans chaque nid, il y a ' + p + ' œufs.',
           'La plus vieille tortue de l\'île a ' + age + ' ans : ça ne sert à rien ici !',
-          'Chaque nid a le même nombre d\'œufs : les parts sont égales, c\'est le schéma B.',
+          'Chaque nid a le même nombre d\'œufs : les parts sont égales.',
           'Ce que tu cherches : le tout, tous les œufs ensemble.',
           'Vérifie : il y a forcément plus de ' + p + ' œufs.',
           n + ' parts égales de ' + p + ' : je multiplie.',
@@ -1589,7 +1592,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Il y a ' + fmtNum(T) + ' rubis dans le tas.',
           'Les ' + n + ' pirates se partagent les rubis en parts égales.',
           'Le volcan mesure ' + h + ' m de haut.',
-          'Les parts sont égales : c\'est le schéma B.',
+          'Les parts sont égales : il faut un schéma avec des parts égales.',
           'Le tout est connu : ' + fmtNum(T) + ' rubis. Il y a ' + n + ' parts.',
           'Ce que tu cherches : la valeur d\'une part, ce que reçoit un pirate.',
           'Vérifie : un pirate reçoit moins de ' + fmtNum(T) + ' rubis.',
@@ -1606,7 +1609,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Le matin, ils ont rapporté ' + fmtNum(a) + ' perles.',
           (three ? 'À midi, ils ont rapporté ' + fmtNum(b) + ' perles, et le soir ' + fmtNum(c) + ' perles.' : 'Le soir, ils ont rapporté ' + fmtNum(b) + ' perles.'),
           'Il y a ' + k + ' dauphins dans le groupe.',
-          "Les parties n'ont pas la même taille : c'est le schéma A.",
+          "Les parties n'ont pas la même taille : les parts ne sont pas égales.",
           'Ce que tu cherches : le tout, toutes les perles de la journée.',
           'Vérifie : il y a forcément plus de ' + fmtNum(a) + ' perles.',
           "Pour trouver le tout, j'additionne toutes les parties."
@@ -1621,7 +1624,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Il contient ' + fmtNum(T) + " pièces d'or.",
           'Le capitaine met ' + p + ' pièces dans chaque sac, pas une de plus.',
           'Le capitaine a ' + age + ' ans.',
-          'Tous les sacs ont le même nombre de pièces : c\'est le schéma B.',
+          'Tous les sacs ont le même nombre de pièces : les parts sont égales.',
           'Ce que tu cherches : le nombre de parts, c\'est-à-dire le nombre de sacs.',
           'Vérifie : il y a forcément moins de sacs que de pièces.',
           'Pour trouver le nombre de parts, je divise le tout par la valeur d\'une part.'

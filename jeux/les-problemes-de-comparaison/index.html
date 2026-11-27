@@ -511,7 +511,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .schema{display:flex;flex-direction:column;gap:6px;width:100%;padding:2px 0;font-family:var(--font-num);color:var(--ink)}
 .brow{display:flex;align-items:flex-end;gap:8px;min-width:0}
 .bname{flex:0 0 5.7em;font-family:var(--font-body);font-weight:600;font-size:.78rem;line-height:1.15;color:var(--ink-soft);padding-bottom:9px;overflow-wrap:normal;hyphens:auto}
-.brow.has-bot .bname{padding-bottom:38px}
+.brow.has-bot .bname{padding-bottom:42px}
 .btrack{flex:1 1 auto;display:flex;align-items:flex-end;min-width:0}
 .grp{display:flex;flex-direction:column;min-width:0}
 .segs{display:flex;min-width:0}
@@ -528,14 +528,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .brace{position:relative;display:flex;justify-content:center;height:22px}
 .brace::before{content:"";position:absolute;left:1px;right:1px;height:7px;border:2px solid var(--ink-soft)}
 .brace.up{align-items:flex-start;margin-bottom:3px;height:26px}
-.brace.up::before{bottom:0;border-bottom:0;border-radius:4px 4px 0 0}
-.brace.up::after{content:"";position:absolute;left:50%;bottom:7px;width:2px;height:5px;margin-left:-1px;background:var(--ink-soft)}
-.brace.down{align-items:flex-end;margin-top:3px;height:26px}
-.brace.down::before{top:0;border-top:0;border-radius:0 0 4px 4px}
-.brace.down::after{content:"";position:absolute;left:50%;top:7px;width:2px;height:5px;margin-left:-1px;background:var(--ink-soft)}
+.brace.up::before{bottom:0;height:8px;border:2.5px solid var(--ink);border-bottom:0;border-radius:2px 2px 0 0}
+.brace.up::after{content:none}
+.brace.down{align-items:flex-end;margin-top:3px;height:30px}
+.brace.down::before{content:none}
+.brace.down::after{content:none}
+.brace.down .bbr{position:absolute;left:1px;top:0;width:calc(100% - 2px);height:12px;overflow:visible}
+.bbr path{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .bt{position:relative;z-index:1;padding:0 6px;background:var(--sheet);border-radius:6px;font-size:.98rem;line-height:1.2;white-space:nowrap}
-.brace.up .bt{top:-2px}
-.brace.down .bt{bottom:-2px}
+.brace.up .bt{top:-4px;background:transparent}
+.brace.down .bt{bottom:-3px;background:transparent}
 .bt b{font-weight:800}
 .bt small{font-family:var(--font-body);font-weight:600;font-size:.74rem;color:var(--ink-soft)}
 .choice .bt,.srow.done .bt{background:transparent}
@@ -662,7 +664,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         </span>
       </div>
       <h2>Comprendre la leçon</h2>
-      <p>4 fiches courtes : comparer deux quantités, le schéma C (un écart), le schéma D (un nombre de fois), puis le calcul et le nombre qui répond. Une petite question à chaque fiche.</p>
+      <p>4 fiches courtes : comparer deux quantités, comparer avec un écart, comparer avec un nombre de fois, puis le calcul et le nombre qui répond. Une petite question à chaque fiche.</p>
       <div class="rule-strip" aria-label="La règle à retenir">
         <div class="rs add"><i aria-hidden="true">C</i><span><b>de plus, de moins</b>un écart : + ou −</span></div>
         <div class="rs mul"><i aria-hidden="true">D</i><span><b>fois plus, fois moins</b>un nombre de fois : × ou ÷</span></div>
@@ -702,10 +704,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       <h2>À retenir</h2>
       <p><b>D'abord</b> : qui en a le plus ? Attention à « c'est 5 de plus que… » : c'est celui dont on parle qui en a le plus.</p>
       <div class="rulebig">
-        <div class="rb add"><b>Schéma C</b><span>un écart : de plus, de moins</span><i aria-hidden="true">+ −</i></div>
-        <div class="rb mul"><b>Schéma D</b><span>un nombre de fois</span><i aria-hidden="true">× ÷</i></div>
+        <div class="rb add"><b>Un écart</b><span>de plus, de moins</span><i aria-hidden="true">+ −</i></div>
+        <div class="rb mul"><b>Un nombre de fois</b><span>fois plus, fois moins</span><i aria-hidden="true">× ÷</i></div>
       </div>
-      <p><b>Le mot « fois »</b> n'est là que pour le schéma D.</p>
+      <p><b>Le mot « fois »</b> n'est là que quand on compare avec un nombre de fois.</p>
       <p><b>Le nombre qui répond</b> : dans 9 + 5 = 14 ou 14 − 9 = 5, c'est 5 qui répond à « combien de plus ? ».</p>
     </div>
     <div class="stack push-bottom">
@@ -845,7 +847,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>Chaque réussite du premier coup donne un indice. Quand l'île est validée, l'élève résout une énigme de comparaison avec ses indices (nombres tirés au hasard à chaque partie) : plus il a d'indices, plus il a d'aide. La bonne réponse ouvre le coffre. Après trois essais faux, la solution est expliquée. L'énigme ne change pas les bons points ; le formulaire indique si elle a été résolue.</li>
         <li>Parmi les indices, un nombre ne sert à rien. Aux îles 1 et 2, l'indice le dit (« ça ne sert à rien ici ! »). À partir de l'île 3, il ne le dit plus, et aucun indice ne dit quels mots sont importants : l'élève trie lui-même les informations utiles.</li>
         <li>Bons points : 1 à la validation d'une île, puis 1 par réussite de plus sur le meilleur score, jusqu'au sans-faute. On peut en gagner 13 en tout : une carte de 10 montre que le chapitre est bien maîtrisé.</li>
-        <li>L'île 1 travaille la différence entre comparaison avec un écart (schéma C) et avec un nombre de fois (schéma D) : le mot « fois » s'allume dans l'énoncé après la réponse. L'élève dit aussi qui en a le plus, y compris dans les phrases pièges (« c'est 5 de plus que… »).</li>
+        <li>L'île 1 travaille la différence entre comparaison avec un écart et avec un nombre de fois : le mot « fois » s'allume dans l'énoncé après la réponse. L'élève dit aussi qui en a le plus, y compris dans les phrases pièges (« c'est 5 de plus que… »).</li>
         <li>L'île 2 fait dire ce qu'on cherche (grande quantité, petite quantité, écart, nombre de fois) puis placer le « ? » sur le schéma ; ensuite, chaque problème commence par le choix du schéma. À l'île 3, la soustraction et l'addition à trou sont toutes deux acceptées ; l'élève montre ensuite quel nombre du calcul répond à la question (piste de remédiation de la fiche).</li>
         <li>Parcours orange : nombres à trois chiffres, plus de phrases pièges (« c'est 3 fois plus que… »), et la moitié, le tiers, le quart d'une quantité.</li>
         <li>Vérification : sur environ un problème sur quatre, à partir de l'île 3, le mousse étourdi propose une phrase réponse, juste ou fausse, à contrôler avec les trois questions du détective (la bonne unité ? un nombre possible ? la réponse à la question ?). Une erreur à cette étape ne fait pas perdre la question : elle est notée « vérification à revoir » dans le détail et dans le score envoyé, et renvoie au jeu « Mon résultat est-il possible ? ».</li>
@@ -941,12 +943,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return '<span class="' + cls + '" style="flex:' + s.w + ' 1 0px">' + SV(s.v) + '</span>';
   }
   function braceLabel(b){ return (b.pre ? '<small>' + esc(b.pre) + '</small> ' : '') + '<b class="' + (isQ(b.v) ? 'q' : '') + '">' + SV(b.v) + '</b>' + (b.l ? ' <small>' + esc(b.l) + '</small>' : ''); }
+  const BRACE_SVG = '<svg class="bbr" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M1 1 Q1 6 7 6 L44 6 Q50 6 50 11 Q50 6 56 6 L93 6 Q99 6 99 1" vector-effect="non-scaling-stroke"/></svg>';
   function barRow(row, W){
     const sw = row.segs.reduce((s, x) => s + x.w, 0);
     let grp = '<span class="grp" style="flex:' + sw + ' 1 0px">';
     if (row.top) grp += '<span class="brace up"><span class="bt">' + braceLabel(row.top) + '</span></span>';
     grp += '<span class="segs">' + row.segs.map(segHTML).join('') + '</span>';
-    if (row.bot) grp += '<span class="brace down"><span class="bt">' + braceLabel(row.bot) + '</span></span>';
+    if (row.bot) grp += '<span class="brace down">' + BRACE_SVG + '<span class="bt">' + braceLabel(row.bot) + '</span></span>';
     grp += '</span>';
     const rest = Math.max(0, W - sw);
     let tail = '';
@@ -960,21 +963,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* Les largeurs suivent les vraies quantités, avec un minimum pour rester lisibles */
   const wOf = (v, real) => Math.max(1, typeof v === 'number' ? v : (real || 1));
   function evenW(ws){ const tot = ws.reduce((s, x) => s + x, 0); return ws.map(x => Math.max(x, tot * 0.2)); }
-  /* Schéma A : des parties inégales. parts : [[valeur ou '?', vraie valeur], …] */
+  /* Un schéma avec des parts inégales. parts : [[valeur ou '?', vraie valeur], …] */
   function schemaA(tout, parts){
     const ws = evenW(parts.map(p => wOf(p[0], p[1])));
     const segs = parts.map((p, i) => ({ v: p[0], w: ws[i], c: ['a', 'b', 'c'][i] }));
-    return schema([{ segs, top: { v: tout, pre: 'tout' } }], ws.reduce((s, x) => s + x, 0), 'Schéma A : des parties inégales');
+    return schema([{ segs, top: { v: tout, pre: 'tout' } }], ws.reduce((s, x) => s + x, 0), 'Un schéma avec des parts inégales');
   }
-  /* Schéma B : des parts égales */
+  /* Un schéma avec des parts égales */
   function schemaB(tout, part, count){
     const shown = (typeof count === 'number' && count <= 8) ? count : 3;
     const segs = [];
     for (let i = 0; i < shown; i++) segs.push({ v: part, w: 1, c: 'p' });
     if (shown !== count) segs.push({ v: '…', w: 1, c: 'x' });
-    return schema([{ segs, top: { v: tout, pre: 'tout' }, bot: { v: count, l: count === 1 ? 'part' : 'parts' } }], segs.length, 'Schéma B : des parts égales');
+    return schema([{ segs, top: { v: tout, pre: 'tout' }, bot: { v: count, l: 'fois' } }], segs.length, 'Un schéma avec des parts égales');
   }
-  /* Schéma C : comparer avec un écart. big, small : { name, v, real } */
+  /* Un schéma pour comparer avec un écart. big, small : { name, v, real } */
   function schemaC(big, small, diff){
     let wb = wOf(big.v, big.real), ws = wOf(small.v, small.real);
     if (ws > wb * 0.84) ws = wb * 0.84;
@@ -982,9 +985,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schema([
       { name: big.name, segs: [{ v: big.v, w: wb, c: 'a' }] },
       { name: small.name, segs: [{ v: small.v, w: ws, c: 'b' }], diff: { v: diff } }
-    ], wb, 'Schéma C : comparer avec un écart');
+    ], wb, 'Un schéma pour comparer avec un écart');
   }
-  /* Schéma D : comparer avec un nombre de fois. one : la petite quantité, many : la grande */
+  /* Un schéma pour comparer avec un nombre de fois. one : la petite quantité, many : la grande */
   function schemaD(one, many, k){
     const shown = (typeof k === 'number' && k <= 8) ? k : 3;
     const segs = [];
@@ -993,7 +996,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return schema([
       { name: one.name, segs: [{ v: one.v, w: 1, c: 'p' }] },
       { name: many.name, segs, top: { v: many.v }, bot: { v: k, l: 'fois' } }
-    ], segs.length, 'Schéma D : comparer avec un nombre de fois');
+    ], segs.length, 'Un schéma pour comparer avec un nombre de fois');
   }
 
   /* ---------- La ligne du temps ---------- */
@@ -1088,8 +1091,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       ]
     },
     {
-      title: 'Schéma C : comparer avec un écart',
-      html: '<p>Quand on dit « <b>de plus</b> », « <b>de moins</b> », « combien de plus ? », on compare avec un <b>écart</b> (une différence). Je dessine le <b>schéma C</b> : la grande barre, la petite barre, et l\'écart.</p>' +
+      title: 'Comparer avec un écart',
+      html: '<p>Quand on dit « <b>de plus</b> », « <b>de moins</b> », « combien de plus ? », on compare avec un <b>écart</b> (une différence). Je dessine <b>une barre pour chacun</b> : la grande barre, la petite barre, et la flèche de l\'écart.</p>' +
             schemaC({ name: 'Rose', v: 18, real: 18 }, { name: 'Noah', v: '?', real: 11 }, 7) +
             '<p class="ex-cap">« Rose a 18 ans. Noah a 7 ans de moins qu\'elle. » <b>Quel âge a Noah ?</b></p>' +
             '<p class="ex-line">18 − 7 = 11</p><p>Je peux faire une <b>addition</b> ou une <b>soustraction</b>.</p>',
@@ -1098,15 +1101,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       ]
     },
     {
-      title: 'Schéma D : comparer avec un nombre de fois',
-      html: '<p>Quand on dit « <b>fois plus</b> », « <b>fois moins</b> », « combien de fois ? », on compare avec un <b>nombre de fois</b>. Je dessine le <b>schéma D</b> : une part pour la petite quantité, plusieurs parts égales pour la grande.</p>' +
+      title: 'Comparer avec un nombre de fois',
+      html: '<p>Quand on dit « <b>fois plus</b> », « <b>fois moins</b> », « combien de fois ? », on compare avec un <b>nombre de fois</b>. Je dessine <b>une part pour la petite quantité</b>, et plusieurs parts égales pour la grande ; <b>l\'accolade</b>, en dessous, dit combien de fois.</p>' +
             schemaD({ name: 'Tom', v: 6 }, { name: 'Jade', v: '?' }, 4) +
             '<p class="ex-cap">« Tom a 6 billes. Jade a 4 fois plus de billes que lui. » <b>Combien de billes a Jade ?</b></p>' +
             '<p class="ex-line">6 × 4 = 24</p><p>Je peux faire une <b>multiplication</b> ou une <b>division</b>.</p>' +
-            '<p class="warn">Le mot « <b>fois</b> » est là seulement quand on compare avec un nombre de fois. « 4 <b>de</b> plus », c\'est le schéma C : 6 + 4.</p>',
+            '<p class="warn">Le mot « <b>fois</b> » est là seulement quand on compare avec un nombre de fois. « 4 <b>de</b> plus », c\'est un écart : 6 + 4.</p>',
       checks: [
-        { q: 'Le capitaine a 40 pièces. Le mousse en a 5 fois moins. Quel schéma ?', c: ['Schéma C : un écart', 'Schéma D : un nombre de fois'], a: 1, why: 'Il y a le mot « <b>fois</b> » : c\'est le schéma D. Le mousse a 40 ÷ 5 = 8 pièces.' },
-        { q: 'Lou a 30 timbres. Sarah en a 6 de moins. Quel schéma ?', c: ['Schéma C : un écart', 'Schéma D : un nombre de fois'], a: 0, why: 'Pas de mot « fois » : on compare avec un écart, c\'est le schéma C. Sarah a 30 − 6 = 24 timbres.' }
+        { q: 'Le capitaine a 40 pièces. Le mousse en a 5 fois moins. Quel schéma ?', c: ['Un schéma pour comparer avec un écart', 'Un schéma pour comparer avec un nombre de fois'], a: 1, why: 'Il y a le mot « <b>fois</b> » : on compare avec un nombre de fois. Le mousse a 40 ÷ 5 = 8 pièces.' },
+        { q: 'Lou a 30 timbres. Sarah en a 6 de moins. Quel schéma ?', c: ['Un schéma pour comparer avec un écart', 'Un schéma pour comparer avec un nombre de fois'], a: 0, why: 'Pas de mot « fois » : on compare avec un écart. Sarah a 30 − 6 = 24 timbres.' }
       ]
     },
     {
@@ -1124,9 +1127,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   /* ---------- Étape 2 : les niveaux ---------- */
   const LEVELS = [
-    { id: 1, n: 10, name: 'Fois ou pas fois ?', desc: 'Un écart ou un nombre de fois ? Et qui en a le plus ?', tip: 'Je cherche le mot <b>fois</b>. « fois plus », « fois moins », « combien de fois » : <b>schéma D</b>. « de plus », « de moins » : <b>schéma C</b>.' },
+    { id: 1, n: 10, name: 'Fois ou pas fois ?', desc: 'Un écart ou un nombre de fois ? Et qui en a le plus ?', tip: 'Je cherche le mot <b>fois</b>. « fois plus », « fois moins », « combien de fois » : <b>un nombre de fois</b>. « de plus », « de moins » : <b>un écart</b>.' },
     { id: 2, n: 10, name: 'Je cherche…', desc: 'Dis ce que tu cherches, puis place le « ? » sur le bon schéma.', tip: 'Je cherche la grande quantité, la petite quantité, l\'écart ou le nombre de fois ? Le « ? » se met à cet endroit du schéma.' },
-    { id: 3, n: 10, name: 'Le bon calcul', desc: 'Choisis le schéma et le calcul, puis montre quel nombre répond.', tip: '<b>Schéma C</b> : + ou −. <b>Schéma D</b> : × ou ÷. Addition à trou ou soustraction : les deux marchent, l\'important est de trouver le nombre qui répond.' },
+    { id: 3, n: 10, name: 'Le bon calcul', desc: 'Choisis le schéma et le calcul, puis montre quel nombre répond.', tip: '<b>Un écart</b> : + ou −. <b>Un nombre de fois</b> : × ou ÷. Addition à trou ou soustraction : les deux marchent, l\'important est de trouver le nombre qui répond.' },
     { id: 4, n: 8, name: 'Résous et réponds', desc: 'Ce que tu cherches, le schéma, le calcul et la phrase réponse.', tip: 'Qui en a le plus ? Un écart ou un nombre de fois ? Le schéma, puis le calcul et la phrase réponse. C\'est la démarche qui compte !' },
     { id: 5, n: 8, name: 'Le grand mélange', desc: 'Le schéma, le calcul et la phrase réponse, avec des pièges.', tip: '' }
   ];
@@ -1282,22 +1285,22 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function schFb2(P){
     const fam = P.kd.fam, most = P.kd.most === 'X' ? P.X : P.Y;
-    const d1 = P.type === 'Df' ? 'Il y a le mot « fois » dans la question : on compare avec un nombre de fois, c\'est le schéma D.'
+    const d1 = P.type === 'Df' ? 'Il y a le mot « fois » dans la question : on compare avec un nombre de fois.'
       : P.type === 'Cd' ? 'Les deux quantités sont connues : le « ? » va sur l\'écart.'
       : 'Regarde bien qui en a le plus : c\'est ' + most.n + '. Sa barre doit être la plus longue.';
     const d2 = P.type === 'Df' ? 'Celui qui en a le plus doit avoir plusieurs parts : relis qui en a le plus.'
-      : fam === 'C' ? 'Il n\'y a pas le mot « fois » : on compare avec un écart, c\'est le schéma C.' : 'Il y a le mot « fois » : on compare avec un nombre de fois, c\'est le schéma D.';
+      : fam === 'C' ? 'Il n\'y a pas le mot « fois » : on compare avec un écart.' : 'Il y a le mot « fois » : on compare avec un nombre de fois.';
     return [d1, d2];
   }
   function schemaStep2(P){
     const fb = schFb2(P);
     return mkChoice('Quel schéma raconte ce problème ?', shuffle([
       { h: sch2(P, 'ok'), ok: true }, { h: sch2(P, 'd1'), ok: false, fb: fb[0] }, { h: sch2(P, 'd2'), ok: false, fb: fb[1] }
-    ]), { layout: 'schemas', hint: 'Qui en a le plus ? Sa barre est la plus longue. Le mot « fois » : schéma D. Le « ? » se met à la place de ce que tu cherches.', okFb: 'Oui ! Le « ? » est au bon endroit.', showKw: true });
+    ]), { layout: 'schemas', hint: 'Qui en a le plus ? Sa barre est la plus longue. Le mot « fois » : un nombre de fois. Le « ? » se met à la place de ce que tu cherches.', okFb: 'Oui ! Le « ? » est au bon endroit.', showKw: true });
   }
   /* Les calculs, avec les deux chemins justes pour l'écart et le nombre de fois */
   function calc2(P){
-    const { type: t, d, k, r, xv, yv } = P, ADDF = 'C\'est une comparaison avec un écart (schéma C) : je fais + ou −.', MULF = 'C\'est une comparaison avec « fois » (schéma D) : je fais × ou ÷.';
+    const { type: t, d, k, r, xv, yv } = P, ADDF = 'C\'est une comparaison avec un écart : je fais + ou −.', MULF = 'C\'est une comparaison avec « fois » : je fais × ou ÷.';
     const most = (P.kd.most === 'X' ? P.X : P.Y).n;
     switch (t){
       case 'Cg': return { line: cx(xv, '+', d) + ' = ' + fmtNum(r), opts: [calcOpt(xv, '+', d, true), calcOpt(xv, '−', d, false, ucf(P.Y.n) + ' en a ' + d + ' de plus : c\'est ' + P.Y.n + ' qui en a le plus. J\'ajoute l\'écart.'), calcOpt(xv, '×', d, false, ADDF)], nums: [[cx(xv, '+', d) + ' = □', r, arithHint(xv, '+', d), { x: xv, op: '+', y: d }]], three: [xv, d, r] };
@@ -1312,7 +1315,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       case 'Dg': return { line: cx(xv, '×', k) + ' = ' + fmtNum(r), opts: [calcOpt(xv, '×', k, true), calcOpt(xv, '+', k, false, 'Il y a le mot « fois » : ce n\'est pas un écart. « ' + k + ' fois plus » : je multiplie.'), (xv % k === 0 ? calcOpt(xv, '÷', k, false, ucf(P.Y.n) + ' en a ' + k + ' fois plus : je multiplie.') : calcOpt(xv, '−', k, false, MULF))], nums: [[cx(xv, '×', k) + ' = □', r, arithHint(xv, '×', k), { x: xv, op: '×', y: k }]], three: [xv, k, r] };
       case 'Df': return { line: cx(xv, '÷', yv) + ' = ' + r + '  ou  ' + fmtNum(yv) + ' × ' + r + ' = ' + fmtNum(xv), opts: [
           { h: cx(xv, '÷', yv), ok: true, br: 0 }, { h: fmtNum(yv) + ' × ? = ' + fmtNum(xv), ok: true, br: 1 },
-          calcOpt(xv, '−', yv, false, 'Tu calcules un écart. Mais la question demande « combien de fois » : c\'est le schéma D.'),
+          calcOpt(xv, '−', yv, false, 'Tu calcules un écart. Mais la question demande « combien de fois » : on compare avec un nombre de fois.'),
           calcOpt(xv, '×', yv, false, 'On cherche combien de fois ' + fmtNum(yv) + ' va dans ' + fmtNum(xv) + ' : je divise.')],
         nums: [[cx(xv, '÷', yv) + ' = □', r, arithHint(xv, '÷', yv), { x: xv, op: '÷', y: yv }], [fmtNum(yv) + ' × □ = ' + fmtNum(xv), r, 'Récite la table de ' + yv + ' jusqu\'à ' + fmtNum(xv) + '.', { x: xv, op: '÷', y: yv }]], three: [xv, yv, r] };
       default: { /* Dp, Di, Dfr */
@@ -1329,7 +1332,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function calcSteps2(P, C, withWhich){
     const tail = withWhich ? [whichStep(P, C)] : [];
     const numOf = n => mkNum('Calcule.', n[0], n[1], { hint: n[2], calc: n[3] });
-    const steps = [calcStep('Quel calcul fais-tu ?', C.opts, { hint: 'Schéma C : + ou −. Schéma D : × ou ÷. Qui en a le plus ? La réponse sera-t-elle plus grande ou plus petite ?', showKw: true })];
+    const steps = [calcStep('Quel calcul fais-tu ?', C.opts, { hint: 'Un écart : + ou −. Un nombre de fois : × ou ÷. Qui en a le plus ? La réponse sera-t-elle plus grande ou plus petite ?', showKw: true })];
     if (C.nums.length > 1){
       return { steps: steps.concat([numOf(C.nums[0])], tail), branches: C.nums.map(n => [numOf(n)].concat(tail)) };
     }
@@ -1522,20 +1525,20 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* ---------- Les questions de chaque niveau ---------- */
   function item2(id, P){
     const fam = P.kd.fam, C = calc2(P), most = P.kd.most === 'X' ? P.X : P.Y, other = P.kd.most === 'X' ? P.Y : P.X;
-    const famTxt = fam === 'C' ? 'on compare avec un écart : schéma C' : 'on compare avec un nombre de fois : schéma D';
+    const famTxt = fam === 'C' ? 'on compare avec un écart' : 'on compare avec un nombre de fois';
     const isAge = P.c.k === 'age', mostTxt = A => isAge ? A.n + ' ' + (A.g === 'f' ? 'la plus âgée' : 'le plus âgé') : A.n + ' qui en a le plus';
     const endBase = '<p class="ex-line">' + C.line + '</p><p>' + esc(P.ans) + '</p>';
     if (id === 1){
       const s1 = mkChoice('Comment compare-t-on ?', [
-        { h: 'Avec un écart (schéma C)', ok: fam === 'C', fb: 'Il y a le mot « fois » : on compare avec un nombre de fois, c\'est le schéma D.' },
-        { h: 'Avec un nombre de fois (schéma D)', ok: fam === 'D', fb: 'Il n\'y a pas le mot « fois » : on compare avec un écart (de plus, de moins), c\'est le schéma C.' }
+        { h: 'Avec un écart', ok: fam === 'C', fb: 'Il y a le mot « fois » : on compare avec un nombre de fois.' },
+        { h: 'Avec un nombre de fois', ok: fam === 'D', fb: 'Il n\'y a pas le mot « fois » : on compare avec un écart (de plus, de moins).' }
       ], { layout: 'two', showKw: true, why: '' });
       const mq = P.F.most;
       const s2 = mkChoice(mq, shuffle([{ h: ucf(P.X.n), ok: P.kd.most === 'X' }, { h: ucf(P.Y.n), ok: P.kd.most === 'Y' }]).map(o => Object.assign(o, { fb: o.ok ? '' : 'C\'est ' + mostTxt(most) + ' : relis la phrase qui compare.' })), { layout: 'two', showKw: true });
       return { stmt: P.stmt, steps: [s1, s2], end: '<b>' + ucf(famTxt) + '</b>. C\'est ' + esc(mostTxt(most)) + '.' + sch2(P, 'ok'), sum: sum2(P, '<b>schéma ' + fam + '</b>, ' + esc(mostTxt(most))) };
     }
     if (id === 2){
-      return { stmt: P.stmt, steps: [seekStep2(P), schemaStep2(P)], end: 'Le « ? » est à la place de ce que je cherche.' + endBase, sum: sum2(P, 'schéma ' + fam + ', ' + C.line.split('  ou')[0].replace(/ = [\d ]+$/, '') + ' = <b>' + fmtNum(P.r) + '</b>') };
+      return { stmt: P.stmt, steps: [seekStep2(P), schemaStep2(P)], end: 'Le « ? » est à la place de ce que je cherche.' + endBase, sum: sum2(P, (fam === 'C' ? 'un écart' : 'un nombre de fois') + ', ' + C.line.split('  ou')[0].replace(/ = [\d ]+$/, '') + ' = <b>' + fmtNum(P.r) + '</b>') };
     }
     if (id === 3){
       const cs = calcSteps2(P, C, true);
@@ -1576,7 +1579,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Coco, le petit perroquet vert, connaît ' + fmtNum(a) + ' mots.',
           'Le perroquet du capitaine connaît ' + d + ' mots de plus que Coco.',
           'Coco a ' + age + ' ans : ça ne sert à rien ici !',
-          'Il n\'y a pas le mot « fois » : on compare avec un écart, c\'est le schéma C.',
+          'Il n\'y a pas le mot « fois » : on compare avec un écart.',
           'C\'est le perroquet du capitaine qui connaît le plus de mots.',
           'Vérifie : il connaît forcément plus de ' + fmtNum(a) + ' mots.',
           'Il en connaît ' + d + ' de plus : j\'ajoute l\'écart.',
@@ -1593,7 +1596,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'La grande tortue pèse ' + big + ' kg.',
           'La petite tortue pèse ' + k + ' fois moins que la grande.',
           'Les deux tortues ont ' + pattes + ' pattes : ça ne sert à rien ici !',
-          'Il y a le mot « fois » : on compare avec un nombre de fois, c\'est le schéma D.',
+          'Il y a le mot « fois » : on compare avec un nombre de fois.',
           'C\'est la grande tortue qui pèse le plus.',
           'Vérifie : la petite tortue pèse moins de ' + big + ' kg.',
           '« ' + k + ' fois moins » : je divise par ' + k + '.',
@@ -1610,7 +1613,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Du camp jusqu\'au volcan, il faut faire ' + fmtNum(big) + ' pas.',
           'Du camp jusqu\'à la plage, il faut faire ' + fmtNum(small) + ' pas.',
           'Le volcan mesure ' + h + ' m de haut.',
-          'On compare deux distances : c\'est un écart, le schéma C.',
+          'On compare deux distances : c\'est un écart.',
           'Les deux quantités sont connues : le « ? » va sur l\'écart.',
           'Vérifie : la réponse est plus petite que ' + fmtNum(big) + '.',
           'Tu peux faire ' + fmtNum(big) + ' − ' + fmtNum(small) + ', ou chercher ' + fmtNum(small) + ' + ? = ' + fmtNum(big) + '.',
@@ -1627,7 +1630,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
           'Le petit dauphin a fait ' + a + ' sauts.',
           'Sa maman a fait ' + k + ' fois plus de sauts que lui.',
           'Ils ont fait le tour de ' + n + ' rochers.',
-          'Il y a le mot « fois » : c\'est le schéma D.',
+          'Il y a le mot « fois » : on compare avec un nombre de fois.',
           'C\'est la maman qui a fait le plus de sauts.',
           'Vérifie : elle a fait plus de ' + a + ' sauts.',
           '« ' + k + ' fois plus » : je multiplie par ' + k + '.'
