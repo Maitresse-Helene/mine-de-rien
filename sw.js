@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-27-180603';
+const VERSION = '2026-11-27-190907';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -45,6 +45,7 @@ const FICHIERS = [
   "jeux/encadrer-et-placer-les-fractions/index.html",
   "jeux/est-es-ou-et/index.html",
   "jeux/estimer-un-resultat/index.html",
+  "jeux/je-construis-mon-schema/index.html",
   "jeux/je-me-teste/index.html",
   "jeux/l-addition-et-la-soustraction-posees/index.html",
   "jeux/l-adjectif-epithete-et-attribut/index.html",
