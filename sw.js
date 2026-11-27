@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-27-200332';
+const VERSION = '2026-11-27-223332';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -49,6 +49,7 @@ const FICHIERS = [
   "jeux/je-me-teste/index.html",
   "jeux/l-addition-et-la-soustraction-posees/index.html",
   "jeux/l-adjectif-epithete-et-attribut/index.html",
+  "jeux/l-imparfait-et-le-futur/index.html",
   "jeux/la-division/index.html",
   "jeux/la-multiplication-par-trois-chiffres/index.html",
   "jeux/la-multiplication-posee/index.html",
@@ -123,6 +124,7 @@ const FICHIERS = [
   "jeux/les-synonymes/index.html",
   "jeux/les-tables-d-addition/index.html",
   "jeux/les-tables-de-multiplication/index.html",
+  "jeux/les-temps-composes/index.html",
   "jeux/lire-et-ecrire-les-fractions/index.html",
   "jeux/lire-un-document/index.html",
   "jeux/mon-resultat-est-il-possible/index.html",
@@ -130,6 +132,7 @@ const FICHIERS = [
   "jeux/multiplier-par-10-100-1000/index.html",
   "jeux/multiplier-par-4-par-8/index.html",
   "jeux/passer-la-centaine/index.html",
+  "jeux/raconter-au-passe-passe-simple-ou-imparfait/index.html",
   "jeux/remettre-les-informations-dans-l-ordre/index.html",
   "jeux/soustractions-de-tete/index.html",
   "jeux/tirelettres-l-imparfait/index.html",
@@ -141,6 +144,7 @@ const FICHIERS = [
   "jeux/tirelettres-les-adjectifs/index.html",
   "jeux/tirelettres-les-adverbes/index.html",
   "jeux/tirelettres-prefixes-et-suffixes/index.html",
+  "jeux/transposer-un-texte/index.html",
   "jeux/trier-les-donnees-d-un-probleme/index.html",
   "jeux.js",
   "manifest.webmanifest"
