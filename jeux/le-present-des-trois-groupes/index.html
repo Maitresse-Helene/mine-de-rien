@@ -325,6 +325,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .tokens .orig-label,.sentence .orig-label{color:var(--ink-soft);line-height:1.4}
 .instr b{display:block;color:var(--ink);font-weight:700}
 .instr .step{display:block;margin-top:2px}
+/* Consignes : ce qui est demandé est mis en valeur (28 novembre) */
+.instr strong,.check-q strong,.lead-q strong{font-weight:800;color:var(--pen)}
 .nw{color:var(--pen);font-weight:600}
 .ov.sub{font-weight:500;color:var(--ink-soft);border-bottom:2px dotted var(--rule-strong)}
 .tok:disabled{cursor:default}
@@ -425,6 +427,20 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.acckeys{display:flex;flex-wrap:wrap;gap:6px}
+.acckey{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.25rem;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.acckey:active{transform:translateY(2px);box-shadow:none}
+/* Lettres accentuées repliées : « Besoin d'un accent ? Touche ici. » déplie la rangée */
+.accfold{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.accopen{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:4px 14px 4px 5px;border-radius:999px;border:1.5px dashed var(--key-edge);background:transparent;color:var(--ink-soft);font:inherit;font-size:.95rem;font-weight:600;line-height:1.2;text-align:left;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.accopen .accmini{display:inline-grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1}
+.accopen:active{transform:translateY(1px)}
+.accfold .acckeys{display:none}
+.accfold.open .accopen{display:none}
+.accfold.open .acckeys{display:flex}
+.acckey.accclose{border-style:dashed;background:transparent;box-shadow:none;color:var(--ink-soft);font-family:inherit;font-size:1rem;font-weight:700}
+.answer-row[hidden] + .accfold{display:none}
+.answer-row[hidden] + .accfold-slot{display:none}
 </style>
 
 <div class="app">
@@ -549,6 +565,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
         <input class="input" id="answerInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Écris le verbe">
         <button class="btn-primary btn-inline" id="answerBtn" type="submit">Valider</button>
       </div>
+      <div class="accfold-slot" id="accFoldMain"></div>
       <div class="grp" id="groupBtns" hidden>
         <button class="btn-secondary" type="button" data-group="1">1er groupe</button>
         <button class="btn-secondary" type="button" data-group="2">2e groupe</button>
@@ -777,8 +794,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
       html: '<p>Dans une phrase, le verbe conjugué change selon la personne : <i>je danse</i>, <i>nous dansons</i>.</p>' +
             '<p>Pour savoir de quel verbe il s\'agit, on cherche son <b>infinitif</b>. Astuce : dis « il faut… » devant.<br><span class="ex">nous dansons → il faut <b>danser</b></span></p>',
       checks: [
-        { q: '« ils viennent » : quel est l\'infinitif ?', c: ['viendre', 'venir', 'viennir'], a: 1, why: 'On dit « il faut venir » : c\'est le verbe <b>venir</b>.' },
-        { q: '« tu réfléchis » : quel est l\'infinitif ?', c: ['réfléchir', 'réfléchire', 'réfléchier'], a: 0, why: 'On dit « il faut réfléchir » : c\'est le verbe <b>réfléchir</b>.' }
+        { q: '« ils viennent » : quel est <strong>l\'infinitif</strong> ?', c: ['viendre', 'venir', 'viennir'], a: 1, why: 'On dit « il faut venir » : c\'est le verbe <b>venir</b>.' },
+        { q: '« tu réfléchis » : quel est <strong>l\'infinitif</strong> ?', c: ['réfléchir', 'réfléchire', 'réfléchier'], a: 0, why: 'On dit « il faut réfléchir » : c\'est le verbe <b>réfléchir</b>.' }
       ]
     },
     {
@@ -789,11 +806,11 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
             '<div class="grow"><span class="gbadge">3e</span><span>Tous les autres : aller, les verbes en -ir sans -issons (partir → nous partons), en <b>-re</b> (lire) et en <b>-oir</b> (savoir).</span></div>' +
             '</div>',
       checks: [
-        { q: '« sauter » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 0, why: 'sauter se termine par -er : <b>1er groupe</b>.' },
-        { q: '« réussir » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 1, why: 'On dit « nous réussissons » : <b>2e groupe</b>.' },
-        { q: '« partir » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'On dit « nous partons », pas « nous partissons » : <b>3e groupe</b>.' },
-        { q: '« aller » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'aller finit par -er, mais c\'est l\'exception : <b>3e groupe</b>.' },
-        { q: '« descendre » : quel groupe ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'descendre finit par -re : <b>3e groupe</b>.' }
+        { q: '« sauter » : <strong>quel groupe</strong> ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 0, why: 'sauter se termine par -er : <b>1er groupe</b>.' },
+        { q: '« réussir » : <strong>quel groupe</strong> ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 1, why: 'On dit « nous réussissons » : <b>2e groupe</b>.' },
+        { q: '« partir » : <strong>quel groupe</strong> ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'On dit « nous partons », pas « nous partissons » : <b>3e groupe</b>.' },
+        { q: '« aller » : <strong>quel groupe</strong> ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'aller finit par -er, mais c\'est l\'exception : <b>3e groupe</b>.' },
+        { q: '« descendre » : <strong>quel groupe</strong> ?', c: ['1er groupe', '2e groupe', '3e groupe'], a: 2, why: 'descendre finit par -re : <b>3e groupe</b>.' }
       ]
     },
     {
@@ -833,9 +850,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 
   /* ---------- Étape 2 : contenus des niveaux ---------- */
   const LEVELS = [
-    { id: 1, name: 'Phrases simples', desc: 'Des phrases courtes à trous. Le sujet est un pronom.', kind: 'cloze', instr: 'Écris le verbe au présent.' },
-    { id: 2, name: 'Phrases complexes', desc: 'Le sujet est un groupe de mots, parfois loin du verbe.', kind: 'cloze', instr: 'Trouve le sujet, puis écris le verbe au présent.' },
-    { id: 3, name: 'Texte à trous', desc: 'Un petit texte avec des verbes à conjuguer.', kind: 'text', instr: 'Complète le texte avec les verbes au présent.' },
+    { id: 1, name: 'Phrases simples', desc: 'Des phrases courtes à trous. Le sujet est un pronom.', kind: 'cloze', instr: 'Écris le verbe <strong>au présent</strong>.' },
+    { id: 2, name: 'Phrases complexes', desc: 'Le sujet est un groupe de mots, parfois loin du verbe.', kind: 'cloze', instr: '<strong>Trouve le sujet</strong>, puis écris le verbe au présent.' },
+    { id: 3, name: 'Texte à trous', desc: 'Un petit texte avec des verbes à conjuguer.', kind: 'text', instr: 'Complète le texte avec les verbes <strong>au présent</strong>.' },
     { id: 4, name: 'Sujet et verbe', desc: 'Repère le verbe conjugué, son sujet et son groupe.', kind: 'spot', instr: '' },
     { id: 5, name: 'Transposer un texte', desc: 'Repère les mots qui changent, puis réécris le texte avec un autre sujet ou au présent.', kind: 'transpo', instr: '' }
   ];
@@ -1440,6 +1457,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     HARD = curParc() === 'orange';
     if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
     if (!unlocked(prof, id)) return;
+    accFoldSet(false);
     if (prof.gift){ prof.gift = 0; saveStore(); }
     S.R = freshRound(id);
     S.R.uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -1660,9 +1678,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   }
   function renderTp(R, u){
     const spotting = R.tp === 'A' || R.tp === 'B';
-    const step = R.tp === 'A' ? 'D\'abord, touche tous les verbes conjugués qui vont changer, puis valide.'
-      : R.tp === 'B' ? 'Ensuite, touche les autres mots qui vont changer, puis valide.'
-      : (u.chO.length ? 'Enfin, écris chaque mot qui change.' : 'Enfin, écris chaque verbe qui change.');
+    const step = R.tp === 'A' ? 'D\'abord, touche <strong>tous les verbes conjugués qui vont changer</strong>, puis valide.'
+      : R.tp === 'B' ? 'Ensuite, touche <strong>les autres mots qui vont changer</strong>, puis valide.'
+      : (u.chO.length ? 'Enfin, <strong>écris chaque mot qui change</strong>.' : 'Enfin, <strong>écris chaque verbe qui change</strong>.');
     $('instr').innerHTML = '<b>' + esc(u.instr) + '</b><span class="step">' + step + '</span>';
     $('textTitle').hidden = false;
     $('textTitle').textContent = u.title;
@@ -2700,7 +2718,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     if (R.kind === 'transpo') renderTp(R, u);
     else {
     const isSpot = R.kind === 'spot', isText = R.kind === 'text';
-    $('instr').textContent = isSpot ? spotInstr(R) : lv.instr;
+    $('instr').innerHTML = isSpot ? spotInstr(R) : lv.instr;
     $('textTitle').hidden = !isText;
     if (isText) $('textTitle').textContent = u.title;
     $('spotLegend').hidden = !isSpot;
@@ -2759,9 +2777,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   }
   const LEGEND0 = '<span><i class="sw v"></i>verbe</span><span><i class="sw s"></i>sujet</span>';
   function spotInstr(R){
-    if (R.step === 'verb') return 'Touche le verbe conjugué.';
-    if (R.step === 'subject') return 'Touche tous les mots du sujet, puis valide.';
-    if (R.step === 'group') return 'À quel groupe appartient ce verbe ?';
+    if (R.step === 'verb') return 'Touche <strong>le verbe conjugué</strong>.';
+    if (R.step === 'subject') return 'Touche <strong>tous les mots du sujet</strong>, puis valide.';
+    if (R.step === 'group') return 'À <strong>quel groupe</strong> appartient ce verbe ?';
     return 'Bilan de la phrase.';
   }
 
@@ -2918,6 +2936,36 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     else advanceGap();
   });
 
+  // Lettres accentuées repliées : la même ligne à toutes les questions ; ouverte, elle le reste jusqu'à la fin de la partie
+  function accFoldSet(open, from){
+    accOpen = !!open;
+    document.querySelectorAll('.accfold').forEach(f => {
+      f.classList.toggle('open', accOpen);
+      const b = f.querySelector('.accopen'); if (b) b.setAttribute('aria-expanded', accOpen ? 'true' : 'false');
+    });
+    const f = from && from.closest('.accfold'), k = f && f.querySelector('.acckeys');
+    if (accOpen && k && k.scrollIntoView){ try { k.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  }
+  let accFoldTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); accFoldTouch = Date.now(); accFoldSet(b.dataset.accfold === '1', b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); if (Date.now() - accFoldTouch < 700) return; accFoldSet(b.dataset.accfold === '1', b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (b && e.detail === 0) accFoldSet(b.dataset.accfold === '1', b); });
+  // Lettres accentuées : on écrit dans la case sans lui faire perdre le curseur
+  const ACC_KEYS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'ç', 'î', 'ï', 'ô', 'û', 'ù', 'œ'];
+  let accOpen = false; // rangée des lettres accentuées dépliée ?
+  function accKeysHTML(forId){ return '<div class="accfold' + (accOpen ? ' open' : '') + '"><button class="accopen" type="button" data-accfold="1" aria-expanded="' + (accOpen ? 'true' : 'false') + '"><span class="accmini" aria-hidden="true">é</span>Besoin d\'un accent ? Touche ici.</button><div class="acckeys" role="group" aria-label="Lettres accentuées">' + ACC_KEYS.map(c => '<button class="acckey" type="button" tabindex="-1" data-acc="' + c + '" data-for="' + forId + '">' + c + '</button>').join('') + '<button class="acckey accclose" type="button" data-accfold="0" aria-label="Replier les lettres accentuées">✕</button></div></div>'; }
+  function accInsert(btn){
+    const inp = $(btn.dataset.for); if (!inp || inp.disabled) return;
+    const ch = btn.dataset.acc, s = inp.selectionStart == null ? inp.value.length : inp.selectionStart, en = inp.selectionEnd == null ? s : inp.selectionEnd;
+    inp.value = inp.value.slice(0, s) + ch + inp.value.slice(en);
+    try { inp.focus({ preventScroll: true }); inp.setSelectionRange(s + ch.length, s + ch.length); } catch (e) {}
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  let accTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); accTouch = Date.now(); accInsert(b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); if (Date.now() - accTouch < 700) return; accInsert(b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (b && e.detail === 0) accInsert(b); });
+  $('accFoldMain').innerHTML = accKeysHTML('answerInput');
   $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
   $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
   $('resHome').addEventListener('click', goHome);

@@ -468,6 +468,22 @@ span.tok.has-gap{padding:0;margin:0}
 .learn-row .input.bad{border-color:var(--red);background:var(--red-bg)}
 #noneBtn{width:100%}
 .wil{display:block;margin-top:4px;font-weight:600;color:var(--stamp)}
+/* Consignes : ce qui est demandé est mis en valeur (28 novembre) */
+.instr strong,.check-q strong,.lead-q strong{font-weight:800;color:var(--pen)}
+.acckeys{display:flex;flex-wrap:wrap;gap:6px}
+.acckey{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.25rem;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.acckey:active{transform:translateY(2px);box-shadow:none}
+/* Lettres accentuées repliées : « Besoin d'un accent ? Touche ici. » déplie la rangée */
+.accfold{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.accopen{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:4px 14px 4px 5px;border-radius:999px;border:1.5px dashed var(--key-edge);background:transparent;color:var(--ink-soft);font:inherit;font-size:.95rem;font-weight:600;line-height:1.2;text-align:left;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.accopen .accmini{display:inline-grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1}
+.accopen:active{transform:translateY(1px)}
+.accfold .acckeys{display:none}
+.accfold.open .accopen{display:none}
+.accfold.open .acckeys{display:flex}
+.acckey.accclose{border-style:dashed;background:transparent;box-shadow:none;color:var(--ink-soft);font-family:inherit;font-size:1rem;font-weight:700}
+.answer-row[hidden] + .accfold{display:none}
+.answer-row[hidden] + .accfold-slot{display:none}
 </style>
 
 <div class="app">
@@ -588,6 +604,7 @@ span.tok.has-gap{padding:0;margin:0}
         <input class="input" id="answerInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Écris le verbe">
         <button class="btn-primary btn-inline" id="answerBtn" type="submit">Valider</button>
       </div>
+      <div class="accfold-slot" id="accFoldMain"></div>
       <div class="grp" id="choiceBtns" hidden></div>
       <button class="btn-primary" id="subjBtn" type="button" hidden>Valider</button>
       <button class="btn-secondary" id="noneBtn" type="button" hidden>Pas de réponse</button>
@@ -1175,7 +1192,7 @@ span.tok.has-gap{padding:0;margin:0}
     return 'Change le moment de la phrase : « ' + esc(k.t) + ' » ne change pas. Ce n\'est pas le verbe conjugué.';
   }
   function stepTapVerb(u, vi, q){
-    return { k: 'tap', mode: 'one', q: q || 'Touche le verbe conjugué.', want: Array.isArray(vi) ? vi : [vi], other: k => tokFbVerb(k), hint: HINT_VERB, mark: 'is-verb' };
+    return { k: 'tap', mode: 'one', q: q || 'Touche <strong>le verbe conjugué</strong>.', want: Array.isArray(vi) ? vi : [vi], other: k => tokFbVerb(k), hint: HINT_VERB, mark: 'is-verb' };
   }
   function infErrs(inf, form){
     const e = [{ m: [form], fb: 'Ça, c\'est le verbe conjugué. L\'infinitif, c\'est le nom du verbe : dis « il faut… » devant.' }];
@@ -1188,7 +1205,7 @@ span.tok.has-gap{padding:0;margin:0}
     return e;
   }
   function stepTypeInf(inf, form){
-    return { k: 'type', q: 'Écris l\'infinitif de ce verbe.', acc: [inf], errs: infErrs(inf, form), hint: 'Dis « il faut… » devant le verbe : il faut chanter, il faut finir, il faut prendre.', ph: 'L\'infinitif', show: esc(inf) };
+    return { k: 'type', q: 'Écris <strong>l\'infinitif</strong> de ce verbe.', acc: [inf], errs: infErrs(inf, form), hint: 'Dis « il faut… » devant le verbe : il faut chanter, il faut finir, il faut prendre.', ph: 'L\'infinitif', show: esc(inf) };
   }
   const GROUP_OPTS = ['1er groupe', '2e groupe', '3e groupe'];
   function stepGroup(inf){
@@ -1197,10 +1214,10 @@ span.tok.has-gap{padding:0;margin:0}
     fb[0] = inf === 'aller' ? 'aller se termine par -er, mais c\'est l\'exception : il n\'est pas du 1er groupe.' : '« ' + inf + ' » ne se termine pas par -er.';
     fb[1] = /ir$/.test(inf) ? 'On dit « nous ' + nous + ' », pas « nous …issons » : ce n\'est pas le 2e groupe.' : 'Le 2e groupe, ce sont des verbes en -ir qui font « nous …issons ».';
     fb[2] = g === 1 ? '« ' + inf + ' » se termine par -er : ce n\'est pas le 3e groupe.' : 'On dit « nous ' + nous + ' » : regarde bien la fin.';
-    return { k: 'choice', q: 'À quel groupe appartient le verbe « ' + inf + ' » ?', opts: GROUP_OPTS, a: g - 1, fb, hint: 'Regarde la fin de l\'infinitif, et pour les verbes en -ir, dis « nous … » au présent.' };
+    return { k: 'choice', q: 'À <strong>quel groupe</strong> appartient le verbe « ' + inf + ' » ?', opts: GROUP_OPTS, a: g - 1, fb, hint: 'Regarde la fin de l\'infinitif, et pour les verbes en -ir, dis « nous … » au présent.' };
   }
   function stepTense(tenses, t, extra){
-    return { k: 'choice', q: 'À quel temps est ce verbe ?', opts: tenses, a: tenses.indexOf(t), fb: Object.fromEntries(tenses.map((x, k) => [k, extraTenseFb(x, t)]).filter(x => x[1])), hint: extra || 'Change le moment de la phrase : hier, aujourd\'hui, demain. Regarde aussi la terminaison.' };
+    return { k: 'choice', q: 'À <strong>quel temps</strong> est ce verbe ?', opts: tenses, a: tenses.indexOf(t), fb: Object.fromEntries(tenses.map((x, k) => [k, extraTenseFb(x, t)]).filter(x => x[1])), hint: extra || 'Change le moment de la phrase : hier, aujourd\'hui, demain. Regarde aussi la terminaison.' };
   }
   function extraTenseFb(chosen, t){
     if (chosen === t) return null;
@@ -1277,7 +1294,7 @@ span.tok.has-gap{padding:0;margin:0}
   function stepTypeForm(inf, t, p, o){
     o = o || {};
     const ans = conj(inf, t, p, o);
-    const st = { k: 'type', q: o.q || ('Écris le verbe « ' + inf + ' » ' + AU[t] + '.'), acc: [ans].concat(o.alt || []), errs: formErrs(inf, t, p, o), hint: o.hint || RULE[t], ph: 'Le verbe ' + AU[t], show: esc(o.subj ? withSubj(o.subj, ans) : ans), strictAcc: t !== 'présent' && t !== 'imparfait' && t !== 'futur' };
+    const st = { k: 'type', q: o.q || ('Écris le verbe « ' + inf + ' » <strong>' + AU[t] + '</strong>.'), acc: [ans].concat(o.alt || []), errs: formErrs(inf, t, p, o), hint: o.hint || RULE[t], ph: 'Le verbe ' + AU[t], show: esc(o.subj ? withSubj(o.subj, ans) : ans), strictAcc: t !== 'présent' && t !== 'imparfait' && t !== 'futur' };
     if (o.gap !== undefined) st.gap = o.gap;
     return st;
   }
@@ -1319,7 +1336,7 @@ span.tok.has-gap{padding:0;margin:0}
       else fbA[idx] = '« ' + esc(k.t) + ' » ne change pas : ce n\'est pas un verbe conjugué.';
     });
     const nV = vch.length;
-    const stA = { k: 'tap', mode: nV === 1 && opts.one ? 'one' : 'set', q: opts.qA || (nV === 1 && opts.one ? 'Touche le verbe qui va changer.' : 'Touche tous les verbes conjugués qui vont changer, puis valide.'), want: vch, fb: fbA, other: k => tokFbVerb(k), hint: opts.hintA || 'Encadre avec « ne … pas » ou change le moment pour trouver les verbes conjugués. Un verbe à l\'infinitif ne change jamais.', mark: 'is-verb', btn: 'Valider les verbes', miss: n => n === 1 ? 'Il te manque encore 1 verbe qui change.' : 'Il te manque encore ' + n + ' verbes qui changent.' };
+    const stA = { k: 'tap', mode: nV === 1 && opts.one ? 'one' : 'set', q: opts.qA || (nV === 1 && opts.one ? 'Touche <strong>le verbe qui va changer</strong>.' : 'Touche <strong>tous les verbes conjugués qui vont changer</strong>, puis valide.'), want: vch, fb: fbA, other: k => tokFbVerb(k), hint: opts.hintA || 'Encadre avec « ne … pas » ou change le moment pour trouver les verbes conjugués. Un verbe à l\'infinitif ne change jamais.', mark: 'is-verb', btn: 'Valider les verbes', miss: n => n === 1 ? 'Il te manque encore 1 verbe qui change.' : 'Il te manque encore ' + n + ' verbes qui changent.' };
     const steps = [stA];
     let stB = null;
     if (och.length && opts.otherWords !== false){
@@ -1334,7 +1351,7 @@ span.tok.has-gap{padding:0;margin:0}
       });
       let blue = false;
       auto.forEach(idx => { if (src[idx].subj && !tapOnly.includes(idx)){ u.marks['text' + idx] = 'is-subj'; blue = true; } });
-      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant les autres mots qui changent' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
+      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant <strong>les autres mots qui changent</strong>' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
       steps.push(stB);
     }
     const writes = changed.filter(k => gapOf[k] !== undefined).map(k => {
@@ -1372,7 +1389,7 @@ span.tok.has-gap{padding:0;margin:0}
         else if (/x$/.test(w) && !/x$/.test(s.t)) add([s.t + 's'], 'Ce nom prend un x au pluriel : un oiseau, des oiseaux ; un hibou, des hiboux.');
         if (/s$/.test(w) && opts.to.sj.p >= 3 && !/s$/.test(s.t)) add([s.t], 'Au pluriel, ce mot prend un s.');
       }
-      return { st: { k: 'type', q: 'Écris le mot qui remplace « ' + esc(s.t) + ' ».', acc, gap: gapOf[k], hint: why, why, ph: 'Le mot', show: esc(tk.t), strictAcc: true, errs }, sum: esc(s.t) + ' → <b>' + esc(tk.t) + '</b>' };
+      return { st: { k: 'type', q: 'Écris <strong>le mot qui remplace</strong> « ' + esc(s.t) + ' ».', acc, gap: gapOf[k], hint: why, why, ph: 'Le mot', show: esc(tk.t), strictAcc: true, errs }, sum: esc(s.t) + ' → <b>' + esc(tk.t) + '</b>' };
     });
     const sumA = () => 'Les verbes qui changent : ' + vch.map(k => '<b>' + esc(src[k].t) + '</b>').join(', ');
     if (opts.split){
@@ -1399,8 +1416,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<p>Pour nommer un verbe, on dit son <b>infinitif</b> : dis « il faut… » devant. <span class="ex">il dormait → il faut <b>dormir</b></span></p>' +
             '<p class="warn">Un verbe à l\'infinitif ne change pas : dans « Léa aime dessiner », seul <b>aime</b> est conjugué.</p>',
       checks: [
-        { type: true, q: '« Mes cousins veulent jouer. » Écris le verbe conjugué de cette phrase.', acc: ['veulent'], errs: [{ m: ['jouer'], fb: '« jouer » est à l\'infinitif : il ne change pas.' }, { m: ['cousins', 'mes cousins', 'mes'], fb: 'C\'est le sujet : il dit de qui on parle.' }, { m: ['vouloir'], fb: 'Ça, c\'est l\'infinitif. Écris le verbe comme il est dans la phrase.' }], why: '« veulent » change si on dit « Demain, mes cousins voudront jouer » : c\'est le verbe conjugué.', hint: 'Change le moment : quel mot change ?' },
-        { type: true, q: '« nous bâtissons » : écris l\'infinitif.', acc: ['bâtir'], errs: [{ m: ['bâtissons', 'batissons'], fb: 'Ça, c\'est le verbe conjugué.' }, { m: ['bâtisser', 'batisser', 'bâtissoner'], fb: 'Dis « il faut… » devant.' }], why: 'On dit « il faut bâtir » : c\'est le verbe <b>bâtir</b>.', hint: 'Dis « il faut… » devant.' }
+        { type: true, q: '« Mes cousins veulent jouer. » Écris <strong>le verbe conjugué</strong> de cette phrase.', acc: ['veulent'], errs: [{ m: ['jouer'], fb: '« jouer » est à l\'infinitif : il ne change pas.' }, { m: ['cousins', 'mes cousins', 'mes'], fb: 'C\'est le sujet : il dit de qui on parle.' }, { m: ['vouloir'], fb: 'Ça, c\'est l\'infinitif. Écris le verbe comme il est dans la phrase.' }], why: '« veulent » change si on dit « Demain, mes cousins voudront jouer » : c\'est le verbe conjugué.', hint: 'Change le moment : quel mot change ?' },
+        { type: true, q: '« nous bâtissons » : écris <strong>l\'infinitif</strong>.', acc: ['bâtir'], errs: [{ m: ['bâtissons', 'batissons'], fb: 'Ça, c\'est le verbe conjugué.' }, { m: ['bâtisser', 'batisser', 'bâtissoner'], fb: 'Dis « il faut… » devant.' }], why: 'On dit « il faut bâtir » : c\'est le verbe <b>bâtir</b>.', hint: 'Dis « il faut… » devant.' }
       ]
     },
     {
@@ -1411,8 +1428,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<div class="grow"><span class="gbadge">3e</span><span>Tous les autres : aller, les verbes en -ir sans -issons (partir → nous partons), en <b>-re</b> (lire) et en <b>-oir</b> (savoir).</span></div>' +
             '</div>',
       checks: [
-        { q: '« bondir » : quel groupe ?', c: GROUP_OPTS, a: 1, why: 'On dit « nous bondissons » : <b>2e groupe</b>.' },
-        { q: '« courir » : quel groupe ?', c: GROUP_OPTS, a: 2, why: 'On dit « nous courons », pas « nous courissons » : <b>3e groupe</b>.' }
+        { q: '« bondir » : <strong>quel groupe</strong> ?', c: GROUP_OPTS, a: 1, why: 'On dit « nous bondissons » : <b>2e groupe</b>.' },
+        { q: '« courir » : <strong>quel groupe</strong> ?', c: GROUP_OPTS, a: 2, why: 'On dit « nous courons », pas « nous courissons » : <b>3e groupe</b>.' }
       ]
     },
     {
@@ -1422,8 +1439,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<p>La terminaison a elle-même deux morceaux : la <b>marque de temps</b>, puis la <b>marque de personne</b>.</p>' +
             '<p class="ex">nous <span class="p-rad">dans</span>-<span class="p-tps">i</span>-<span class="p-pers">ons</span> (imparfait) · tu <span class="p-rad">danse</span>-<span class="p-tps">r</span>-<span class="p-pers">as</span> (futur)</p>',
       checks: [
-        { type: true, q: '« ils jouaient » : écris la terminaison du verbe.', acc: ['aient', '-aient'], errs: [{ m: ['jou', 'jouaient'], fb: 'La terminaison, c\'est seulement la fin qui change.' }, { m: ['ent', '-ent'], fb: 'C\'est la marque de personne. La terminaison commence avant.' }, { m: ['ai', 'ai-'], fb: 'C\'est la marque de temps. La terminaison continue après.' }], why: 'jou | <b>aient</b> : marque de temps <b>ai</b>, marque de personne <b>ent</b>.', hint: 'Enlève le radical, « jou ».' },
-        { type: true, q: '« nous chanterons » : écris la marque de temps.', acc: ['r', 'r-', '-r-', '-r'], errs: [{ m: ['ons', '-ons'], fb: 'C\'est la marque de personne (avec nous).' }, { m: ['rons', '-rons'], fb: 'C\'est toute la terminaison : la marque de temps est le premier morceau.' }], why: 'nous chante-<b>r</b>-ons : au futur, la marque de temps est <b>r</b>.', hint: 'Au futur, la marque de temps est une seule lettre, juste avant la marque de personne.' }
+        { type: true, q: '« ils jouaient » : écris <strong>la terminaison</strong> du verbe.', acc: ['aient', '-aient'], errs: [{ m: ['jou', 'jouaient'], fb: 'La terminaison, c\'est seulement la fin qui change.' }, { m: ['ent', '-ent'], fb: 'C\'est la marque de personne. La terminaison commence avant.' }, { m: ['ai', 'ai-'], fb: 'C\'est la marque de temps. La terminaison continue après.' }], why: 'jou | <b>aient</b> : marque de temps <b>ai</b>, marque de personne <b>ent</b>.', hint: 'Enlève le radical, « jou ».' },
+        { type: true, q: '« nous chanterons » : écris <strong>la marque de temps</strong>.', acc: ['r', 'r-', '-r-', '-r'], errs: [{ m: ['ons', '-ons'], fb: 'C\'est la marque de personne (avec nous).' }, { m: ['rons', '-rons'], fb: 'C\'est toute la terminaison : la marque de temps est le premier morceau.' }], why: 'nous chante-<b>r</b>-ons : au futur, la marque de temps est <b>r</b>.', hint: 'Au futur, la marque de temps est une seule lettre, juste avant la marque de personne.' }
       ]
     },
     {
@@ -1432,8 +1449,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<p>Le radical vient de « nous … » au présent : <span class="ex">nous finissons → je <b>finiss</b>ais · nous faisons → je <b>fais</b>ais</span> Sauf être : j\'<b>ét</b>ais.</p>' +
             '<ul><li>Verbes en -ger : un <b>e</b> devant a (je rangeais), pas devant i (nous rangions).</li><li>Verbes en -cer : <b>ç</b> devant a (je plaçais), c devant i (nous placions).</li><li>Avec nous et vous, on n\'oublie pas le <b>i</b> de l\'imparfait : nous oubli-<b>i</b>-ons, vous voy-<b>i</b>-ez.</li></ul>',
       checks: [
-        { type: true, q: 'Écris le verbe « remplir » à l\'imparfait avec « ils ».', acc: ['remplissaient'], errs: [{ m: ['remplaient', 'remplirent'], fb: 'Le radical vient de « nous remplissons ».' }, { m: ['remplissent'], fb: 'Ça, c\'est le présent.' }, { m: ['remplissait', 'remplissais'], fb: 'Avec ils, la terminaison est -aient.' }], why: 'nous remplissons → ils <b>rempliss</b>aient.', hint: 'Dis « nous … » au présent pour trouver le radical.' },
-        { type: true, q: 'Écris le verbe « voyager » à l\'imparfait avec « nous ».', acc: ['voyagions'], errs: [{ m: ['voyageions'], fb: 'Devant i, pas besoin de e : le g fait déjà [ʒ].' }, { m: ['voyageons'], fb: 'Ça, c\'est le présent.' }, { m: ['voyageais', 'voyageait', 'voyagais'], fb: 'Avec nous, la terminaison est -ions.' }], why: 'Devant i, pas de e : nous <b>voyagions</b>.', hint: 'Regarde la lettre qui suit le g.' }
+        { type: true, q: 'Écris le verbe « remplir » <strong>à l\'imparfait</strong> avec « ils ».', acc: ['remplissaient'], errs: [{ m: ['remplaient', 'remplirent'], fb: 'Le radical vient de « nous remplissons ».' }, { m: ['remplissent'], fb: 'Ça, c\'est le présent.' }, { m: ['remplissait', 'remplissais'], fb: 'Avec ils, la terminaison est -aient.' }], why: 'nous remplissons → ils <b>rempliss</b>aient.', hint: 'Dis « nous … » au présent pour trouver le radical.' },
+        { type: true, q: 'Écris le verbe « voyager » <strong>à l\'imparfait</strong> avec « nous ».', acc: ['voyagions'], errs: [{ m: ['voyageions'], fb: 'Devant i, pas besoin de e : le g fait déjà [ʒ].' }, { m: ['voyageons'], fb: 'Ça, c\'est le présent.' }, { m: ['voyageais', 'voyageait', 'voyagais'], fb: 'Avec nous, la terminaison est -ions.' }], why: 'Devant i, pas de e : nous <b>voyagions</b>.', hint: 'Regarde la lettre qui suit le g.' }
       ]
     },
     {
@@ -1443,8 +1460,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<li>Radicaux à connaître : je <b>serai</b>, j\'<b>aurai</b>, j\'<b>irai</b>, je <b>ferai</b>, je <b>viendrai</b>, je <b>verrai</b>, je <b>pourrai</b>, je <b>voudrai</b>.</li></ul>' +
             '<p class="warn">En orange : y devient i (je nettoierai), jeter et appeler doublent la consonne (je jetterai), e devient è (j\'achèterai).</p>',
       checks: [
-        { type: true, q: 'Écris le verbe « remercier » au futur avec « je ».', acc: ['remercierai'], errs: [{ m: ['remercirai'], fb: 'Pour le 1er groupe, on garde le e de l\'infinitif, même si on ne l\'entend pas.' }, { m: ['remerciera', 'remercieras'], fb: 'Avec je, la marque de personne est -ai.' }], why: 'remercier + ai → je <b>remercierai</b>.', hint: 'Écris l\'infinitif en entier, puis la marque de personne.' },
-        { type: true, q: 'Écris le verbe « faire » au futur avec « vous ».', acc: ['ferez'], errs: [{ m: ['fairez', 'fairerez', 'faisez'], fb: 'faire change de radical au futur.' }, { m: ['faites'], fb: 'Ça, c\'est le présent.' }, { m: ['feront', 'ferons'], fb: 'Avec vous, la marque de personne est -ez.' }], why: 'faire → je ferai, vous <b>ferez</b>.', hint: 'Relis les radicaux à connaître.' }
+        { type: true, q: 'Écris le verbe « remercier » <strong>au futur</strong> avec « je ».', acc: ['remercierai'], errs: [{ m: ['remercirai'], fb: 'Pour le 1er groupe, on garde le e de l\'infinitif, même si on ne l\'entend pas.' }, { m: ['remerciera', 'remercieras'], fb: 'Avec je, la marque de personne est -ai.' }], why: 'remercier + ai → je <b>remercierai</b>.', hint: 'Écris l\'infinitif en entier, puis la marque de personne.' },
+        { type: true, q: 'Écris le verbe « faire » <strong>au futur</strong> avec « vous ».', acc: ['ferez'], errs: [{ m: ['fairez', 'fairerez', 'faisez'], fb: 'faire change de radical au futur.' }, { m: ['faites'], fb: 'Ça, c\'est le présent.' }, { m: ['feront', 'ferons'], fb: 'Avec vous, la marque de personne est -ez.' }], why: 'faire → je ferai, vous <b>ferez</b>.', hint: 'Relis les radicaux à connaître.' }
       ]
     }
   ];
@@ -1513,7 +1530,7 @@ span.tok.has-gap{padding:0;margin:0}
       if (t === 'imparfait') return 'La marque de temps de l\'imparfait est ai (ou i avec nous et vous). La marque de personne vient après.';
       return 'La marque de temps du futur est r. La marque de personne vient après : -ai, -as, -a, -ons, -ez, -ont.';
     };
-    const qCut = two ? 'Coupe le verbe en trois : le radical | la marque de temps | la marque de personne. Touche les espaces entre les lettres, puis valide.' : 'Coupe le verbe en deux : le radical | la terminaison. Touche l\'espace entre deux lettres, puis valide.';
+    const qCut = two ? 'Coupe le verbe <strong>en trois</strong> : le radical | la marque de temps | la marque de personne. Touche les espaces entre les lettres, puis valide.' : 'Coupe le verbe <strong>en deux</strong> : le radical | la terminaison. Touche l\'espace entre deux lettres, puis valide.';
     const cut = { k: 'cut', q: qCut, word: ci.word, cuts: ci.cuts, fbFn, hint: t === 'présent' ? RULE['présent'] : RULE[t], show: cutWord(ci.word, ci.cuts) };
     u.items = [{ steps: [stepTapVerb(u, s.vi), cut, stepTense(TENSES_A, t)], sum: () => cutWord(ci.word, ci.cuts) + ' <span class="tries">(' + v + ', ' + t + ')</span>' }];
     return u;
@@ -1531,7 +1548,7 @@ span.tok.has-gap{padding:0;margin:0}
     let sj2 = sj;
     if (changeP){ sj2 = pick(SUBJ_PRO.filter(x => x.p !== sj.p)); }
     const u = transposeUnit({ tpl, from: { sj, t: 'présent' }, to: { sj: sj2, t }, one: true, otherWords: false,
-      q: 'Réécris la phrase ' + AU[t] + (changeP ? ' avec le sujet « ' + sj2.w + ' »' : '') + '.' });
+      q: 'Réécris la phrase <strong>' + AU[t] + (changeP ? ' avec le sujet « ' + sj2.w + ' »' : '') + '</strong>.' });
     return u;
   }
   /* Niveau 5 : autrefois ou demain ? */
@@ -1569,7 +1586,7 @@ span.tok.has-gap{padding:0;margin:0}
     const tpl = pick(HARD ? SC_O : SC_J);
     const sj = pick(SUBJ_ALL().filter(x => !(x.p === 3 && /chez nous/.test(tpl))));
     const u = transposeUnit({ tpl, from: { sj, t: 'présent' }, to: { sj, t }, time: TIME_A, otherWords: false,
-      q: 'Réécris le texte en commençant par « ' + capFirst(TIME_A[t]) + ' ».', hintA: 'Tous les verbes conjugués changent quand on change le moment. Les verbes à l\'infinitif ne changent pas.' });
+      q: 'Réécris le texte <strong>en commençant par « ' + capFirst(TIME_A[t]) + ' »</strong>.', hintA: 'Tous les verbes conjugués changent quand on change le moment. Les verbes à l\'infinitif ne changent pas.' });
     u.items[0].steps.forEach(st => { if (st.k === 'type'){ st.q = st.q.replace(/ (à l'imparfait|au futur)\.$/, ' dans le nouveau texte.'); st.hint = 'Avec « ' + capFirst(TIME_A[t]) + ' », quel temps faut-il ? ' + (t === 'futur' ? 'Le futur : -rai, -ras, -ra…' : 'L\'imparfait : -ais, -ais, -ait…'); } });
     u.long = true;
     return u;
@@ -1799,6 +1816,7 @@ span.tok.has-gap{padding:0;margin:0}
     HARD = curParc() === 'orange';
     if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
     if (!unlocked(prof, id)) return;
+    accFoldSet(false);
     if (prof.gift){ prof.gift = 0; saveStore(); }
     S.R = freshRound(id);
     S.R.uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -2839,7 +2857,7 @@ span.tok.has-gap{padding:0;margin:0}
     let h = '<h2>' + card.title + '</h2>' + card.html;
     h += '<div class="check" id="learnCheck"><span class="eyebrow">Question ' + (L.check + 1) + ' sur ' + card.checks.length + '</span><p class="check-q">' + ch.q + '</p>';
     if (ch.type){
-      h += '<form class="answer-row learn-row" id="learnForm" novalidate><input class="input' + (L.last === 'bad' && !right ? ' bad' : '') + '" id="learnInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="' + (ch.ph || 'Écris ta réponse') + '"' + (right ? ' disabled value="' + esc(L.revealed ? ch.acc[0] : (document.getElementById('learnInput') || {}).value || ch.acc[0]) + '"' : '') + '><button class="btn-primary btn-inline" type="submit"' + (right ? ' disabled' : '') + '>Valider</button></form>';
+      h += '<form class="answer-row learn-row" id="learnForm" novalidate><input class="input' + (L.last === 'bad' && !right ? ' bad' : '') + '" id="learnInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="' + (ch.ph || 'Écris ta réponse') + '"' + (right ? ' disabled value="' + esc(L.revealed ? ch.acc[0] : (document.getElementById('learnInput') || {}).value || ch.acc[0]) + '"' : '') + '><button class="btn-primary btn-inline" type="submit"' + (right ? ' disabled' : '') + '>Valider</button></form>' + (right ? '' : accKeysHTML('learnInput'));
       if (right) h += '<p class="why ' + (L.revealed ? 'bad' : 'good') + '">' + (L.revealed ? 'La bonne réponse : <b>' + esc(ch.acc[0]) + '</b>. ' : '') + ch.why + '</p>';
       else if (L.msg) h += '<p class="why bad">' + L.msg + '</p>';
     } else {
@@ -3152,6 +3170,36 @@ span.tok.has-gap{padding:0;margin:0}
   $('choiceBtns').addEventListener('click', e => { const b = e.target.closest('[data-pick]'); if (b) choicePick(+b.dataset.pick); });
   $('continueBtn').addEventListener('click', onContinue);
 
+  // Lettres accentuées repliées : la même ligne à toutes les questions ; ouverte, elle le reste jusqu'à la fin de la partie
+  function accFoldSet(open, from){
+    accOpen = !!open;
+    document.querySelectorAll('.accfold').forEach(f => {
+      f.classList.toggle('open', accOpen);
+      const b = f.querySelector('.accopen'); if (b) b.setAttribute('aria-expanded', accOpen ? 'true' : 'false');
+    });
+    const f = from && from.closest('.accfold'), k = f && f.querySelector('.acckeys');
+    if (accOpen && k && k.scrollIntoView){ try { k.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  }
+  let accFoldTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); accFoldTouch = Date.now(); accFoldSet(b.dataset.accfold === '1', b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); if (Date.now() - accFoldTouch < 700) return; accFoldSet(b.dataset.accfold === '1', b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (b && e.detail === 0) accFoldSet(b.dataset.accfold === '1', b); });
+  // Lettres accentuées : on écrit dans la case sans lui faire perdre le curseur
+  const ACC_KEYS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'ç', 'î', 'ï', 'ô', 'û', 'ù', 'œ'];
+  let accOpen = false; // rangée des lettres accentuées dépliée ?
+  function accKeysHTML(forId){ return '<div class="accfold' + (accOpen ? ' open' : '') + '"><button class="accopen" type="button" data-accfold="1" aria-expanded="' + (accOpen ? 'true' : 'false') + '"><span class="accmini" aria-hidden="true">é</span>Besoin d\'un accent ? Touche ici.</button><div class="acckeys" role="group" aria-label="Lettres accentuées">' + ACC_KEYS.map(c => '<button class="acckey" type="button" tabindex="-1" data-acc="' + c + '" data-for="' + forId + '">' + c + '</button>').join('') + '<button class="acckey accclose" type="button" data-accfold="0" aria-label="Replier les lettres accentuées">✕</button></div></div>'; }
+  function accInsert(btn){
+    const inp = $(btn.dataset.for); if (!inp || inp.disabled) return;
+    const ch = btn.dataset.acc, s = inp.selectionStart == null ? inp.value.length : inp.selectionStart, en = inp.selectionEnd == null ? s : inp.selectionEnd;
+    inp.value = inp.value.slice(0, s) + ch + inp.value.slice(en);
+    try { inp.focus({ preventScroll: true }); inp.setSelectionRange(s + ch.length, s + ch.length); } catch (e) {}
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  let accTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); accTouch = Date.now(); accInsert(b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); if (Date.now() - accTouch < 700) return; accInsert(b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (b && e.detail === 0) accInsert(b); });
+  $('accFoldMain').innerHTML = accKeysHTML('answerInput');
   $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
   $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
   $('resHome').addEventListener('click', goHome);

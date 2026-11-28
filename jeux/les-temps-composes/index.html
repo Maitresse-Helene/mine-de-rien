@@ -468,6 +468,22 @@ span.tok.has-gap{padding:0;margin:0}
 .learn-row .input.bad{border-color:var(--red);background:var(--red-bg)}
 #noneBtn{width:100%}
 .wil{display:block;margin-top:4px;font-weight:600;color:var(--stamp)}
+/* Consignes : ce qui est demandé est mis en valeur (28 novembre) */
+.instr strong,.check-q strong,.lead-q strong{font-weight:800;color:var(--pen)}
+.acckeys{display:flex;flex-wrap:wrap;gap:6px}
+.acckey{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.25rem;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.acckey:active{transform:translateY(2px);box-shadow:none}
+/* Lettres accentuées repliées : « Besoin d'un accent ? Touche ici. » déplie la rangée */
+.accfold{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.accopen{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:4px 14px 4px 5px;border-radius:999px;border:1.5px dashed var(--key-edge);background:transparent;color:var(--ink-soft);font:inherit;font-size:.95rem;font-weight:600;line-height:1.2;text-align:left;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.accopen .accmini{display:inline-grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1}
+.accopen:active{transform:translateY(1px)}
+.accfold .acckeys{display:none}
+.accfold.open .accopen{display:none}
+.accfold.open .acckeys{display:flex}
+.acckey.accclose{border-style:dashed;background:transparent;box-shadow:none;color:var(--ink-soft);font-family:inherit;font-size:1rem;font-weight:700}
+.answer-row[hidden] + .accfold{display:none}
+.answer-row[hidden] + .accfold-slot{display:none}
 </style>
 
 <div class="app">
@@ -588,6 +604,7 @@ span.tok.has-gap{padding:0;margin:0}
         <input class="input" id="answerInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Écris le verbe">
         <button class="btn-primary btn-inline" id="answerBtn" type="submit">Valider</button>
       </div>
+      <div class="accfold-slot" id="accFoldMain"></div>
       <div class="grp" id="choiceBtns" hidden></div>
       <button class="btn-primary" id="subjBtn" type="button" hidden>Valider</button>
       <button class="btn-secondary" id="noneBtn" type="button" hidden>Pas de réponse</button>
@@ -1175,7 +1192,7 @@ span.tok.has-gap{padding:0;margin:0}
     return 'Change le moment de la phrase : « ' + esc(k.t) + ' » ne change pas. Ce n\'est pas le verbe conjugué.';
   }
   function stepTapVerb(u, vi, q){
-    return { k: 'tap', mode: 'one', q: q || 'Touche le verbe conjugué.', want: Array.isArray(vi) ? vi : [vi], other: k => tokFbVerb(k), hint: HINT_VERB, mark: 'is-verb' };
+    return { k: 'tap', mode: 'one', q: q || 'Touche <strong>le verbe conjugué</strong>.', want: Array.isArray(vi) ? vi : [vi], other: k => tokFbVerb(k), hint: HINT_VERB, mark: 'is-verb' };
   }
   function infErrs(inf, form){
     const e = [{ m: [form], fb: 'Ça, c\'est le verbe conjugué. L\'infinitif, c\'est le nom du verbe : dis « il faut… » devant.' }];
@@ -1188,7 +1205,7 @@ span.tok.has-gap{padding:0;margin:0}
     return e;
   }
   function stepTypeInf(inf, form){
-    return { k: 'type', q: 'Écris l\'infinitif de ce verbe.', acc: [inf], errs: infErrs(inf, form), hint: 'Dis « il faut… » devant le verbe : il faut chanter, il faut finir, il faut prendre.', ph: 'L\'infinitif', show: esc(inf) };
+    return { k: 'type', q: 'Écris <strong>l\'infinitif</strong> de ce verbe.', acc: [inf], errs: infErrs(inf, form), hint: 'Dis « il faut… » devant le verbe : il faut chanter, il faut finir, il faut prendre.', ph: 'L\'infinitif', show: esc(inf) };
   }
   const GROUP_OPTS = ['1er groupe', '2e groupe', '3e groupe'];
   function stepGroup(inf){
@@ -1197,10 +1214,10 @@ span.tok.has-gap{padding:0;margin:0}
     fb[0] = inf === 'aller' ? 'aller se termine par -er, mais c\'est l\'exception : il n\'est pas du 1er groupe.' : '« ' + inf + ' » ne se termine pas par -er.';
     fb[1] = /ir$/.test(inf) ? 'On dit « nous ' + nous + ' », pas « nous …issons » : ce n\'est pas le 2e groupe.' : 'Le 2e groupe, ce sont des verbes en -ir qui font « nous …issons ».';
     fb[2] = g === 1 ? '« ' + inf + ' » se termine par -er : ce n\'est pas le 3e groupe.' : 'On dit « nous ' + nous + ' » : regarde bien la fin.';
-    return { k: 'choice', q: 'À quel groupe appartient le verbe « ' + inf + ' » ?', opts: GROUP_OPTS, a: g - 1, fb, hint: 'Regarde la fin de l\'infinitif, et pour les verbes en -ir, dis « nous … » au présent.' };
+    return { k: 'choice', q: 'À <strong>quel groupe</strong> appartient le verbe « ' + inf + ' » ?', opts: GROUP_OPTS, a: g - 1, fb, hint: 'Regarde la fin de l\'infinitif, et pour les verbes en -ir, dis « nous … » au présent.' };
   }
   function stepTense(tenses, t, extra){
-    return { k: 'choice', q: 'À quel temps est ce verbe ?', opts: tenses, a: tenses.indexOf(t), fb: Object.fromEntries(tenses.map((x, k) => [k, extraTenseFb(x, t)]).filter(x => x[1])), hint: extra || 'Change le moment de la phrase : hier, aujourd\'hui, demain. Regarde aussi la terminaison.' };
+    return { k: 'choice', q: 'À <strong>quel temps</strong> est ce verbe ?', opts: tenses, a: tenses.indexOf(t), fb: Object.fromEntries(tenses.map((x, k) => [k, extraTenseFb(x, t)]).filter(x => x[1])), hint: extra || 'Change le moment de la phrase : hier, aujourd\'hui, demain. Regarde aussi la terminaison.' };
   }
   function extraTenseFb(chosen, t){
     if (chosen === t) return null;
@@ -1277,7 +1294,7 @@ span.tok.has-gap{padding:0;margin:0}
   function stepTypeForm(inf, t, p, o){
     o = o || {};
     const ans = conj(inf, t, p, o);
-    const st = { k: 'type', q: o.q || ('Écris le verbe « ' + inf + ' » ' + AU[t] + '.'), acc: [ans].concat(o.alt || []), errs: formErrs(inf, t, p, o), hint: o.hint || RULE[t], ph: 'Le verbe ' + AU[t], show: esc(o.subj ? withSubj(o.subj, ans) : ans), strictAcc: t !== 'présent' && t !== 'imparfait' && t !== 'futur' };
+    const st = { k: 'type', q: o.q || ('Écris le verbe « ' + inf + ' » <strong>' + AU[t] + '</strong>.'), acc: [ans].concat(o.alt || []), errs: formErrs(inf, t, p, o), hint: o.hint || RULE[t], ph: 'Le verbe ' + AU[t], show: esc(o.subj ? withSubj(o.subj, ans) : ans), strictAcc: t !== 'présent' && t !== 'imparfait' && t !== 'futur' };
     if (o.gap !== undefined) st.gap = o.gap;
     return st;
   }
@@ -1319,7 +1336,7 @@ span.tok.has-gap{padding:0;margin:0}
       else fbA[idx] = '« ' + esc(k.t) + ' » ne change pas : ce n\'est pas un verbe conjugué.';
     });
     const nV = vch.length;
-    const stA = { k: 'tap', mode: nV === 1 && opts.one ? 'one' : 'set', q: opts.qA || (nV === 1 && opts.one ? 'Touche le verbe qui va changer.' : 'Touche tous les verbes conjugués qui vont changer, puis valide.'), want: vch, fb: fbA, other: k => tokFbVerb(k), hint: opts.hintA || 'Encadre avec « ne … pas » ou change le moment pour trouver les verbes conjugués. Un verbe à l\'infinitif ne change jamais.', mark: 'is-verb', btn: 'Valider les verbes', miss: n => n === 1 ? 'Il te manque encore 1 verbe qui change.' : 'Il te manque encore ' + n + ' verbes qui changent.' };
+    const stA = { k: 'tap', mode: nV === 1 && opts.one ? 'one' : 'set', q: opts.qA || (nV === 1 && opts.one ? 'Touche <strong>le verbe qui va changer</strong>.' : 'Touche <strong>tous les verbes conjugués qui vont changer</strong>, puis valide.'), want: vch, fb: fbA, other: k => tokFbVerb(k), hint: opts.hintA || 'Encadre avec « ne … pas » ou change le moment pour trouver les verbes conjugués. Un verbe à l\'infinitif ne change jamais.', mark: 'is-verb', btn: 'Valider les verbes', miss: n => n === 1 ? 'Il te manque encore 1 verbe qui change.' : 'Il te manque encore ' + n + ' verbes qui changent.' };
     const steps = [stA];
     let stB = null;
     if (och.length && opts.otherWords !== false){
@@ -1334,7 +1351,7 @@ span.tok.has-gap{padding:0;margin:0}
       });
       let blue = false;
       auto.forEach(idx => { if (src[idx].subj && !tapOnly.includes(idx)){ u.marks['text' + idx] = 'is-subj'; blue = true; } });
-      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant les autres mots qui changent' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
+      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant <strong>les autres mots qui changent</strong>' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
       steps.push(stB);
     }
     const writes = changed.filter(k => gapOf[k] !== undefined).map(k => {
@@ -1372,7 +1389,7 @@ span.tok.has-gap{padding:0;margin:0}
         else if (/x$/.test(w) && !/x$/.test(s.t)) add([s.t + 's'], 'Ce nom prend un x au pluriel : un oiseau, des oiseaux ; un hibou, des hiboux.');
         if (/s$/.test(w) && opts.to.sj.p >= 3 && !/s$/.test(s.t)) add([s.t], 'Au pluriel, ce mot prend un s.');
       }
-      return { st: { k: 'type', q: 'Écris le mot qui remplace « ' + esc(s.t) + ' ».', acc, gap: gapOf[k], hint: why, why, ph: 'Le mot', show: esc(tk.t), strictAcc: true, errs }, sum: esc(s.t) + ' → <b>' + esc(tk.t) + '</b>' };
+      return { st: { k: 'type', q: 'Écris <strong>le mot qui remplace</strong> « ' + esc(s.t) + ' ».', acc, gap: gapOf[k], hint: why, why, ph: 'Le mot', show: esc(tk.t), strictAcc: true, errs }, sum: esc(s.t) + ' → <b>' + esc(tk.t) + '</b>' };
     });
     const sumA = () => 'Les verbes qui changent : ' + vch.map(k => '<b>' + esc(src[k].t) + '</b>').join(', ');
     if (opts.split){
@@ -1400,8 +1417,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<li><b>Plus-que-parfait</b> : l\'auxiliaire est à l\'<b>imparfait</b>. <span class="ex">j\'<span class="p-tps">avais</span> <span class="p-pers">dessiné</span> · elle <span class="p-tps">était</span> <span class="p-pers">partie</span></span></li></ul>' +
             '<p class="warn">Pour donner l\'infinitif, c\'est le participe qui compte : « nous avions bu » → <b>boire</b>.</p>',
       checks: [
-        { type: true, q: '« Vous étiez sortis. » Écris l\'auxiliaire.', acc: ['étiez'], errs: [{ m: ['sortis'], fb: 'C\'est le participe passé. L\'auxiliaire est avant.' }, { m: ['être'], fb: 'Écris l\'auxiliaire comme il est dans la phrase.' }], why: '« étiez » : l\'auxiliaire être à l\'imparfait.', hint: 'L\'auxiliaire, c\'est avoir ou être conjugué.' },
-        { q: '« Tu es tombé. » À quel temps est ce verbe ?', c: TENSES_B, a: 3, why: '« es » est au présent : c\'est le <b>passé composé</b>.' }
+        { type: true, q: '« Vous étiez sortis. » Écris <strong>l\'auxiliaire</strong>.', acc: ['étiez'], errs: [{ m: ['sortis'], fb: 'C\'est le participe passé. L\'auxiliaire est avant.' }, { m: ['être'], fb: 'Écris l\'auxiliaire comme il est dans la phrase.' }], why: '« étiez » : l\'auxiliaire être à l\'imparfait.', hint: 'L\'auxiliaire, c\'est avoir ou être conjugué.' },
+        { q: '« Tu es tombé. » À <strong>quel temps</strong> est ce verbe ?', c: TENSES_B, a: 3, why: '« es » est au présent : c\'est le <b>passé composé</b>.' }
       ]
     },
     {
@@ -1410,8 +1427,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<p>Pour entendre la dernière lettre, mets le participe au <b>féminin</b> : une phrase <b>écrite</b> → écrit ; une veste <b>mise</b> → mis.</p>' +
             '<p><b>-é ou -er ?</b> Remplace par un verbe du 3e groupe, « vendu » ou « vendre » : <span class="ex">il a dansé → il a vendu : -é · il veut danser → il veut vendre : -er</span></p>',
       checks: [
-        { type: true, q: 'Écris le participe passé du verbe « dire ».', acc: ['dit'], errs: [{ m: ['di', 'dis', 'dié', 'diu'], fb: 'Mets-le au féminin : une chose « dite ». Tu entends la dernière lettre.' }, { m: ['dire'], fb: 'Ça, c\'est l\'infinitif.' }], why: 'une chose dite → <b>dit</b>.', hint: 'Mets-le au féminin.' },
-        { q: 'Quelle phrase est bien écrite ?', c: ['Nina a cherché ses gants.', 'Nina a chercher ses gants.'], a: 0, why: 'On dirait « Nina a <b>vendu</b> » : c\'est le participe passé, <b>cherché</b>.' }
+        { type: true, q: 'Écris <strong>le participe passé</strong> du verbe « dire ».', acc: ['dit'], errs: [{ m: ['di', 'dis', 'dié', 'diu'], fb: 'Mets-le au féminin : une chose « dite ». Tu entends la dernière lettre.' }, { m: ['dire'], fb: 'Ça, c\'est l\'infinitif.' }], why: 'une chose dite → <b>dit</b>.', hint: 'Mets-le au féminin.' },
+        { q: 'Quelle phrase est <strong>bien écrite</strong> ?', c: ['Nina a cherché ses gants.', 'Nina a chercher ses gants.'], a: 0, why: 'On dirait « Nina a <b>vendu</b> » : c\'est le participe passé, <b>cherché</b>.' }
       ]
     },
     {
@@ -1420,8 +1437,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<p>Avec <b>être</b> : aller, venir, revenir, devenir, arriver, partir, entrer, rentrer, sortir, monter, descendre, tomber, rester, retourner, passer, naître, mourir, apparaître… <span class="ex">elle est venue, ils sont restés</span></p>' +
             '<p>Les <b>verbes pronominaux</b> (se laver, se lever) aussi : <span class="ex">il s\'est levé</span></p>',
       checks: [
-        { q: 'Le verbe « arriver » au passé composé : quel auxiliaire ?', c: ['avoir', 'être'], a: 1, why: 'je suis arrivé : <b>être</b>.' },
-        { type: true, q: 'Écris le verbe « courir » au passé composé avec « ils ».', acc: ['ont couru'], errs: [{ m: ['sont couru', 'sont courus'], fb: 'courir se conjugue avec avoir.' }, { m: ['ont courus', 'ont couri', 'ont courri'], fb: 'Le participe passé de courir est « couru ». Avec avoir, je me demande : qu\'est-ce qui est couru ? Pas de réponse : je n\'accorde pas.' }, { m: ['couru'], fb: 'N\'oublie pas l\'auxiliaire.' }], why: 'ils <b>ont couru</b>.', hint: 'L\'auxiliaire au présent, puis le participe passé.' }
+        { q: 'Le verbe « arriver » au passé composé : <strong>quel auxiliaire</strong> ?', c: ['avoir', 'être'], a: 1, why: 'je suis arrivé : <b>être</b>.' },
+        { type: true, q: 'Écris le verbe « courir » <strong>au passé composé</strong> avec « ils ».', acc: ['ont couru'], errs: [{ m: ['sont couru', 'sont courus'], fb: 'courir se conjugue avec avoir.' }, { m: ['ont courus', 'ont couri', 'ont courri'], fb: 'Le participe passé de courir est « couru ». Avec avoir, je me demande : qu\'est-ce qui est couru ? Pas de réponse : je n\'accorde pas.' }, { m: ['couru'], fb: 'N\'oublie pas l\'auxiliaire.' }], why: 'ils <b>ont couru</b>.', hint: 'L\'auxiliaire au présent, puis le participe passé.' }
       ]
     },
     {
@@ -1431,8 +1448,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<li>La réponse n\'est <b>pas encore écrite</b>, ou il n\'y a <b>pas de réponse</b> : <b>je n\'accorde pas</b>.<br><span class="ex">Mes cousines ont cueilli des prunes. Qu\'est-ce qui est cueilli ? Des prunes : pas encore écrit. · Elles ont ri. Pas de réponse.</span></li></ul>' +
             '<p class="warn">En orange : « Ces prunes, elles les ont cueillies. » Qu\'est-ce qui est cueilli ? Les (ces prunes) : déjà écrit, j\'accorde.</p>',
       checks: [
-        { type: true, q: 'Écris le verbe « venir » au passé composé avec le sujet « mes tantes ».', acc: ['sont venues'], errs: [{ m: ['sont venu', 'sont venus', 'sont venue'], fb: 'Qu\'est-ce qui est venu ? Mes tantes : c\'est déjà écrit, j\'accorde avec elles (féminin pluriel).' }, { m: ['ont venu', 'ont venues'], fb: 'venir se conjugue avec être.' }], why: 'Qu\'est-ce qui est venu ? Mes tantes, déjà écrit : <b>sont venues</b>.', hint: 'Pose la question des moines copistes.' },
-        { type: true, q: 'Écris le verbe « goûter » au passé composé avec le sujet « les filles » (« Les filles … la soupe. »).', acc: ['ont goûté'], errs: [{ m: ['ont goûtées', 'ont goûtés', 'ont goutées', 'ont goutés'], fb: 'Qu\'est-ce qui est goûté ? La soupe : elle n\'est pas encore écrite (elle vient après). Je n\'accorde pas.' }, { m: ['sont goûtées', 'sont goûté'], fb: 'goûter se conjugue avec avoir.' }, { m: ['ont goûter', 'ont gouter'], fb: 'Remplace par « vendu » : -é.' }], why: 'La soupe vient après : <b>ont goûté</b>, sans accord.', hint: 'Qu\'est-ce qui est goûté ? Est-ce déjà écrit ?' }
+        { type: true, q: 'Écris le verbe « venir » <strong>au passé composé</strong> avec le sujet « mes tantes ».', acc: ['sont venues'], errs: [{ m: ['sont venu', 'sont venus', 'sont venue'], fb: 'Qu\'est-ce qui est venu ? Mes tantes : c\'est déjà écrit, j\'accorde avec elles (féminin pluriel).' }, { m: ['ont venu', 'ont venues'], fb: 'venir se conjugue avec être.' }], why: 'Qu\'est-ce qui est venu ? Mes tantes, déjà écrit : <b>sont venues</b>.', hint: 'Pose la question des moines copistes.' },
+        { type: true, q: 'Écris le verbe « goûter » <strong>au passé composé</strong> avec le sujet « les filles » (« Les filles … la soupe. »).', acc: ['ont goûté'], errs: [{ m: ['ont goûtées', 'ont goûtés', 'ont goutées', 'ont goutés'], fb: 'Qu\'est-ce qui est goûté ? La soupe : elle n\'est pas encore écrite (elle vient après). Je n\'accorde pas.' }, { m: ['sont goûtées', 'sont goûté'], fb: 'goûter se conjugue avec avoir.' }, { m: ['ont goûter', 'ont gouter'], fb: 'Remplace par « vendu » : -é.' }], why: 'La soupe vient après : <b>ont goûté</b>, sans accord.', hint: 'Qu\'est-ce qui est goûté ? Est-ce déjà écrit ?' }
       ]
     },
     {
@@ -1441,8 +1458,8 @@ span.tok.has-gap{padding:0;margin:0}
             '<p class="ex">Quand je suis arrivé à la salle, le spectacle <b>avait commencé</b>. (1. le spectacle commence ; 2. j\'arrive)</p>' +
             '<p>On le forme avec l\'auxiliaire <b>à l\'imparfait</b> : j\'avais, tu avais… ou j\'étais, tu étais… puis le participe passé. L\'accord se fait comme au passé composé.</p>',
       checks: [
-        { type: true, q: 'Écris le verbe « bâtir » au plus-que-parfait avec « nous ».', acc: ['avions bâti'], errs: [{ m: ['avons bâti'], fb: 'Ça, c\'est le passé composé. Au plus-que-parfait, l\'auxiliaire est à l\'imparfait.' }, { m: ['avions bâtis', 'avions bâtit'], fb: 'Le participe passé de bâtir : -i. Qu\'est-ce qui est bâti ? Pas de réponse dans ce que tu écris : je n\'accorde pas.' }], why: 'nous <b>avions bâti</b>.', hint: 'L\'auxiliaire avoir à l\'imparfait, puis le participe.' },
-        { q: '« Paul avait rangé sa chambre quand ses amis sont arrivés. » Quelle action s\'est passée en premier ?', c: ['Paul range sa chambre.', 'Ses amis arrivent.'], a: 0, why: '« avait rangé » est au plus-que-parfait : <b>Paul range sa chambre</b> d\'abord.' }
+        { type: true, q: 'Écris le verbe « bâtir » <strong>au plus-que-parfait</strong> avec « nous ».', acc: ['avions bâti'], errs: [{ m: ['avons bâti'], fb: 'Ça, c\'est le passé composé. Au plus-que-parfait, l\'auxiliaire est à l\'imparfait.' }, { m: ['avions bâtis', 'avions bâtit'], fb: 'Le participe passé de bâtir : -i. Qu\'est-ce qui est bâti ? Pas de réponse dans ce que tu écris : je n\'accorde pas.' }], why: 'nous <b>avions bâti</b>.', hint: 'L\'auxiliaire avoir à l\'imparfait, puis le participe.' },
+        { q: '« Paul avait rangé sa chambre quand ses amis sont arrivés. » Quelle action s\'est passée <strong>en premier</strong> ?', c: ['Paul range sa chambre.', 'Ses amis arrivent.'], a: 0, why: '« avait rangé » est au plus-que-parfait : <b>Paul range sa chambre</b> d\'abord.' }
       ]
     }
   ];
@@ -1508,8 +1525,8 @@ span.tok.has-gap{padding:0;margin:0}
       if (/^(ne|n'|pas)$/.test(k.t)) fbAux[i] = fbPp[i] = '« ' + esc(k.t) + ' » marque la forme négative : ce n\'est pas une partie du verbe.';
       if (k.alone) fbPp[i] = '« ' + esc(k.t) + ' » est le verbe ' + k.inf + ' tout seul.';
     });
-    const stAux = { k: 'tap', mode: 'one', q: 'Touche l\'auxiliaire.', want: [ai], fb: fbAux, other: k => '« ' + esc(k.t) + ' » n\'est pas l\'auxiliaire. L\'auxiliaire, c\'est avoir ou être conjugué, juste avant le participe passé.', hint: 'L\'auxiliaire, c\'est avoir ou être conjugué : ai, as, a, avons…, suis, es, est… ou avais, étais…', mark: 'm-aux' };
-    const stPp = { k: 'tap', mode: 'one', q: 'Touche le participe passé.', want: [pi], fb: fbPp, other: k => '« ' + esc(k.t) + ' » n\'est pas le participe passé. Il vient après l\'auxiliaire.', hint: 'Le participe passé suit l\'auxiliaire : il se termine souvent par -é, -i, -u, -s ou -t.', mark: 'm-pp' };
+    const stAux = { k: 'tap', mode: 'one', q: 'Touche <strong>l\'auxiliaire</strong>.', want: [ai], fb: fbAux, other: k => '« ' + esc(k.t) + ' » n\'est pas l\'auxiliaire. L\'auxiliaire, c\'est avoir ou être conjugué, juste avant le participe passé.', hint: 'L\'auxiliaire, c\'est avoir ou être conjugué : ai, as, a, avons…, suis, es, est… ou avais, étais…', mark: 'm-aux' };
+    const stPp = { k: 'tap', mode: 'one', q: 'Touche <strong>le participe passé</strong>.', want: [pi], fb: fbPp, other: k => '« ' + esc(k.t) + ' » n\'est pas le participe passé. Il vient après l\'auxiliaire.', hint: 'Le participe passé suit l\'auxiliaire : il se termine souvent par -é, -i, -u, -s ou -t.', mark: 'm-pp' };
     u.items = [{ steps: [stAux, stPp, stepTypeInf(v, text[pi].t), stepTense(TENSES_B, t, 'Regarde l\'auxiliaire : au présent (ai, est…) ou à l\'imparfait (avait, était…) ?')], sum: boldSentence(text, [ai, pi]) + ' <span class="tries">(' + v + ', ' + t + ')</span>' }];
     return u;
   }
@@ -1562,8 +1579,8 @@ span.tok.has-gap{padding:0;margin:0}
     text.forEach((k, i) => { if (i !== wi && (k.r === 'pp' || k.r === 'i')) fb[i] = '« ' + esc(k.t) + ' » est bien écrit : remplace par « vendu » ou « vendre » pour vérifier.'; });
     const why = wrongPp ? 'Remplace par « vendu » ou « vendre » : on dit « ' + text[wi - 1].t + ' vendu », donc c\'est le participe passé : <b>' + good + '</b>.' : 'Remplace par « vendu » ou « vendre » : on dit « … vendre », donc c\'est l\'infinitif : <b>' + good + '</b>.';
     u.items = [{ steps: [
-      { k: 'tap', mode: 'one', q: 'Un mot est mal écrit : touche-le.', want: [wi], fb, other: k => '« ' + esc(k.t) + ' » est bien écrit. Cherche un mot qui finit par -é ou par -er.', hint: 'Pour chaque mot qui finit par le son [e], remplace par « vendu » ou « vendre ».', mark: 'is-verb' },
-      { k: 'type', q: 'Écris ce mot correctement.', acc: [good], errs: [{ m: [wrong], fb: 'C\'est justement le mot mal écrit.' }], hint: why, why, strictAcc: true, ph: 'Le mot', show: esc(good) }
+      { k: 'tap', mode: 'one', q: 'Un mot est mal écrit : <strong>touche-le</strong>.', want: [wi], fb, other: k => '« ' + esc(k.t) + ' » est bien écrit. Cherche un mot qui finit par -é ou par -er.', hint: 'Pour chaque mot qui finit par le son [e], remplace par « vendu » ou « vendre ».', mark: 'is-verb' },
+      { k: 'type', q: 'Écris <strong>ce mot correctement</strong>.', acc: [good], errs: [{ m: [wrong], fb: 'C\'est justement le mot mal écrit.' }], hint: why, why, strictAcc: true, ph: 'Le mot', show: esc(good) }
     ], sum: 'Corrigé : ' + esc(wrong) + ' → <b>' + esc(good) + '</b>' }];
     return u;
   }
@@ -1571,12 +1588,12 @@ span.tok.has-gap{padding:0;margin:0}
     const v = pick(HARD ? PP_O : PP_J);
     const sj0 = { w: 'je', p: 0, g: 'x' };
     const u = { text: [{ t: v, r: 'w', sp: false }], marks: {}, key: 'b2p|' + v, label: 'Le verbe' };
-    u.items = [{ steps: [{ k: 'type', q: 'Écris le participe passé du verbe « ' + v + ' ».', acc: [participe(v)], errs: ppErrs(v), hint: 'Dis « j\'ai … » ou « je suis … », et mets le participe au féminin pour entendre la dernière lettre.', strictAcc: true, ph: 'Le participe passé', show: esc(participe(v)) }], sum: v + ' → <b>' + participe(v) + '</b>' }];
+    u.items = [{ steps: [{ k: 'type', q: 'Écris <strong>le participe passé</strong> du verbe « ' + v + ' ».', acc: [participe(v)], errs: ppErrs(v), hint: 'Dis « j\'ai … » ou « je suis … », et mets le participe au féminin pour entendre la dernière lettre.', strictAcc: true, ph: 'Le participe passé', show: esc(participe(v)) }], sum: v + ' → <b>' + participe(v) + '</b>' }];
     return u;
   }
   /* Niveau 3 : avoir ou être, la question des moines copistes, le verbe */
   function wilStep(u, wantIdx, pp, accordWith){
-    const st = { k: 'tap', mode: 'one', q: 'Qu\'est-ce qui est ' + pp + ' ? Touche la réponse dans la phrase, ou « Pas de réponse ».', want: wantIdx, none: 'Pas de réponse', noneFb: 'Il y a une réponse dans la phrase : cherche ce qui est ' + pp + '.', other: k => '« ' + esc(k.t) + ' » n\'est pas ' + pp + '. Pose la question : qu\'est-ce qui est ' + pp + ' ?', hint: 'Lis la phrase en posant la question : « qu\'est-ce qui est ' + pp + ' ? »', mark: 'm-ans', two: !wantIdx.length };
+    const st = { k: 'tap', mode: 'one', q: '<strong>Qu\'est-ce qui est ' + pp + ' ?</strong> Touche la réponse dans la phrase, ou « Pas de réponse ».', want: wantIdx, none: 'Pas de réponse', noneFb: 'Il y a une réponse dans la phrase : cherche ce qui est ' + pp + '.', other: k => '« ' + esc(k.t) + ' » n\'est pas ' + pp + '. Pose la question : qu\'est-ce qui est ' + pp + ' ?', hint: 'Lis la phrase en posant la question : « qu\'est-ce qui est ' + pp + ' ? »', mark: 'm-ans', two: !wantIdx.length };
     st.after = !wantIdx.length ? 'Pas de réponse : je n\'accorde pas.' : (accordWith ? 'C\'est déjà écrit, avant le participe : j\'accorde avec « ' + esc(accordWith) + ' ».' : 'Ce n\'est pas encore écrit : je n\'accorde pas.');
     return st;
   }
@@ -1590,7 +1607,7 @@ span.tok.has-gap{padding:0;margin:0}
     const cc = c.replace(/^=/, '');
     tpl = '@S {v:' + v + (kind === 'prc' ? '|d|nc' : '') + '} ' + cc + '.';
     const inf = v.replace(/^s[e']\s?/, '');
-    const u = transposeUnit({ tpl, from: { sj, t: 'présent' }, to: { sj, t: 'passé composé' }, one: true, otherWords: false, q: 'Réécris la phrase au passé composé.' });
+    const u = transposeUnit({ tpl, from: { sj, t: 'présent' }, to: { sj, t: 'passé composé' }, one: true, otherWords: false, q: 'Réécris la phrase <strong>au passé composé</strong>.' });
     const src = u.text, vi = u.vch[0];
     const pp = participe(inf);
     // la réponse à la question des moines copistes
@@ -1600,7 +1617,7 @@ span.tok.has-gap{padding:0;margin:0}
     if (kind === 'et' || kind === 'pr'){ want = subjIdx.concat(reflIdx); accordWith = src.filter(k => k.subj).map(k => k.t).join(' '); }
     else if (isCod){ want = src.map((k, i) => (i > vi && k.r !== 'p') ? i : -1).filter(i => i >= 0); }
     const aux = (kind === 'av') ? 0 : 1;
-    const stAux = { k: 'choice', q: 'Au passé composé, le verbe « ' + inf + ' » se conjugue avec quel auxiliaire ?', opts: ['avoir', 'être'], a: aux, fb: { 0: 'Ce verbe se conjugue avec être.', 1: 'Ce verbe se conjugue avec avoir.' }, hint: 'Avec être : aller, venir, arriver, partir, entrer, sortir, monter, descendre, tomber, rester… et les verbes pronominaux.' };
+    const stAux = { k: 'choice', q: 'Au passé composé, le verbe « ' + inf + ' » se conjugue avec <strong>quel auxiliaire</strong> ?', opts: ['avoir', 'être'], a: aux, fb: { 0: 'Ce verbe se conjugue avec être.', 1: 'Ce verbe se conjugue avec avoir.' }, hint: 'Avec être : aller, venir, arriver, partir, entrer, sortir, monter, descendre, tomber, rester… et les verbes pronominaux.' };
     if (kind === 'pr' || kind === 'prc') stAux.fb[0] = 'Les verbes pronominaux (se laver, se lever…) se conjuguent avec être.';
     const stW = wilStep(u, want, pp, accordWith);
     const steps = u.items[0].steps;
@@ -1636,7 +1653,7 @@ span.tok.has-gap{padding:0;margin:0}
     const u = { text, marks: {}, key: 'b4f|' + tpl.slice(0, 24) + '|' + sj.p };
     const fb = {}; fb[ai] = 'Cette action s\'est passée après : son verbe est au passé composé.';
     u.items = [{ steps: [
-      { k: 'tap', mode: 'one', q: 'Il y a deux actions passées. Touche le verbe de l\'action qui s\'est passée en premier.', want: [di], fb, other: k => '« ' + esc(k.t) + ' » n\'est pas un verbe conjugué.', hint: 'L\'action qui s\'est passée avant l\'autre est au plus-que-parfait : l\'auxiliaire est à l\'imparfait (avait, était).', mark: 'm-first', two: true },
+      { k: 'tap', mode: 'one', q: 'Il y a deux actions passées. Touche le verbe de l\'action qui s\'est passée <strong>en premier</strong>.', want: [di], fb, other: k => '« ' + esc(k.t) + ' » n\'est pas un verbe conjugué.', hint: 'L\'action qui s\'est passée avant l\'autre est au plus-que-parfait : l\'auxiliaire est à l\'imparfait (avait, était).', mark: 'm-first', two: true },
       stepTense(TENSES_B, 'plus-que-parfait', 'Regarde l\'auxiliaire : avait, était… c\'est l\'imparfait.')
     ], sum: boldSentence(text, [di]) + ' <span class="tries">(en premier, plus-que-parfait)</span>' }];
     return u;
@@ -1646,7 +1663,7 @@ span.tok.has-gap{padding:0;margin:0}
     const v = pick((etre ? ET_V : avPool()).filter(x => VP[x]));
     const c = pick(VP[v].c.filter(x => !/\{a:|\{i:/.test(x)));
     const sj = pick(SUBJ_ALL().filter(x => !etre || knownG(x)));
-    const u = transposeUnit({ tpl: '@S {v:' + v + '} ' + c.replace(/^=/, '') + '.', from: { sj, t: 'présent' }, to: { sj, t: 'plus-que-parfait' }, one: true, otherWords: false, q: 'Réécris la phrase au plus-que-parfait.' });
+    const u = transposeUnit({ tpl: '@S {v:' + v + '} ' + c.replace(/^=/, '') + '.', from: { sj, t: 'présent' }, to: { sj, t: 'plus-que-parfait' }, one: true, otherWords: false, q: 'Réécris la phrase <strong>au plus-que-parfait</strong>.' });
     const wr = u.items[0].steps.find(st => st.k === 'type' && st.vinf);
     wr.errs = formErrs(v, 'plus-que-parfait', sj.p, { g: sj.g, wil: (sj.w || pronOf(sj)), codAfter: /^=/.test(c) ? c.slice(1) : null, subj: (sj.w || pronOf(sj)) });
     return u;
@@ -1671,7 +1688,7 @@ span.tok.has-gap{padding:0;margin:0}
     const fb = {};
     text.forEach((k, i) => { if (/^(ne|n'|pas|jamais|encore)$/.test(k.t)) fb[i] = '« ' + esc(k.t) + ' » marque la forme négative : ce n\'est pas une partie du verbe.'; });
     u.items = [{ steps: [
-      { k: 'tap', mode: 'set', q: 'La phrase est à la forme négative. Touche les deux mots du verbe (l\'auxiliaire et le participe passé), puis valide.', want: [a2, p2], fb, other: k => '« ' + esc(k.t) + ' » ne fait pas partie du verbe.', hint: 'Enlève « ne … pas » : il reste l\'auxiliaire et le participe passé.', mark: 'is-verb', btn: 'Valider le verbe' },
+      { k: 'tap', mode: 'set', q: 'La phrase est à la forme négative. Touche <strong>les deux mots du verbe</strong> (l\'auxiliaire et le participe passé), puis valide.', want: [a2, p2], fb, other: k => '« ' + esc(k.t) + ' » ne fait pas partie du verbe.', hint: 'Enlève « ne … pas » : il reste l\'auxiliaire et le participe passé.', mark: 'is-verb', btn: 'Valider le verbe' },
       stepTypeInf(v, text[p2].t),
       stepTense(TENSES_B, t, 'Regarde l\'auxiliaire : au présent ou à l\'imparfait ?')
     ], sum: boldSentence(text, [a2, p2]) + ' <span class="tries">(' + v + ', ' + t + ')</span>' }];
@@ -1692,7 +1709,7 @@ span.tok.has-gap{padding:0;margin:0}
     const c = pick(CODB);
     const sj = pick(SUBJ_ALL().filter(x => x.p !== 3 && x.p !== 4 || true));
     const tpl = c.tpl.replace("l' {v", "l'{v");
-    const u = transposeUnit({ tpl, from: { sj, t: 'présent' }, to: { sj, t: 'passé composé' }, one: true, otherWords: false, q: 'Réécris la phrase au passé composé.' });
+    const u = transposeUnit({ tpl, from: { sj, t: 'présent' }, to: { sj, t: 'passé composé' }, one: true, otherWords: false, q: 'Réécris la phrase <strong>au passé composé</strong>.' });
     const src = u.text, vi = u.vch[0], tk = u.tgt[vi];
     const inf = tk.inf, pp = participe(inf);
     const antIdx = src.map((k, i) => i < src.findIndex(x => x.r === 'p') ? i : -1).filter(i => i >= 0);
@@ -1938,6 +1955,7 @@ span.tok.has-gap{padding:0;margin:0}
     HARD = curParc() === 'orange';
     if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
     if (!unlocked(prof, id)) return;
+    accFoldSet(false);
     if (prof.gift){ prof.gift = 0; saveStore(); }
     S.R = freshRound(id);
     S.R.uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -2978,7 +2996,7 @@ span.tok.has-gap{padding:0;margin:0}
     let h = '<h2>' + card.title + '</h2>' + card.html;
     h += '<div class="check" id="learnCheck"><span class="eyebrow">Question ' + (L.check + 1) + ' sur ' + card.checks.length + '</span><p class="check-q">' + ch.q + '</p>';
     if (ch.type){
-      h += '<form class="answer-row learn-row" id="learnForm" novalidate><input class="input' + (L.last === 'bad' && !right ? ' bad' : '') + '" id="learnInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="' + (ch.ph || 'Écris ta réponse') + '"' + (right ? ' disabled value="' + esc(L.revealed ? ch.acc[0] : (document.getElementById('learnInput') || {}).value || ch.acc[0]) + '"' : '') + '><button class="btn-primary btn-inline" type="submit"' + (right ? ' disabled' : '') + '>Valider</button></form>';
+      h += '<form class="answer-row learn-row" id="learnForm" novalidate><input class="input' + (L.last === 'bad' && !right ? ' bad' : '') + '" id="learnInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="' + (ch.ph || 'Écris ta réponse') + '"' + (right ? ' disabled value="' + esc(L.revealed ? ch.acc[0] : (document.getElementById('learnInput') || {}).value || ch.acc[0]) + '"' : '') + '><button class="btn-primary btn-inline" type="submit"' + (right ? ' disabled' : '') + '>Valider</button></form>' + (right ? '' : accKeysHTML('learnInput'));
       if (right) h += '<p class="why ' + (L.revealed ? 'bad' : 'good') + '">' + (L.revealed ? 'La bonne réponse : <b>' + esc(ch.acc[0]) + '</b>. ' : '') + ch.why + '</p>';
       else if (L.msg) h += '<p class="why bad">' + L.msg + '</p>';
     } else {
@@ -3291,6 +3309,36 @@ span.tok.has-gap{padding:0;margin:0}
   $('choiceBtns').addEventListener('click', e => { const b = e.target.closest('[data-pick]'); if (b) choicePick(+b.dataset.pick); });
   $('continueBtn').addEventListener('click', onContinue);
 
+  // Lettres accentuées repliées : la même ligne à toutes les questions ; ouverte, elle le reste jusqu'à la fin de la partie
+  function accFoldSet(open, from){
+    accOpen = !!open;
+    document.querySelectorAll('.accfold').forEach(f => {
+      f.classList.toggle('open', accOpen);
+      const b = f.querySelector('.accopen'); if (b) b.setAttribute('aria-expanded', accOpen ? 'true' : 'false');
+    });
+    const f = from && from.closest('.accfold'), k = f && f.querySelector('.acckeys');
+    if (accOpen && k && k.scrollIntoView){ try { k.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  }
+  let accFoldTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); accFoldTouch = Date.now(); accFoldSet(b.dataset.accfold === '1', b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); if (Date.now() - accFoldTouch < 700) return; accFoldSet(b.dataset.accfold === '1', b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (b && e.detail === 0) accFoldSet(b.dataset.accfold === '1', b); });
+  // Lettres accentuées : on écrit dans la case sans lui faire perdre le curseur
+  const ACC_KEYS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'ç', 'î', 'ï', 'ô', 'û', 'ù', 'œ'];
+  let accOpen = false; // rangée des lettres accentuées dépliée ?
+  function accKeysHTML(forId){ return '<div class="accfold' + (accOpen ? ' open' : '') + '"><button class="accopen" type="button" data-accfold="1" aria-expanded="' + (accOpen ? 'true' : 'false') + '"><span class="accmini" aria-hidden="true">é</span>Besoin d\'un accent ? Touche ici.</button><div class="acckeys" role="group" aria-label="Lettres accentuées">' + ACC_KEYS.map(c => '<button class="acckey" type="button" tabindex="-1" data-acc="' + c + '" data-for="' + forId + '">' + c + '</button>').join('') + '<button class="acckey accclose" type="button" data-accfold="0" aria-label="Replier les lettres accentuées">✕</button></div></div>'; }
+  function accInsert(btn){
+    const inp = $(btn.dataset.for); if (!inp || inp.disabled) return;
+    const ch = btn.dataset.acc, s = inp.selectionStart == null ? inp.value.length : inp.selectionStart, en = inp.selectionEnd == null ? s : inp.selectionEnd;
+    inp.value = inp.value.slice(0, s) + ch + inp.value.slice(en);
+    try { inp.focus({ preventScroll: true }); inp.setSelectionRange(s + ch.length, s + ch.length); } catch (e) {}
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  let accTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); accTouch = Date.now(); accInsert(b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); if (Date.now() - accTouch < 700) return; accInsert(b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (b && e.detail === 0) accInsert(b); });
+  $('accFoldMain').innerHTML = accKeysHTML('answerInput');
   $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
   $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
   $('resHome').addEventListener('click', goHome);

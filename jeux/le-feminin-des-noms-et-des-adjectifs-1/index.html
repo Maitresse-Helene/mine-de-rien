@@ -11,7 +11,7 @@
 <style>
 /* Mise en page : une seule colonne posée sur un cahier Seyès, comme les autres jeux.
    Étape 1 : des fiches de leçon avec une question chacune (l'élève écrit sa réponse).
-   Étape 2 : cinq zones de plongée. L'élève écrit ses réponses (case + lettres accentuées),
+   Étape 2 : cinq zones de plongée. L'élève écrit ses réponses (case + lettres accentuées repliées),
    touche des lettres dans un mot, ou touche le mot mal écrit d'une phrase. */
 :root{
   --paper:#f6f7fd;
@@ -507,6 +507,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .duo .arrow{color:var(--ink-soft);font-weight:600}
 .learn-type{display:flex;flex-direction:column;gap:8px}
 @media (prefers-reduced-motion: reduce){.typebox .input.shake{animation:none}}
+/* Lettres accentuées repliées : « Besoin d'un accent ? Touche ici. » déplie la rangée */
+.accfold{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.accopen{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:4px 14px 4px 5px;border-radius:999px;border:1.5px dashed var(--key-edge);background:transparent;color:var(--ink-soft);font:inherit;font-size:.95rem;font-weight:600;line-height:1.2;text-align:left;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.accopen .accmini{display:inline-grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1}
+.accopen:active{transform:translateY(1px)}
+.accfold .acckeys{display:none}
+.accfold.open .accopen{display:none}
+.accfold.open .acckeys{display:flex}
+.acckey.accclose{border-style:dashed;background:transparent;box-shadow:none;color:var(--ink-soft);font-family:inherit;font-size:1rem;font-weight:700}
+.answer-row[hidden] + .accfold{display:none}
+/* Consignes : ce qui est demandé est en gras */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -705,7 +718,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       <ul class="howto">
         <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
         <li>Une question est réussie quand toutes ses étapes sont justes du premier coup. Une erreur donne un message et un indice ; après deux erreurs, la correction s'affiche.</li>
-        <li>L'élève écrit ses réponses (une rangée de lettres accentuées l'aide sur tablette). Les majuscules ne comptent pas ; un accent oublié compte comme une erreur, avec le message « Regarde bien les accents » ; l'orthographe de 1990 est acceptée (maitre, gouter…). Il n'y a pas de réponses à choisir : l'élève écrit, touche des lettres dans un mot ou touche le mot mal écrit d'une phrase.</li>
+        <li>L'élève écrit ses réponses. Sous la case, « Besoin d'un accent ? Touche ici. » déplie une rangée de lettres accentuées (utile sur téléphone et tablette) : la même ligne à toutes les questions, pour ne pas dire s'il faut un accent ; ouverte, elle le reste jusqu'à la fin de la partie. Les majuscules ne comptent pas ; un accent oublié compte comme une erreur, avec le message « Regarde bien les accents » ; l'orthographe de 1990 est acceptée (maitre, gouter…). Il n'y a pas de réponses à choisir : l'élève écrit, touche des lettres dans un mot ou touche le mot mal écrit d'une phrase.</li>
         <li>Les niveaux sont 5 zones : le féminin le plus courant (on ajoute un e, rien ne change, ou c'est un autre mot), les mots en -eur et en -teur, les mots en -x, -f et -er (et -et en orange), la dernière consonne (faut-il la doubler ?), puis le plongeur étourdi (toucher le mot mal écrit, puis l'écrire correctement). L'élève écrit toujours lui-même le mot au féminin. En parcours orange : les féminins d'animaux (bélier → brebis), les mots en -teur qui font -teuse (chanteur, menteur), les mots en -eur qui prennent seulement un e (meilleure, supérieure), -et qui donne -ète ou -ette (inquiète, muette), les fins qui ne doublent pas (cousine, écrivaine, partisane), l'exception paysanne, gentille, pareille et brève. Les mots changent à chaque partie.</li>
         <li>Une zone est réussie avec au moins 80 % de réussites (8 sur 10, ou 7 sur 8 aux zones 4 et 5). Elle ouvre la suivante. Pendant le jeu, le plongeur ouvre une huître à chaque question et gagne une perle à chaque réussite ; une erreur lui vaut un nuage d'encre.</li>
         <li>Bons points : 1 à 80 %, 1 de plus à 90 % et 1 de plus pour le sans-faute, soit 3 par zone et 15 en tout.</li>
@@ -752,6 +765,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 
   /* ---------- Réponses écrites : comparaison ---------- */
   const ACC_KEYS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'ç', 'î', 'ï', 'ô', 'û', 'ù', 'œ'];
+  let accOpen = false; // rangée des lettres accentuées dépliée ?
   const deacc = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
   const normT = s => String(s || '').normalize('NFC').replace(/[’‘`´ʼ]/g, "'").replace(/\s+/g, ' ').trim().replace(/[.!?,;:…]+$/, '').trim().toLowerCase();
   const NO1990 = new Set(['dû', 'mûr', 'mûre', 'sûr', 'sûre', 'jeûne', 'crû']);
@@ -777,7 +791,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (!st.loose && accs.some(a => a.length >= 4 && lev(a, v) === 1)) return { ok: false, fb: 'Presque ! Une lettre ne va pas.' };
     return { ok: false, fb: '' };
   }
-  const accKeysHTML = forId => '<div class="acckeys" role="group" aria-label="Lettres accentuées">' + ACC_KEYS.map(c => '<button class="acckey" type="button" tabindex="-1" data-acc="' + c + '" data-for="' + forId + '">' + c + '</button>').join('') + '</div>';
+  const accKeysHTML = forId => '<div class="accfold' + (accOpen ? ' open' : '') + '"><button class="accopen" type="button" data-accfold="1" aria-expanded="' + (accOpen ? 'true' : 'false') + '"><span class="accmini" aria-hidden="true">é</span>Besoin d\'un accent ? Touche ici.</button><div class="acckeys" role="group" aria-label="Lettres accentuées">' + ACC_KEYS.map(c => '<button class="acckey" type="button" tabindex="-1" data-acc="' + c + '" data-for="' + forId + '">' + c + '</button>').join('') + '<button class="acckey accclose" type="button" data-accfold="0" aria-label="Replier les lettres accentuées">✕</button></div></div>';
   const inputHTML = (id, val, bad, act) => '<div class="typebox"><input class="input' + (bad ? ' bad' : '') + '" id="' + id + '" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="60" aria-label="Ta réponse" value="' + esc(val || '') + '"><button class="btn-primary btn-inline vbtn" type="button" data-act="' + act + '">Valider</button></div>' + accKeysHTML(id);
 
   /* ---------- Outils communs pour fabriquer les questions ---------- */
@@ -922,7 +936,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const errs = (pat === 'same' ? [] : [{ m: [m], fb: MASC_MSG }]).concat(R.wr(m, verb).filter(x => x[0] !== f).map(x => ({ m: [x[0]], fb: x[1] })));
     const isAdj = c !== 'n';
     return {
-      stmt: '<p class="lead-q">Écris ' + (isAdj ? 'l\'adjectif' : 'le nom') + ' au féminin.</p>' + frame(e, gapSpan(0)),
+      stmt: '<p class="lead-q">Écris ' + (isAdj ? 'l\'adjectif' : 'le nom') + ' <b>au féminin</b>.</p>' + frame(e, gapSpan(0)),
       stmtDone: '<p class="lead-q">Au féminin :</p>' + frame(e, '<b class="gr">' + f + '</b>'),
       steps: [mkType(isAdj ? 'L\'adjectif au féminin' : 'Le nom au féminin', [f].concat(m === 'monsieur' ? ['madame'] : []), { gap: 0, pre: ['une ', 'la ', 'l\'', 'elle est ', 'ma '], errs, show: f, hint: R.hint })],
       end: R.rule(m, f, verb),
@@ -988,8 +1002,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       stmt: '<p class="lead-q">Le plongeur étourdi a écrit cette phrase dans son carnet de plongée. Il s\'est trompé une fois.</p>',
       stmtDone: '<p class="lead-q">La phrase corrigée :</p><p class="sentence">' + fixedH + '</p>',
       steps: [
-        { kind: 'words', q: 'Un mot est mal écrit : touche-le.', toks, target, tokFb, fbOther: 'Ce mot est bien écrit. Cherche un mot au féminin mal écrit.', hint: 'Regarde chaque nom et chaque adjectif au féminin : la fin est-elle bien écrite ?', why: '' },
-        mkType('Écris ce mot correctement.', [wd.ok], { errs: [{ m: [wd.bad], fb: 'C\'est justement le mot mal écrit : écris-le autrement.' }], show: '<b class="gr">' + esc(wd.ok) + '</b>', hint: 'Pense au masculin du mot, puis aux fiches.' })
+        { kind: 'words', q: 'Un mot est mal écrit : <b>touche-le</b>.', toks, target, tokFb, fbOther: 'Ce mot est bien écrit. Cherche un mot au féminin mal écrit.', hint: 'Regarde chaque nom et chaque adjectif au féminin : la fin est-elle bien écrite ?', why: '' },
+        mkType('Écris <b>ce mot correctement</b>.', [wd.ok], { errs: [{ m: [wd.bad], fb: 'C\'est justement le mot mal écrit : écris-le autrement.' }], show: '<b class="gr">' + esc(wd.ok) + '</b>', hint: 'Pense au masculin du mot, puis aux fiches.' })
       ],
       end: 'Le plongeur avait écrit « ' + esc(wd.bad) + ' ». On écrit <b>' + esc(wd.ok) + '</b>. ' + ruleOf(wd.ok),
       sum: 'Corrigé : ' + fixedH
@@ -1697,7 +1711,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, sel: [], bad: [], focus: true });
+  const stepState = () => ({ early: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, sel: [], bad: [], focus: true });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -1762,6 +1776,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     HARD = curParc() === 'orange';
     if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
     if (!unlocked(prof, id)) return;
+    accFoldSet(false);
     const items = freshItems(id);
     S.R = Object.assign({ level: id, uid: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), items, total: items.length, i: 0, results: [], ok: 0, err: 0 }, itemState());
     S.phase = 'play';
@@ -1825,6 +1840,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (!normT(R.input)){ R.fb = { kind: 'info', html: "Écris d'abord ta réponse." }; R.focus = true; renderPlay(); return; }
     const c = checkType(st, R.input), show = st.show || esc(st.acc[0]);
     if (c.ok){ solveStep(false, show, st.okFb, '', ''); return; }
+    // Consigne mal lue (réponse finale juste, ou lettres seules) : un message, sans erreur la première fois
+    const early = st.early && st.early.m.some(f => normT(f) === normT(R.input));
+    if (early && !R.early){
+      R.early = 1;
+      R.fb = { kind: 'info', html: 'Tu as écrit « ' + esc(R.input.trim()) + ' ». ' + st.early.fb };
+      R.focus = true; renderPlay(); return;
+    }
+    if (early) c.fb = st.early.fb2 || st.early.fb;
     R.err++; R.itemErr++; R.tries++; R.wrong = true; R.shake = true;
     runFall();
     const said = 'Tu as écrit « ' + esc(R.input.trim()) + ' ». ';
@@ -2275,6 +2298,20 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (S.R.wrong){ S.R.wrong = false; e.target.classList.remove('bad', 'shake'); }
   });
   $('steps').addEventListener('keydown', e => { if (e.target.id === 'typeIn' && e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); typeSubmit(); } });
+  // Lettres accentuées repliées : la même ligne à toutes les questions ; ouverte, elle le reste jusqu'à la fin de la partie
+  function accFoldSet(open, from){
+    accOpen = !!open;
+    document.querySelectorAll('.accfold').forEach(f => {
+      f.classList.toggle('open', accOpen);
+      const b = f.querySelector('.accopen'); if (b) b.setAttribute('aria-expanded', accOpen ? 'true' : 'false');
+    });
+    const f = from && from.closest('.accfold'), k = f && f.querySelector('.acckeys');
+    if (accOpen && k && k.scrollIntoView){ try { k.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  }
+  let accFoldTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); accFoldTouch = Date.now(); accFoldSet(b.dataset.accfold === '1', b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); if (Date.now() - accFoldTouch < 700) return; accFoldSet(b.dataset.accfold === '1', b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (b && e.detail === 0) accFoldSet(b.dataset.accfold === '1', b); });
   // Lettres accentuées : on écrit dans la case sans lui faire perdre le curseur
   function accInsert(btn){
     const inp = $(btn.dataset.for); if (!inp) return;

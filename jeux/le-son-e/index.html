@@ -468,6 +468,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -808,7 +811,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const L = { debut: 'au début du mot', milieu: 'au milieu du mot', fin: 'à la fin du mot' };
     const opts = ['debut', 'milieu', 'fin'].map(k => ({ h: L[k], ok: k === where, fb: k === where ? '' : 'Dis le mot en séparant les syllabes, puis cherche celle où tu entends [e].' }));
     return {
-      stmt: '<p class="lead-q">Où entends-tu le son [e] ?</p>' + W(w),
+      stmt: '<p class="lead-q"><b>Où</b> entends-tu le son [e] ?</p>' + W(w),
       steps: [mkChoice('Le son [e] est…', opts, { hint: 'Coupe le mot en syllabes en tapant dans tes mains, puis écoute où se trouve le son [e].' })],
       end: 'Dans « ' + w + ' », le son [e] est <b>' + L[where] + '</b>.',
       sum: w + ' : <b>' + L[where] + '</b>'
@@ -818,7 +821,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const r = Math.random(), three = HARD && r < 0.35, two = !three && r < 0.75;
     const w = three ? pick(COUNT3) : (two ? pick(COUNT2) : pick(POS.debut.concat(POS.fin))), n = three ? 3 : (two ? 2 : 1);
     return {
-      stmt: '<p class="lead-q">Combien de fois entends-tu le son [e] dans ce mot ?</p>' + W(w),
+      stmt: '<p class="lead-q"><b>Combien de fois</b> entends-tu le son [e] dans ce mot ?</p>' + W(w),
       steps: [mkChoice('Le son [e] est dans…', [1, 2, 3].map(k => ({ h: k === 1 ? '1 syllabe' : k + ' syllabes', ok: k === n, fb: 'Dis le mot lentement, syllabe par syllabe, et compte les [e].' })), { hint: 'Tape dans tes mains à chaque syllabe et lève un doigt quand tu entends [e].' })],
       end: 'Dans « ' + w + ' », on entend le son [e] <b>' + (n === 1 ? 'une fois' : n + ' fois') + '</b>.',
       sum: w + ' : <b>' + n + ' fois</b>'
@@ -873,7 +876,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemFamN(){
     const [a, b] = pick(FAM_N), r = b.slice(0, -2);
     return {
-      stmt: '<p class="lead-q">Trouve le nom de la même famille, bien écrit :</p>' + W(a) + '<p class="lead-q small">(un arbre, un métier ou un objet)</p>',
+      stmt: '<p class="lead-q">Trouve <b>le nom de la même famille</b>, bien écrit :</p>' + W(a) + '<p class="lead-q small">(un arbre, un métier ou un objet)</p>',
       steps: [mkChoice('Le nom de la même famille', shuffle([
         { h: b, ok: true },
         { h: r + 'é', ok: false, fb: 'Non : les noms d\'arbres, de métiers et beaucoup d\'objets se terminent par -er.' },
@@ -886,7 +889,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemFamT(){
     const [a, b] = pick(FAM_T), base = b.replace(/^(la |l')/, ''), d = b.slice(0, b.length - base.length);
     return {
-      stmt: '<p class="lead-q">Trouve le nom de la même famille, bien écrit :</p>' + W(a),
+      stmt: '<p class="lead-q">Trouve <b>le nom de la même famille</b>, bien écrit :</p>' + W(a),
       steps: [mkChoice('Le nom de la même famille', shuffle([
         { h: b, ok: true },
         { h: d + base + 'e', ok: false, fb: 'Non : les noms féminins en -té s\'écrivent sans e à la fin (sauf quelques-uns, comme la dictée ou la montée).' },

@@ -468,6 +468,22 @@ span.tok.has-gap{padding:0;margin:0}
 .learn-row .input.bad{border-color:var(--red);background:var(--red-bg)}
 #noneBtn{width:100%}
 .wil{display:block;margin-top:4px;font-weight:600;color:var(--stamp)}
+/* Consignes : ce qui est demandé est mis en valeur (28 novembre) */
+.instr strong,.check-q strong,.lead-q strong{font-weight:800;color:var(--pen)}
+.acckeys{display:flex;flex-wrap:wrap;gap:6px}
+.acckey{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.25rem;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.acckey:active{transform:translateY(2px);box-shadow:none}
+/* Lettres accentuées repliées : « Besoin d'un accent ? Touche ici. » déplie la rangée */
+.accfold{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.accopen{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:4px 14px 4px 5px;border-radius:999px;border:1.5px dashed var(--key-edge);background:transparent;color:var(--ink-soft);font:inherit;font-size:.95rem;font-weight:600;line-height:1.2;text-align:left;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.accopen .accmini{display:inline-grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;border:1.5px solid var(--key-edge);background:var(--key);color:var(--ink);box-shadow:0 2px 0 var(--key-shadow);font-family:var(--font-num);font-weight:800;font-size:1.1rem;line-height:1}
+.accopen:active{transform:translateY(1px)}
+.accfold .acckeys{display:none}
+.accfold.open .accopen{display:none}
+.accfold.open .acckeys{display:flex}
+.acckey.accclose{border-style:dashed;background:transparent;box-shadow:none;color:var(--ink-soft);font-family:inherit;font-size:1rem;font-weight:700}
+.answer-row[hidden] + .accfold{display:none}
+.answer-row[hidden] + .accfold-slot{display:none}
 </style>
 
 <div class="app">
@@ -588,6 +604,7 @@ span.tok.has-gap{padding:0;margin:0}
         <input class="input" id="answerInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Écris le verbe">
         <button class="btn-primary btn-inline" id="answerBtn" type="submit">Valider</button>
       </div>
+      <div class="accfold-slot" id="accFoldMain"></div>
       <div class="grp" id="choiceBtns" hidden></div>
       <button class="btn-primary" id="subjBtn" type="button" hidden>Valider</button>
       <button class="btn-secondary" id="noneBtn" type="button" hidden>Pas de réponse</button>
@@ -1175,7 +1192,7 @@ span.tok.has-gap{padding:0;margin:0}
     return 'Change le moment de la phrase : « ' + esc(k.t) + ' » ne change pas. Ce n\'est pas le verbe conjugué.';
   }
   function stepTapVerb(u, vi, q){
-    return { k: 'tap', mode: 'one', q: q || 'Touche le verbe conjugué.', want: Array.isArray(vi) ? vi : [vi], other: k => tokFbVerb(k), hint: HINT_VERB, mark: 'is-verb' };
+    return { k: 'tap', mode: 'one', q: q || 'Touche <strong>le verbe conjugué</strong>.', want: Array.isArray(vi) ? vi : [vi], other: k => tokFbVerb(k), hint: HINT_VERB, mark: 'is-verb' };
   }
   function infErrs(inf, form){
     const e = [{ m: [form], fb: 'Ça, c\'est le verbe conjugué. L\'infinitif, c\'est le nom du verbe : dis « il faut… » devant.' }];
@@ -1188,7 +1205,7 @@ span.tok.has-gap{padding:0;margin:0}
     return e;
   }
   function stepTypeInf(inf, form){
-    return { k: 'type', q: 'Écris l\'infinitif de ce verbe.', acc: [inf], errs: infErrs(inf, form), hint: 'Dis « il faut… » devant le verbe : il faut chanter, il faut finir, il faut prendre.', ph: 'L\'infinitif', show: esc(inf) };
+    return { k: 'type', q: 'Écris <strong>l\'infinitif</strong> de ce verbe.', acc: [inf], errs: infErrs(inf, form), hint: 'Dis « il faut… » devant le verbe : il faut chanter, il faut finir, il faut prendre.', ph: 'L\'infinitif', show: esc(inf) };
   }
   const GROUP_OPTS = ['1er groupe', '2e groupe', '3e groupe'];
   function stepGroup(inf){
@@ -1197,10 +1214,10 @@ span.tok.has-gap{padding:0;margin:0}
     fb[0] = inf === 'aller' ? 'aller se termine par -er, mais c\'est l\'exception : il n\'est pas du 1er groupe.' : '« ' + inf + ' » ne se termine pas par -er.';
     fb[1] = /ir$/.test(inf) ? 'On dit « nous ' + nous + ' », pas « nous …issons » : ce n\'est pas le 2e groupe.' : 'Le 2e groupe, ce sont des verbes en -ir qui font « nous …issons ».';
     fb[2] = g === 1 ? '« ' + inf + ' » se termine par -er : ce n\'est pas le 3e groupe.' : 'On dit « nous ' + nous + ' » : regarde bien la fin.';
-    return { k: 'choice', q: 'À quel groupe appartient le verbe « ' + inf + ' » ?', opts: GROUP_OPTS, a: g - 1, fb, hint: 'Regarde la fin de l\'infinitif, et pour les verbes en -ir, dis « nous … » au présent.' };
+    return { k: 'choice', q: 'À <strong>quel groupe</strong> appartient le verbe « ' + inf + ' » ?', opts: GROUP_OPTS, a: g - 1, fb, hint: 'Regarde la fin de l\'infinitif, et pour les verbes en -ir, dis « nous … » au présent.' };
   }
   function stepTense(tenses, t, extra){
-    return { k: 'choice', q: 'À quel temps est ce verbe ?', opts: tenses, a: tenses.indexOf(t), fb: Object.fromEntries(tenses.map((x, k) => [k, extraTenseFb(x, t)]).filter(x => x[1])), hint: extra || 'Change le moment de la phrase : hier, aujourd\'hui, demain. Regarde aussi la terminaison.' };
+    return { k: 'choice', q: 'À <strong>quel temps</strong> est ce verbe ?', opts: tenses, a: tenses.indexOf(t), fb: Object.fromEntries(tenses.map((x, k) => [k, extraTenseFb(x, t)]).filter(x => x[1])), hint: extra || 'Change le moment de la phrase : hier, aujourd\'hui, demain. Regarde aussi la terminaison.' };
   }
   function extraTenseFb(chosen, t){
     if (chosen === t) return null;
@@ -1277,7 +1294,7 @@ span.tok.has-gap{padding:0;margin:0}
   function stepTypeForm(inf, t, p, o){
     o = o || {};
     const ans = conj(inf, t, p, o);
-    const st = { k: 'type', q: o.q || ('Écris le verbe « ' + inf + ' » ' + AU[t] + '.'), acc: [ans].concat(o.alt || []), errs: formErrs(inf, t, p, o), hint: o.hint || RULE[t], ph: 'Le verbe ' + AU[t], show: esc(o.subj ? withSubj(o.subj, ans) : ans), strictAcc: t !== 'présent' && t !== 'imparfait' && t !== 'futur' };
+    const st = { k: 'type', q: o.q || ('Écris le verbe « ' + inf + ' » <strong>' + AU[t] + '</strong>.'), acc: [ans].concat(o.alt || []), errs: formErrs(inf, t, p, o), hint: o.hint || RULE[t], ph: 'Le verbe ' + AU[t], show: esc(o.subj ? withSubj(o.subj, ans) : ans), strictAcc: t !== 'présent' && t !== 'imparfait' && t !== 'futur' };
     if (o.gap !== undefined) st.gap = o.gap;
     return st;
   }
@@ -1319,7 +1336,7 @@ span.tok.has-gap{padding:0;margin:0}
       else fbA[idx] = '« ' + esc(k.t) + ' » ne change pas : ce n\'est pas un verbe conjugué.';
     });
     const nV = vch.length;
-    const stA = { k: 'tap', mode: nV === 1 && opts.one ? 'one' : 'set', q: opts.qA || (nV === 1 && opts.one ? 'Touche le verbe qui va changer.' : 'Touche tous les verbes conjugués qui vont changer, puis valide.'), want: vch, fb: fbA, other: k => tokFbVerb(k), hint: opts.hintA || 'Encadre avec « ne … pas » ou change le moment pour trouver les verbes conjugués. Un verbe à l\'infinitif ne change jamais.', mark: 'is-verb', btn: 'Valider les verbes', miss: n => n === 1 ? 'Il te manque encore 1 verbe qui change.' : 'Il te manque encore ' + n + ' verbes qui changent.' };
+    const stA = { k: 'tap', mode: nV === 1 && opts.one ? 'one' : 'set', q: opts.qA || (nV === 1 && opts.one ? 'Touche <strong>le verbe qui va changer</strong>.' : 'Touche <strong>tous les verbes conjugués qui vont changer</strong>, puis valide.'), want: vch, fb: fbA, other: k => tokFbVerb(k), hint: opts.hintA || 'Encadre avec « ne … pas » ou change le moment pour trouver les verbes conjugués. Un verbe à l\'infinitif ne change jamais.', mark: 'is-verb', btn: 'Valider les verbes', miss: n => n === 1 ? 'Il te manque encore 1 verbe qui change.' : 'Il te manque encore ' + n + ' verbes qui changent.' };
     const steps = [stA];
     let stB = null;
     if (och.length && opts.otherWords !== false){
@@ -1334,7 +1351,7 @@ span.tok.has-gap{padding:0;margin:0}
       });
       let blue = false;
       auto.forEach(idx => { if (src[idx].subj && !tapOnly.includes(idx)){ u.marks['text' + idx] = 'is-subj'; blue = true; } });
-      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant les autres mots qui changent' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
+      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant <strong>les autres mots qui changent</strong>' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
       steps.push(stB);
     }
     const writes = changed.filter(k => gapOf[k] !== undefined).map(k => {
@@ -1372,7 +1389,7 @@ span.tok.has-gap{padding:0;margin:0}
         else if (/x$/.test(w) && !/x$/.test(s.t)) add([s.t + 's'], 'Ce nom prend un x au pluriel : un oiseau, des oiseaux ; un hibou, des hiboux.');
         if (/s$/.test(w) && opts.to.sj.p >= 3 && !/s$/.test(s.t)) add([s.t], 'Au pluriel, ce mot prend un s.');
       }
-      return { st: { k: 'type', q: 'Écris le mot qui remplace « ' + esc(s.t) + ' ».', acc, gap: gapOf[k], hint: why, why, ph: 'Le mot', show: esc(tk.t), strictAcc: true, errs }, sum: esc(s.t) + ' → <b>' + esc(tk.t) + '</b>' };
+      return { st: { k: 'type', q: 'Écris <strong>le mot qui remplace</strong> « ' + esc(s.t) + ' ».', acc, gap: gapOf[k], hint: why, why, ph: 'Le mot', show: esc(tk.t), strictAcc: true, errs }, sum: esc(s.t) + ' → <b>' + esc(tk.t) + '</b>' };
     });
     const sumA = () => 'Les verbes qui changent : ' + vch.map(k => '<b>' + esc(src[k].t) + '</b>').join(', ');
     if (opts.split){
@@ -1398,7 +1415,7 @@ span.tok.has-gap{padding:0;margin:0}
             '<ol><li>je trouve les <b>verbes conjugués</b> qui vont changer ;</li><li>je trouve les <b>autres mots</b> qui changent ;</li><li>j\'écris le nouveau texte.</li></ol>' +
             '<p class="warn">Attention aux pièges : un verbe à l\'infinitif ne change jamais, et un verbe qui a un autre sujet ne change pas quand on change le sujet.</p>',
       checks: [
-        { type: true, q: '« Léa veut manger une pomme. Son frère dort. » Avec « Léa et Tom » à la place de « Léa », écris le verbe qui change.', acc: ['veulent'], errs: [{ m: ['mangent'], fb: '« manger » est à l\'infinitif : il ne change pas.' }, { m: ['dorment'], fb: '« dort » a un autre sujet, « son frère » : il ne change pas.' }, { m: ['veut', 'vouloir'], fb: 'Avec « Léa et Tom », le verbe passe au pluriel.' }], why: 'Seul « veut » change : <b>veulent</b>. « manger » est à l\'infinitif, et « dort » a un autre sujet.', hint: 'Cherche le verbe conjugué qui a pour sujet « Léa ».' }
+        { type: true, q: '« Léa veut manger une pomme. Son frère dort. » Avec « Léa et Tom » à la place de « Léa », écris <strong>le verbe qui change</strong>.', acc: ['veulent'], errs: [{ m: ['mangent'], fb: '« manger » est à l\'infinitif : il ne change pas.' }, { m: ['dorment'], fb: '« dort » a un autre sujet, « son frère » : il ne change pas.' }, { m: ['veut', 'vouloir'], fb: 'Avec « Léa et Tom », le verbe passe au pluriel.' }], why: 'Seul « veut » change : <b>veulent</b>. « manger » est à l\'infinitif, et « dort » a un autre sujet.', hint: 'Cherche le verbe conjugué qui a pour sujet « Léa ».' }
       ]
     },
     {
@@ -1409,7 +1426,7 @@ span.tok.has-gap{padding:0;margin:0}
             '<tr><td>nous</td><td>nous</td><td>notre</td><td>nos</td></tr><tr><td>vous</td><td>vous</td><td>votre</td><td>vos</td></tr><tr><td>ils, elles</td><td>se</td><td>leur</td><td>leurs</td></tr></table>' +
             '<p class="ex">Je <b>me</b> lève et je prends <b>mon</b> sac. → Nous <b>nous</b> levons et nous prenons <b>notre</b> sac.</p>',
       checks: [
-        { type: true, q: '« Tu ranges tes affaires. » Avec « vous » à la place de « tu », écris le mot qui remplace « tes ».', acc: ['vos'], errs: [{ m: ['votre'], fb: 'Il y a plusieurs affaires : « vos ».' }, { m: ['leurs', 'nos'], fb: 'Le sujet est « vous ».' }, { m: ['tes'], fb: 'C\'est le mot de départ : il doit changer.' }], why: 'tu → vous, tes → <b>vos</b>.', hint: 'Regarde le tableau.' }
+        { type: true, q: '« Tu ranges tes affaires. » Avec « vous » à la place de « tu », écris <strong>le mot qui remplace « tes »</strong>.', acc: ['vos'], errs: [{ m: ['votre'], fb: 'Il y a plusieurs affaires : « vos ».' }, { m: ['leurs', 'nos'], fb: 'Le sujet est « vous ».' }, { m: ['tes'], fb: 'C\'est le mot de départ : il doit changer.' }], why: 'tu → vous, tes → <b>vos</b>.', hint: 'Regarde le tableau.' }
       ]
     },
     {
@@ -1418,7 +1435,7 @@ span.tok.has-gap{padding:0;margin:0}
             '<p class="ex">Le petit chat est content. Il joue avec <b>sa</b> balle. → Les petit<b>s</b> chat<b>s</b> sont content<b>s</b>. Il<b>s</b> jouent avec <b>leur</b> balle.</p>' +
             '<ul><li>son, sa → <b>leur</b> (un objet pour chacun) ; ses → <b>leurs</b>.</li><li>Noms en -eau : un oiseau, des oiseau<b>x</b>. Noms en -al : un cheval, des chev<b>aux</b>.</li></ul>',
       checks: [
-        { type: true, q: '« Le cheval est content. » Au pluriel, écris le mot qui remplace « cheval ».', acc: ['chevaux'], errs: [{ m: ['chevals'], fb: 'Les noms en -al font leur pluriel en -aux.' }, { m: ['cheval'], fb: 'Au pluriel, le nom change.' }], why: 'un cheval, des <b>chevaux</b>.', hint: 'Les noms en -al font -aux.' }
+        { type: true, q: '« Le cheval est content. » <strong>Au pluriel</strong>, écris le mot qui remplace « cheval ».', acc: ['chevaux'], errs: [{ m: ['chevals'], fb: 'Les noms en -al font leur pluriel en -aux.' }, { m: ['cheval'], fb: 'Au pluriel, le nom change.' }], why: 'un cheval, des <b>chevaux</b>.', hint: 'Les noms en -al font -aux.' }
       ]
     },
     {
@@ -1427,7 +1444,7 @@ span.tok.has-gap{padding:0;margin:0}
             '<p>Au passé composé avec <b>être</b>, j\'utilise la méthode des moines copistes : qu\'est-ce qui est + participe ? Si la réponse est déjà écrite, j\'accorde.</p>' +
             '<p class="ex">Aujourd\'hui, mes cousines arrivent et elles goûtent. → Hier, mes cousines sont arrivé<b>es</b> et elles ont goûté.</p>',
       checks: [
-        { type: true, q: '« Aujourd\'hui, mes tantes partent en voyage. » Commence par « Hier » : écris le verbe.', acc: ['sont parties'], errs: [{ m: ['sont parti', 'sont partis', 'sont partie'], fb: 'Qu\'est-ce qui est parti ? « mes tantes » : c\'est déjà écrit, j\'accorde (féminin pluriel).' }, { m: ['ont parti', 'ont parties'], fb: 'partir se conjugue avec être.' }, { m: ['partaient'], fb: 'Ça, c\'est l\'imparfait. Avec « hier », on raconte au passé composé.' }], why: 'Hier, mes tantes <b>sont parties</b>.', hint: 'Passé composé : être au présent, puis le participe passé accordé.' }
+        { type: true, q: '« Aujourd\'hui, mes tantes partent en voyage. » <strong>Commence par « Hier »</strong> : écris le verbe.', acc: ['sont parties'], errs: [{ m: ['sont parti', 'sont partis', 'sont partie'], fb: 'Qu\'est-ce qui est parti ? « mes tantes » : c\'est déjà écrit, j\'accorde (féminin pluriel).' }, { m: ['ont parti', 'ont parties'], fb: 'partir se conjugue avec être.' }, { m: ['partaient'], fb: 'Ça, c\'est l\'imparfait. Avec « hier », on raconte au passé composé.' }], why: 'Hier, mes tantes <b>sont parties</b>.', hint: 'Passé composé : être au présent, puis le participe passé accordé.' }
       ]
     },
     {
@@ -1437,7 +1454,7 @@ span.tok.has-gap{padding:0;margin:0}
             '<li>le <b>passé composé</b> (ou, dans les livres, le <b>passé simple</b>) pour les <b>actions</b> qui font avancer l\'histoire.</li></ul>' +
             '<p class="ex">Il pleuvait. Soudain, le chat <b>a sauté</b> (<b>sauta</b>) sur la table.</p>',
       checks: [
-        { q: '« Ce soir-là, la lune brillait. Tout à coup, un loup a hurlé. » Quel verbe raconte le décor ?', c: ['brillait', 'a hurlé'], a: 0, why: '« brillait » (imparfait) : c\'est le décor, ce qui dure.' }
+        { q: '« Ce soir-là, la lune brillait. Tout à coup, un loup a hurlé. » Quel verbe raconte <strong>le décor</strong> ?', c: ['brillait', 'a hurlé'], a: 0, why: '« brillait » (imparfait) : c\'est le décor, ce qui dure.' }
       ]
     }
   ];
@@ -1566,7 +1583,7 @@ span.tok.has-gap{padding:0;margin:0}
       const ti = Math.floor(Math.random() * pool.length);
       const sj = pick(SUBJ_PRO), sj2 = otherPro(sj);
       const u = transposeUnit({ tpl: pool[ti], from: { sj, t: 'présent' }, to: { sj: sj2, t: 'présent' }, tapPro: true, split: true,
-        q: 'Réécris le texte avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' ».', hintA: HINT_P });
+        q: 'Réécris le texte <strong>avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »</strong>.', hintA: HINT_P });
       u.key = 'd1|' + (HARD ? 'o' : 'j') + ti + '|' + sj.w + '>' + sj2.w;
       return u;
     }, u => mainChange(u) && u.och.length > 0);
@@ -1584,7 +1601,7 @@ span.tok.has-gap{padding:0;margin:0}
       const t = HARD ? pick(pron ? ['présent', 'imparfait', 'futur'] : ['présent', 'imparfait', 'futur', 'passé composé']) : 'présent';
       const from = back ? many : one, to = back ? one : many;
       const u = transposeUnit({ tpl: it.t, from: { sj: from, t }, to: { sj: to, t }, tapPro: true, subjWrite: true, split: true,
-        q: 'Réécris le texte en mettant « ' + lowFirst(from.w) + ' » au ' + (back ? 'singulier' : 'pluriel') + '.', hintA: HINT_P });
+        q: 'Réécris le texte en mettant « ' + lowFirst(from.w) + ' » <strong>au ' + (back ? 'singulier' : 'pluriel') + '</strong>.', hintA: HINT_P });
       u.key = 'd2|' + (bank === NB_O ? 'o' : 'j') + ti + '|' + nm + '|' + t + '|' + (back ? 's' : 'p');
       return u;
     }, u => mainChange(u));
@@ -1598,7 +1615,7 @@ span.tok.has-gap{padding:0;margin:0}
       const sj = HARD ? pick(SUBJ_PRO) : pick(SUBJ_ALL());
       const sj2 = HARD ? otherPro(sj) : sj;
       const u = transposeUnit({ tpl: '@T, ' + pool[ti], from: { sj, t: 'présent' }, to: { sj: sj2, t }, time: TIME_A, tapPro: true, split: true,
-        q: 'Réécris le texte en commençant par « ' + capFirst(TIME_A[t]) + ' »' + (HARD ? ', avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »' : '') + '.', hintA: HARD ? HINT_P + ' Et comme le moment change aussi, les verbes qui ont un autre sujet changent quand même.' : HINT_T });
+        q: 'Réécris le texte <strong>en commençant par « ' + capFirst(TIME_A[t]) + ' »' + (HARD ? ', avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »' : '') + '</strong>.', hintA: HARD ? HINT_P + ' Et comme le moment change aussi, les verbes qui ont un autre sujet changent quand même.' : HINT_T });
       pastHints(u, t);
       u.key = 'd3|' + (HARD ? 'o' : 'j') + ti + '|' + t + '|' + (sj.w || sj.p) + '>' + (sj2.w || sj2.p);
       return u;
@@ -1613,7 +1630,7 @@ span.tok.has-gap{padding:0;margin:0}
       const sj2 = HARD ? otherSubj(sj, SUBJ_ALL().filter(knownG)) : sj;
       if (!sj2) return null;
       const u = transposeUnit({ tpl: pool[ti], from: { sj, t: 'présent' }, to: { sj: sj2, t: 'passé composé' }, time: TIME_PC, tapPro: true, split: true,
-        q: 'Réécris le texte en commençant par « Hier »' + (HARD ? ', avec « ' + subjName(sj2) + ' » à la place de « ' + subjName(sj) + ' »' : '') + '.', hintA: HARD ? HINT_P + ' Et comme le moment change aussi, les verbes qui ont un autre sujet changent quand même.' : HINT_T });
+        q: 'Réécris le texte <strong>en commençant par « Hier »' + (HARD ? ', avec « ' + subjName(sj2) + ' » à la place de « ' + subjName(sj) + ' »' : '') + '</strong>.', hintA: HARD ? HINT_P + ' Et comme le moment change aussi, les verbes qui ont un autre sujet changent quand même.' : HINT_T });
       pastHints(u, 'passé composé');
       u.key = 'd4|' + (HARD ? 'o' : 'j') + ti + '|' + (sj.w || sj.p) + '>' + (sj2.w || sj2.p);
       return u;
@@ -1637,7 +1654,7 @@ span.tok.has-gap{padding:0;margin:0}
       const sj2 = change ? otherSubj(sj, SUBJ_ALL().filter(knownG)) : sj;
       if (!sj2) return null;
       const u = transposeUnit({ tpl: pool[ti], from: { sj, t: 'présent' }, to: { sj: sj2, t: T }, time, tapPro: true, split: true,
-        q: 'Réécris le récit au passé, en commençant par « ' + capFirst(time.imparfait) + ' »' + (change ? ', avec « ' + subjName(sj2) + ' » à la place de « ' + subjName(sj) + ' »' : '') + '.',
+        q: 'Réécris le récit <strong>au passé, en commençant par « ' + capFirst(time.imparfait) + ' »' + (change ? ', avec « ' + subjName(sj2) + ' » à la place de « ' + subjName(sj) + ' »' : '') + '</strong>.',
         hintA: 'Quand on raconte au passé, tous les verbes conjugués changent, même ceux qui ont un autre sujet. Les verbes à l\'infinitif ne changent pas.' });
       const A = T.a;
       u.items.forEach(it => it.steps.forEach(st => {
@@ -1885,6 +1902,7 @@ span.tok.has-gap{padding:0;margin:0}
     HARD = curParc() === 'orange';
     if (!prof){ askForName("Écris d'abord ton prénom pour gagner des bons points."); return; }
     if (!unlocked(prof, id)) return;
+    accFoldSet(false);
     if (prof.gift){ prof.gift = 0; saveStore(); }
     S.R = freshRound(id);
     S.R.uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -2925,7 +2943,7 @@ span.tok.has-gap{padding:0;margin:0}
     let h = '<h2>' + card.title + '</h2>' + card.html;
     h += '<div class="check" id="learnCheck"><span class="eyebrow">Question ' + (L.check + 1) + ' sur ' + card.checks.length + '</span><p class="check-q">' + ch.q + '</p>';
     if (ch.type){
-      h += '<form class="answer-row learn-row" id="learnForm" novalidate><input class="input' + (L.last === 'bad' && !right ? ' bad' : '') + '" id="learnInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="' + (ch.ph || 'Écris ta réponse') + '"' + (right ? ' disabled value="' + esc(L.revealed ? ch.acc[0] : (document.getElementById('learnInput') || {}).value || ch.acc[0]) + '"' : '') + '><button class="btn-primary btn-inline" type="submit"' + (right ? ' disabled' : '') + '>Valider</button></form>';
+      h += '<form class="answer-row learn-row" id="learnForm" novalidate><input class="input' + (L.last === 'bad' && !right ? ' bad' : '') + '" id="learnInput" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="' + (ch.ph || 'Écris ta réponse') + '"' + (right ? ' disabled value="' + esc(L.revealed ? ch.acc[0] : (document.getElementById('learnInput') || {}).value || ch.acc[0]) + '"' : '') + '><button class="btn-primary btn-inline" type="submit"' + (right ? ' disabled' : '') + '>Valider</button></form>' + (right ? '' : accKeysHTML('learnInput'));
       if (right) h += '<p class="why ' + (L.revealed ? 'bad' : 'good') + '">' + (L.revealed ? 'La bonne réponse : <b>' + esc(ch.acc[0]) + '</b>. ' : '') + ch.why + '</p>';
       else if (L.msg) h += '<p class="why bad">' + L.msg + '</p>';
     } else {
@@ -3238,6 +3256,36 @@ span.tok.has-gap{padding:0;margin:0}
   $('choiceBtns').addEventListener('click', e => { const b = e.target.closest('[data-pick]'); if (b) choicePick(+b.dataset.pick); });
   $('continueBtn').addEventListener('click', onContinue);
 
+  // Lettres accentuées repliées : la même ligne à toutes les questions ; ouverte, elle le reste jusqu'à la fin de la partie
+  function accFoldSet(open, from){
+    accOpen = !!open;
+    document.querySelectorAll('.accfold').forEach(f => {
+      f.classList.toggle('open', accOpen);
+      const b = f.querySelector('.accopen'); if (b) b.setAttribute('aria-expanded', accOpen ? 'true' : 'false');
+    });
+    const f = from && from.closest('.accfold'), k = f && f.querySelector('.acckeys');
+    if (accOpen && k && k.scrollIntoView){ try { k.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  }
+  let accFoldTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); accFoldTouch = Date.now(); accFoldSet(b.dataset.accfold === '1', b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (!b) return; e.preventDefault(); if (Date.now() - accFoldTouch < 700) return; accFoldSet(b.dataset.accfold === '1', b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-accfold]'); if (b && e.detail === 0) accFoldSet(b.dataset.accfold === '1', b); });
+  // Lettres accentuées : on écrit dans la case sans lui faire perdre le curseur
+  const ACC_KEYS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'ç', 'î', 'ï', 'ô', 'û', 'ù', 'œ'];
+  let accOpen = false; // rangée des lettres accentuées dépliée ?
+  function accKeysHTML(forId){ return '<div class="accfold' + (accOpen ? ' open' : '') + '"><button class="accopen" type="button" data-accfold="1" aria-expanded="' + (accOpen ? 'true' : 'false') + '"><span class="accmini" aria-hidden="true">é</span>Besoin d\'un accent ? Touche ici.</button><div class="acckeys" role="group" aria-label="Lettres accentuées">' + ACC_KEYS.map(c => '<button class="acckey" type="button" tabindex="-1" data-acc="' + c + '" data-for="' + forId + '">' + c + '</button>').join('') + '<button class="acckey accclose" type="button" data-accfold="0" aria-label="Replier les lettres accentuées">✕</button></div></div>'; }
+  function accInsert(btn){
+    const inp = $(btn.dataset.for); if (!inp || inp.disabled) return;
+    const ch = btn.dataset.acc, s = inp.selectionStart == null ? inp.value.length : inp.selectionStart, en = inp.selectionEnd == null ? s : inp.selectionEnd;
+    inp.value = inp.value.slice(0, s) + ch + inp.value.slice(en);
+    try { inp.focus({ preventScroll: true }); inp.setSelectionRange(s + ch.length, s + ch.length); } catch (e) {}
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  let accTouch = 0;
+  document.addEventListener('touchstart', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); accTouch = Date.now(); accInsert(b); }, { passive: false });
+  document.addEventListener('mousedown', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (!b) return; e.preventDefault(); if (Date.now() - accTouch < 700) return; accInsert(b); });
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-acc]'); if (b && e.detail === 0) accInsert(b); });
+  $('accFoldMain').innerHTML = accKeysHTML('answerInput');
   $('nextLevelBtn').addEventListener('click', () => startLevel(S.res.id + 1));
   $('replayBtn').addEventListener('click', () => startLevel(S.res.id));
   $('resHome').addEventListener('click', goHome);

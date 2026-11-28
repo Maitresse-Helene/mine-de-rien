@@ -469,6 +469,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -811,7 +814,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const L = { debut: 'au début du mot', milieu: 'au milieu du mot', fin: 'à la fin du mot' };
     const opts = ['debut', 'milieu', 'fin'].map(k => ({ h: L[k], ok: k === where, fb: k === where ? '' : 'Dis le mot en séparant les syllabes, puis cherche celle où tu entends [ʒ].' }));
     return {
-      stmt: '<p class="lead-q">Où entends-tu le son [ʒ] ?</p>' + W(w),
+      stmt: '<p class="lead-q"><b>Où</b> entends-tu le son [ʒ] ?</p>' + W(w),
       steps: [mkChoice('Le son [ʒ] est…', opts, { hint: 'Coupe le mot en syllabes en tapant dans tes mains, puis écoute où se trouve le son [ʒ].' })],
       end: 'Dans « ' + w + ' », le son [ʒ] est <b>' + L[where] + '</b>.',
       sum: w + ' : <b>' + L[where] + '</b>'
@@ -820,7 +823,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemCount(){
     const two = Math.random() < 0.55, w = two ? pick(COUNT2) : pick(POS.debut.concat(POS.fin)), n = two ? 2 : 1;
     return {
-      stmt: '<p class="lead-q">Combien de fois entends-tu le son [ʒ] dans ce mot ?</p>' + W(w),
+      stmt: '<p class="lead-q"><b>Combien de fois</b> entends-tu le son [ʒ] dans ce mot ?</p>' + W(w),
       steps: [mkChoice('On entend le son [ʒ]…', [1, 2].map(k => ({ h: k === 1 ? '1 fois' : '2 fois', ok: k === n, fb: 'Dis le mot très lentement et compte les [ʒ].' })), { hint: 'Dis le mot très lentement et lève un doigt chaque fois que tu entends [ʒ].' })],
       end: 'Dans « ' + w + ' », on entend le son [ʒ] <b>' + (n === 1 ? 'une fois' : '2 fois') + '</b>.',
       sum: w + ' : <b>' + n + ' fois</b>'
@@ -831,7 +834,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const L = { g: 'avec un g', j: 'avec un j', ge: 'avec ge' };
     const opts = GSET.map(k => ({ h: L[k], ok: k === g, fb: k === g ? '' : 'Regarde bien les lettres qui font le son [ʒ] dans ce mot.' }));
     return {
-      stmt: '<p class="lead-q">Comment s\'écrit le son [ʒ] dans ce mot ?</p>' + W(plainOf(s)),
+      stmt: '<p class="lead-q"><b>Comment s\'écrit</b> le son [ʒ] dans ce mot ?</p>' + W(plainOf(s)),
       stmtDone: '<p class="lead-q">Comment s\'écrit le son [ʒ] dans ce mot ?</p>' + W(fullOf(s)),
       steps: [mkChoice('Le son [ʒ] s\'écrit…', opts, { hint: 'Cherche la lettre j, ou la lettre g suivie de e, i ou y.' })],
       end: 'Dans « ' + plainOf(s) + ' », le son [ʒ] s\'écrit <b>' + g + '</b>.',
