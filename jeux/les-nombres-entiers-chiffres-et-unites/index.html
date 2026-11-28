@@ -557,6 +557,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .sex .wd{font-family:var(--font-body);font-size:.5em;font-weight:600;color:var(--ink);line-height:1.2}
 .sex.small .wd{font-size:.6em}
 .lesson > .evlist{flex:none}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1110,7 +1113,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* ---------- Niveau 2 : chiffre ou nombre ? ---------- */
   const rankList = () => Array.from({ length: NR() - 1 }, (_, j) => j + 1);
   function chiffreStep(N, j){
-    return mkNum('Le chiffre des ' + UN[j].p, '□', digitAt(N, j), { hint: 'Le chiffre des ' + UN[j].p + ' est le seul chiffre de la colonne des ' + UN[j].p + '. Compte les rangs depuis la droite.', diag: v => {
+    return mkNum('Le <b>chiffre</b> des ' + UN[j].p, '□', digitAt(N, j), { hint: 'Le chiffre des ' + UN[j].p + ' est le seul chiffre de la colonne des ' + UN[j].p + '. Compte les rangs depuis la droite.', diag: v => {
       if (v === countOf(N, j) && v > 9) return 'Ça, c\'est le nombre ' + deq(UN[j].p) + '. Le chiffre des ' + UN[j].p + ' est un seul chiffre.';
       if (j > 0 && v === digitAt(N, j - 1)) return 'Ce chiffre est celui des ' + UN[j - 1].p + ' : compte les rangs depuis la droite.';
       if (j < NR() - 1 && v === digitAt(N, j + 1)) return 'Ce chiffre est celui des ' + UN[j + 1].p + ' : compte les rangs depuis la droite.';
@@ -1118,7 +1121,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     } });
   }
   function nombreStep(N, j){
-    return mkNum('Le nombre ' + deq(UN[j].p), '□', countOf(N, j), { hint: 'On lit tous les chiffres jusqu\'à la colonne des ' + UN[j].p + ' (on cache ceux de droite).' + tableNum([N], { hl: j }), diag: v => {
+    return mkNum('Le <b>nombre</b> ' + deq(UN[j].p), '□', countOf(N, j), { hint: 'On lit tous les chiffres jusqu\'à la colonne des ' + UN[j].p + ' (on cache ceux de droite).' + tableNum([N], { hl: j }), diag: v => {
       if (v === digitAt(N, j) && countOf(N, j) > 9) return 'Ça, c\'est le chiffre des ' + UN[j].p + '. Le nombre ' + deq(UN[j].p) + ' compte toutes les ' + UN[j].p + ' : lis aussi les chiffres à gauche.';
       if (j > 0 && v === countOf(N, j - 1)) return 'Tu t\'es arrêté à la colonne des ' + UN[j - 1].p + ' : cache aussi ce chiffre.';
       if (j + 1 < UN.length && v === countOf(N, j + 1)) return 'Tu as caché un chiffre de trop : arrête-toi à la colonne des ' + UN[j].p + '.';
@@ -1305,7 +1308,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     while ((j1 === j2 || digitAt(N, j1) === digitAt(N, j2) || String(M).length !== String(N).length) && k++ < 80);
     const a = Math.max(j1, j2), b = Math.min(j1, j2);
     return {
-      stmt: '<p class="lead-q">Dans ce nombre, échange le chiffre des ' + UN[a].p + ' et le chiffre des ' + UN[b].p + '. Écris le nouveau nombre.</p><p class="numbig">' + F(N) + '</p>',
+      stmt: '<p class="lead-q">Dans ce nombre, <b>échange</b> le chiffre des ' + UN[a].p + ' et le chiffre des ' + UN[b].p + '. Écris le nouveau nombre.</p><p class="numbig">' + F(N) + '</p>',
       steps: [mkNum('Le nouveau nombre', '□', M, { hint: 'Trouve d\'abord le chiffre des ' + UN[a].p + ' et le chiffre des ' + UN[b].p + ', puis échange-les ; les autres chiffres ne bougent pas.', diag: v => v === N ? 'Tu as recopié le nombre : échange les deux chiffres.' : 'Vérifie : seuls le chiffre des ' + UN[a].p + ' et celui des ' + UN[b].p + ' changent de place.' })],
       end: 'Le chiffre des ' + UN[a].p + ' (' + digitAt(N, a) + ') et celui des ' + UN[b].p + ' (' + digitAt(N, b) + ') changent de place : <b>' + F(M) + '</b>.',
       sum: 'Échanger ' + COLS[a] + ' et ' + COLS[b] + ' dans ' + F(N)

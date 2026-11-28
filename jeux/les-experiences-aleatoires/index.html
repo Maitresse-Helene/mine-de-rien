@@ -496,6 +496,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .nonebtn{align-self:flex-start;font-size:1rem;font-style:italic}
 .psubmit{margin-top:4px}
 .problem{margin:0;line-height:1.6}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -968,7 +971,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tiles = range(0, N + 2).map(v => tok(v, v >= 1 && v <= N, v === 0 ? '« 0 » n\'est écrit sur aucune face du dé : ce n\'est pas une issue.' : 'Le dé n\'a que ' + N + ' faces : « ' + v + ' » ne peut pas sortir.'));
     return {
       stmt: '<p class="event">Je lance un dé à ' + N + ' faces, numérotées de 1 à ' + N + '.</p>',
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Quels nombres sont écrits sur les faces du dé ?' })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Quels nombres sont écrits sur les faces du dé ?' })],
       end: 'Les issues sont les nombres de 1 à ' + N + ' : il y a <b>' + N + ' issues</b>.',
       sum: 'Dé à ' + N + ' faces → <b>' + N + ' issues</b> (1 à ' + N + ')'
     };
@@ -978,7 +981,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tiles = shuffle(cs.concat(abs)).map(c => tok(dot(c) + c, cs.includes(c), 'Il n\'y a pas de case ' + adjC(c, true) + ' sur la roue : la flèche ne peut pas s\'y arrêter.'));
     return {
       stmt: '<p class="lead-q">On fait tourner la roue de la loterie et on regarde la couleur de la case où la flèche s\'arrête.</p>' + fig(wheelSVG(shuffle(cs).map(c => ({ c, t: c })))),
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Regarde bien les couleurs des cases de la roue.' })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Regarde bien les couleurs des cases de la roue.' })],
       end: 'Les issues sont les couleurs des cases : ' + listFr(cs) + '. Il y a <b>' + n + ' issues</b>.',
       sum: 'Roue ' + cs.join(', ') + ' → <b>' + n + ' issues</b>'
     };
@@ -990,7 +993,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tiles = shuffle(ns).map(nm => tok(nm, ok.includes(nm), '« ' + nm + ' » est dans ' + other + ', pas dans ' + cont + ' : ce prénom ne peut pas sortir.'));
     return {
       stmt: '<p class="problem">Les enfants de l\'équipe ' + T[0] + ' ont mis un papier à leur prénom dans le chapeau : ' + listFr(A) + '. Ceux de l\'équipe ' + T[1] + ' ont mis le leur dans une boîte : ' + listFr(B) + '.</p><p class="event">On tire un papier dans ' + cont + '.</p>',
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Quels papiers sont dans ' + cont + ' ?' })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Quels papiers sont dans ' + cont + ' ?' })],
       end: 'Les issues sont les prénoms qui sont dans ' + cont + ' : ' + listFr(ok) + '. Il y a <b>' + ok.length + ' issues</b>.',
       sum: 'Papier tiré dans ' + cont + ' (' + ok.join(', ') + ') → <b>' + ok.length + ' issues</b>'
     };
@@ -1000,7 +1003,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tiles = range(1, top).map(v => tok(v, nums.includes(v), 'Aucun canard ne porte le numéro ' + v + ' : il ne peut pas sortir.'));
     return {
       stmt: '<p class="lead-q">On pêche au hasard un canard dans le bassin et on regarde son numéro.</p>' + fig(ducksSVG(ducks)),
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Quels numéros portent les canards ?' })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Quels numéros portent les canards ?' })],
       end: 'Les issues sont les numéros des canards : ' + listFr(nums) + '. Il y a <b>' + m + ' issues</b>.',
       sum: 'Canards n° ' + nums.join(', ') + ' → <b>' + m + ' issues</b>'
     };
@@ -1010,7 +1013,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tiles = L.concat(others).sort().map(x => tok(x, L.includes(x), 'Il n\'y a pas de « ' + x + ' » dans le mot ' + word + ' : cette étiquette n\'existe pas.'));
     return {
       stmt: '<p class="event">On écrit chaque lettre du mot <b>' + word + '</b> sur une étiquette. On mélange les étiquettes et on en tire une.</p>',
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Quelles lettres sont écrites sur les étiquettes ?' })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Quelles lettres sont écrites sur les étiquettes ?' })],
       end: 'Les issues sont les lettres du mot ' + word + ' : ' + listFr(L) + '. Il y a <b>' + L.length + ' issues</b>.',
       sum: 'Lettres de ' + word + ' → <b>' + L.length + ' issues</b>'
     };
@@ -1019,7 +1022,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tiles = range(A - 2, B + 2).map(v => tok(v, v >= A && v <= B, v < A ? 'Les boules commencent à ' + A + ' : il n\'y a pas de boule « ' + v + ' ».' : 'Les boules s\'arrêtent à ' + B + ' : il n\'y a pas de boule « ' + v + ' ».'));
     return {
       stmt: '<p class="event">Dans une urne, il y a une boule pour chaque nombre de ' + A + ' à ' + B + '. On tire une boule.</p>',
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' « De ' + A + ' à ' + B + ' » : ' + A + ' et ' + B + ' y sont aussi.', missFb: 'Il manque encore {n}. Attention : « de ' + A + ' à ' + B + ' », cela veut dire que ' + A + ' et ' + B + ' y sont aussi.' })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' « De ' + A + ' à ' + B + ' » : ' + A + ' et ' + B + ' y sont aussi.', missFb: 'Il manque encore {n}. Attention : « de ' + A + ' à ' + B + ' », cela veut dire que ' + A + ' et ' + B + ' y sont aussi.' })],
       end: 'Les issues sont les nombres de ' + A + ' à ' + B + ' (' + A + ' et ' + B + ' compris) : il y a <b>' + (B - A + 1) + ' issues</b>.',
       sum: 'Boules de ' + A + ' à ' + B + ' → <b>' + (B - A + 1) + ' issues</b>'
     };
@@ -1029,12 +1032,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (v === 'saisons'){
       const S4 = ['printemps', 'été', 'automne', 'hiver'], ex = sample(['janvier', 'juillet', 'octobre', 'avril', 'lundi'], 3);
       const tiles = shuffle(S4.concat(ex)).map(x => tok(x, S4.includes(x), '« ' + x + ' » n\'est pas une saison : son étiquette n\'est pas dans la boîte.'));
-      return { stmt: '<p class="event">Dans une boîte, il y a une étiquette pour chaque saison. On en tire une au hasard.</p>', steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Quelles étiquettes sont dans la boîte ?' })], end: 'Les issues sont les quatre saisons : printemps, été, automne et hiver. Il y a <b>4 issues</b>.', sum: 'Une étiquette par saison → <b>4 issues</b>' };
+      return { stmt: '<p class="event">Dans une boîte, il y a une étiquette pour chaque saison. On en tire une au hasard.</p>', steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Quelles étiquettes sont dans la boîte ?' })], end: 'Les issues sont les quatre saisons : printemps, été, automne et hiver. Il y a <b>4 issues</b>.', sum: 'Une étiquette par saison → <b>4 issues</b>' };
     }
     const ok = v === 'we' ? ['samedi', 'dimanche'] : ['mardi', 'mercredi'];
     const tiles = DAYS.map(d => tok(d, ok.includes(d), v === 'we' ? '« ' + d + ' » n\'est pas un jour du week-end : son étiquette n\'est pas dans la boîte.' : '« ' + d + ' » ne commence pas par la lettre M : son étiquette n\'est pas dans la boîte.'));
     const txt = v === 'we' ? 'chaque jour du week-end' : 'chaque jour de la semaine dont le nom commence par M';
-    return { stmt: '<p class="event">Dans une boîte, il y a une étiquette pour ' + txt + '. On en tire une au hasard.</p>', steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Quelles étiquettes sont dans la boîte ?' })], end: 'Les issues sont ' + listFr(ok) + ' : il y a <b>2 issues</b>.', sum: 'Une étiquette pour ' + txt + ' → <b>2 issues</b>' };
+    return { stmt: '<p class="event">Dans une boîte, il y a une étiquette pour ' + txt + '. On en tire une au hasard.</p>', steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Quelles étiquettes sont dans la boîte ?' })], end: 'Les issues sont ' + listFr(ok) + ' : il y a <b>2 issues</b>.', sum: 'Une étiquette pour ' + txt + ' → <b>2 issues</b>' };
   }
   const DEUX = {
     sum6: { t: 'Je lance deux dés à 6 faces et j\'additionne les deux nombres.', lo: 2, hi: 12, tmin: 0, tmax: 13, fb: v => v < 2 ? 'Avec deux dés, le plus petit total est 1 + 1 = 2 : « ' + v + ' » ne peut pas sortir.' : 'Le plus grand total est 6 + 6 = 12 : « ' + v + ' » ne peut pas sortir.', end: 'Les totaux vont de 1 + 1 = 2 à 6 + 6 = 12', miss: 'Pense au plus petit total (1 + 1) et au plus grand (6 + 6) : tous les nombres entre les deux peuvent sortir.' },
@@ -1046,7 +1049,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const D = DEUX[k], tiles = range(D.tmin, D.tmax).map(v => tok(v, v >= D.lo && v <= D.hi, D.fb(v))), n = D.hi - D.lo + 1;
     return {
       stmt: '<p class="event">' + D.t + '</p>',
-      steps: [mkPick('Touche toutes les issues possibles.', tiles, { hint: HINT_ISS + ' Cherche le plus petit résultat possible, puis le plus grand.', missFb: 'Il manque encore {n}. ' + D.miss })],
+      steps: [mkPick('Touche <b>toutes les issues possibles</b>.', tiles, { hint: HINT_ISS + ' Cherche le plus petit résultat possible, puis le plus grand.', missFb: 'Il manque encore {n}. ' + D.miss })],
       end: D.end + ' : il y a <b>' + n + ' issues</b>.',
       sum: esc(D.t) + ' → <b>' + n + ' issues</b>'
     };
@@ -1096,14 +1099,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       addTrap(traps, issues.length, 'Tu as compté toutes les issues. Garde seulement celles qui réalisent l\'évènement.', n);
       return {
         stmt: stmtHtml + '<p class="event">Évènement : « ' + esc(ev.t) + ' »</p>',
-        steps: [mkNum('Combien d\'issues réalisent cet évènement ?', '□ issues', n, { traps, zero: true, hint: HINT_EV + (ev.miss ? ' ' + ev.miss : '') })],
+        steps: [mkNum('Combien d\'issues <b>réalisent cet évènement</b> ?', '□ issues', n, { traps, zero: true, hint: HINT_EV + (ev.miss ? ' ' + ev.miss : '') })],
         end: what,
         sum: esc(o.sum || '') + ' « ' + esc(ev.t) + ' » → <b>' + plu(n, 'issue') + '</b>'
       };
     }
     return {
       stmt: stmtHtml + '<p class="event">Évènement : « ' + esc(ev.t) + ' »</p>',
-      steps: [mkPick('Touche toutes les issues qui réalisent cet évènement.', tiles, { hint: HINT_EV, none: !!o.none, missFb: 'Il manque encore {n}.' + (ev.miss ? ' ' + ev.miss : ''), compFb: ev.neg ? 'Tu as touché ce qu\'il ne faut pas obtenir ! « Ne pas… », ce sont toutes les autres issues.' : '' })],
+      steps: [mkPick('Touche toutes les issues <b>qui réalisent cet évènement</b>.', tiles, { hint: HINT_EV, none: !!o.none, missFb: 'Il manque encore {n}.' + (ev.miss ? ' ' + ev.miss : ''), compFb: ev.neg ? 'Tu as touché ce qu\'il ne faut pas obtenir ! « Ne pas… », ce sont toutes les autres issues.' : '' })],
       end: what,
       sum: esc(o.sum || '') + ' « ' + esc(ev.t) + ' » → <b>' + (n ? listFr(okL.map(label)) : 'aucune issue') + '</b>'
     };
@@ -1250,11 +1253,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function cInterEv(){
     const v = pick(['fin', 'mul', 'pair']);
     if (v === 'fin'){ const M = pick([30, 40, 50, 60]), d = rand(1, 9), ok = range(1, M).filter(x => x % 10 === d), n = ok.length, traps = {}; addTrap(traps, n - 1, 'N\'oublie pas ' + d + ' tout seul : il se termine aussi par ' + d + '.', n);
-      return numItem('<p class="event">On tire au hasard un nombre de 1 à ' + M + '.</p><p class="event">Évènement : « obtenir un nombre qui se termine par ' + d + ' »</p>', 'Combien d\'issues réalisent cet évènement ?', n, traps, 'Écris-les : ' + d + ', ' + (10 + d) + ', ' + (20 + d) + '…', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'De 1 à ' + M + ', « se termine par ' + d + ' » → <b>' + n + ' issues</b>', { zero: true }); }
+      return numItem('<p class="event">On tire au hasard un nombre de 1 à ' + M + '.</p><p class="event">Évènement : « obtenir un nombre qui se termine par ' + d + ' »</p>', 'Combien d\'issues <b>réalisent cet évènement</b> ?', n, traps, 'Écris-les : ' + d + ', ' + (10 + d) + ', ' + (20 + d) + '…', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'De 1 à ' + M + ', « se termine par ' + d + ' » → <b>' + n + ' issues</b>', { zero: true }); }
     if (v === 'mul'){ const t = pick([4, 5, 6]), M = t * rand(5, 9) + rand(0, t - 1), ok = range(1, M).filter(x => x % t === 0), n = ok.length, traps = {}; addTrap(traps, n + 1, '0 n\'est pas entre 1 et ' + M + ' : il ne compte pas.', n);
-      return numItem('<p class="event">On tire au hasard un nombre de 1 à ' + M + '.</p><p class="event">Évènement : « obtenir un nombre de la table de ' + t + ' »</p>', 'Combien d\'issues réalisent cet évènement ?', n, traps, 'Récite la table de ' + t + ' et arrête-toi avant de dépasser ' + M + '.', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'De 1 à ' + M + ', table de ' + t + ' → <b>' + n + ' issues</b>', { zero: true }); }
+      return numItem('<p class="event">On tire au hasard un nombre de 1 à ' + M + '.</p><p class="event">Évènement : « obtenir un nombre de la table de ' + t + ' »</p>', 'Combien d\'issues <b>réalisent cet évènement</b> ?', n, traps, 'Récite la table de ' + t + ' et arrête-toi avant de dépasser ' + M + '.', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'De 1 à ' + M + ', table de ' + t + ' → <b>' + n + ' issues</b>', { zero: true }); }
     const A = rand(11, 25), B = A + rand(9, 16), ok = range(A, B).filter(x => x % 2 === 0), n = ok.length, traps = {}; addTrap(traps, B - A + 1, 'Tu as compté tous les nombres. Garde seulement les nombres pairs.', n);
-    return numItem('<p class="event">On tire au hasard un nombre de ' + A + ' à ' + B + '.</p><p class="event">Évènement : « obtenir un nombre pair »</p>', 'Combien d\'issues réalisent cet évènement ?', n, traps, 'Écris les nombres pairs de ' + A + ' à ' + B + ', puis compte-les.', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'De ' + A + ' à ' + B + ', « nombre pair » → <b>' + n + ' issues</b>', { zero: true });
+    return numItem('<p class="event">On tire au hasard un nombre de ' + A + ' à ' + B + '.</p><p class="event">Évènement : « obtenir un nombre pair »</p>', 'Combien d\'issues <b>réalisent cet évènement</b> ?', n, traps, 'Écris les nombres pairs de ' + A + ' à ' + B + ', puis compte-les.', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'De ' + A + ' à ' + B + ', « nombre pair » → <b>' + n + ' issues</b>', { zero: true });
   }
   function cClasseEv(){
     const G = rand(10, 15), B = rand(9, 14), girl = Math.random() < 0.5, a = girl ? B : G, traps = {};
@@ -1271,7 +1274,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     else if (v === 'pair'){ ok = sums.filter(s => s % 2 === 0); ev = 'le total est un nombre pair'; }
     else { const k = rand(6, 9); ok = sums.filter(s => s < k); ev = 'le total est plus petit que ' + k; }
     const n = ok.length, traps = {}; addTrap(traps, 11, 'Tu as compté tous les totaux possibles. Garde seulement ceux qui réalisent l\'évènement.', n);
-    return numItem('<p class="event">Je lance deux dés à 6 faces et je note le total des deux nombres.</p><p class="event">Évènement : « ' + ev + ' »</p>', 'Combien d\'issues réalisent cet évènement ?', n, traps,
+    return numItem('<p class="event">Je lance deux dés à 6 faces et je note le total des deux nombres.</p><p class="event">Évènement : « ' + ev + ' »</p>', 'Combien d\'issues <b>réalisent cet évènement</b> ?', n, traps,
       'Les issues sont les totaux de 2 à 12. Prends-les un par un.', 'Les issues : ' + listFr(ok) + '. Il y en a <b>' + n + '</b>.', 'Deux dés, « ' + ev + ' » → <b>' + n + ' issues</b>', { zero: true });
   }
 
@@ -1286,7 +1289,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return {
       stmt: '<p>Dans une boîte, il y a ces ' + N + ' cartes :</p>' + cardsHTML(cards) + '<p class="event">' + seq + '</p>',
       steps: [
-        mkNum('Combien y a-t-il d\'issues au ' + ordinal(k) + ' tirage ?', '□ issues', N - d, { traps, hint: 'Les cartes tirées ne sont pas remises : combien en reste-t-il dans la boîte ?' }),
+        mkNum('Combien y a-t-il d\'issues <b>au ' + ordinal(k) + ' tirage</b> ?', '□ issues', N - d, { traps, hint: 'Les cartes tirées ne sont pas remises : combien en reste-t-il dans la boîte ?' }),
         mkPick('Touche toutes les issues possibles au ' + ordinal(k) + ' tirage.', cards.map(c => tok(c, rest.includes(c), '« ' + c + ' » est déjà sortie et n\'a pas été remise : elle ne peut plus sortir.')), { hint: 'Quelles cartes sont encore dans la boîte ?' })
       ],
       end: 'Au ' + ordinal(k) + ' tirage, il reste ' + (N - d) + ' cartes : ' + listFr(rest) + '. Il y a <b>' + (N - d) + ' issues</b>.',
@@ -1320,7 +1323,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return {
         stmt: fig(wheelSVG(cs.map(x => ({ c: x, t: x })))) + '<p>' + who + ' a fait tourner la roue ' + R + ' fois. Voici les couleurs obtenues, dans l\'ordre :</p>' + resultsHTML(list, true),
         steps: [
-          mkNum('Combien de fois la flèche s\'est-elle arrêtée sur le ' + c + ' ?', '□ fois', k, { hint: 'Parcours la liste et compte les « ' + c + ' » un par un.' }),
+          mkNum('<b>Combien de fois</b> la flèche s\'est-elle arrêtée sur le ' + c + ' ?', '□ fois', k, { hint: 'Parcours la liste et compte les « ' + c + ' » un par un.' }),
           mkChoice('Au ' + (R + 1) + 'e tour, sur quelle couleur la flèche va-t-elle s\'arrêter ?', NEXT_OPTS('la couleur', 'Non : la roue ne se souvient pas des tours d\'avant. À chaque tour, le hasard décide : toutes les couleurs peuvent sortir.'), { hint: 'La roue se souvient-elle des tours d\'avant ?' })
         ],
         end: 'Le ' + c + ' est sorti <b>' + k + ' fois</b>. Au ' + (R + 1) + 'e tour, toutes les couleurs peuvent sortir : <b>on ne peut pas savoir</b> laquelle.',
@@ -1336,8 +1339,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       if (cnt(k) < 2) continue;
       const who = pick(NAMES);
       const steps = [
-        mkNum('Combien de fois le ' + k + ' est-il sorti ?', '□ fois', cnt(k), { hint: 'Parcours la liste et compte les ' + k + ' un par un.' }),
-        mkPick('Touche les issues qui ne sont jamais sorties.', range(1, N).map(v => tok(v, abs.includes(v), 'Le ' + v + ' est sorti ' + plu(cnt(v), 'fois', 'fois') + '.')), { hint: 'Les issues sont les nombres de 1 à ' + N + '. Cherche ceux qui ne sont pas dans la liste.' })
+        mkNum('<b>Combien de fois</b> le ' + k + ' est-il sorti ?', '□ fois', cnt(k), { hint: 'Parcours la liste et compte les ' + k + ' un par un.' }),
+        mkPick('Touche les issues qui <b>ne sont jamais sorties</b>.', range(1, N).map(v => tok(v, abs.includes(v), 'Le ' + v + ' est sorti ' + plu(cnt(v), 'fois', 'fois') + '.')), { hint: 'Les issues sont les nombres de 1 à ' + N + '. Cherche ceux qui ne sont pas dans la liste.' })
       ];
       if (step3) steps.push(mkChoice('Ces issues peuvent-elles sortir au prochain lancer ?', YESNO(true, '', 'Si : ce sont des issues possibles. Elles ne sont pas encore sorties, mais elles peuvent sortir à n\'importe quel lancer.')));
       return {
@@ -1359,7 +1362,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return {
         stmt: '<p class="lead-q">Dans ce sac, on tire un jeton, on note son numéro, et on ne le remet pas.</p>' + fig(bagSVG(range(1, T).map(v => ({ n: v, c: colOf(v) })))) + '<p class="event">Jetons déjà tirés : ' + listFr(drawn) + '.</p>',
         steps: [
-          mkNum('Combien y a-t-il d\'issues au ' + ordinal(k) + ' tirage ?', '□ issues', T - d, { traps, hint: 'Les jetons tirés ne sont pas remis : combien en reste-t-il dans le sac ?' }),
+          mkNum('Combien y a-t-il d\'issues <b>au ' + ordinal(k) + ' tirage</b> ?', '□ issues', T - d, { traps, hint: 'Les jetons tirés ne sont pas remis : combien en reste-t-il dans le sac ?' }),
           mkPick('Touche les issues qui réalisent l\'évènement « tirer un jeton ' + adjC(c) + ' » au ' + ordinal(k) + ' tirage.', range(1, T).map(v => tok(v, ok.includes(v), colOf(v) !== c ? 'Le jeton ' + v + ' est ' + adjC(colOf(v)) + '.' : 'Le jeton ' + v + ' est bien ' + adjC(c) + ', mais il est déjà sorti et n\'a pas été remis.')), { hint: 'Il faut un jeton ' + adjC(c) + ' qui est encore dans le sac.' })
         ],
         end: 'Il reste ' + (T - d) + ' jetons, donc <b>' + (T - d) + ' issues</b>. Les jetons ' + adjC(c, false, true) + ' encore dans le sac : <b>' + listFr(ok) + '</b>.',
@@ -1394,7 +1397,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       stmt: '<p>Dans une boîte, il y a ces ' + N + ' cartes :</p>' + cardsHTML(cards) + '<p class="event">On tire les cartes une par une, sans jamais les remettre, jusqu\'à ce que la boîte soit vide.</p>',
       steps: [
         mkNum('Combien de tirages peut-on faire en tout ?', '□ tirages', N, { traps: t1, hint: 'À chaque tirage, une carte sort de la boîte et n\'y revient pas.' }),
-        mkNum('Combien y a-t-il d\'issues au dernier tirage ?', '□ issue', 1, { traps: t2, zero: true, hint: 'Au dernier tirage, combien reste-t-il de cartes dans la boîte ?' }),
+        mkNum('Combien y a-t-il d\'issues <b>au dernier tirage</b> ?', '□ issue', 1, { traps: t2, zero: true, hint: 'Au dernier tirage, combien reste-t-il de cartes dans la boîte ?' }),
         mkChoice('Avant de commencer, peut-on savoir quelle carte sortira au dernier tirage ?', YESNO(false, 'Non : c\'est le hasard qui décide de l\'ordre des cartes. On ne le sait qu\'à la fin.', ''))
       ],
       end: 'On peut faire <b>' + N + ' tirages</b>. Au dernier, il ne reste qu\'une carte : <b>1 issue</b>. Mais avant de commencer, on ne peut pas savoir laquelle.',

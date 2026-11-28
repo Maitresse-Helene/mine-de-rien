@@ -618,6 +618,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .dots.posts b{display:inline-block;width:22px;height:4px;background:var(--key-edge)}
 .mask.unit{width:1.6em}
 .aff{margin:10px 0 0;padding:8px 12px;border-radius:12px;background:var(--mul-bg);color:var(--ink);font-weight:700;font-size:1.08rem;line-height:1.5}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1031,7 +1034,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1065,7 +1068,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1260,7 +1263,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     opts[1].fb = 'Compare avec ton repère : ' + T.rep;
     return {
       stmt: '<p class="problem">' + thingText(T, v, u, V) + '</p>',
-      steps: [mkChoice('Cette mesure est-elle possible ?', opts, { layout: 'two', hint: 'Compare avec un repère que tu connais bien.', okFb: possible ? 'Oui, c\'est possible. ' + T.rep : 'Bien vu ! ' + why })],
+      steps: [mkChoice('Cette mesure est-elle <b>possible</b> ?', opts, { layout: 'two', hint: 'Compare avec un repère que tu connais bien.', okFb: possible ? 'Oui, c\'est possible. ' + T.rep : 'Bien vu ! ' + why })],
       end: '<p>' + (possible ? '<b>Possible.</b> ' : '<b>Impossible.</b> ') + esc(possible ? T.rep : why) + '</p>',
       sum: esc(T.l) + ' : ' + fmtNum(v) + ' ' + esc(u) + ' → <b>' + (possible ? 'possible' : 'impossible') + '</b>'
     };
@@ -1278,7 +1281,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return {
       stmt: '<p class="problem">' + fill(T.s, V, false) + ' <span class="nb">' + fmtNum(v) + '</span> <span class="mask unit" role="img" aria-label="unité cachée"></span>' + esc(T.after || '') + '.</p>',
       stmtDone: '<p class="problem">' + thingText(T, v, T.u, V) + '</p>',
-      steps: [mkChoice('Quelle est la bonne unité ?', opts, { layout: 'calcs', hint: 'Est-ce une longueur, une masse, une contenance ou une durée ? Puis compare avec ton repère.', okFb: 'Oui ! ' + T.rep })],
+      steps: [mkChoice('Quelle est <b>la bonne unité</b> ?', opts, { layout: 'calcs', hint: 'Est-ce une longueur, une masse, une contenance ou une durée ? Puis compare avec ton repère.', okFb: 'Oui ! ' + T.rep })],
       end: '<p>' + esc(thingPlain(T, v, T.u, V)) + ' ' + esc(T.rep) + '</p>',
       sum: esc(T.l) + ' : ' + fmtNum(v) + ' <b>' + esc(T.u) + '</b>'
     };
@@ -1401,7 +1404,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       { h: 'Oui, c\'est possible.', ok: possible, fb: possible ? '' : 'Regarde bien : ' + P.why },
       { h: 'Non, c\'est impossible.', ok: !possible, fb: 'Vérifie : son résultat va dans le bon sens. Ici, ' + calcLine(P) + '.' }
     ], { layout: 'two', hint: 'Je réunis : plus grand. J\'enlève : plus petit. Je partage : plus petit que le tout.', okFb: possible ? 'Oui : ' + calcLine(P) + '.' : 'Bien vu !' })];
-    if (!possible) steps.push(mkChoice('Pourquoi est-ce impossible ?', reasonOpts(P), { layout: 'phrases', hint: 'Que se passe-t-il dans l\'histoire : on réunit, on enlève, on partage ?', okFb: 'Oui ! ' + P.why }));
+    if (!possible) steps.push(mkChoice('<b>Pourquoi</b> est-ce impossible ?', reasonOpts(P), { layout: 'phrases', hint: 'Que se passe-t-il dans l\'histoire : on réunit, on enlève, on partage ?', okFb: 'Oui ! ' + P.why }));
     return {
       stmt: P.stmt, steps,
       end: '<p class="ex-line">' + esc(calcLine(P)) + '</p><p>' + esc(P.ans) + (possible ? '' : ' Le mousse s\'est trompé. ' + esc(P.why)) + '</p>',
@@ -1448,15 +1451,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tpl = P.tpl, op = tpl.op;
     const estOpts = shuffle([P.est, P.est * 10, Math.max(1, Math.round(P.est / 10))].filter((v, i, arr) => arr.indexOf(v) === i)).map(v => ({ h: fmtNum(v), ok: v === P.est, fb: v > P.est ? 'Beaucoup trop grand : arrondis ' + fmtNum(P.a) + ' et ' + fmtNum(P.b) + '.' : 'Beaucoup trop petit : arrondis ' + fmtNum(P.a) + ' et ' + fmtNum(P.b) + '.' }));
     const estLine = fmtNum(P.ra) + ' ' + op + ' ' + fmtNum(P.rb) + ' = ' + fmtNum(P.est);
-    const steps = [mkChoice('Avant de calculer : le résultat sera environ…', estOpts, { layout: 'calcs', hint: 'Arrondis les nombres : ' + fmtNum(P.a) + ' ≈ ' + fmtNum(P.ra) + ', ' + fmtNum(P.b) + ' ≈ ' + fmtNum(P.rb) + '.', okFb: 'Oui : ' + estLine + '.' })];
-    steps.push(mkNum('Calcule le résultat exact.', cx(P.a, op, P.b) + ' = □', P.r, { calc: { x: P.a, op, y: P.b }, hint: arithHint(P.a, op, P.b) + ' Ton résultat doit être proche de ' + fmtNum(P.est) + '.', traps: { [P.r * 10]: 'Trop loin de ' + fmtNum(P.est) + ' : tu as un zéro de trop.', [Math.round(P.r / 10)]: 'Trop loin de ' + fmtNum(P.est) + ' : il te manque un chiffre.' } }));
+    const steps = [mkChoice('<b>Avant de calculer</b> : le résultat sera environ…', estOpts, { layout: 'calcs', hint: 'Arrondis les nombres : ' + fmtNum(P.a) + ' ≈ ' + fmtNum(P.ra) + ', ' + fmtNum(P.b) + ' ≈ ' + fmtNum(P.rb) + '.', okFb: 'Oui : ' + estLine + '.' })];
+    steps.push(mkNum('Calcule le résultat <b>exact</b>.', cx(P.a, op, P.b) + ' = □', P.r, { calc: { x: P.a, op, y: P.b }, hint: arithHint(P.a, op, P.b) + ' Ton résultat doit être proche de ' + fmtNum(P.est) + '.', traps: { [P.r * 10]: 'Trop loin de ' + fmtNum(P.est) + ' : tu as un zéro de trop.', [Math.round(P.r / 10)]: 'Trop loin de ' + fmtNum(P.est) + ' : il te manque un chiffre.' } }));
     if (!short){
       const W = Object.assign({}, P.V);
       const opts = [{ h: P.ans, ok: true }, { h: txt(tpl.ans, Object.assign({}, W, { r: P.r * 10 })), ok: false, fb: 'Ce nombre est trop loin de ton estimation (' + fmtNum(P.est) + ').' }];
       if (tpl.ub) opts.push({ h: P.ans.replace(' ' + tpl.u + ' ', ' ' + tpl.ub + ' ').replace(' ' + tpl.u + '.', ' ' + tpl.ub + '.'), ok: false, fb: 'Ce n\'est pas la bonne unité : la question demande des ' + ({ m: 'mètres', kg: 'kilos' }[tpl.u] || tpl.u) + '.' });
       else opts.push({ h: txt(tpl.ans, Object.assign({}, W, { r: P.est })), ok: false, fb: fmtNum(P.est) + ', c\'est l\'estimation, pas le résultat exact.' });
       const seen = new Set(), uopts = opts.filter(o => !seen.has(o.h) && seen.add(o.h));
-      steps.push(mkChoice('Quelle phrase répond à la question ?', shuffle(uopts), { layout: 'phrases', hint: 'La bonne unité ? Un nombre proche de ton estimation ? La réponse à la question ?' }));
+      steps.push(mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(uopts), { layout: 'phrases', hint: 'La bonne unité ? Un nombre proche de ton estimation ? La réponse à la question ?' }));
     }
     return {
       stmt: P.stmt, steps,

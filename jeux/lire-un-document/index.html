@@ -625,6 +625,9 @@ b.tgt{color:var(--stamp)}
 .paper.pdoc .doc{box-shadow:none;border-color:#999;break-inside:avoid}
 .paper.pdoc .p-docs{margin:6px 0 12px}
 .paper.pdoc .dsvg{max-width:520px;margin:0 auto}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1009,7 +1012,7 @@ b.tgt{color:var(--stamp)}
       it.ask = esc(q.q);
       steps = [natureStep(lvl, 'ecrit')];
       if (q.t === 'ex'){
-        steps.push(zonesStep('Touche l\'endroit du document qui donne la réponse.', q.z, 1, true, 'Lis le titre, les axes ou les intitulés du tableau, puis cherche ce dont parle la question.'));
+        steps.push(zonesStep('Touche l\'endroit du document <b>qui donne la réponse</b>.', q.z, 1, true, 'Lis le titre, les axes ou les intitulés du tableau, puis cherche ce dont parle la question.'));
         steps.push(typeStep('Écris la réponse.', q.ans, { hint: 'Recopie ce que tu lis à l\'endroit que tu as trouvé.' }));
         end = 'La réponse se lit : ' + esc(zl(q.z)) + '. Réponse : ' + esc(q.ans[0]) + '.';
       } else {
@@ -1022,7 +1025,7 @@ b.tgt{color:var(--stamp)}
     } else if (q.t === 'inf'){
       it.ask = esc(q.q);
       steps = [natureStep(lvl, 'devine'),
-        zonesStep(q.need > 1 ? 'Touche au moins deux endroits du document qui t\'aident (les indices), puis valide.' : 'Touche l\'endroit du document qui t\'aide à répondre (l\'indice), puis valide.', q.z, q.need, false, 'Cherche ce qui, dans le document, fait penser à la réponse.', { more: 'C\'est juste ! Mais il y a un autre indice : touche encore un endroit.' }),
+        zonesStep(q.need > 1 ? 'Touche <b>au moins deux endroits</b> du document qui t\'aident (les indices), puis valide.' : 'Touche l\'endroit du document qui t\'aide à répondre (l\'indice), puis valide.', q.z, q.need, false, 'Cherche ce qui, dans le document, fait penser à la réponse.', { more: 'C\'est juste ! Mais il y a un autre indice : touche encore un endroit.' }),
         typeStep('Écris ta réponse en un ou quelques mots.', q.acc, { wrongs: q.opts.slice(1), copts: shuffle(q.opts.map((h, i) => ({ h: esc(h), ok: i === 0, fb: i === 0 ? '' : 'Relis les indices : ils ne font pas penser à « ' + esc(h) + ' ».' }))) })];
       end = '<span class="muted">Indices : ' + esc(zl(q.z)) + '.</span> ';
     } else if (q.t === 'vf'){
@@ -1032,12 +1035,12 @@ b.tgt{color:var(--stamp)}
         { h: 'Faux', ok: q.a === 'F', fb: q.a === 'V' ? 'Regarde bien : le document le montre.' : 'Le document n\'en parle pas : on ne peut pas dire que c\'est faux.' },
         { h: 'On ne peut pas savoir', ok: q.a === '?', fb: 'Si : le document permet de le savoir. Regarde encore.' }
       ], { hint: 'Vrai : le document le montre. Faux : il montre le contraire. On ne peut pas savoir : il n\'en parle pas.', nat3: true })];
-      if (q.a !== '?') steps.push(zonesStep('Touche l\'endroit du document qui le prouve, puis valide.', q.z, 1, false, 'Cherche l\'endroit qui parle de la même chose que la phrase.'));
+      if (q.a !== '?') steps.push(zonesStep('Touche l\'endroit du document <b>qui le prouve</b>, puis valide.', q.z, 1, false, 'Cherche l\'endroit qui parle de la même chose que la phrase.'));
       if (q.a !== '?') end = '<span class="muted">Preuve : ' + esc(zl(q.z)) + '.</span> ';
     } else if (q.t === 'calc'){
       it.ask = esc(q.q);
       steps = [zonesStep(q.z.length > 1 ? 'Touche les ' + (q.z.length === 2 ? 'deux' : q.z.length) + ' endroits du document dont tu as besoin, puis valide.' : 'Touche l\'endroit du document dont tu as besoin, puis valide.', q.z, q.z.length, false, 'De quelles valeurs as-tu besoin pour répondre ?', { more: 'C\'est juste ! Mais il te faut encore une autre valeur.' }),
-        typeStep('Calcule, puis écris le résultat.', q.ans, { hint: 'Relis la question : faut-il ajouter, enlever, comparer ?' })];
+        typeStep('<b>Calcule</b>, puis écris le résultat.', q.ans, { hint: 'Relis la question : faut-il ajouter, enlever, comparer ?' })];
       end = 'On utilise : ' + esc(zl(q.z)) + '. Résultat : ' + esc(q.ans[0]) + '.';
     } else if (q.t === 'nat'){
       it.ask = 'Observe bien ' + (q.d ? 'le document B' : (t.docs.length > 1 ? 'le document A' : 'ce document')) + '.';
@@ -1046,7 +1049,7 @@ b.tgt{color:var(--stamp)}
       end = 'C\'est ' + k + '.';
     } else if (q.t === 'mot'){
       it.ask = 'Que veut dire « ' + esc(q.w) + ' » dans ce document ?';
-      steps = [zonesStep('D\'abord, touche l\'endroit du document où se trouve ce mot, ou celui qui t\'aide à le comprendre, puis valide.', q.z, 1, false, 'Cherche le mot dans le titre, les intitulés, la légende ou le texte.'),
+      steps = [zonesStep('<b>D\'abord</b>, touche l\'endroit du document où se trouve ce mot, ou celui qui t\'aide à le comprendre, puis valide.', q.z, 1, false, 'Cherche le mot dans le titre, les intitulés, la légende ou le texte.'),
         mkChoice('Ici, « ' + esc(q.w) + ' » veut dire…', shuffle(q.opts.map((h, i) => ({ h: esc(h), ok: i === 0, fb: i === 0 ? '' : 'Relis le document : est-ce que « ' + esc(h) + ' » a du sens ici ?' }))), { hint: 'Remplace le mot par chaque proposition, et regarde si le document garde son sens.' })];
       end = '« ' + esc(q.w) + ' » veut dire : ' + esc(q.opts[0]) + '.';
     }
@@ -1256,11 +1259,11 @@ b.tgt{color:var(--stamp)}
   const zonesStep = (q, acc, need, single, hint, o) => Object.assign({ kind: 'zones', q, acc, need: Math.max(1, Math.min(need || 1, acc.length)), single: !!single, hint }, o || {});
   const typeStep = (q, acc, o) => Object.assign({ kind: 'type', q, acc, wrongs: [], copts: null, num: acc.length > 0 && acc.every(a => /^\s*\d+([,.]\d+)?\s*$/.test(a)), hint: '' }, o || {});
   function natureStep(lvl, truth){
-    if (!threeChoices(lvl)) return mkChoice('La réponse est-elle ' + DOC_IN + ' ?', [
+    if (!threeChoices(lvl)) return mkChoice('La réponse est-elle <b>' + DOC_IN + '</b> ?', [
       { h: 'Oui, ' + DOC_YES, ok: truth === 'ecrit', fb: 'Cherche bien : cette réponse ne se trouve nulle part ' + DOC_IN + '.' },
       { h: 'Non, ' + DOC_NO, ok: truth !== 'ecrit', fb: 'Si : la réponse se trouve ' + DOC_IN + '.' }
     ], { hint: 'Regarde bien tout ' + DOC_WORD + ' en gardant la question en tête.' });
-    return mkChoice('Peut-on répondre avec ' + DOC_WORD + ' ?', [
+    return mkChoice('<b>Peut-on répondre</b> avec ' + DOC_WORD + ' ?', [
       { h: NAT_ECRIT, ok: truth === 'ecrit', fb: truth === 'devine' ? 'La réponse ne se lit pas directement : cherche plutôt des indices.' : 'Ce n\'est écrit nulle part ' + DOC_IN + '.' },
       { h: 'Ça se devine avec des indices', ok: truth === 'devine', fb: truth === 'ecrit' ? 'Pas besoin de deviner : la réponse se lit ' + DOC_IN + '.' : 'Aucun indice ne permet de le deviner : attention, il ne faut pas inventer !' },
       { h: 'On ne peut pas savoir', ok: truth === 'no', fb: truth === 'ecrit' ? 'Si, on peut savoir : la réponse se lit ' + DOC_IN + '.' : 'Si : des indices permettent de le deviner.' }

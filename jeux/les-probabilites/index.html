@@ -472,6 +472,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1094,7 +1097,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tally = 'Sac A : ' + cntC(x, c, U.jeton) + ' sur ' + T + '. Sac B : ' + cntC(y, c, U.jeton) + ' sur ' + T + '.';
     const fb = 'Compte les jetons ' + adj(c, 2, U.jeton) + ' dans chaque sac.';
     return {
-      stmt: '<p class="lead-q">Dans quel sac ai-je le plus de chances de tirer un jeton ' + c + ' ?</p><div class="figpair">' + fig(bagSVG(A, 'Sac A')) + fig(bagSVG(B, 'Sac B')) + '</div>',
+      stmt: '<p class="lead-q">Dans quel sac ai-je <b>le plus de chances</b> de tirer un jeton ' + c + ' ?</p><div class="figpair">' + fig(bagSVG(A, 'Sac A')) + fig(bagSVG(B, 'Sac B')) + '</div>',
       steps: [mkChoice('Choisis.', [
         { h: 'Dans le sac A', ok: rel === 'A', fb },
         { h: 'Dans le sac B', ok: rel === 'B', fb },

@@ -475,6 +475,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -858,7 +861,7 @@ b.tgt{color:var(--stamp)}
     if (HARD && Math.random() < 0.7) [noun, verb, adj] = pick(FAM);
     else { noun = pick(Math.random() < (HARD ? 0.5 : 0.3) ? N_IDEA : N_SIMPLE); verb = pick(V_LIST); adj = pick(A_LIST); }
     return {
-      stmt: '<p class="lead-q">Lequel de ces mots (ou groupes de mots) contient un nom ?</p>',
+      stmt: '<p class="lead-q">Lequel de ces mots (ou groupes de mots) <b>contient un nom</b> ?</p>',
       steps: [mkChoice('Choisis le nom :', shuffle([{ h: noun, ok: true }, { h: verb, ok: false, fb: '« ' + verb + ' » est un verbe : on peut le conjuguer.' }, { h: adj, ok: false, fb: '« ' + adj + ' » est un adjectif : il dit comment est quelque chose.' }]), { cls: 'big', hint: 'Un nom peut avoir un déterminant devant lui (le, la, un, une…). Une idée aussi peut être un nom.' })],
       end: '« ' + noun + ' » : ' + noun.split(' ').pop() + ' est un nom' + (N_IDEA.includes(noun) || FAM.some(f => f[0] === noun) ? ' qui désigne une idée.' : '.'),
       sum: noun + ' / ' + verb + ' / ' + adj
@@ -878,7 +881,7 @@ b.tgt{color:var(--stamp)}
     const [raw, k] = pick(pool), w = raw.match(/\{([^}]+)\}/)[1];
     const s = raw.replace(/\{([^}]+)\}/, (m, x) => B(x));
     return {
-      stmt: '<p class="lead-q">Le nom en gras est-il un nom propre ou un nom commun ?</p>' + P(s),
+      stmt: '<p class="lead-q">Le nom en gras est-il <b>un nom propre ou un nom commun</b> ?</p>' + P(s),
       steps: [mkChoice('« ' + w + ' » est…', [{ h: 'un nom propre', ok: k === 'np', fb: k === 'np' ? '' : 'Ce nom n\'a pas de majuscule : il désigne quelque chose de façon générale.' }, { h: 'un nom commun', ok: k === 'nc', fb: k === 'nc' ? '' : 'Ce nom a une majuscule et désigne une personne, un animal ou un lieu bien précis.' }], { hint: 'Le nom propre commence toujours par une majuscule, même au milieu de la phrase.' })],
       end: '« ' + w + ' » est un ' + (k === 'np' ? 'nom propre : il désigne une personne, un animal ou un lieu bien précis, et prend une majuscule.' : 'nom commun : il désigne de façon générale.'),
       sum: raw.replace(/[{}]/g, '')
@@ -898,7 +901,7 @@ b.tgt{color:var(--stamp)}
     const k = (g.N.g === 'f' ? 'f' : 'm') + (g.pl ? 'p' : 's');
     const word = g.pl ? g.N.pl : g.N.n;
     return {
-      stmt: '<p class="lead-q">Quel est le genre et le nombre du nom noyau ?</p>' + W(GN_MARK(g)),
+      stmt: '<p class="lead-q">Quel est <b>le genre et le nombre</b> du nom noyau ?</p>' + W(GN_MARK(g)),
       steps: [mkChoice('« ' + word + ' » est…', GNB.map(x => {
         if (x.k === k) return { h: x.h, ok: true };
         const gw = x.k[0] !== k[0], nw = x.k[1] !== k[1];
@@ -923,7 +926,7 @@ b.tgt{color:var(--stamp)}
     if (g.c) opts.push({ h: cdnNoun(g.c), ok: false, fb: '« ' + cdnNoun(g.c) + ' » est dans le complément du nom (« ' + g.c + ' ») : il complète le nom noyau.' });
     if (opts.length < 3) opts.push({ h: g.d.trim().replace(/'$/, '\''), ok: false, fb: '« ' + g.d.trim() + ' » est le déterminant.' });
     return {
-      stmt: '<p class="lead-q">Quel est le nom noyau de ce groupe nominal ?</p>' + W(g.text),
+      stmt: '<p class="lead-q">Quel est <b>le nom noyau</b> de ce groupe nominal ?</p>' + W(g.text),
       stmtDone: W(GN_MARK(g)),
       steps: [mkChoice('Le nom noyau est…', shuffle(opts.slice(0, 3)), { cls: 'big', hint: 'Le nom noyau est le nom principal : de quoi parle-t-on ? Il est juste après le déterminant ou après un adjectif.' })],
       end: 'On parle ' + speakOf(g) + ' : le nom noyau est « ' + word + ' ».',
@@ -934,7 +937,7 @@ b.tgt{color:var(--stamp)}
     const g = mkGN({ shape: pick(['', 'a', 'b', 'c']) });
     const ds = shuffle(NOT_GN).slice(0, 2);
     return {
-      stmt: '<p class="lead-q">Un seul de ces groupes de mots est un groupe nominal. Lequel ?</p>',
+      stmt: '<p class="lead-q">Un seul de ces groupes de mots est <b>un groupe nominal</b>. Lequel ?</p>',
       steps: [mkChoice('Le groupe nominal est…', shuffle([{ h: g.text, ok: true }].concat(ds.map(d => ({ h: d[0], ok: false, fb: d[1] })))), { hint: 'Un groupe nominal est organisé autour d\'un nom, avec un déterminant.' })],
       end: '« ' + g.text + ' » est un groupe nominal : son nom noyau est « ' + g.word + ' ».',
       sum: g.text + ' → GN'
@@ -961,7 +964,7 @@ b.tgt{color:var(--stamp)}
     if (g.c && (g.ab || g.aa)) pool.push({ h: g.min + ' ' + g.c, fb: 'On peut aussi enlever « ' + g.c + ' » : c\'est un complément du nom.' });
     const ds = (g.naive !== g.min ? [pool[1]].concat(shuffle(pool.filter((x, i) => i !== 1))) : shuffle(pool)).filter(x => x.h !== g.min).filter((x, i, a) => a.findIndex(y => y.h === x.h) === i).slice(0, 2);
     return {
-      stmt: '<p class="lead-q">Réduis ce groupe nominal : garde seulement le déterminant et le nom noyau.</p>' + W(g.text),
+      stmt: '<p class="lead-q">Réduis ce groupe nominal : garde <b>seulement le déterminant et le nom noyau</b>.</p>' + W(g.text),
       stmtDone: W(GN_MARK(g)) + P('→ ' + g.min),
       steps: [mkChoice('Le GN minimal est…', shuffle(opts.concat(ds.map(d => ({ h: d.h, ok: false, fb: d.fb })))), { cls: 'big', hint: 'Trouve le nom noyau, puis remets le bon déterminant devant lui. Enlève les adjectifs et le complément du nom.' })],
       end: 'Le nom noyau est « ' + g.word + ' » : le GN minimal est « ' + g.min + ' ».' + (g.naive !== g.min ? ' Le déterminant a changé, car il est maintenant juste devant le nom.' : ''),
@@ -976,7 +979,7 @@ b.tgt{color:var(--stamp)}
     const shape = k === 'a' ? pick(['a', 'b']) : k === 'c' ? 'c' : pick(['ac', 'bc']);
     const g = mkGN({ shape });
     return {
-      stmt: '<p class="lead-q">Comment ce groupe nominal est-il enrichi ?</p>' + W(g.text),
+      stmt: '<p class="lead-q"><b>Comment</b> ce groupe nominal est-il enrichi ?</p>' + W(g.text),
       stmtDone: W(GN_MARK(g)),
       steps: [mkChoice('Le nom « ' + g.word + ' » est enrichi…', ENR.map(x => ({ h: x.h, ok: x.k === k, fb: x.k === k ? '' : 'Repère d\'abord le nom noyau. Y a-t-il un adjectif ? Un groupe qui commence par de, à, en… ?' })), { hint: 'L\'adjectif dit comment est le nom. Le complément du nom commence par une préposition : de, du, des, à, en…' })],
       end: '« ' + g.text + ' » : ' + [g.ab || g.aa ? '« ' + (g.ab || g.aa) + ' » est un adjectif' : '', g.c ? '« ' + g.c + ' » est un complément du nom' : ''].filter(Boolean).join(' et ') + '.',
@@ -999,7 +1002,7 @@ b.tgt{color:var(--stamp)}
     const g = mkGN({ shape: pick(['ac', 'bc']) });
     const adj = g.ab || g.aa;
     return {
-      stmt: '<p class="lead-q">Dans ce groupe nominal, quel mot est un adjectif ?</p>' + W(g.text),
+      stmt: '<p class="lead-q">Dans ce groupe nominal, quel mot est <b>un adjectif</b> ?</p>' + W(g.text),
       stmtDone: W(GN_MARK(g)),
       steps: [mkChoice('L\'adjectif est…', shuffle([{ h: adj, ok: true }, { h: g.word, ok: false, fb: '« ' + g.word + ' » est le nom noyau.' }, { h: cdnNoun(g.c), ok: false, fb: '« ' + cdnNoun(g.c) + ' » est un nom, dans le complément du nom « ' + g.c + ' ».' }]), { cls: 'big', hint: 'L\'adjectif dit comment est le nom. Il s\'accorde avec lui.' })],
       end: '« ' + adj + ' » est un adjectif : il dit comment est ' + det('def', g.N.g, g.pl, g.word) + g.word + '. « ' + g.c + ' » est un complément du nom.',

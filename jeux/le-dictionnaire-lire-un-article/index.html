@@ -471,6 +471,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -809,13 +812,13 @@ b.tgt{color:var(--stamp)}
     if (Math.random() < 0.5) {
       return {
         stmt: '<p class="lead-q">Dans le dictionnaire, on lit :</p>' + W('<b>' + w.toUpperCase() + '</b>, <i>' + ABBR[k] + '</i>'),
-        steps: [mkChoice('Que veut dire « ' + ABBR[k] + ' » ?', shuffle([k].concat(ds).map(x => ({ h: MEAN[x], ok: x === k, fb: x === k ? '' : 'L\'abréviation de « ' + MEAN[x] + ' » est « ' + ABBR[x] + ' ».' }))), { hint: 'n. = nom, m. = masculin, f. = féminin, v. = verbe, adj. = adjectif, adv. = adverbe.' })],
+        steps: [mkChoice('<b>Que veut dire</b> « ' + ABBR[k] + ' » ?', shuffle([k].concat(ds).map(x => ({ h: MEAN[x], ok: x === k, fb: x === k ? '' : 'L\'abréviation de « ' + MEAN[x] + ' » est « ' + ABBR[x] + ' ».' }))), { hint: 'n. = nom, m. = masculin, f. = féminin, v. = verbe, adj. = adjectif, adv. = adverbe.' })],
         end: '« ' + ABBR[k] + ' » veut dire <b>' + MEAN[k] + '</b>.',
         sum: w + ' ' + ABBR[k] + ' → sens'
       };
     }
     return {
-      stmt: '<p class="lead-q">Quelle abréviation trouve-t-on après ce mot, dans le dictionnaire ?</p>' + W(w),
+      stmt: '<p class="lead-q"><b>Quelle abréviation</b> trouve-t-on après ce mot, dans le dictionnaire ?</p>' + W(w),
       steps: [mkChoice('« ' + w + ' » est suivi de…', shuffle([k].concat(ds).map(x => ({ h: ABBR[x], ok: x === k, fb: x === k ? '' : '« ' + ABBR[x] + ' » veut dire ' + MEAN[x] + '.' }))), { cls: 'big', hint: k === 'nm' || k === 'nf' ? 'Est-ce un nom ? Dirait-on « un » ou « une » ' + w + ' ?' : 'Peut-on le conjuguer ? Dit-il comment est quelque chose ? Dit-il comment on fait l\'action ?' })],
       end: '« ' + w + ' » est un ' + MEAN[k] + (k === 'nm' ? ' (un ' + w + ')' : k === 'nf' ? ' (une ' + w + ')' : '') + ' : <b>' + ABBR[k] + '</b>',
       sum: w + ' → abréviation'
@@ -893,7 +896,7 @@ b.tgt{color:var(--stamp)}
     const form = raw.match(/\{([^}]+)\}/)[1];
     const fbOf = d => d === form ? RULE[t] : (fb2 || (t === 'v' && /[éiust]$/.test(d) && d !== entry ? '« ' + d + ' » n\'est pas l\'infinitif du verbe.' : t === 'a' ? '« ' + d + ' » n\'est pas au masculin singulier.' : '« ' + d + ' » est un autre mot.'));
     return {
-      stmt: '<p class="lead-q">Pour comprendre le mot en gras, quel mot faut-il chercher dans le dictionnaire ?</p>' + P(raw.replace(/\{([^}]+)\}/, (m, x) => B(x))),
+      stmt: '<p class="lead-q">Pour comprendre le mot en gras, <b>quel mot faut-il chercher</b> dans le dictionnaire ?</p>' + P(raw.replace(/\{([^}]+)\}/, (m, x) => B(x))),
       steps: [mkChoice('Je cherche…', shuffle([{ h: entry, ok: true }, { h: d1, ok: false, fb: fbOf(d1) }, { h: d2, ok: false, fb: fbOf(d2) }]), { cls: 'big', hint: 'Est-ce un verbe, un nom ou un adjectif ? ' + RULE[t].replace('Dans le dictionnaire, l', 'L') })],
       end: '« ' + form + ' » → je cherche <b>' + entry + '</b>. ' + RULE[t],
       sum: raw.replace(/[{}]/g, '')
@@ -906,17 +909,17 @@ b.tgt{color:var(--stamp)}
     const stmt = '<p class="lead-q">Lis cet article de dictionnaire.</p>' + article(a);
     if (kind === 'count') {
       const opts = [n - 1, n, n + 1].filter(x => x >= 1); if (opts.length < 3) opts.push(n + 2);
-      return { stmt, steps: [mkChoice('Combien de sens le mot « ' + a.w + ' » a-t-il ici ?', opts.map(x => ({ h: String(x), ok: x === n, fb: x === n ? '' : 'Compte les définitions numérotées.' })), { cls: 'big', hint: 'Chaque sens a son numéro.' })], end: 'Le mot « ' + a.w + ' » a <b>' + n + '</b> sens dans cet article : les définitions sont numérotées de 1 à ' + n + '.', sum: a.w + ' → nombre de sens' };
+      return { stmt, steps: [mkChoice('<b>Combien de sens</b> le mot « ' + a.w + ' » a-t-il ici ?', opts.map(x => ({ h: String(x), ok: x === n, fb: x === n ? '' : 'Compte les définitions numérotées.' })), { cls: 'big', hint: 'Chaque sens a son numéro.' })], end: 'Le mot « ' + a.w + ' » a <b>' + n + '</b> sens dans cet article : les définitions sont numérotées de 1 à ' + n + '.', sum: a.w + ' → nombre de sens' };
     }
     if (kind === 'nat') {
       const ks = [a.n, a.n === 'nm' ? 'nf' : 'nm', pick(['v', 'adj'])];
-      return { stmt, steps: [mkChoice('Quelle est la nature du mot « ' + a.w + ' » ?', shuffle(ks.map(x => ({ h: MEAN[x], ok: x === a.n, fb: x === a.n ? '' : 'Regarde l\'abréviation juste après le mot : ce n\'est pas « ' + ABBR[x] + ' ».' }))), { hint: 'La nature est écrite en abrégé, juste après le mot.' })], end: '« ' + ABBR[a.n] + ' » : « ' + a.w + ' » est un <b>' + MEAN[a.n] + '</b>.', sum: a.w + ' → nature' };
+      return { stmt, steps: [mkChoice('Quelle est <b>la nature</b> du mot « ' + a.w + ' » ?', shuffle(ks.map(x => ({ h: MEAN[x], ok: x === a.n, fb: x === a.n ? '' : 'Regarde l\'abréviation juste après le mot : ce n\'est pas « ' + ABBR[x] + ' ».' }))), { hint: 'La nature est écrite en abrégé, juste après le mot.' })], end: '« ' + ABBR[a.n] + ' » : « ' + a.w + ' » est un <b>' + MEAN[a.n] + '</b>.', sum: a.w + ' → nature' };
     }
     if (kind === 'ital') {
-      return { stmt, steps: [mkChoice('Que sont les phrases écrites en italique ?', shuffle([{ h: 'des exemples', ok: true }, { h: 'des définitions', ok: false, fb: 'Les définitions expliquent le sens du mot ; elles ne sont pas en italique.' }, { h: 'des abréviations', ok: false, fb: 'L\'abréviation est juste après le mot : elle donne sa nature.' }]), { hint: 'Ces phrases emploient le mot « ' + a.w + ' ».' })], end: 'Les phrases en italique sont des <b>exemples</b> : elles montrent le mot « ' + a.w + ' » dans une phrase.', sum: a.w + ' → italique' };
+      return { stmt, steps: [mkChoice('Que sont <b>les phrases écrites en italique</b> ?', shuffle([{ h: 'des exemples', ok: true }, { h: 'des définitions', ok: false, fb: 'Les définitions expliquent le sens du mot ; elles ne sont pas en italique.' }, { h: 'des abréviations', ok: false, fb: 'L\'abréviation est juste après le mot : elle donne sa nature.' }]), { hint: 'Ces phrases emploient le mot « ' + a.w + ' ».' })], end: 'Les phrases en italique sont des <b>exemples</b> : elles montrent le mot « ' + a.w + ' » dans une phrase.', sum: a.w + ' → italique' };
     }
     const i = rand(0, n - 1);
-    return { stmt, steps: [mkChoice('Quel numéro porte la définition : « ' + a.s[i][0] + ' » ?', a.s.map((x, j) => ({ h: 'le sens ' + ORDN[j], ok: j === i, fb: j === i ? '' : 'Le sens ' + ORDN[j] + ' dit autre chose.' })), { hint: 'Relis chaque définition numérotée.' })], end: 'C\'est le sens <b>' + ORDN[i] + '</b> du mot « ' + a.w + ' ».', sum: a.w + ' → numéro ' + i };
+    return { stmt, steps: [mkChoice('<b>Quel numéro</b> porte la définition : « ' + a.s[i][0] + ' » ?', a.s.map((x, j) => ({ h: 'le sens ' + ORDN[j], ok: j === i, fb: j === i ? '' : 'Le sens ' + ORDN[j] + ' dit autre chose.' })), { hint: 'Relis chaque définition numérotée.' })], end: 'C\'est le sens <b>' + ORDN[i] + '</b> du mot « ' + a.w + ' ».', sum: a.w + ' → numéro ' + i };
   }
 
   /* ---------- Niveau 4 : la bonne définition ---------- */
@@ -935,7 +938,7 @@ b.tgt{color:var(--stamp)}
     const t = HARD ? pick(['n', 'v', 'a', 'v', 'a']) : 'n';
     const [good, ...bad] = shuffle(DEF[t]).slice(0, 3);
     return {
-      stmt: '<p class="lead-q">Quelle est la définition de ce mot ?</p>' + W(good[0]),
+      stmt: '<p class="lead-q">Quelle est <b>la définition</b> de ce mot ?</p>' + W(good[0]),
       steps: [mkChoice('« ' + good[0] + ' » :', shuffle([{ h: good[1], ok: true }].concat(bad.map(b => ({ h: b[1], ok: false, fb: 'C\'est la définition de « ' + b[0] + ' ».' })))), { hint: 'Remplace le mot par chaque définition dans une petite phrase : laquelle a du sens ?' })],
       end: '<b>' + good[0] + '</b> : ' + good[1],
       sum: good[0] + ' / ' + bad.map(b => b[0]).join(' ')
@@ -959,7 +962,7 @@ b.tgt{color:var(--stamp)}
     const others = shuffle(a.s.flatMap((x, j) => j === i ? [] : x[1].map(e => [e, j]))).slice(0, 2);
     return {
       stmt: '<p class="lead-q">Voici les définitions du mot « ' + a.w + ' » (' + ABBR[a.n] + ').</p>' + article(a, { noEx: true, mark: i }),
-      steps: [mkChoice('Quel exemple va avec la définition ' + ORDN[i] + ' ?', shuffle([{ h: good, ok: true }].concat(others.map(([e, j]) => ({ h: e, ok: false, fb: 'Cet exemple va avec la définition ' + ORDN[j] + '.' })))), { hint: 'Relis la définition ' + ORDN[i] + ' et cherche la phrase où le mot a ce sens.' })],
+      steps: [mkChoice('Quel exemple va avec <b>la définition ' + ORDN[i] + '</b> ?', shuffle([{ h: good, ok: true }].concat(others.map(([e, j]) => ({ h: e, ok: false, fb: 'Cet exemple va avec la définition ' + ORDN[j] + '.' })))), { hint: 'Relis la définition ' + ORDN[i] + ' et cherche la phrase où le mot a ce sens.' })],
       end: 'Définition ' + ORDN[i] + ' : « ' + good + ' »',
       sum: a.w + ' ' + i + ' → ' + good
     };

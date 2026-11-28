@@ -589,6 +589,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .choices.signs .choice{justify-content:center;font-family:var(--font-num);font-size:2rem;font-weight:800;min-height:56px}
 .tnum th.comma-h{background:transparent;border:none;min-width:.5em;padding:0}
 .sex .nw{white-space:nowrap;display:inline-block}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1140,7 +1143,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const R0 = pick(Math.random() < 0.7 ? ranks.filter(x => x.r < 0) : ranks);
     const v = digitAt(m, R0.r);
     return {
-      stmt: '<p class="lead-q">Dans ce nombre, quel est le chiffre des ' + R0.s + ' ?</p><p class="numbig">' + D(m) + '</p>',
+      stmt: '<p class="lead-q">Dans ce nombre, quel est le chiffre des <b>' + R0.s + '</b> ?</p><p class="numbig">' + D(m) + '</p>',
       steps: [mkNum('Le chiffre des ' + R0.s, '□', v, { zero: true, hint: 'Avant la virgule : unités, dizaines, centaines (vers la gauche). Après : dixièmes, centièmes, millièmes (vers la droite).', diag: x => R0.r < 0 && x === digitAt(m, -R0.r - 1) && x !== v ? 'Après la virgule, on compte vers la droite : dixièmes, puis centièmes, puis millièmes.' : 'Place le nombre dans le tableau de numération dans ta tête : la virgule est juste après les unités.' })],
       end: tableDec(m, { hl: R0.r, P: placesOf(m) }) + 'Le chiffre des ' + R0.s + ' est <b>' + v + '</b>.',
       sum: 'Digit ' + m + ' ' + R0.r
@@ -1235,7 +1238,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemPE(){
     const m = rndDec(HARD ? pick([1, 2, 3]) : pick([1, 2]), HARD ? 999 : 300, 0), E = Math.floor(m / 1000);
     return {
-      stmt: '<p class="lead-q">Quelle est la partie entière de ce nombre ?</p><p class="numbig">' + D(m) + '</p>',
+      stmt: '<p class="lead-q">Quelle est <b>la partie entière</b> de ce nombre ?</p><p class="numbig">' + D(m) + '</p>',
       steps: [mkNum('La partie entière', '□', E, { zero: true, hint: 'La partie entière : les chiffres avant la virgule.', diag: v => v === E + 1 ? 'La partie entière n\'est pas l\'arrondi : ce sont les unités, avant la virgule.' : 'Regarde les chiffres avant la virgule.' })],
       end: 'La partie entière de ' + D(m) + ' est <b>' + E + '</b>.',
       sum: 'PE ' + m
@@ -1246,7 +1249,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (HARD && Math.random() < 0.3) m = Math.floor(m / 1000) * 1000 + pick([490, 499, 950, 960, 990, 449, 501]);     // les pièges
     const E = Math.floor(m / 1000), dx = digitAt(m, -1), A = dx >= 5 ? E + 1 : E;
     return {
-      stmt: '<p class="lead-q">Arrondis ce nombre à l\'entier le plus proche.</p><p class="numbig">' + D(m) + '</p>',
+      stmt: '<p class="lead-q">Arrondis ce nombre <b>à l\'entier le plus proche</b>.</p><p class="numbig">' + D(m) + '</p>',
       steps: [mkNum('L\'arrondi à l\'entier', '□', A, { zero: true, hint: 'Regarde seulement le chiffre des dixièmes : de 0 à 4, l\'entier juste avant ; de 5 à 9, l\'entier juste après.', diag: v => {
         if (dx >= 5 && v === E) return 'Le chiffre des dixièmes est ' + dx + ' : ' + dx + ' ≥ 5, on arrondit à l\'entier juste après.';
         if (dx < 5 && v === E + 1) return 'Le chiffre des dixièmes est ' + dx + ' : ' + dx + ' &lt; 5, on arrondit à l\'entier juste avant.' + (digitAt(m, -2) >= 5 ? ' Les centièmes ne comptent pas.' : '');
@@ -1306,7 +1309,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const lo = Math.floor(m / 100) * 100;
     if (m === lo) m += 10;
     return {
-      stmt: '<p class="lead-q">Encadre ce nombre au dixième près (par deux nombres à un chiffre après la virgule qui se suivent).</p><p class="numbig">' + D(m) + '</p>',
+      stmt: '<p class="lead-q">Encadre ce nombre <b>au dixième près</b> (par deux nombres à un chiffre après la virgule qui se suivent).</p><p class="numbig">' + D(m) + '</p>',
       steps: [mkMulti('L\'encadrement', BX(0) + LT + D(m) + LT + BX(1), [lo, lo + 100], { dec: true, small: true, hint: 'Garde la partie entière et le chiffre des dixièmes, puis ajoute 1 dixième.', diag: v => v[1] - v[0] !== 100 ? 'Les deux nombres doivent se suivre de 1 dixième, comme 16,4 et 16,5.' : (v[0] > m ? D(v[0]) + ' est plus grand que ' + D(m) + '.' : D(v[1]) + ' est plus petit que ' + D(m) + '.') })],
       end: '<b>' + D(lo) + LT + D(m) + LT + D(lo + 100) + '</b>.',
       sum: 'EncD ' + m

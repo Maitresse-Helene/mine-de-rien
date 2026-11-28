@@ -715,6 +715,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .qsub{font-weight:500;color:var(--ink-soft)}
 .srow.done.bdone .sq{font-weight:700}
 .srow.done.bdone .sa{margin-bottom:2px}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1128,7 +1131,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1162,7 +1165,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1766,7 +1769,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         if (!opts.some(o => o.h === h || o.h.split(' ')[1] === op)) opts.push({ h, ok: false, fb: OPWHY(P, op) });
       });
     }
-    const s1 = calcStep(o.q || 'Le schéma me donne le calcul. Quel calcul fais-tu ?', opts.map(x => calcOpt0(x)), { hint: o.hint || 'Regarde où est le « ? » sur ton schéma : le tout, une part, le nombre de parts, l\'écart ?', okFb: 'Oui ! Le schéma donne le calcul.' });
+    const s1 = calcStep(o.q || 'Le schéma me donne le calcul. Quel <b>calcul</b> fais-tu ?', opts.map(x => calcOpt0(x)), { hint: o.hint || 'Regarde où est le « ? » sur ton schéma : le tout, une part, le nombre de parts, l\'écart ?', okFb: 'Oui ! Le schéma donne le calcul.' });
     const s2 = mkNum(o.n || 'Calcule.', esc(c.h) + ' = □ ' + esc(u === 'fois' ? '' : u), c.r, { calc: c.calc, hint: 'Pose le calcul si tu en as besoin.' });
     return [s1, s2];
   }
@@ -1967,10 +1970,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const use = (T.exp && T.exp.useless) || [];
     T.s1.useless = use; T.s2.useless = use;
     const L1 = T.labs.concat(use).concat(['?']), L2 = T.labs.concat(use).concat(['?', '??']);
-    steps.push({ kind: 'build', proc: true, exp: T.s1, labels: L1, names: nm1, qd: 'Premier schéma :', q: 'Premier schéma : construis-le, avec le « ? » à la place du nombre que je cherche d\'abord.', hint: H_ALL, okFb: 'Bravo ! Premier schéma juste.', why: 'Voici le premier schéma juste.' });
-    steps.push(...calcSteps({ calc: T.c1, u: T.u, fam: T.s1.fam, eg: T.s1.eg, q: '', k: 2, V: T.V }, { q: 'Premier calcul : lequel ?', n: 'Calcule le « ? ».' }));
-    steps.push({ kind: 'build', proc: true, exp: T.s2, labels: L2, names: nm2, qd: 'Deuxième schéma :', q: 'Deuxième schéma : le « ? » est le nombre que tu viens de trouver. Mets « ?? » à la place de ce que demande la question.', hint: H_ALL, okFb: 'Bravo ! Deuxième schéma juste.', why: 'Voici le deuxième schéma juste.' });
-    steps.push(...calcSteps({ calc: T.c2, u: T.u, fam: T.s2.fam, eg: T.s2.eg, q: '', k: 2, V: T.V }, { q: 'Deuxième calcul : lequel ?', n: 'Calcule le « ?? ».' }));
+    steps.push({ kind: 'build', proc: true, exp: T.s1, labels: L1, names: nm1, qd: 'Premier schéma :', q: '<b>Premier schéma</b> : construis-le, avec le « ? » à la place du nombre que je cherche d\'abord.', hint: H_ALL, okFb: 'Bravo ! Premier schéma juste.', why: 'Voici le premier schéma juste.' });
+    steps.push(...calcSteps({ calc: T.c1, u: T.u, fam: T.s1.fam, eg: T.s1.eg, q: '', k: 2, V: T.V }, { q: '<b>Premier calcul</b> : lequel ?', n: 'Calcule le « ? ».' }));
+    steps.push({ kind: 'build', proc: true, exp: T.s2, labels: L2, names: nm2, qd: 'Deuxième schéma :', q: '<b>Deuxième schéma</b> : le « ? » est le nombre que tu viens de trouver. Mets « ?? » à la place de ce que demande la question.', hint: H_ALL, okFb: 'Bravo ! Deuxième schéma juste.', why: 'Voici le deuxième schéma juste.' });
+    steps.push(...calcSteps({ calc: T.c2, u: T.u, fam: T.s2.fam, eg: T.s2.eg, q: '', k: 2, V: T.V }, { q: '<b>Deuxième calcul</b> : lequel ?', n: 'Calcule le « ?? ».' }));
     const P = { ans: T.ans, say: T.say, other: T.other, sens: T.sens, calc: T.c2 };
     steps.push(o.reflex ? mousseQ(P) : phraseQ(P));
     const end = '<p>D\'abord : <b>' + esc(T.c1.h) + ' = ' + F(T.c1.r) + '</b>. Ensuite : <b>' + esc(T.c2.h) + ' = ' + F(T.c2.r) + '</b>. ' + esc(T.say(T.ans)) + '</p>';

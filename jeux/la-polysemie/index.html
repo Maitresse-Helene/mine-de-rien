@@ -471,6 +471,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -833,7 +836,7 @@ b.tgt{color:var(--stamp)}
     const raw2 = exs(k2)[e2], forms = x.N ? src.f : adjForms(src);
     return {
       stmt: '<p class="lead-q">Lis ces deux phrases.</p>' + P(x.s) + P(hl(raw2, forms)),
-      steps: [mkChoice('Le mot « ' + x.w + ' » a-t-il le même sens dans les deux phrases ?', [{ h: 'Oui, le même sens', ok: same, fb: same ? '' : 'Regarde les autres mots de chaque phrase : parlent-ils de la même chose ?' }, { h: 'Non, deux sens différents', ok: !same, fb: !same ? '' : 'Dans les deux phrases, le mot désigne la même chose.' }], { hint: 'Aide-toi du contexte : les autres mots de la phrase.' })],
+      steps: [mkChoice('Le mot « ' + x.w + ' » a-t-il <b>le même sens</b> dans les deux phrases ?', [{ h: 'Oui, le même sens', ok: same, fb: same ? '' : 'Regarde les autres mots de chaque phrase : parlent-ils de la même chose ?' }, { h: 'Non, deux sens différents', ok: !same, fb: !same ? '' : 'Dans les deux phrases, le mot désigne la même chose.' }], { hint: 'Aide-toi du contexte : les autres mots de la phrase.' })],
       end: same ? 'Le même sens' + (x.N ? ' : ' + low1(src.s[x.k][0]) : ' : on peut le remplacer par « ' + src.s[x.k][1] + ' » dans les deux phrases.') : 'Deux sens différents' + (x.N ? ' : « ' + low1(src.s[x.k][0]).replace(/\.$/, '') + ' » et « ' + low1(src.s[k2][0]).replace(/\.$/, '') + ' ».' : ' : « ' + src.s[x.k][1] + ' » dans la première, « ' + src.s[k2][1] + ' » dans la seconde.'),
       sum: x.raw + ' / ' + raw2
     };
@@ -843,7 +846,7 @@ b.tgt{color:var(--stamp)}
   function itemMeaning(){
     const N = pick(NOUNS), k = rand(0, N.s.length - 1), raw = pick(N.s[k][1]);
     return {
-      stmt: '<p class="lead-q">Que veut dire le mot en gras dans cette phrase ?</p>' + P(hl(raw, N.f)),
+      stmt: '<p class="lead-q"><b>Que veut dire</b> le mot en gras dans cette phrase ?</p>' + P(hl(raw, N.f)),
       steps: [mkChoice('Ici, « ' + N.w + ' » veut dire…', shuffle(N.s.map((x, i) => ({ h: x[0], ok: i === k, fb: i === k ? '' : 'C\'est un autre sens du mot « ' + N.w + ' ». Relis la phrase.' }))), { hint: 'Remplace le mot par chaque définition : laquelle va avec le reste de la phrase ?' })],
       end: 'Ici, « ' + N.w + ' » veut dire : ' + low1(N.s[k][0]),
       sum: raw
@@ -854,7 +857,7 @@ b.tgt{color:var(--stamp)}
   function itemReplace(){
     const a = pick(ADJS), k = rand(0, a.s.length - 1), raw = pick(a.s[k][0]);
     return {
-      stmt: '<p class="lead-q">Par quel mot peut-on remplacer le mot en gras, sans changer le sens de la phrase ?</p>' + P(hl(raw, adjForms(a))),
+      stmt: '<p class="lead-q"><b>Par quel mot peut-on remplacer</b> le mot en gras, sans changer le sens de la phrase ?</p>' + P(hl(raw, adjForms(a))),
       steps: [mkChoice('« ' + a.w + ' » veut dire ici…', shuffle(a.s.map((x, i) => ({ h: x[1], ok: i === k, fb: i === k ? '' : '« ' + x[1] + ' » correspond à un autre sens de « ' + a.w + ' ».' })).concat(HARD || a.s.length < 3 ? [{ h: ANTI[a.w], ok: false, fb: '« ' + ANTI[a.w] + ' » ne convient pas : il change complètement le sens de la phrase.' }] : [])), { cls: 'big', hint: 'Remplace le mot par chaque proposition et relis la phrase : garde-t-elle le même sens ?' })],
       end: 'Ici, « ' + a.w + ' » veut dire « ' + a.s[k][1] + ' ».',
       sum: raw
@@ -870,7 +873,7 @@ b.tgt{color:var(--stamp)}
     const descr = i => useAdj ? 'le mot veut dire « ' + src.s[i][1] + ' »' : 'le mot veut dire : ' + low1(src.s[i][0]).replace(/\.$/, '');
     return {
       stmt: '<p class="lead-q">Voici une phrase :</p>' + P(hl(model, forms)),
-      steps: [mkChoice('Dans quelle phrase « ' + src.w + ' » a-t-il le même sens ?', shuffle([{ h: hl(good, forms), ok: true }].concat(bad.map(([t, i]) => ({ h: hl(t, forms), ok: false, fb: 'Dans cette phrase, ' + descr(i) + '.' })))), { hint: 'Que veut dire le mot dans la première phrase ? Cherche la phrase où il veut dire la même chose.' })],
+      steps: [mkChoice('Dans quelle phrase « ' + src.w + ' » a-t-il <b>le même sens</b> ?', shuffle([{ h: hl(good, forms), ok: true }].concat(bad.map(([t, i]) => ({ h: hl(t, forms), ok: false, fb: 'Dans cette phrase, ' + descr(i) + '.' })))), { hint: 'Que veut dire le mot dans la première phrase ? Cherche la phrase où il veut dire la même chose.' })],
       end: 'Dans les deux phrases, ' + descr(k) + '.',
       sum: model + ' → même sens'
     };
@@ -891,7 +894,7 @@ b.tgt{color:var(--stamp)}
     const [w, s1, s2, d1, d2] = pick(HIDE);
     const fill = (s, x) => s.replace('…', B(x));
     return {
-      stmt: '<p class="lead-q">Un seul mot peut compléter les deux phrases.</p>' + P(s1.replace('…', GAP)) + P(s2.replace('…', GAP)),
+      stmt: '<p class="lead-q">Un seul mot peut compléter <b>les deux phrases</b>.</p>' + P(s1.replace('…', GAP)) + P(s2.replace('…', GAP)),
       stmtDone: P(fill(s1, w)) + P(fill(s2, w)),
       steps: [mkChoice('Quel mot va dans les deux phrases ?', shuffle([{ h: w, ok: true }, { h: d1, ok: false, fb: '« ' + d1 + ' » va dans la première phrase, mais pas dans la seconde.' }, { h: d2, ok: false, fb: '« ' + d2 + ' » va dans la seconde phrase, mais pas dans la première.' }]), { cls: 'big', hint: 'Essaie chaque mot dans les deux phrases. Le bon mot a deux sens différents.' })],
       end: '« ' + w + ' » va dans les deux phrases, avec deux sens différents : c\'est un mot polysémique.',

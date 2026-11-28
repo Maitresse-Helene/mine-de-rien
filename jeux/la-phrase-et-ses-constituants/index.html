@@ -475,6 +475,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -879,7 +882,7 @@ b.tgt{color:var(--stamp)}
     while (k === 'mix' && (!b.S || b.text.split(' ').length < 4)) b = baseText();
     const t = damage(b, k);
     return {
-      stmt: '<p class="lead-q">Cette suite de mots est-elle une phrase ?</p>' + P(t),
+      stmt: '<p class="lead-q">Cette suite de mots est-elle <b>une phrase</b> ?</p>' + P(t),
       steps: [mkChoice('Ton avis :', VERDICT.map(v => ({ h: v.h, ok: v.k === k, fb: v.k === k ? '' : VFB[v.k] })), { hint: 'Vérifie trois choses : les mots ont-ils du sens dans cet ordre ? Y a-t-il une majuscule au début ? Une ponctuation à la fin ?' })],
       end: VEND[k],
       sum: t + ' → ' + (k === 'ok' ? 'phrase' : 'pas une phrase')
@@ -890,7 +893,7 @@ b.tgt{color:var(--stamp)}
     const bad2 = pick(['cap', 'pt']);
     const opts = shuffle([{ h: b.text, ok: true }, { h: damage(b, 'mix'), ok: false, fb: 'Les mots sont dans le désordre : cette suite n\'a pas de sens.' }, { h: damage(b, bad2), ok: false, fb: bad2 === 'cap' ? 'Il manque la majuscule au début.' : 'Il manque la ponctuation finale.' }]);
     return {
-      stmt: '<p class="lead-q">Une seule de ces suites de mots est une phrase. Laquelle ?</p>',
+      stmt: '<p class="lead-q">Une seule de ces suites de mots est <b>une phrase</b>. Laquelle ?</p>',
       steps: [mkChoice('Choisis la phrase :', opts, { caseOk: true, hint: 'Une phrase a du sens, commence par une majuscule et se termine par une ponctuation finale.' })],
       end: 'La phrase est : « ' + b.text + ' »',
       sum: b.text + ' → laquelle ?'
@@ -914,7 +917,7 @@ b.tgt{color:var(--stamp)}
     else { const g = gcs[0] || null; if (g) opts.push({ h: shown(S, g), ok: false, fb: fbGroup(S, g) }); }
     if (opts.length < 3) return itemGS();
     return {
-      stmt: '<p class="lead-q">Quel est le groupe sujet ?</p>' + P(plain(S)),
+      stmt: '<p class="lead-q">Quel est <b>le groupe sujet</b> ?</p>' + P(plain(S)),
       stmtDone: P(colored(S)) + legend,
       steps: [mkChoice('De qui ou de quoi parle-t-on ?', shuffle(opts), { hint: 'Demande-toi : de qui ou de quoi parle-t-on dans cette phrase ? Tu peux dire « C\'est … qui … ».' })],
       end: 'Le groupe sujet est « ' + shown(S, gs) + ' » : ' + (S.pl ? 'ce sont ' : 'c\'est ') + gs.t + ' qui ' + gv.t + '.',
@@ -935,7 +938,7 @@ b.tgt{color:var(--stamp)}
     if (!pool.length) return itemGV();
     opts.push(HARD && pool.length > 1 ? pick(pool.slice(1).concat(pool)) : pick(pool));
     return {
-      stmt: '<p class="lead-q">Quel est le groupe verbal ?</p>' + P(plain(S)),
+      stmt: '<p class="lead-q">Quel est <b>le groupe verbal</b> ?</p>' + P(plain(S)),
       stmtDone: P(colored(S)) + legend,
       steps: [mkChoice('Que dit-on du sujet ?', shuffle(opts), { hint: 'Le groupe verbal contient le verbe et les mots qui le complètent. Il ne dit ni où, ni quand, ni comment.' })],
       end: 'Le groupe verbal est « ' + gv.t + ' »' + (gv.c ? ' : le verbe « ' + gv.v + ' » et son complément « ' + gv.c + ' ».' : ' : ici, le verbe est tout seul.'),
@@ -953,7 +956,7 @@ b.tgt{color:var(--stamp)}
       return {
         stmt: P(plain(S)),
         stmtDone: P(colored(S)) + legend,
-        steps: [mkChoice('Quel est le groupe circonstanciel ?', opts, { hint: 'C\'est le groupe qu\'on peut supprimer ou déplacer. Il dit où, quand ou comment.' }), kindStep(S, g)],
+        steps: [mkChoice('Quel est <b>le groupe circonstanciel</b> ?', opts, { hint: 'C\'est le groupe qu\'on peut supprimer ou déplacer. Il dit où, quand ou comment.' }), kindStep(S, g)],
         end: '« ' + shown(S, g) + ' » est un groupe circonstanciel : il indique ' + KW[g.k] + '.',
         sum: plain(S) + ' → GC ' + KW[g.k]
       };
@@ -964,7 +967,7 @@ b.tgt{color:var(--stamp)}
     return {
       stmt: P(plain(S)),
       stmtDone: P(colored(S)) + legend,
-      steps: [mkChoice('Quel groupe circonstanciel indique ' + KW[a.k] + ' ?', opts, { hint: 'Il y a deux groupes circonstanciels dans cette phrase. Pose la question « ' + KW[a.k] + ' ? ».' }), kindStep(S, b)],
+      steps: [mkChoice('Quel groupe circonstanciel indique <b>' + KW[a.k] + '</b> ?', opts, { hint: 'Il y a deux groupes circonstanciels dans cette phrase. Pose la question « ' + KW[a.k] + ' ? ».' }), kindStep(S, b)],
       end: '« ' + shown(S, a) + ' » indique ' + KW[a.k] + ' et « ' + shown(S, b) + ' » indique ' + KW[b.k] + ' : ce sont deux groupes circonstanciels.',
       sum: plain(S) + ' → ' + KW[a.k] + ' / ' + KW[b.k]
     };
@@ -976,7 +979,7 @@ b.tgt{color:var(--stamp)}
     const S = mkSent(HARD ? { gc: pick([1, 2]), mid: true, long: true } : { gc: 1 });
     const p = pick(S.parts);
     return {
-      stmt: '<p class="lead-q">Quel est le rôle du groupe souligné ?</p>' + P(sent(S, (x, t) => x === p ? '<u class="tgt">' + t + '</u>' : t)),
+      stmt: '<p class="lead-q">Quel est <b>le rôle</b> du groupe souligné ?</p>' + P(sent(S, (x, t) => x === p ? '<u class="tgt">' + t + '</u>' : t)),
       stmtDone: P(colored(S)) + legend,
       steps: [mkChoice('Le groupe souligné est…', ['gs', 'gv', 'gc'].map(r => ({ h: ROLE[r], ok: r === p.r, fb: r === p.r ? '' : RFB[r] })), { hint: 'De qui parle-t-on ? → groupe sujet. Que dit-on du sujet ? → groupe verbal. Où, quand, comment ? → groupe circonstanciel.' })],
       end: '« ' + shown(S, p) + ' » est ' + ROLE[p.r] + (p.r === 'gc' ? ' : il indique ' + KW[p.k] + '.' : '.'),
@@ -988,7 +991,7 @@ b.tgt{color:var(--stamp)}
     const g = part(S, 'gc'), gs = part(S, 'gs'), gv = part(S, 'gv');
     const rest = cap1(gs.t) + ' ' + gv.t + '.';
     return {
-      stmt: '<p class="lead-q">On veut supprimer un groupe. La phrase doit rester correcte.</p>' + P(plain(S)),
+      stmt: '<p class="lead-q">On veut <b>supprimer</b> un groupe. La phrase doit rester correcte.</p>' + P(plain(S)),
       stmtDone: P(colored(S)) + '<p class="sentence small">→ ' + rest + '</p>',
       steps: [mkChoice('Quel groupe peut-on supprimer ?', shuffle([{ h: shown(S, g), ok: true }, { h: shown(S, gs), ok: false, fb: 'Sans « ' + shown(S, gs) + ' », on ne sait plus de qui on parle : le groupe sujet est indispensable.' }, { h: shown(S, gv), ok: false, fb: 'Sans « ' + shown(S, gv) + ' », il n\'y a plus de verbe : le groupe verbal est indispensable.' }]), { hint: 'Seul le groupe circonstanciel est facultatif.' })],
       end: '« ' + g.t + ' » est un groupe circonstanciel : on peut le supprimer. Il reste : « ' + rest + ' »',
@@ -1006,7 +1009,7 @@ b.tgt{color:var(--stamp)}
       { h: cap1(gv.c) + ' ' + gs.t + ' ' + gv.v + ' ' + g.t + '.', ok: false, fb: '« ' + gv.c + ' » fait partie du groupe verbal : on ne peut pas le déplacer.' }
     ]);
     return {
-      stmt: '<p class="lead-q">On a déplacé un groupe. Quelle phrase est correcte et garde le même sens ?</p>' + P(plain(S)),
+      stmt: '<p class="lead-q">On a <b>déplacé</b> un groupe. Quelle phrase est correcte et garde le même sens ?</p>' + P(plain(S)),
       stmtDone: P(colored(S)) + '<p class="sentence small">→ ' + good + '</p>',
       steps: [mkChoice('Choisis la phrase :', opts, { hint: 'Le groupe circonstanciel est déplaçable : il peut aller au début de la phrase, suivi d\'une virgule.' })],
       end: 'On a déplacé le groupe circonstanciel « ' + g.t + ' » : « ' + good + ' »',
@@ -1025,7 +1028,7 @@ b.tgt{color:var(--stamp)}
       { h: half, ok: false, fb: '« ' + keep.t + ' » indique ' + KW[keep.k] + ' : c\'est aussi un groupe circonstanciel.' }
     ]);
     return {
-      stmt: '<p class="lead-q">On supprime tous les groupes circonstanciels. Que reste-t-il ?</p>' + P(plain(S)),
+      stmt: '<p class="lead-q">On supprime <b>tous les groupes circonstanciels</b>. Que reste-t-il ?</p>' + P(plain(S)),
       stmtDone: P(colored(S)) + '<p class="sentence small">→ ' + good + '</p>',
       steps: [mkChoice('Il reste :', opts, { hint: 'Il y a deux groupes circonstanciels. Il doit rester le groupe sujet et le groupe verbal en entier.' })],
       end: 'Sans « ' + gcs[0].t + ' » ni « ' + gcs[1].t + ' », il reste le groupe sujet et le groupe verbal : « ' + good + ' »',

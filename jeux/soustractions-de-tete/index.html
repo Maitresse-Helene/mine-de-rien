@@ -448,6 +448,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.instr b{font-weight:800;color:var(--pen)}
 </style>
 
 <div class="app">
@@ -885,10 +887,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function instrHTML(a, b, strat, step){
     const p = plan(a, b), s = p[strat].steps[step];
-    if (strat === 'round' && step === 0) return 'Étape 1 : enlève ' + n(p.up) + ' au lieu de ' + n(b) + '.<br>' + n(a) + ' − ' + n(p.up) + ' = ?';
-    if (strat === 'round') return 'Étape 2 : tu as enlevé ' + n(p.diff) + ' de trop, rajoute-' + (p.diff > 1 ? 'les' : 'le') + '.<br>' + n(s.from) + ' + ' + n(p.diff) + ' = ?';
-    if (step === 0) return "Étape 1 : enlève d'abord les dizaines.<br>" + n(a) + ' − ' + n(p.bt) + ' = ?';
-    return 'Étape 2 : enlève maintenant les unités.<br>' + n(s.from) + ' − ' + n(p.bu) + ' = ?';
+    if (strat === 'round' && step === 0) return 'Étape 1 : enlève <b>' + n(p.up) + ' au lieu de ' + n(b) + '</b>.<br>' + n(a) + ' − ' + n(p.up) + ' = ?';
+    if (strat === 'round') return 'Étape 2 : tu as enlevé ' + n(p.diff) + ' de trop, <b>rajoute-' + (p.diff > 1 ? 'les' : 'le') + '</b>.<br>' + n(s.from) + ' + ' + n(p.diff) + ' = ?';
+    if (step === 0) return "Étape 1 : enlève d'abord <b>les dizaines</b>.<br>" + n(a) + ' − ' + n(p.bt) + ' = ?';
+    return 'Étape 2 : enlève maintenant <b>les unités</b>.<br>' + n(s.from) + ' − ' + n(p.bu) + ' = ?';
   }
   function stepHint(s){
     if (s.op === '+') return 'Avance de ' + n(s.n) + ' à partir de ' + n(s.from) + '. Tu peux compter sur tes doigts.';
@@ -1014,7 +1016,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function resetStep(){
     const L = S.L;
-    L.step = 0; L.values = []; L.input = ''; L.errors = 0; L.wrong = false; L.locked = false; L.fb = null;
+    L.step = 0; L.values = []; L.input = ''; L.errors = 0; L.early = 0; L.wrong = false; L.locked = false; L.fb = null;
   }
   function choose(strat){
     const L = S.L;
@@ -1053,9 +1055,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       renderLearn();
       setTimeout(advanceStep, 700);
     } else {
+      // Consigne mal lue : le résultat final (juste) tapé à la première étape. Un message, sans erreur la première fois.
+      const early = L.step === 0 && parseInt(L.input, 10) === (it.a - it.b);
+      const earlyMsg = 'Tu as tapé ' + parseInt(L.input, 10) + '. Lis bien la consigne : fais d\'abord cette étape, pas encore le résultat final.';
+      if (early && !L.early){ L.early = 1; L.fb = { kind: 'info', text: earlyMsg }; renderLearn(); return; }
       L.errors++;
       L.wrong = true;
-      L.fb = { kind: 'bad', text: pick(BAD) };
+      L.fb = { kind: 'bad', text: early ? earlyMsg : pick(BAD) };
       renderLearn();
       const box = $('activeBox');
       if (box){ void box.offsetWidth; box.classList.add('shake'); }
@@ -1064,7 +1070,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function advanceStep(){
     const L = S.L;
     L.step++;
-    L.errors = 0; L.wrong = false; L.locked = false; L.input = ''; L.fb = null;
+    L.errors = 0; L.early = 0; L.wrong = false; L.locked = false; L.input = ''; L.fb = null;
     if (L.step >= 2){ L.done[L.strat] = true; L.sub = 'done'; }
     renderLearn();
   }

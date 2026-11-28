@@ -650,6 +650,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .ord-bar .ord-clear:disabled{visibility:hidden}
 .tl-mom{font-family:var(--font-body);font-weight:700;font-size:12.5px;fill:var(--ink-soft)}
 .ex-cap .ev[data-n]{font-weight:600}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1064,7 +1067,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1098,7 +1101,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1769,7 +1772,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       mExtra: 'Tu as surligné un groupe de mots qui ne dit pas quand : il dit où, ou avec qui.', mMiss: 'Il reste au moins un mot du temps à surligner.',
       noun: ['mot surligné', 'mots surlignés'], empty: 'Aucun mot surligné', info: 'Touche d\'abord les mots qui disent quand.' };
     return { stmt: '<p class="problem">' + sents.join(' ') + '</p>',
-      steps: [surl, mkChoice('Qu\'a fait ' + esc(P.n) + ' en ' + (first ? 'premier' : 'dernier') + ' ?', shuffle(opts), { layout: 'phrases', hint: 'Range les mots du temps que tu as surlignés : lequel vient ' + (first ? 'en premier' : 'en dernier') + ' ?', okFb: 'Oui ! C\'est le mot du temps qui le dit.' })],
+      steps: [surl, mkChoice('Qu\'a fait ' + esc(P.n) + ' <b>en ' + (first ? 'premier' : 'dernier') + '</b> ?', shuffle(opts), { layout: 'phrases', hint: 'Range les mots du temps que tu as surlignés : lequel vient ' + (first ? 'en premier' : 'en dernier') + ' ?', okFb: 'Oui ! C\'est le mot du temps qui le dit.' })],
       end: '<p>Dans l\'ordre du temps : ' + A.map((x, i) => (i + 1) + '. ' + esc(lcf(x.m.mk)) + ' : ' + esc(P.il) + ' ' + esc(plain(actV(x.a, V)))).join(' · ') + '.</p>',
       sum: 'Mots du temps · ' + A.map(x => esc(x.m.lab)).join(', ') + ' · ' + esc(P.n) };
   }

@@ -612,6 +612,9 @@ b.tgt{color:var(--stamp)}
 .paper .pc-barrer{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#6a2ca0}
 .paper .pc-surligner{background:#eadcf7}
 .paper ol.p-ex > li{break-inside:avoid}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1018,14 +1021,14 @@ b.tgt{color:var(--stamp)}
       if (s.c === 'verbe'){
         const words = f[0].split(/,\s+|;/).map(x => x.trim()).filter(Boolean);
         const keys = words.map(w => wordKeys(doc, [w], consL)[0]).filter(Boolean);
-        if (keys.length === 1) steps.push(wordStep(f[1] || 'Touche le verbe qui dit ce que tu dois faire.', keys, 'Le verbe d\'action dit ce que tu dois faire : entoure, souligne, écris…', { scope: consL, keep: 'trouve', wrongMsg: w => '« ' + esc(w) + ' » ne dit pas ce que tu dois faire : cherche le verbe d\'action.' }));
-        else steps.push(markStep(f[1] || 'Touche les verbes qui disent ce que tu dois faire, dans l\'ordre des tâches, puis valide.', 'trouve', keys, 'Cherche chaque verbe d\'action, du début à la fin de la consigne.',
+        if (keys.length === 1) steps.push(wordStep(f[1] || 'Touche <b>le verbe</b> qui dit ce que tu dois faire.', keys, 'Le verbe d\'action dit ce que tu dois faire : entoure, souligne, écris…', { scope: consL, keep: 'trouve', wrongMsg: w => '« ' + esc(w) + ' » ne dit pas ce que tu dois faire : cherche le verbe d\'action.' }));
+        else steps.push(markStep(f[1] || 'Touche <b>les verbes</b> qui disent ce que tu dois faire, dans l\'ordre des tâches, puis valide.', 'trouve', keys, 'Cherche chaque verbe d\'action, du début à la fin de la consigne.',
           { scope: consL, ordered: true, missMsg: 'Il manque un verbe : relis toute la consigne.', orderMsg: 'Ce sont les bons verbes, mais touche-les dans l\'ordre où tu dois faire les tâches.', wrongMsg: ws => andList(ws) + (ws.length > 1 ? ' ne disent pas' : ' ne dit pas') + ' ce que tu dois faire.' }));
         end.push(keys.length > 1 ? 'Les tâches, dans l\'ordre : ' + words.map(esc).join(', puis ') + '.' : 'Le verbe d\'action : « ' + esc(words[0]) + ' ».');
       } else if (s.c === 'mot' || s.c === 'oubli' || s.c === 'cherche'){
         const scope = s.c === 'cherche' ? all : consL;
         const keys = wordKeys(doc, alts(f[0]), scope);
-        const Q = { mot: 'Touche le mot de la consigne qui change tout.', oubli: 'Touche le mot de la consigne que la chouette n\'a pas respecté.', cherche: 'Touche le mot qui dit ce que tu cherches.' }[s.c];
+        const Q = { mot: 'Touche le mot de la consigne <b>qui change tout</b>.', oubli: 'Touche le mot de la consigne que la chouette <b>n\'a pas respecté</b>.', cherche: 'Touche le mot qui dit <b>ce que tu cherches</b>.' }[s.c];
         const H = { mot: 'Cherche un petit mot comme sauf, seulement, chaque, ne… pas, deux, le plus…', oubli: 'Compare la copie de la chouette avec chaque mot de la consigne.', cherche: 'Relis la question : « Combien de… ? », « Quel est… ? »' }[s.c];
         steps.push(wordStep(f[1] || Q, keys, H, { scope, keep: 'trouve' }));
         end.push({ mot: 'Le mot qui change tout : ', oubli: 'Ce qu\'elle n\'a pas respecté : ', cherche: 'Ce que l\'on cherche : ' }[s.c] + '« ' + esc(alts(f[0])[0]) + ' ».');
@@ -1033,7 +1036,7 @@ b.tgt{color:var(--stamp)}
         const words = f[0].split(/,\s+|;/).map(x => x.trim()).filter(Boolean);
         const keys = wordKeys(doc, words, consL);
         const tol = []; consL.forEach(l => doc.toks[l - 1].forEach((x, i) => { if (x.w && SMALL.has(x.n)) tol.push(l + ':' + i); }));
-        steps.push(markStep(f[1] || 'Touche les mots qui disent sur quoi tu dois travailler, puis valide.', 'trouve', keys, 'Après le verbe, quels mots disent avec quoi tu travailles ?', { scope: consL, tol }));
+        steps.push(markStep(f[1] || 'Touche les mots qui disent <b>sur quoi</b> tu dois travailler, puis valide.', 'trouve', keys, 'Après le verbe, quels mots disent avec quoi tu travailles ?', { scope: consL, tol }));
         end.push('Tu travailles sur : ' + words.map(esc).join(' ') + '.');
       } else if (s.c === 'faire' || s.c === 'choisir'){
         const mode = f[0], pickN = s.c === 'choisir' ? { n: parseInt(f[1], 10), min: /\+$/.test(f[1]) } : null;
@@ -1065,15 +1068,15 @@ b.tgt{color:var(--stamp)}
         end.push((s.c === 'combien' ? 'Nombre de choses à faire : ' : 'Nombre de réponses à donner : ') + f[0] + '.');
       } else if (s.c === 'ligne'){
         const ls = f[0].split(/[,\s]+/).filter(Boolean).map(Number);
-        steps.push(linesStep(f[1] || (ls.length > 1 ? 'Touche les lignes où se trouvent les questions, puis valide.' : 'Touche la ligne où se trouve la question.'), ls, ls.length, ls.length === 1, 'La question finit souvent par « ? », ou commence par un verbe comme Calcule ou Trouve.', { badMsg: ls.length > 1 ? 'ne contient pas de question.' : 'ne contient pas la question.', more: 'C\'est juste ! Mais il y a une autre question : cherche-la.' }));
+        steps.push(linesStep(f[1] || (ls.length > 1 ? 'Touche les lignes où se trouvent <b>les questions</b>, puis valide.' : 'Touche la ligne où se trouve <b>la question</b>.'), ls, ls.length, ls.length === 1, 'La question finit souvent par « ? », ou commence par un verbe comme Calcule ou Trouve.', { badMsg: ls.length > 1 ? 'ne contient pas de question.' : 'ne contient pas la question.', more: 'C\'est juste ! Mais il y a une autre question : cherche-la.' }));
         end.push((ls.length > 1 ? 'Les questions sont ' : 'La question est ') + lnList(ls) + '.');
       } else if (s.c === 'unite'){
         const acc = f[0].split('/').map(x => x.trim()).filter(Boolean);
-        steps.push(typeStep('Quelle sera l\'unité de ta réponse (des euros, des billes, des mètres…) ? Écris-la.', acc, { hint: 'Que cherches-tu ? Un prix, une longueur, une durée, un nombre d\'objets ?' }));
+        steps.push(typeStep('Quelle sera <b>l\'unité</b> de ta réponse (des euros, des billes, des mètres…) ? Écris-la.', acc, { hint: 'Que cherches-tu ? Un prix, une longueur, une durée, un nombre d\'objets ?' }));
         end.push('Unité de la réponse : ' + esc(acc[0]) + '.');
       } else if (s.c === 'chouette'){
         const ok = /^oui/i.test(f[0]);
-        steps.push(mkChoice('La chouette a-t-elle bien suivi la consigne ?', [
+        steps.push(mkChoice('La chouette a-t-elle <b>bien suivi</b> la consigne ?', [
           { h: 'Oui', ok: ok, fb: 'Regarde mieux : la chouette n\'a pas tout fait comme le demande la consigne.' },
           { h: 'Non', ok: !ok, fb: 'Si : relis la consigne, la chouette a bien fait ce qu\'on demandait.' }
         ], { hint: 'Relis la consigne mot à mot, puis compare avec la copie.' }));
@@ -1180,11 +1183,11 @@ b.tgt{color:var(--stamp)}
   const zonesStep = (q, acc, need, single, hint, o) => Object.assign({ kind: 'zones', q, acc, need: Math.max(1, Math.min(need || 1, acc.length)), single: !!single, hint }, o || {});
   const typeStep = (q, acc, o) => Object.assign({ kind: 'type', q, acc, wrongs: [], copts: null, num: acc.length > 0 && acc.every(a => /^\s*\d+([,.]\d+)?\s*$/.test(a)), hint: '' }, o || {});
   function natureStep(lvl, truth){
-    if (!threeChoices(lvl)) return mkChoice('La réponse est-elle ' + DOC_IN + ' ?', [
+    if (!threeChoices(lvl)) return mkChoice('La réponse est-elle <b>' + DOC_IN + '</b> ?', [
       { h: 'Oui, ' + DOC_YES, ok: truth === 'ecrit', fb: 'Cherche bien : cette réponse ne se trouve nulle part ' + DOC_IN + '.' },
       { h: 'Non, ' + DOC_NO, ok: truth !== 'ecrit', fb: 'Si : la réponse se trouve ' + DOC_IN + '.' }
     ], { hint: 'Regarde bien tout ' + DOC_WORD + ' en gardant la question en tête.' });
-    return mkChoice('Peut-on répondre avec ' + DOC_WORD + ' ?', [
+    return mkChoice('<b>Peut-on répondre</b> avec ' + DOC_WORD + ' ?', [
       { h: NAT_ECRIT, ok: truth === 'ecrit', fb: truth === 'devine' ? 'La réponse ne se lit pas directement : cherche plutôt des indices.' : 'Ce n\'est écrit nulle part ' + DOC_IN + '.' },
       { h: 'Ça se devine avec des indices', ok: truth === 'devine', fb: truth === 'ecrit' ? 'Pas besoin de deviner : la réponse se lit ' + DOC_IN + '.' : 'Aucun indice ne permet de le deviner : attention, il ne faut pas inventer !' },
       { h: 'On ne peut pas savoir', ok: truth === 'no', fb: truth === 'ecrit' ? 'Si, on peut savoir : la réponse se lit ' + DOC_IN + '.' : 'Si : des indices permettent de le deviner.' }

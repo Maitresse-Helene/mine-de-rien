@@ -615,6 +615,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .tri-count{color:var(--ink-soft);font-weight:700}
 .tri-bar .tri-ok{width:auto;flex:none;min-height:52px;padding:6px 26px;font-size:1.2rem}
 .ex-cap .tok{font-weight:700}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1031,7 +1034,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1227,7 +1230,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   SCH_FB1.Br = SCH_FB1.Bn;
   function schemaStep1(P){
     const fb = SCH_FB1[P.type];
-    return mkChoice('Quel schéma raconte ce problème ?', shuffle([
+    return mkChoice('Quel <b>schéma</b> raconte ce problème ?', shuffle([
       { h: sch1(P, 'ok'), ok: true },
       { h: sch1(P, 'd1'), ok: false, fb: fb[0] },
       { h: sch1(P, 'd2'), ok: false, fb: fb[1] }
@@ -1249,8 +1252,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function numSteps1(P, C, q){
     const u = P.tpl.u;
     if (P.type === 'Br') return [
-      mkNum(q || 'Calcule : combien de fois ' + P.p + ' dans ' + fmtNum(P.T) + ' ?', fmtNum(P.T) + ' ÷ ' + P.p + ' → □ ' + esc(u), P.r, { calc: { x: P.T, op: '÷', y: P.p }, hint: 'Cherche dans la table de ' + P.p + ' le plus grand nombre qui ne dépasse pas ' + fmtNum(P.T) + '.', traps: { [P.r + 1]: 'Trop grand : ' + (P.r + 1) + ' × ' + P.p + ' = ' + fmtNum((P.r + 1) * P.p) + ', ça dépasse ' + fmtNum(P.T) + '.' } }),
-      mkNum('Combien en reste-t-il ?', 'il reste □ ' + esc(P.tpl.u2), P.s, { calc: { x: P.T, op: '−', y: P.r * P.p }, hint: fmtNum(P.T) + ' − ' + fmtNum(P.r * P.p) + ' = ?' })
+      mkNum(q || 'Calcule : <b>combien de fois</b> ' + P.p + ' dans ' + fmtNum(P.T) + ' ?', fmtNum(P.T) + ' ÷ ' + P.p + ' → □ ' + esc(u), P.r, { calc: { x: P.T, op: '÷', y: P.p }, hint: 'Cherche dans la table de ' + P.p + ' le plus grand nombre qui ne dépasse pas ' + fmtNum(P.T) + '.', traps: { [P.r + 1]: 'Trop grand : ' + (P.r + 1) + ' × ' + P.p + ' = ' + fmtNum((P.r + 1) * P.p) + ', ça dépasse ' + fmtNum(P.T) + '.' } }),
+      mkNum('Combien en <b>reste-t-il</b> ?', 'il reste □ ' + esc(P.tpl.u2), P.s, { calc: { x: P.T, op: '−', y: P.r * P.p }, hint: fmtNum(P.T) + ' − ' + fmtNum(P.r * P.p) + ' = ?' })
     ];
     return [mkNum(q || 'Calcule.', calcText1(C) + ' = □', P.r, { calc: C.expr ? { x: P.a + P.b, op: '+', y: P.c } : { x: C.x, op: C.op, y: C.y }, hint: C.expr ? 'Additionne les deux premiers nombres, puis ajoute le troisième.' : arithHint(C.x, C.op, C.y) })];
   }
@@ -1264,7 +1267,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       if (k === 'partie') return 'Non : les parties ne sont pas égales ici. On cherche le morceau qui manque.';
       return x === 'part' ? 'Non : on connaît déjà ce qu\'il y a dans chaque part. Relis la question.' : 'Non : on connaît déjà le nombre de parts. Relis la question.';
     };
-    return mkChoice('Que cherches-tu ?', ['tout', 'partie', 'part', 'nb'].map(x => ({ h: L[x], ok: x === k, fb: x === k ? '' : F(x) })), { hint: known ? 'Le tout (' + fmtNum(P.T) + ') est déjà connu. Les parts sont-elles toutes égales ?' : 'Relis la question en gras : demande-t-elle tout ensemble ?' });
+    return mkChoice('<b>Que cherches-tu</b> ?', ['tout', 'partie', 'part', 'nb'].map(x => ({ h: L[x], ok: x === k, fb: x === k ? '' : F(x) })), { hint: known ? 'Le tout (' + fmtNum(P.T) + ') est déjà connu. Les parts sont-elles toutes égales ?' : 'Relis la question en gras : demande-t-elle tout ensemble ?' });
   }
   function phrase1(P){
     const V = Object.assign({}, P.V), others = [P.a, P.b, P.T, P.p, P.n].filter(x => x !== undefined && x !== P.r);
@@ -1302,7 +1305,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1513,7 +1516,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (id === 2){
       return { stmt: P.stmt, steps: [schemaStep1(P)], end: 'Le « ? » est à la place de ce que je cherche.' + endText1(P, C), sum: sum1(P, (isA ? 'parts inégales' : 'parts égales') + ', ' + calcText1(C) + ' = <b>' + fmtNum(P.r) + '</b>') };
     }
-    const calcS = () => calcStep('Quel calcul fais-tu ?', C.opts, { hint: 'Regarde ton schéma : le « ? » est-il sur le tout, ou dans une partie ? Les parts sont-elles égales ?' });
+    const calcS = () => calcStep('Quel <b>calcul</b> fais-tu ?', C.opts, { hint: 'Regarde ton schéma : le « ? » est-il sur le tout, ou dans une partie ? Les parts sont-elles égales ?' });
     if (id === 3){
       return { stmt: P.stmt, steps: [schemaStep1(P), calcS()].concat(numSteps1(P, C)), end: endText1(P, C), sum: sum1(P, calcText1(C) + ' = <b>' + fmtNum(P.r) + '</b>') };
     }

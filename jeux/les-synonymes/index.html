@@ -517,6 +517,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .dt{border:2px solid #0f8a7e;border-radius:7px;padding:0 4px;color:#0b6e64;font-weight:700}
 .av{border:2px dashed #b4530a;border-radius:7px;padding:0 4px;color:#94420a;font-weight:700}
 @media (prefers-color-scheme: dark){ .pr{border-color:#ff8fb1;color:#ffb3c9} .dt{border-color:#5fd6c8;color:#8ee6db} .av{border-color:#ffad6b;color:#ffc796} }
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -902,7 +905,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const others = shuffle(all.filter(o => o.c === S0.c && o.g !== S0.g)).map(o => pick([o.w].concat(o.s)));
     for (let k = 0; toks.length < 8 && k < others.length; k++) if (!toks.some(t => t.h === others[k])) toks.push({ h: others[k], ok: false, fb: '« ' + others[k] + ' » ne veut pas dire la même chose que « ' + S0.w + ' ».' });
     return {
-      stmt: '<p class="lead-q">Touche tous les synonymes de ce mot, puis valide.</p>' + W(S0.w),
+      stmt: '<p class="lead-q">Touche <b>tous les synonymes</b> de ce mot, puis valide.</p>' + W(S0.w),
       steps: [{ kind: 'tags', q: 'Les synonymes de « ' + S0.w + ' »', mode: 'set', toks: shuffle(toks), hint: HINT_S, miss: n => 'Il en manque ' + (n > 1 ? n : 'un') + '.' }],
       end: 'Les synonymes de « ' + S0.w + ' » : ' + syn.map(gu).join(', ') + '. Ce sont ' + (S0.c === 'nom' ? 'des noms' : S0.c === 'verbe' ? 'des verbes' : 'des adjectifs') + ', comme « ' + S0.w + ' ».',
       sum: 'synonymes de ' + S0.w + ' : ' + toks.map(t => t.h).sort().join(', ')
@@ -922,7 +925,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return '« ' + a.h + ' » et « ' + b.h + ' » n\'ont pas le même sens.';
     };
     return {
-      stmt: '<p class="lead-q">Relie les mots qui ont le même sens : touche un mot, puis son synonyme.</p>',
+      stmt: '<p class="lead-q"><b>Relie</b> les mots qui ont le même sens : touche un mot, puis son synonyme.</p>',
       steps: [{ kind: 'tags', q: 'Les paires de synonymes', mode: 'pairs', toks: shuffle(toks).map(t => ({ h: t.h, pair: t.pair, set: t.set })), pairFb, pairOk: 'ils ont le même sens.', hint: HINT_S }],
       end: 'Les paires : ' + chosen.map((o, k) => toks.filter(t => t.pair === k).map(t => t.h).join(' = ')).join(' ; ') + '.',
       sum: 'paires : ' + toks.map(t => t.h).sort().join(', ')
@@ -945,7 +948,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     else { const o = pick(all.filter(o => o.c === S0.c && o.g !== S0.g)); intr = pick([o.w].concat(o.s)); why = '« ' + intr + ' » n\'a pas le même sens que les autres mots.'; }
     const opts = shuffle(group.map(w => ({ h: w, ok: false, fb: '« ' + w + ' » a le même sens que les autres mots : ce n\'est pas l\'intrus.' })).concat([{ h: intr, ok: true }]));
     return {
-      stmt: '<p class="lead-q">Un de ces mots n\'est pas un synonyme des autres. Lequel ?</p>',
+      stmt: '<p class="lead-q">Un de ces mots <b>n\'est pas un synonyme</b> des autres. Lequel ?</p>',
       steps: [mkChoice('L\'intrus', opts, { cls: 'two', hint: 'Cherche le sens commun à presque tous les mots. Vérifie aussi leur classe : verbe, adjectif ou nom.', why })],
       end: why + ' Les synonymes : ' + group.map(gu).join(', ') + '.',
       sum: 'intrus : ' + group.concat([intr]).sort().join(', ')
@@ -964,7 +967,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemScale(sc){
     const toks = shuffle(sc.map((h, ord) => ({ h, ord })));
     return {
-      stmt: '<p class="lead-q">Ces mots disent la même idée, plus ou moins fort. Range-les du moins fort au plus fort.</p>',
+      stmt: '<p class="lead-q">Ces mots disent la même idée, plus ou moins fort. Range-les <b>du moins fort au plus fort</b>.</p>',
       steps: [{ kind: 'tags', q: 'Du moins fort au plus fort', mode: 'seq', toks, hint: 'Touche d\'abord le mot le moins fort. Un numéro s\'affiche sur chaque mot. Touche un mot numéroté pour l\'enlever.',
         seqFb: (got, bad) => bad === 0 ? '« ' + got[0].h + ' » n\'est pas le moins fort.' : '« ' + got[bad].h + ' » n\'est pas à sa place : il est ' + (got[bad].ord > bad ? 'plus fort' : 'moins fort') + ' que ça.' }],
       end: 'Du moins fort au plus fort : ' + sc.join(' → ') + '.',
@@ -1001,7 +1004,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const [txt, tw, good, bad] = row, g = pick(good);
     const opts = shuffle([{ h: g, ok: true }].concat(bad.map(([w, r]) => ({ h: w, ok: false, fb: WHY_T[r](w) }))));
     return {
-      stmt: '<p class="lead-q">Remplace « ' + tw + ' » par un mot plus fort.</p><p class="sentence">' + txt.replace(tw, '<b class="tgt">' + tw + '</b>') + '</p>',
+      stmt: '<p class="lead-q">Remplace « ' + tw + ' » par un mot <b>plus fort</b>.</p><p class="sentence">' + txt.replace(tw, '<b class="tgt">' + tw + '</b>') + '</p>',
       steps: [mkChoice('Un seul mot, plus fort', opts, { cls: 'two', hint: 'Le mot doit dire la même chose, en plus fort, et rester bien accordé.', why: '« ' + g + ' » veut dire « ' + tw + ' ».' })],
       end: txt.replace(tw, '<b>' + (good.length > 1 ? good.join('</b> ou <b>') : g) + '</b>'),
       sum: 'plus fort : ' + txt
@@ -1081,14 +1084,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const fixed = s.toks.map((t, n) => (t.sb ? ' ' : '') + (n === k ? '<b class="tgt">' + esc(g) + '</b>' : esc(t.t)) + (t.nsp ? '' : ' ')).join('').trim();
     return {
       toks: s.toks,
-      stmt: '<p class="lead-q">Un mot revient plusieurs fois. Touche-le à chaque fois, puis valide.</p>{{S}}',
+      stmt: '<p class="lead-q">Un mot revient plusieurs fois. Touche-le <b>à chaque fois</b>, puis valide.</p>{{S}}',
       stmtDone: '<p class="lead-q">Le texte, sans répétition :</p><p class="sentence tapsent">' + fixed + '</p>',
       steps: [
         { kind: 'tap', q: 'Le mot répété', mode: 'set', want: occ.slice(), mark: 'm-ok',
           fbOf: i => { const t = s.toks[i].t, n = s.toks.filter(x => x.t.toLowerCase() === t.toLowerCase()).length; return SMALL.test(t) ? '« ' + t + ' » est un petit mot : on cherche un nom, un verbe ou un adjectif qui revient.' : n > 1 ? '« ' + t + ' » revient aussi, mais ce n\'est pas le mot qu\'on cherche : cherche celui qui revient le plus souvent.' : '« ' + t + ' » n\'est écrit qu\'une fois.'; },
           miss: n => 'Il en manque ' + (n > 1 ? n : 'un') + ' : le mot revient ' + occ.length + ' fois' + (occ.some(i => s.toks[i].t !== s.toks[occ[0]].t) ? ', parfois écrit un peu autrement (accordé ou conjugué).' : '.'),
           hint: 'Lis le texte en entier : quel mot important entends-tu plusieurs fois ?' },
-        mkChoice('Par quel mot peux-tu remplacer le ' + rank + ' « ' + word + ' » (surligné) ?', opts, { cls: 'two', hint: 'Le mot doit avoir le même sens dans cette phrase, être de la même classe, et bien accordé.', why: '« ' + g + ' » a le même sens ici.', tgt: [k] })
+        mkChoice('Par quel mot peux-tu remplacer <b>le ' + rank + '</b> « ' + word + ' » (surligné) ?', opts, { cls: 'two', hint: 'Le mot doit avoir le même sens dans cette phrase, être de la même classe, et bien accordé.', why: '« ' + g + ' » a le même sens ici.', tgt: [k] })
       ],
       end: 'Pour ne pas répéter « ' + word + ' », on peut écrire ' + (good.length > 1 ? good.slice(0, -1).map(gu).join(', ') + ' ou ' + gu(good[good.length - 1]) : gu(g)) + '.',
       sum: 'répétition : ' + s.text

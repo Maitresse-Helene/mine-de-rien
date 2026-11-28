@@ -503,6 +503,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -926,12 +929,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemFirstOp(){
     if (HARD && Math.random() < 0.4){
       const X3 = nested();
-      return { stmt: nb('<p class="lead-q">Quel calcul fais-tu en premier ?</p><p class="calc">' + X3.txt + '</p>'),
+      return { stmt: nb('<p class="lead-q">Quel calcul fais-tu <b>en premier</b> ?</p><p class="calc">' + X3.txt + '</p>'),
         steps: [mkChoice('Le premier calcul', shuffle([{ h: X3.I.t, ok: true }, { h: E(X3.m, X3.op2, X3.I.b), ok: false, fb: 'Il y a une parenthèse plus à l\'intérieur : ' + X3.I.t + '.' }, { h: E(X3.a, X3.op3, X3.m), ok: false, fb: 'On commence par la parenthèse la plus à l\'intérieur.' }]), { cls: 'big' })],
         end: nb('On commence par la parenthèse la plus à l\'intérieur : ' + X3.I.t + ' = ' + X3.I.v + '.'), sum: 'P1 ' + X3.txt };
     }
     const X1 = oneParen(), other = X1.right ? E(X1.a, X1.op, X1.I.b) : E(X1.I.c, X1.op, X1.a);
-    return { stmt: nb('<p class="lead-q">Quel calcul fais-tu en premier ?</p><p class="calc">' + X1.txt + '</p>'),
+    return { stmt: nb('<p class="lead-q">Quel calcul fais-tu <b>en premier</b> ?</p><p class="calc">' + X1.txt + '</p>'),
       steps: [mkChoice('Le premier calcul', shuffle([{ h: X1.I.t, ok: true }, { h: other, ok: false, fb: 'Ce calcul coupe la parenthèse en deux. On calcule d\'abord ce qui est dans la parenthèse.' }, { h: X1.mid, ok: false, fb: 'Ce calcul vient après : il faut d\'abord trouver le résultat de la parenthèse.' }]), { cls: 'big' })],
       end: nb('On commence par la parenthèse : ' + X1.I.t + ' = ' + X1.I.v + '.'), sum: 'P1 ' + X1.txt };
   }
@@ -966,7 +969,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function itemNested(){
     const X3 = nested();
-    return { stmt: nb('<p class="lead-q">Calcule, en commençant par la parenthèse la plus à l\'intérieur.</p><p class="calc">' + X3.txt + '</p>'),
+    return { stmt: nb('<p class="lead-q">Calcule, en commençant par <b>la parenthèse la plus à l\'intérieur</b>.</p><p class="calc">' + X3.txt + '</p>'),
       steps: [stepN('La parenthèse la plus à l\'intérieur', X3.I.t + ' = □', X3.I.v, 'Commence par la parenthèse la plus à l\'intérieur.'),
         stepN('La parenthèse suivante', E(X3.m, X3.op2, X3.I.v) + ' = □', X3.midV, 'Calcule maintenant la grande parenthèse.'),
         stepN('Le résultat', X3.s3 + ' = □', X3.v, 'Finis le calcul.')],
@@ -1646,7 +1649,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
+  const stepState = () => ({ early: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -1747,9 +1750,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (R.wrong) return;
     const v = parseInt(R.input, 10);
     if (v === st.a){ solveStep(false, fmtNum(st.a), st.okFb, '', ''); return; }
+    // Consigne mal lue : le résultat final (juste) tapé à une étape intermédiaire. Un message, sans erreur la première fois.
+    const fin = curItem().steps.slice(R.si + 1).filter(x => x.kind === 'num').pop(), lastSt = curItem().steps[curItem().steps.length - 1];
+    const early = !!fin && fin === lastSt && v === fin.a;
+    const earlyMsg = 'Tu as tapé ' + fmtNum(v) + '. Lis bien la consigne : pour cette étape, on te demande « <b>' + st.q + '</b> », pas encore le résultat final.';
+    if (early && !R.early){ R.early = 1; R.fb = { kind: 'info', html: earlyMsg }; renderPlay(); return; }
     R.err++; R.itemErr++; R.tries++; R.wrong = true; R.shake = true;
     runFall();
-    const dg = st.diag ? st.diag(v) : '';
+    const dg = early ? earlyMsg : st.diag ? st.diag(v) : '';
     if (R.tries >= 2) solveStep(true, fmtNum(st.a), '', 'Ce n\'est pas ' + fmtNum(v) + '.' + (dg ? ' ' + dg : ''), st.why || '');
     else { R.fb = { kind: 'bad', html: dg ? dg + ' Lis l\'indice et réessaie.' : pick(BAD) + " Lis l'indice et réessaie." }; R.hint = st.hint || null; renderPlay(); }
   }
@@ -1927,7 +1935,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         '</div></div>';
     }
     const box = '<span class="abox' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : '') + '" aria-label="Ta réponse">' + esc(R.input) + '<span class="caret" aria-hidden="true"></span></span>';
-    return '<div class="srow active"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
+    const inter = curItem().steps.slice(curItem().steps.indexOf(st) + 1).some(x => x.kind === 'num');
+    return '<div class="srow active"><span class="sq">' + (inter ? '<b>' + st.q + '</b>' : st.q) + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
   }
   function renderPlay(){
     const R = S.R, lv = LEVELS[R.level - 1], it = curItem();

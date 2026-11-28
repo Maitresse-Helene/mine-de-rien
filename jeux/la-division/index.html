@@ -503,6 +503,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1938,7 +1941,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         '</div></div>';
     }
     const box = '<span class="abox' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : '') + '" aria-label="Ta réponse">' + esc(R.input) + '<span class="caret" aria-hidden="true"></span></span>';
-    return '<div class="srow active"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
+    const inter = curItem().steps.slice(curItem().steps.indexOf(st) + 1).some(x => x.kind === 'num');
+    return '<div class="srow active"><span class="sq">' + (inter ? '<b>' + st.q + '</b>' : st.q) + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
   }
   function renderPlay(){
     const R = S.R, lv = LEVELS[R.level - 1], it = curItem();

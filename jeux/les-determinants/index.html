@@ -465,6 +465,9 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -798,7 +801,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     const nounRe = new RegExp('(^|[\\s\'])(' + noun + ')(?=[\\s.,!?])');
     return {
       stmt: '<p class="sentence">' + shown.replace(nounRe, '$1<b>$2</b>') + '</p>',
-      steps: [mkChoice('Quel est le déterminant du nom « ' + noun + ' » ?', shuffle([{ h: det, ok: true }].concat(dis.map(w => ({ h: w, ok: false, fb: pron.indexOf(w) >= 0 ? '« ' + w + ' » est placé devant un verbe : ici, ce n\'est pas un déterminant.' : '« ' + w + ' » n\'est pas le petit mot placé devant « ' + noun + ' ».' })))), { cls: 'big', hint: 'Le déterminant est placé devant le nom (parfois avec un adjectif entre les deux).' })],
+      steps: [mkChoice('Quel est <b>le déterminant</b> du nom « ' + noun + ' » ?', shuffle([{ h: det, ok: true }].concat(dis.map(w => ({ h: w, ok: false, fb: pron.indexOf(w) >= 0 ? '« ' + w + ' » est placé devant un verbe : ici, ce n\'est pas un déterminant.' : '« ' + w + ' » n\'est pas le petit mot placé devant « ' + noun + ' ».' })))), { cls: 'big', hint: 'Le déterminant est placé devant le nom (parfois avec un adjectif entre les deux).' })],
       end: 'Le déterminant du nom « ' + noun + ' » est ' + D(det) + '.' + (pron.length ? ' Le mot « ' + pron[0] + ' », devant un verbe, n\'est pas un déterminant.' : ''),
       sum: plainS(s) + ' → ' + det + ' ' + noun
     };
@@ -810,7 +813,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     return {
       stmt: '<p class="sentence">' + plainS(s) + '</p>',
       stmtDone: '<p class="sentence">' + boldDets(s) + '</p>',
-      steps: [mkChoice('Combien de déterminants y a-t-il dans cette phrase ?', opts.map(k => ({ h: String(k), ok: k === n, fb: k === n ? '' : 'Cherche chaque nom, puis le petit mot placé devant lui. Attention : le, la, les devant un verbe ne sont pas des déterminants.' })), { cls: 'big', hint: 'Repère d\'abord tous les noms de la phrase.' })],
+      steps: [mkChoice('<b>Combien</b> de déterminants y a-t-il dans cette phrase ?', opts.map(k => ({ h: String(k), ok: k === n, fb: k === n ? '' : 'Cherche chaque nom, puis le petit mot placé devant lui. Attention : le, la, les devant un verbe ne sont pas des déterminants.' })), { cls: 'big', hint: 'Repère d\'abord tous les noms de la phrase.' })],
       end: 'Il y a <b>' + n + '</b> déterminants dans cette phrase.',
       sum: plainS(s) + ' : ' + n
     };
@@ -843,7 +846,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     else a = g === 'p' ? 'des' : (g === 'm' ? 'un' : 'une');
     const gn = a + (a === 'l\'' ? '' : ' ') + n;
     return {
-      stmt: '<p class="lead-q">De quelle sorte est l\'article souligné ?</p>' + W(U(a) + (a === 'l\'' ? '' : ' ') + n),
+      stmt: '<p class="lead-q"><b>De quelle sorte</b> est l\'article souligné ?</p>' + W(U(a) + (a === 'l\'' ? '' : ' ') + n),
       steps: [mkChoice('« ' + a + ' » est…', ['def', 'ind', 'con'].map(x => ({ h: KIND[x], ok: x === k, fb: x === k ? '' : (x === 'con' ? 'Non : un article contracté, c\'est au, aux, du ou des (à ou de collé à le ou les).' : 'Non : relis la liste des articles définis (le, la, les, l\') et indéfinis (un, une, des).') })), { hint: 'Les articles indéfinis : un, une, des. Les articles définis : le, la, les, l\'.' })],
       end: '« ' + a + ' » est un <b>' + KIND[k] + '</b> : ' + gn + '.',
       sum: gn + ' : ' + KIND[k]
@@ -854,7 +857,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     const [s, dec] = desInd ? [pick(ART_IND_DES), null] : pick(ART_CON);
     const a = s.match(/\{([^}]+)\}/)[1], k = desInd ? 'ind' : 'con';
     return {
-      stmt: '<p class="lead-q">De quelle sorte est l\'article souligné ?</p><p class="sentence">' + s.replace(/\{([^}]+)\}/, (m, x) => U(x)) + '</p>',
+      stmt: '<p class="lead-q"><b>De quelle sorte</b> est l\'article souligné ?</p><p class="sentence">' + s.replace(/\{([^}]+)\}/, (m, x) => U(x)) + '</p>',
       steps: [mkChoice('« ' + a.toLowerCase() + ' » est…', ['def', 'ind', 'con'].map(x => ({ h: KIND[x], ok: x === k, fb: x === k ? '' : (k === 'con' ? 'Non : essaie de remplacer « ' + a.toLowerCase() + ' » par « à le », « à les », « de le » ou « de les ».' : 'Non : ici, on ne peut pas dire « de les » : « des » veut dire « plusieurs », c\'est un article indéfini.') })), { hint: 'Peux-tu remplacer ce mot par « à le », « à les », « de le » ou « de les » ?' })],
       end: k === 'con' ? '« ' + a.toLowerCase() + ' » = <b>' + dec + '</b> : c\'est un article défini contracté.' : 'Ici, « des » veut dire « plusieurs » (le pluriel de « un ») : c\'est un <b>article indéfini</b>.',
       sum: plainS(s) + ' : ' + KIND[k]
@@ -864,7 +867,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     const [s, dec] = pick(ART_CON), a = s.match(/\{([^}]+)\}/)[1].toLowerCase();
     const all = ['à + le', 'à + les', 'de + le', 'de + les'];
     return {
-      stmt: '<p class="lead-q">Cet article est contracté. Il remplace…</p><p class="sentence">' + s.replace(/\{([^}]+)\}/, (m, x) => U(x)) + '</p>',
+      stmt: '<p class="lead-q">Cet article est contracté. <b>Il remplace…</b></p><p class="sentence">' + s.replace(/\{([^}]+)\}/, (m, x) => U(x)) + '</p>',
       steps: [mkChoice('« ' + a + ' » =', shuffle([dec].concat(shuffle(all.filter(x => x !== dec)).slice(0, 2))).map(x => ({ h: x, ok: x === dec, fb: x === dec ? '' : 'Non : au = à + le, aux = à + les, du = de + le, des = de + les.' })), { cls: 'big', hint: 'au et aux viennent de « à » ; du et des viennent de « de ».' })],
       end: '« ' + a + ' » = <b>' + dec + '</b>.',
       sum: plainS(s) + ' = ' + dec
@@ -884,7 +887,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     const k = pick(['art', 'dem', 'pos']), src = HARD && Math.random() < 0.5 ? DETS_O : DETS, [d, g] = pick(src[k]), n = nounFor(g);
     const gn = d + (d.slice(-1) === '\'' ? '' : ' ') + n;
     return {
-      stmt: '<p class="lead-q">De quelle sorte est le déterminant souligné ?</p>' + W(U(d) + (d.slice(-1) === '\'' ? '' : ' ') + n),
+      stmt: '<p class="lead-q"><b>De quelle sorte</b> est le déterminant souligné ?</p>' + W(U(d) + (d.slice(-1) === '\'' ? '' : ' ') + n),
       steps: [mkChoice('« ' + d + ' » est…', ['art', 'dem', 'pos'].map(x => ({ h: SORT[x], ok: x === k, fb: x === k ? '' : (x === 'dem' ? 'Non : les démonstratifs sont ce, cet, cette, ces.' : x === 'pos' ? 'Non : un possessif dit à qui est la chose (mon, ta, ses, leur…).' : 'Non : les articles sont un, une, des, le, la, les, l\' et au, aux, du, des.') })), { hint: 'Est-ce que ce mot montre (démonstratif), dit à qui est la chose (possessif), ou est-ce un article ?' })],
       end: '« ' + d + ' » est <b>' + SORT[k] + '</b> : ' + gn + '.',
       sum: gn + ' : ' + k
@@ -898,7 +901,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     const all = ['ce', 'cet', 'cette', 'ces'], wrong = shuffle(all.filter(x => x !== right)).slice(0, 2);
     const why = { ce: '« ' + n + ' » est masculin singulier : <b>ce</b>.', cet: '« ' + n + ' » est masculin et commence par une voyelle (ou un h muet) : <b>cet</b>.', cette: '« ' + n + ' » est féminin singulier : <b>cette</b>.', ces: '« ' + n + ' » est au pluriel : <b>ces</b>.' };
     return {
-      stmt: '<p class="lead-q">Complète avec le bon déterminant démonstratif.</p>' + W('<span class="gap">…</span> ' + n),
+      stmt: '<p class="lead-q">Complète avec le bon déterminant <b>démonstratif</b>.</p>' + W('<span class="gap">…</span> ' + n),
       stmtDone: '<p class="lead-q">Le bon déterminant :</p>' + W(D(right) + ' ' + n),
       steps: [mkChoice('Le déterminant', shuffle([right].concat(wrong)).map(x => ({ h: x, ok: x === right, fb: x === right ? '' : 'Non : « ' + x + ' ' + n + ' » ne va pas. Le nom est-il masculin, féminin, pluriel ? Commence-t-il par une voyelle ?' })), { cls: 'big', hint: 'Masculin, féminin ou pluriel ? Et pour le masculin : le nom commence-t-il par une voyelle ?' })],
       end: why[right],
@@ -981,7 +984,7 @@ u.dtm{text-decoration:none;border-bottom:3px solid var(--stamp);padding:0 1px}
     if (opts1.length < 3) opts1.push({ h: 'Il n\'y a pas d\'erreur', ok: false, fb: 'Si, il y a une erreur ! Vérifie chaque déterminant avec le nom qui le suit.' });
     const corr = shuffle([right].concat(others.filter(x => x.toLowerCase() !== wrong.toLowerCase()).slice(0, 2)));
     return {
-      stmt: '<p class="lead-q">Un des déterminants soulignés est faux.</p><p class="sentence">' + marked + '</p>',
+      stmt: '<p class="lead-q">Un des déterminants soulignés est <b>faux</b>.</p><p class="sentence">' + marked + '</p>',
       stmtDone: '<p class="lead-q">La phrase corrigée :</p><p class="sentence">' + fixed + '</p>',
       steps: [
         mkChoice('Quel déterminant est faux ?', opts1, { cls: 'big', hint: 'Pour chaque déterminant, regarde le nom qui suit : masculin, féminin, pluriel ?' }),

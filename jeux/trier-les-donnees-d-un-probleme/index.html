@@ -633,6 +633,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .tri-count{color:var(--ink-soft);font-weight:700}
 .tri-bar .tri-ok{width:auto;flex:none;min-height:52px;padding:6px 26px;font-size:1.2rem}
 .ex-cap .tok{font-weight:700}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1046,7 +1049,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1080,7 +1083,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1707,7 +1710,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (other) opts.push({ h: ucf(other.cher), ok: false, fb: 'C\'est ce que demande une autre question. Relis la question posée.' });
     if (present.length) opts.push({ h: ucf(S.D[pick(present)].lab), ok: false, fb: 'Cette donnée est déjà écrite dans le texte : on ne la cherche pas.' });
     if (opts.length < 3) opts.push({ h: ucf(pick(S.noQ)[1]), ok: false, fb: 'Relis la question : elle ne demande pas cela.' });
-    return mkChoice('Lis d\'abord la question. Que cherche-t-on ?', shuffle(opts), { layout: 'phrases', hint: 'Relis la question en bas de l\'énoncé, en gras : que demande-t-elle ?', okFb: 'Oui ! La question est la boussole.' });
+    return mkChoice('Lis d\'abord la question. <b>Que cherche-t-on</b> ?', shuffle(opts), { layout: 'phrases', hint: 'Relis la question en bas de l\'énoncé, en gras : que demande-t-elle ?', okFb: 'Oui ! La question est la boussole.' });
   }
   /* « Pourquoi as-tu barré… ? » : c'est la question qui décide */
   const NEVER = {
@@ -1767,7 +1770,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       us = ud ? (u < bg.v ? schemaC(bg, { name: sm.name, v: u }, '?') : schemaC({ name: bg.name, v: u }, sm, '?')) : schemaC(sm.v > 0 ? { name: sm.name, v: sm.v } : sm, bg, '?');
       if (!ud) fu = 'Ce schéma inverse les deux quantités : la plus grande est en haut.';
     }
-    return mkChoice('Quel schéma raconte ce problème ?', shuffle([{ h: ok, ok: true }, { h: wr, ok: false, fb: fw }, { h: us, ok: false, fb: fu }]),
+    return mkChoice('Quel <b>schéma</b> raconte ce problème ?', shuffle([{ h: ok, ok: true }, { h: wr, ok: false, fb: fw }, { h: us, ok: false, fb: fu }]),
       { layout: 'schemas', hint: 'Le schéma se fait avec les données utiles seulement. Le « ? » se met à la place de ce que tu cherches.', okFb: 'Oui ! Seulement les données utiles, et le « ? » à la bonne place.' });
   }
   const numQ = Q => mkNum('Calcule.', esc(Q.expr) + ' = □' + (Q.u ? ' ' + esc(Q.u) : ''), Q.r, { calc: Q.calc, hint: Q.hint || arithHint(Q.x, Q.op, Q.y) });
@@ -1835,7 +1838,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     ], { layout: 'phrases', hint: 'Relis la question : de quoi as-tu besoin pour y répondre ? Est-ce écrit dans le texte ?', okFb: missing ? 'Oui : il manque une donnée pour répondre.' : 'Oui : tout ce qu\'il faut est dans le texte.' });
   }
   function missStep(lab, presentLab, extraLab){
-    return mkChoice('Quelle donnée manque pour répondre ?', shuffle([
+    return mkChoice('Quelle donnée <b>manque</b> pour répondre ?', shuffle([
       { h: ucf(lab), ok: true },
       { h: ucf(presentLab), ok: false, fb: 'Cette donnée est déjà dans le texte.' },
       { h: ucf(extraLab), ok: false, fb: 'Cette information ne servirait pas à répondre à la question.' }

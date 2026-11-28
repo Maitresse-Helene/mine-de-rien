@@ -524,6 +524,9 @@ b.tgt{color:var(--stamp)}
 .dt{border:2px solid #0f8a7e;border-radius:7px;padding:0 4px;color:#0b6e64;font-weight:700}
 .av{border:2px dashed #b4530a;border-radius:7px;padding:0 4px;color:#94420a;font-weight:700}
 @media (prefers-color-scheme: dark){ .pr{border-color:#ff8fb1;color:#ffb3c9} .dt{border-color:#5fd6c8;color:#8ee6db} .av{border-color:#ffad6b;color:#ffc796} }
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1003,7 +1006,7 @@ b.tgt{color:var(--stamp)}
     const s = sOf(src);
     return {
       toks: s.toks, unit: s.unit,
-      stmt: '<p class="lead-q">Touche toutes les prépositions de la phrase, puis valide.</p>{{S}}',
+      stmt: '<p class="lead-q">Touche <b>toutes les prépositions</b> de la phrase, puis valide.</p>{{S}}',
       steps: [tapPrep(s)],
       end: endPreps(s),
       sum: s.text + ' → ' + prepNames(s).join(', ')
@@ -1034,7 +1037,7 @@ b.tgt{color:var(--stamp)}
     for (let k = 0; others.length < 8 - preps.length; k++){ const c = cats[k % 5]; const w = pick(OTHERS[c].filter(x => !others.some(o => o.h === x))); others.push({ h: w, ok: false, fb: OFB[c](w) }); }
     const toks = shuffle(preps.map(p => ({ h: p, ok: true })).concat(others));
     return {
-      stmt: '<p class="lead-q">Dans cette liste, touche toutes les prépositions, puis valide.</p>',
+      stmt: '<p class="lead-q">Dans cette liste, touche <b>toutes les prépositions</b>, puis valide.</p>',
       steps: [{ kind: 'tags', q: 'Les prépositions', mode: 'set', toks, hint: HINT_P + (HARD ? ' Une préposition peut être faite de plusieurs mots.' : ''), miss: n => 'Il en manque ' + (n > 1 ? n : 'une') + '.' }],
       end: 'Les prépositions de la liste : ' + listFr(preps.map(gu)) + '. Elles ne changent jamais, et elles introduisent un groupe de mots : ' + preps.slice(0, 2).map(p => PREP_EX[p]).join(', ') + '…',
       sum: 'liste : ' + toks.map(t => t.h).join(', ')
@@ -1052,7 +1055,7 @@ b.tgt{color:var(--stamp)}
     const s = sOf(src), cs = contrIds(s), k = pick(cs);
     return {
       toks: s.toks, unit: s.unit,
-      stmt: '<p class="lead-q">Touche toutes les prépositions, même celles qui se cachent dans « au », « aux », « du » ou « des ».</p>{{S}}',
+      stmt: '<p class="lead-q">Touche toutes les prépositions, <b>même celles qui se cachent</b> dans « au », « aux », « du » ou « des ».</p>{{S}}',
       steps: [tapPrep(s), contrStep(s, k)],
       end: endPreps(s),
       sum: s.text + ' → ' + s.toks[k].t + ' = ' + CONTR[s.toks[k].t.toLowerCase()]
@@ -1064,7 +1067,7 @@ b.tgt{color:var(--stamp)}
     const cap = k === 0;
     return {
       toks, pre: { [k]: 'm-gap' },
-      stmt: '<p class="lead-q">Comment écrit-on ce qui est entre parenthèses ?</p>{{S}}',
+      stmt: '<p class="lead-q"><b>Comment écrit-on</b> ce qui est entre parenthèses ?</p>{{S}}',
       stmtDone: '<p class="lead-q">Comment écrit-on ce qui est entre parenthèses ?</p>' + P(textWith(s0, [k], 'pr')),
       steps: [mkChoice('« ' + CONTR[right] + ' » s\'écrit…', ['au', 'aux', 'du', 'des'].map(o => ({ h: cap ? cap1(o) : o, ok: o === right, fb: o === right ? '' : '« ' + o + ' » veut dire « ' + CONTR[o] + ' ».' })), { cls: 'two', hint: 'au = à + le ; aux = à + les ; du = de + le ; des = de + les.' })],
       end: '« ' + CONTR[right] + ' » s\'écrit « ' + right + ' ». On ne dit jamais « ' + CONTR[right].replace(' + ', ' ') + ' ».',
@@ -1078,7 +1081,7 @@ b.tgt{color:var(--stamp)}
     const why = c.det ? 'Mets « ' + noun + ' » au singulier : « des » devient « un » ou « une ». Ici, « des » est donc un déterminant.' : 'On peut dire « de les ' + noun + ' » : ici « des » cache la préposition « de ». Il introduit « ' + wordOf(s, g.body) + ' ».';
     return {
       toks: s.toks, pre: { [c.k]: 'm-tgt' },
-      stmt: '<p class="lead-q">Dans cette phrase, « des » est-il un déterminant ou une préposition ?</p>{{S}}',
+      stmt: '<p class="lead-q">Dans cette phrase, « des » est-il <b>un déterminant ou une préposition</b> ?</p>{{S}}',
       steps: [mkChoice('Le mot « des » surligné est…', [
         { h: 'un déterminant (au singulier : un, une)', ok: c.det, fb: c.det ? '' : 'Essaie « de les » : ça marche ! « des » cache donc la préposition « de ».' },
         { h: 'une préposition (de + les)', ok: !c.det, fb: !c.det ? '' : 'Essaie « de les » : ça ne veut rien dire ici. Au singulier, on dirait « un » ou « une ».' }
@@ -1126,7 +1129,7 @@ b.tgt{color:var(--stamp)}
     const gw = wordOf(s, g.prep.concat(g.body));
     return {
       toks: s.toks, pre,
-      stmt: '<p class="lead-q">Quel groupe de mots la préposition entourée introduit-elle ?</p>{{S}}',
+      stmt: '<p class="lead-q"><b>Quel groupe de mots</b> la préposition entourée introduit-elle ?</p>{{S}}',
       steps,
       end: '« ' + wordOf(s, g.prep) + ' » introduit « ' + wordOf(s, g.body) + ' ». « ' + gw + ' » est ' + TYPE_TXT[typeOf(g)].split(' :')[0] + (typeOf(g) === 'N' ? ' « ' + nounBefore(s, g) + ' »' : typeOf(g) === 'V' ? ' « ' + (verbBefore(s, g) || verbOf(s)) + ' »' : '') + '.',
       sum: s.text + ' → ' + gw
@@ -1235,7 +1238,7 @@ b.tgt{color:var(--stamp)}
     const right = isCause ? 'C' : type;
     const MT = { L: 'le lieu (où ?)', T: 'le temps (quand ?)', C: 'la cause (pourquoi ?)', M: HARD ? 'autre chose (comment ? avec qui ? pour quoi ?)' : 'autre chose (comment ? avec qui ? pourquoi ?)' };
     return {
-      stmt: '<p class="lead-q">Quelle préposition manque ?</p><p class="sentence tapsent">' + shown + '</p>',
+      stmt: '<p class="lead-q">Quelle préposition <b>manque</b> ?</p><p class="sentence tapsent">' + shown + '</p>',
       stmtDone: '<p class="lead-q">Quelle préposition manque ?</p><p class="sentence tapsent">' + filled(ok[0]) + '</p>',
       steps: [
         mkChoice('La préposition qui manque', opts, { cls: 'bank', hint: 'Lis toute la phrase, jusqu\'au bout : elle dit où, quand, comment ou pourquoi.', why }),
@@ -1256,7 +1259,7 @@ b.tgt{color:var(--stamp)}
     const gw = wordOf(s, g.prep.concat(g.body));
     return {
       toks: s.toks, unit: s.unit,
-      stmt: '<p class="lead-q">Touche toutes les prépositions de la phrase, puis réponds aux questions.</p>{{S}}',
+      stmt: '<p class="lead-q">Touche <b>toutes les prépositions</b> de la phrase, puis réponds aux questions.</p>{{S}}',
       steps,
       end: endPreps(s) + ' « ' + gw + ' » est ' + TYPE_TXT[typeOf(g)].split(' :')[0] + '.',
       sum: s.text + ' → ' + gw

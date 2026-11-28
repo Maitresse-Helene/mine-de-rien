@@ -557,6 +557,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .sex .wd{font-family:var(--font-body);font-size:.5em;font-weight:600;color:var(--ink);line-height:1.2}
 .sex.small .wd{font-size:.6em}
 .lesson > .evlist{flex:none}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1055,7 +1058,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const L = mkLine({ s: startFor(lvl || 1) }), i = pickTick(L), k = valN(L, i);
     L.pts = [{ i, l: 'A' }];
     const steps = [];
-    if (guided) steps.push(mkNum('En combien de parts égales l\'unité est-elle partagée ?', '□', L.n, { hint: 'Regarde entre deux nombres entiers qui se suivent, et compte les espaces.', diag: v => v === L.n + 1 ? 'Compte les espaces entre deux nombres entiers, pas les traits.' : (v === lineT(L) ? 'Regarde une seule unité, entre deux nombres entiers qui se suivent.' : '') }));
+    if (guided) steps.push(mkNum('<b>En combien de parts égales</b> l\'unité est-elle partagée ?', '□', L.n, { hint: 'Regarde entre deux nombres entiers qui se suivent, et compte les espaces.', diag: v => v === L.n + 1 ? 'Compte les espaces entre deux nombres entiers, pas les traits.' : (v === lineT(L) ? 'Regarde une seule unité, entre deux nombres entiers qui se suivent.' : '') }));
     steps.push(mkMulti('L\'abscisse du point A (une fraction)', FR(BX(0), BX(1)), [k, L.n], { hint: 'Le dénominateur : en combien de parts l\'unité est partagée. Le numérateur : combien de petits sauts depuis 0.' + startNote(L), diag: fracPtDiag(L, i) }));
     return {
       stmt: '<p class="lead-q">Quelle fraction repère le point A ?</p>' + lineBox(L),
@@ -1078,8 +1081,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemMixedPoint(both, lvl){
     const L = mkLine({ s: startFor(lvl || 2) }), i = pickTick(L, { min: L.s ? 1 : L.n + 1 }), E = valE(L, i), r = i % L.n, k = valN(L, i);
     L.pts = [{ i, l: 'B' }];
-    const steps = [mkMulti('L\'abscisse de B sous la forme entier + fraction', BX(0) + ' + ' + FR(BX(1), BX(2)), [E, r, L.n], { hint: 'Prends le nombre entier juste avant le point, puis compte les petits sauts qui restent.' + startNote(L), diag: mixedPtDiag(L, i) })];
-    if (both) steps.push(mkMulti('Puis sous la forme d\'une seule fraction', FR(BX(0), BX(1)), [k, L.n], { hint: 'Une unité, c\'est ' + FR(L.n, L.n) + '. Combien de ' + partsName(L.n) + ' dans ' + E + ' ' + plur(E, 'unité', 'unités') + ' ?', diag: singleDiag(L, i) }));
+    const steps = [mkMulti('L\'abscisse de B sous la forme <b>entier + fraction</b>', BX(0) + ' + ' + FR(BX(1), BX(2)), [E, r, L.n], { hint: 'Prends le nombre entier juste avant le point, puis compte les petits sauts qui restent.' + startNote(L), diag: mixedPtDiag(L, i) })];
+    if (both) steps.push(mkMulti('Puis sous la forme <b>d\'une seule fraction</b>', FR(BX(0), BX(1)), [k, L.n], { hint: 'Une unité, c\'est ' + FR(L.n, L.n) + '. Combien de ' + partsName(L.n) + ' dans ' + E + ' ' + plur(E, 'unité', 'unités') + ' ?', diag: singleDiag(L, i) }));
     return {
       stmt: '<p class="lead-q">Écris l\'abscisse du point B.</p>' + lineBox(L),
       steps,
@@ -1095,7 +1098,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     else { const p = encPick(); k = p[0]; d = p[1]; }
     const q = Math.floor(k / d), r = k % d;
     const steps = [];
-    if (guided) steps.push(mkMulti('D\'abord, décompose', FR(k, d) + ' = ' + BX(0) + ' + ' + FR(BX(1), d), [q, r], { hint: encHint(k, d), diag: v => v[1] >= d ? 'La fraction doit être plus petite que 1 : tu peux encore faire une unité entière.' : 'Vérifie : ' + v[0] + ' × ' + d + ' + ' + v[1] + ' = ' + (v[0] * d + v[1]) + ', pas ' + k + '.' }));
+    if (guided) steps.push(mkMulti('<b>D\'abord, décompose</b>', FR(k, d) + ' = ' + BX(0) + ' + ' + FR(BX(1), d), [q, r], { hint: encHint(k, d), diag: v => v[1] >= d ? 'La fraction doit être plus petite que 1 : tu peux encore faire une unité entière.' : 'Vérifie : ' + v[0] + ' × ' + d + ' + ' + v[1] + ' = ' + (v[0] * d + v[1]) + ', pas ' + k + '.' }));
     steps.push(mkMulti('Encadre la fraction par deux nombres entiers qui se suivent', BX(0) + LT + FR(k, d) + LT + BX(1), [q, q + 1], { hint: encHint(k, d), diag: encDiag(k, d) }));
     let stmt = '<p class="lead-q">Encadre ' + FR(k, d) + ' par deux nombres entiers consécutifs.</p>';
     if (guided) stmt += lineBox({ s: 0, n: d, U: q + 2, x: 0, pts: [{ i: k, l: '?' }] });
@@ -1156,7 +1159,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (form === 'mixed' || form === 'minus') if (!L.s && L.U < 3) L.U = 3;
     const i = pickTick(L, { min: (form === 'mixed' && !L.s) ? L.n + 1 : 1, maxU: form === 'minus' });
     const steps = [];
-    if (withN) steps.push(mkNum('En combien de parts égales l\'unité est-elle partagée sur cette demi-droite ?', '□', L.n, { hint: 'Regarde entre deux nombres entiers qui se suivent, et compte les espaces.', diag: v => v === L.n + 1 ? 'Compte les espaces, pas les traits.' : '' }));
+    if (withN) steps.push(mkNum('<b>En combien de parts égales</b> l\'unité est-elle partagée sur cette demi-droite ?', '□', L.n, { hint: 'Regarde entre deux nombres entiers qui se suivent, et compte les espaces.', diag: v => v === L.n + 1 ? 'Compte les espaces, pas les traits.' : '' }));
     steps.push(placeStep(L, i, form, 'A', null, true));
     return {
       stmt: '<p class="lead-q">Place le point A d\'abscisse ' + placeLabel(L, i, form) + '.</p><p class="small-note">Touche la demi-droite à la bonne graduation (les flèches déplacent le point).</p>',

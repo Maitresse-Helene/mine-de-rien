@@ -589,6 +589,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .choices.signs .choice{justify-content:center;font-family:var(--font-num);font-size:2rem;font-weight:800;min-height:56px}
 .tnum th.comma-h{background:transparent;border:none;min-width:.5em;padding:0}
 .sex .nw{white-space:nowrap;display:inline-block}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1138,7 +1141,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const rel = relOf(cmpF(A, B), 0);
     const steps = [];
     if (common){
-      steps.push(mkNum('Un dénominateur commun (un multiple de ' + A[1] + ' et de ' + B[1] + ')', '□', L, { okv: v => v > 0 && v % A[1] === 0 && v % B[1] === 0, hint: 'Écris les multiples de ' + Math.max(A[1], B[1]) + ' et cherche le premier qui est aussi un multiple de ' + Math.min(A[1], B[1]) + '.', diag: v => v % A[1] ? fmtNum(v) + ' n\'est pas un multiple de ' + A[1] + '.' : fmtNum(v) + ' n\'est pas un multiple de ' + B[1] + '.' }));
+      steps.push(mkNum('<b>Un dénominateur commun</b> (un multiple de ' + A[1] + ' et de ' + B[1] + ')', '□', L, { okv: v => v > 0 && v % A[1] === 0 && v % B[1] === 0, hint: 'Écris les multiples de ' + Math.max(A[1], B[1]) + ' et cherche le premier qui est aussi un multiple de ' + Math.min(A[1], B[1]) + '.', diag: v => v % A[1] ? fmtNum(v) + ' n\'est pas un multiple de ' + A[1] + '.' : fmtNum(v) + ' n\'est pas un multiple de ' + B[1] + '.' }));
       steps.push(mkMulti('Avec le dénominateur ' + L, showF(A) + ' = ' + FR(BX(0), L) + '   et   ' + showF(B) + ' = ' + FR(BX(1), L), [A[0] * L / A[1], B[0] * L / B[1]], { hint: 'Multiplie le numérateur par le même nombre que le dénominateur.', diag: v => v[0] === A[0] || v[1] === B[0] ? 'Le dénominateur a changé : il faut aussi changer le numérateur.' : 'Pour ' + FRT(A[0], A[1]) + ' : ' + A[1] + ' × ' + (L / A[1]) + ' = ' + L + ', donc multiplie aussi ' + A[0] + ' par ' + (L / A[1]) + '.' }));
     } else {
       const S0 = A[1] < B[1] ? A : B, f = L / S0[1];
@@ -1203,7 +1206,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const S0 = pick(SIT), d = pick(HARD ? [3, 4, 5, 6, 8, 10] : [2, 3, 4, 5, 6, 10]);
     const part = ri(Math.max(2, Math.ceil(S0.q[0] / d)), Math.max(3, Math.floor(S0.q[1] / d))), Q = part * d;
     const n = unitOnly ? 1 : ri(2, d - 1);
-    const steps = [mkNum('La valeur d\'une part : ' + FR(1, d) + ' de ' + fmtNum(Q) + ' ' + S0.u, '□', part, { hint: 'Le dénominateur ' + d + ' dit en combien de parts égales on partage ' + fmtNum(Q) + '.', diag: v => v === Q * d ? 'On partage : c\'est une division, pas une multiplication.' : (v === Q - d ? 'On ne retire pas ' + d + ' : on partage ' + fmtNum(Q) + ' en ' + d + ' parts égales.' : fmtNum(Q) + ' ÷ ' + d + ' : cherche dans la table de ' + d + '.') })];
+    const steps = [mkNum('<b>La valeur d\'une part</b> : ' + FR(1, d) + ' de ' + fmtNum(Q) + ' ' + S0.u, '□', part, { hint: 'Le dénominateur ' + d + ' dit en combien de parts égales on partage ' + fmtNum(Q) + '.', diag: v => v === Q * d ? 'On partage : c\'est une division, pas une multiplication.' : (v === Q - d ? 'On ne retire pas ' + d + ' : on partage ' + fmtNum(Q) + ' en ' + d + ' parts égales.' : fmtNum(Q) + ' ÷ ' + d + ' : cherche dans la table de ' + d + '.') })];
     if (n > 1) steps.push(mkNum(FR(n, d) + ' de ' + fmtNum(Q) + ' ' + S0.u, '□', n * part, { hint: FR(n, d) + ', c\'est ' + n + ' parts de ' + part + '.', diag: v => v === part ? 'C\'est la valeur d\'une seule part : il en faut ' + n + '.' : n + ' × ' + part + ' = ?' }));
     return {
       stmt: '<p class="lead-q">' + S0.v + ' ' + fmtNum(Q) + ' ' + S0.o + '. Combien font ' + FR(n, d) + ' de ' + fmtNum(Q) + ' ' + S0.u + ' ?</p>' + barQ(Q, d, n, S0.u),
@@ -1220,7 +1223,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const who = pick(NAMES);
     const verb = { bonbons: 'mange', billes: 'donne', pages: 'lit', '€': 'dépense' }[S0.o];
     return {
-      stmt: '<p class="lead-q">' + who + ' a ' + Q + ' ' + S0.o + '. ' + who + ' en ' + verb + ' ' + FR(n, d) + '. Combien lui en reste-t-il ?</p>' + barQ(Q, d, n, S0.u),
+      stmt: '<p class="lead-q">' + who + ' a ' + Q + ' ' + S0.o + '. ' + who + ' en ' + verb + ' ' + FR(n, d) + '. Combien lui en <b>reste-t-il</b> ?</p>' + barQ(Q, d, n, S0.u),
       steps: [
         mkNum(FR(n, d) + ' de ' + Q, '□', n * part, { hint: 'D\'abord ' + FR(1, d) + ' de ' + Q + ' : ' + Q + ' ÷ ' + d + '.' + (n > 1 ? ' Puis ' + n + ' parts.' : ''), diag: v => v === part && n > 1 ? 'C\'est une seule part : il en faut ' + n + '.' : Q + ' ÷ ' + d + ' = ' + part + (n > 1 ? ', puis × ' + n : '') + '.' }),
         mkNum('Il en reste', '□', Q - n * part, { hint: 'Retire ce qu\'il a ' + (verb === 'lit' ? 'lu' : (verb === 'mange' ? 'mangé' : (verb === 'donne' ? 'donné' : 'dépensé'))) + ' du total.', diag: v => v === n * part ? 'C\'est ce qu\'il a utilisé. La question demande ce qui reste.' : Q + ' − ' + (n * part) + ' = ?' })
@@ -1233,9 +1236,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const d = pick(denPool().filter(x => x >= 4)), a = ri(1, d - 2), b = ri(1, d - 1 - a);
     const who = pick(NAMES);
     return {
-      stmt: '<p class="lead-q">' + who + ' peint ' + FR(a, d) + ' d\'une fresque le matin et ' + FR(b, d) + ' l\'après-midi. Quelle fraction de la fresque reste-t-il à peindre ?</p>',
+      stmt: '<p class="lead-q">' + who + ' peint ' + FR(a, d) + ' d\'une fresque le matin et ' + FR(b, d) + ' l\'après-midi. Quelle fraction de la fresque <b>reste-t-il à peindre</b> ?</p>',
       steps: [
-        mkMulti('Ce qui est peint', FR(a, d) + ' + ' + FR(b, d) + ' = ' + FR(BX(0), BX(1)), [a + b, d], { ok: fracOk([a + b, d]), hint: 'Additionne les numérateurs.', diag: addDiag([a, d], [b, d], '+', [a + b, d]) }),
+        mkMulti('<b>Ce qui est peint</b>', FR(a, d) + ' + ' + FR(b, d) + ' = ' + FR(BX(0), BX(1)), [a + b, d], { ok: fracOk([a + b, d]), hint: 'Additionne les numérateurs.', diag: addDiag([a, d], [b, d], '+', [a + b, d]) }),
         mkMulti('Ce qui reste', '1 − ' + FR(a + b, d) + ' = ' + FR(BX(0), BX(1)), [d - a - b, d], { ok: fracOk([d - a - b, d]), hint: 'La fresque entière, c\'est 1 = ' + FRT(d, d) + '.', diag: v => v[0] === a + b ? 'C\'est ce qui est peint. La question demande ce qui reste.' : '1 = ' + FRT(d, d) + ' : retire ' + FRT(a + b, d) + '.' })
       ],
       end: FR(a, d) + ' + ' + FR(b, d) + ' = ' + FR(a + b, d) + ', et ' + FR(d, d) + ' − ' + FR(a + b, d) + ' = <b>' + FR(d - a - b, d) + '</b>.',
@@ -1863,7 +1866,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1, pk: [], cw: [] });
+  const stepState = () => ({ early: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1, pk: [], cw: [] });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -2012,7 +2015,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const ok = st.okv ? st.okv(v) : (st.acc ? st.acc.includes(v) : v === st.a);
     const show = st.dec ? fmtM(v) : fmtNum(v);
     if (ok){ solveStep(false, show, (st.okNote && st.okNote(v, R.input)) || st.okFb, '', ''); return; }
-    const dg = st.diag ? st.diag(v, R.input) : '';
+    // Consigne mal lue : le résultat final (juste) tapé à une étape intermédiaire
+    const fin = curItem().steps.slice(R.si + 1).filter(x => x.kind === 'num' && x.a !== undefined).pop(), lastSt = curItem().steps[curItem().steps.length - 1];
+    const early = !!fin && fin === lastSt && v === fin.a;
+    const earlyMsg = 'Tu as tapé ' + show + '. Lis bien la consigne : pour cette étape, on te demande « <b>' + st.q + '</b> », pas encore le résultat final.';
+    if (early && !R.early){ R.early = 1; info(earlyMsg); return; }
+    const dg = early ? earlyMsg : st.diag ? st.diag(v, R.input) : '';
     failStep((R.tries >= 1 ? 'Ce n\'est pas ' + show + '. ' : '') + (dg || ''));
   }
   function multiPress(k){

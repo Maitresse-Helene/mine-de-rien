@@ -433,6 +433,9 @@ img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10p
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1209,7 +1212,7 @@ img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10p
     });
     return out.length >= 3 ? shuffle(out) : null;
   }
-  const viewStep = (dir, opts) => mkChoice('Quelle est la vue ' + DIRS[dir].label + ' ?', opts, { figs: true, hint: VIEW_HINT[dir], okFb: "Oui, c'est bien la vue " + DIRS[dir].label + '.' });
+  const viewStep = (dir, opts) => mkChoice('Quelle est la vue <b>' + DIRS[dir].label + '</b> ?', opts, { figs: true, hint: VIEW_HINT[dir], okFb: "Oui, c'est bien la vue " + DIRS[dir].label + '.' });
   function viewsRow(cubes, merged, dirs, s){
     return '<div class="views-row">' + dirs.map(d => '<span class="vcap">Vue ' + DIRS[d].label + cellsSVG(voxCells(cubes, d), merged, s || 20) + '</span>').join('') + '</div>';
   }
@@ -1235,28 +1238,28 @@ img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10p
     const nameHint = p === 'cube' ? 'Regarde bien toutes les faces : sont-elles toutes des carrés ?' : p === 'pave' ? 'Ses 6 faces sont des rectangles. Sont-elles toutes des carrés ?' : 'Regarde les deux bases en orange : combien ont-elles de côtés ?';
     const steps = [
       mkChoice('Quel est son nom le plus précis ?', names, { hint: nameHint, okFb: "Oui, c'est " + P.name + '.' }),
-      mkNum('Combien de faces a-t-il ?', '□ faces', n + 2, { hint: isBox ? 'Compte les faces de devant, de derrière, de gauche, de droite, du dessus et du dessous.' : FACE_HINT })
+      mkNum('Combien de <b>faces</b> a-t-il ?', '□ faces', n + 2, { hint: isBox ? 'Compte les faces de devant, de derrière, de gauche, de droite, du dessus et du dessous.' : FACE_HINT })
     ];
     let extra = '';
     if (isBox){
       const c = ['des carrés', 'des rectangles qui ne sont pas tous des carrés', 'des triangles'];
       const right = p === 'cube' ? 0 : 1;
-      steps.push(mkChoice('Toutes ses faces sont…', c.map((h, i) => ({ h: cap(h), ok: i === right })), { hint: 'Regarde les faces pendant que le solide tourne : leurs côtés sont-ils tous de la même longueur ?' }));
+      steps.push(mkChoice('<b>Toutes ses faces</b> sont…', c.map((h, i) => ({ h: cap(h), ok: i === right })), { hint: 'Regarde les faces pendant que le solide tourne : leurs côtés sont-ils tous de la même longueur ?' }));
       extra = p === 'cube' ? ' Ses 6 faces sont des carrés.' : ' Ses 6 faces sont des rectangles.';
     } else if (HARD){
-      steps.push(mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT }));
-      steps.push(mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }));
+      steps.push(mkNum('Combien de <b>sommets</b> a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT }));
+      steps.push(mkNum("Combien d'<b>arêtes</b> a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }));
       extra = ' Il a ' + 2 * n + ' sommets et ' + 3 * n + ' arêtes.';
     } else {
       const type = ['base', 'sommets', 'aretes'][t % 3];
       if (type === 'base'){
-        steps.push(mkChoice('Ses deux bases sont…', BASE_SET.map(h => ({ h: cap(h), ok: h === P.base })), { hint: 'Les bases sont les deux faces orange. Compte leurs côtés.' }));
+        steps.push(mkChoice('<b>Ses deux bases</b> sont…', BASE_SET.map(h => ({ h: cap(h), ok: h === P.base })), { hint: 'Les bases sont les deux faces orange. Compte leurs côtés.' }));
         extra = ' Ses deux bases sont ' + P.base + '.';
       } else if (type === 'sommets'){
-        steps.push(mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT }));
+        steps.push(mkNum('Combien de <b>sommets</b> a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT }));
         extra = ' Il a ' + 2 * n + ' sommets.';
       } else {
-        steps.push(mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }));
+        steps.push(mkNum("Combien d'<b>arêtes</b> a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }));
         extra = ' Il a ' + 3 * n + ' arêtes.';
       }
     }
@@ -1320,7 +1323,7 @@ img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10p
         h: faceSVG(x.pts), ok: x.k === k,
         fb: x.k === 'B' ? "Non : cette figure est une base. La face " + letters[i] + ' est une face latérale.' : (k === 'B' && p !== 'pave' ? 'Non : la face ' + letters[i] + ' est une base du prisme, pas un rectangle.' : 'Non : compare bien la longueur et la largeur de la face.')
       }));
-      return mkChoice('La face ' + letters[i] + ' correspond à quelle figure ?', opts, {
+      return mkChoice('<b>La face ' + letters[i] + '</b> correspond à quelle figure ?', opts, {
         figs: true,
         hint: F.kind === 'base' ? 'La face ' + letters[i] + ' est une base : elle a la même forme que la face opposée. Compte ses côtés.' : 'La face ' + letters[i] + ' est une face latérale : c\'est un rectangle. Une de ses dimensions est la longueur des arêtes qui relient les deux bases.'
       });
@@ -1374,12 +1377,12 @@ img.thumb{display:block;width:100%;max-width:150px;height:auto;border-radius:10p
       solid: { k: 'prism', p, o, cb: 0 }, spin: false,
       stmt: '<p class="lead-q">Le solide ne tourne pas : pense aussi aux faces que tu ne vois pas.</p>',
       steps: HARD ? [
-        mkNum('Combien de faces a ce solide ?', '□ faces', n + 2, { hint: FACE_HINT }),
-        mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }),
-        mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT })
+        mkNum('Combien de <b>faces</b> a ce solide ?', '□ faces', n + 2, { hint: FACE_HINT }),
+        mkNum("Combien d'<b>arêtes</b> a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }),
+        mkNum('Combien de <b>sommets</b> a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT })
       ] : [
-        mkNum('Combien de faces a ce solide ?', '□ faces', n + 2, { hint: FACE_HINT }),
-        ar ? mkNum("Combien d'arêtes a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }) : mkNum('Combien de sommets a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT })
+        mkNum('Combien de <b>faces</b> a ce solide ?', '□ faces', n + 2, { hint: FACE_HINT }),
+        ar ? mkNum("Combien d'<b>arêtes</b> a-t-il ?", '□ arêtes', 3 * n, { hint: ARETE_HINT }) : mkNum('Combien de <b>sommets</b> a-t-il ?', '□ sommets', 2 * n, { hint: SOMMET_HINT })
       ],
       end: "C'est " + P.name + '. Sa base a ' + n + ' côtés : <b>' + (n + 2) + ' faces</b> (2 bases + ' + n + ' faces latérales), <b>' + 3 * n + ' arêtes</b> et <b>' + 2 * n + ' sommets</b>.',
       sum: cap(P.name) + ' (' + POSE[o] + ') : ' + (n + 2) + ' faces, ' + (HARD ? 3 * n + ' arêtes, ' + 2 * n + ' sommets' : (ar ? 3 * n + ' arêtes' : 2 * n + ' sommets'))

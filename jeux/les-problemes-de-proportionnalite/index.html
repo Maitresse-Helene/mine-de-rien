@@ -512,6 +512,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 :root{ --sb:#fde9b0; --sb-edge:#d29a00; --sb-ink:#4d3900; }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --sb:#4a3b10; --sb-edge:#e8b934; --sb-ink:#fff0c4; } }
 :root[data-theme="dark"]{ --sb:#4a3b10; --sb-edge:#e8b934; --sb-ink:#fff0c4; }
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1447,7 +1450,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return {
       stmt: '<p class="problem">' + html + '</p>',
       steps: [
-        mkChoice('Quel calcul fais-tu ?', opOptions(p.a, p.k, p.op, kw), { hint: 'Repère les mots surlignés dans l\'énoncé. ' + RULE + '.', okFb: 'Oui ! « ' + esc(kw) + ' » : ' + VERB[p.op] + '.', showKw: true }),
+        mkChoice('Quel <b>calcul</b> fais-tu ?', opOptions(p.a, p.k, p.op, kw), { hint: 'Repère les mots surlignés dans l\'énoncé. ' + RULE + '.', okFb: 'Oui ! « ' + esc(kw) + ' » : ' + VERB[p.op] + '.', showKw: true }),
         mkNum('Calcule.', ex(p.a, p.op, p.k) + ' = □', r, { calc: { x: p.a, op: p.op, y: p.k }, hint: arithHint(p.a, p.op, p.k) })
       ],
       end: 'Je repère « <span class="fk ' + OPN[p.op] + '">' + esc(kw) + '</span> » : ' + VERB[p.op] + '. ' + ex(p.a, p.op, p.k) + ' = <b>' + fmtNum(r) + '</b>. ' + esc(p.ans.replace('{r}', fmtNum(r))),
@@ -1460,7 +1463,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function repStep(ans, wrongs){
     const opts = [{ h: ans, ok: true }];
     wrongs.forEach(w => { if (w && w.h && !opts.some(o => o.h === w.h)) opts.push({ h: w.h, ok: false, fb: w.fb }); });
-    return mkChoice('Quelle phrase réponse ?', shuffle(opts), { layout: 'phrases', hint: 'Relis la question : la phrase réponse dit combien, avec la bonne unité.', okFb: 'Oui ! Elle répond à la question : le nombre et son unité.' });
+    return mkChoice('Quelle <b>phrase réponse</b> ?', shuffle(opts), { layout: 'phrases', hint: 'Relis la question : la phrase réponse dit combien, avec la bonne unité.', okFb: 'Oui ! Elle répond à la question : le nombre et son unité.' });
   }
   const vagueFb = K => 'Cette phrase dit « ' + K + ' », mais elle ne dit pas combien : la question demande un nombre.';
   function addRep(items, reps){
@@ -1484,12 +1487,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     fbs[ids.A] = '« ' + esc(A) + ' », c\'est ' + esc(p.as) + ' : ce n\'est pas ce qu\'on cherche.';
     fbs[ids.K] = '« ' + esc(K) + ' », c\'est le rapport : il dit combien de fois le nombre change. Quel nombre change ?';
     const steps = [
-      mkChoice('Que cherches-tu ?', shuffle([
+      mkChoice('<b>Que cherches-tu</b> ?', shuffle([
         { h: esc(p.ch), ok: true },
         { h: esc(p.au), ok: false, fb: 'Relis la question, à la fin de l\'énoncé : on ne demande pas ' + esc(p.as) + '.' },
         { h: 'le nombre de fois', ok: false, fb: '« ' + esc(K) + ' » est déjà écrit dans l\'énoncé : c\'est le rapport. Relis la question pour savoir ce qu\'on cherche.' }
       ]), { hint: 'Relis la question, à la fin de l\'énoncé : « Combien… ? »', okFb: 'Oui : on cherche ' + esc(p.cs) + '.' }),
-      { kind: 'pick', q: 'Touche, dans l\'énoncé, le nombre qui devient ' + p.k + ' fois ' + big + '.', want: ids.B, labels, fbs,
+      { kind: 'pick', q: 'Touche, dans l\'énoncé, le nombre qui devient <b>' + p.k + ' fois ' + big + '</b>.', want: ids.B, labels, fbs,
         hint: 'On cherche ' + esc(p.cs) + ' : quel nombre de l\'énoncé parle de la même chose ?',
         okFb: 'Oui ! On cherche ' + esc(p.cs) + ' : c\'est « ' + esc(B) + ' » qui devient ' + p.k + ' fois ' + big + '.',
         why: 'On cherche ' + esc(p.cs) + ' : c\'est « ' + esc(B) + ' » qui devient ' + p.k + ' fois ' + big + '.' },
@@ -1540,7 +1543,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     trap(p.to, fmtNum(p.to) + ', c\'est le nombre ' + deW + ' qu\'on veut, pas le rapport. ' + ask);
     trap(p.from, fmtNum(p.from) + ', c\'est le nombre ' + deW + ' du départ, pas le rapport. ' + ask);
     trap(p.v, V + ', ce n\'est pas un nombre ' + deW + ' : compare les deux nombres qui parlent ' + de + '.');
-    steps.push(mkNum('Le rapport : combien de fois plus, ou moins, ' + de + ' ?', '□ fois', k, {
+    steps.push(mkNum('<b>Le rapport</b> : combien de fois plus, ou moins, ' + de + ' ?', '□ fois', k, {
       traps, calc: { x: big, op: '÷', y: small },
       hint: 'Compare les deux nombres qui parlent ' + de + ' : ' + small + ' et ' + big + '. C\'est la table de ' + small + ' à l\'envers : ' + countList(small) + ' Combien de fois ?',
       okFb: 'Oui : ' + small + ' × ' + k + ' = ' + big + '.'
@@ -1605,7 +1608,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1828,7 +1831,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     { l: 'Les yaourts en lot', prop: false, one: 'yaourt', many: 'yaourts', u: '€', v: 'coûtent',
       gen(){ const p = rint(2, 3), n = rpick([4, 5, 6]); return { a: 2, X: 2 * p, b: n, Y: n * (p - 1), lot: true }; },
       text: o => 'Au détail, 2 yaourts coûtent ' + o.X + ' €. En lot, ' + o.b + ' yaourts coûtent ' + o.Y + ' €.',
-      lead1: o => 'quand 2 yaourts au détail coûtent ' + o.X + ' €', lead2: o => 'dans le lot de ' + o.b + ' yaourts à ' + o.Y + ' €',
+      lead1: o => 'quand 2 yaourts <b>au détail</b> coûtent ' + o.X + ' €', lead2: o => '<b>dans le lot</b> de ' + o.b + ' yaourts à ' + o.Y + ' €',
       why: () => 'Dans le lot, chaque yaourt coûte moins cher qu\'au détail.' },
     { l: 'Le parc de jeux', prop: false, one: 'manège', many: 'manèges', u: '€', v: 'coûtent', pre: 'Au parc de jeux, ',
       gen(){ const f = rpick([6, 8]), u = rint(1, 3), [a, b] = twoDiff(f === 6 ? [2, 3, 6] : [2, 4, 8]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },
@@ -1854,7 +1857,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     { l: 'Les cahiers en promotion', prop: false, one: 'cahier', many: 'cahiers', u: '€', v: 'coûtent',
       gen(){ const p = rpick([3, 4]), n = rpick([6, 8, 10]); return { a: 3, X: 3 * p, b: n, Y: n * (p - 1) }; },
       text: o => 'Au détail, 3 cahiers coûtent ' + o.X + ' €. En promotion, le lot de ' + o.b + ' cahiers coûte ' + o.Y + ' €.',
-      lead1: o => 'quand 3 cahiers au détail coûtent ' + o.X + ' €', lead2: o => 'dans le lot de ' + o.b + ' cahiers à ' + o.Y + ' €',
+      lead1: o => 'quand 3 cahiers <b>au détail</b> coûtent ' + o.X + ' €', lead2: o => '<b>dans le lot</b> de ' + o.b + ' cahiers à ' + o.Y + ' €',
       why: () => 'Dans le lot en promotion, chaque cahier coûte moins cher qu\'au détail.' },
     { l: 'L\'abonnement à la piscine', prop: false, one: 'entrée', many: 'entrées', u: '€', v: 'coûtent',
       gen(){ const f = rpick([10, 20]), u = rpick([3, 4, 5]), [a, b] = twoDiff(f === 10 ? [2, 5, 10] : [2, 4, 5, 10]); return { a, X: f + a * u, b, Y: f + b * u, f, uu: u }; },

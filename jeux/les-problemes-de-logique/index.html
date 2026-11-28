@@ -618,6 +618,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .dots.posts b{display:inline-block;width:22px;height:4px;background:var(--key-edge)}
 .mask.unit{width:1.6em}
 .aff{margin:10px 0 0;padding:8px 12px;border-radius:12px;background:var(--mul-bg);color:var(--ink);font-weight:700;font-size:1.08rem;line-height:1.5}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1030,7 +1033,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1064,7 +1067,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1261,7 +1264,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       D: kind === 'C' ? 'Relis la question : ce nombre n\'est pas écrit dans l\'énoncé, il faut le calculer.' : 'Cherche bien : la réponse n\'est pas dans l\'énoncé.',
       N: 'Si, on peut savoir avec les informations de l\'énoncé.'
     };
-    const steps = [mkChoice('Faut-il calculer pour répondre ?', ['C', 'D', 'N'].map(k => ({ h: FC_STEP_OPTS[k], ok: k === kind, fb: k === kind ? '' : wrongFb[k] })), { layout: 'phrases', hint: 'Relis la question : demande-t-elle un nombre écrit dans l\'énoncé, un nombre à calculer, ou quelque chose dont l\'énoncé ne parle pas ?' })];
+    const steps = [mkChoice('<b>Faut-il calculer</b> pour répondre ?', ['C', 'D', 'N'].map(k => ({ h: FC_STEP_OPTS[k], ok: k === kind, fb: k === kind ? '' : wrongFb[k] })), { layout: 'phrases', hint: 'Relis la question : demande-t-elle un nombre écrit dans l\'énoncé, un nombre à calculer, ou quelque chose dont l\'énoncé ne parle pas ?' })];
     let end, sum;
     if (kind === 'D'){
       const key = tpl.D[1], r = P[key], other = key === 'a' ? P.b : P.a;
@@ -1273,7 +1276,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     } else if (kind === 'C'){
       const op = P.op, a = P.a, b = P.b;
       const wrong = wrongOps(a, b, op).map(o => calcOpt(a, o, b, false, o === '+' || o === '−' ? (op === '×' || op === '÷' ? 'Il y a des parts égales : multiplication ou division.' : 'Relis l\'histoire : on ajoute ou on enlève ?') : 'Relis l\'histoire : il n\'y a pas de parts égales ici.'));
-      steps.push(calcStep('Quel calcul fais-tu ?', [calcOpt(a, op, b, true)].concat(wrong), { hint: 'Que se passe-t-il dans l\'histoire : on ajoute, on enlève, on fait des paquets, on partage ?' }));
+      steps.push(calcStep('Quel <b>calcul</b> fais-tu ?', [calcOpt(a, op, b, true)].concat(wrong), { hint: 'Que se passe-t-il dans l\'histoire : on ajoute, on enlève, on fait des paquets, on partage ?' }));
       steps.push(mkNum('Calcule.', cx(a, op, b) + ' = □', P.r, { calc: { x: a, op, y: b }, hint: arithHint(a, op, b) }));
       end = '<p class="ex-line">' + cx(a, op, b) + ' = ' + fmtNum(P.r) + '</p><p>' + esc(txt(tpl.C[2], Object.assign({}, V, { r: P.r }))) + '</p>';
       sum = esc(tpl.l) + ' : <b>il faut calculer</b>, ' + cx(a, op, b) + ' = ' + fmtNum(P.r);

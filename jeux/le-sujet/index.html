@@ -475,6 +475,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -847,7 +850,7 @@ b.tgt{color:var(--stamp)}
       return {
         stmt: P(s),
         stmtDone: P(s.replace(sj, SJ(sj)).replace(' ' + v, ' ' + VB(v))),
-        steps: [mkChoice('Quel est le sujet du verbe « ' + v + ' » ?', shuffle([{ h: sj, ok: true }, { h: pr, ok: false, fb: '« ' + pr + ' » est placé juste devant le verbe, mais ce n\'est pas lui qui fait l\'action : il la reçoit.' }, { h: v, ok: false, fb: '« ' + v + ' » est le verbe.' }]), { cls: 'big', hint: 'Pose la question « Qui est-ce qui ' + v + ' ? ». Attention : le mot juste devant le verbe n\'est pas toujours le sujet.' })],
+        steps: [mkChoice('Quel est <b>le sujet</b> du verbe « ' + v + ' » ?', shuffle([{ h: sj, ok: true }, { h: pr, ok: false, fb: '« ' + pr + ' » est placé juste devant le verbe, mais ce n\'est pas lui qui fait l\'action : il la reçoit.' }, { h: v, ok: false, fb: '« ' + v + ' » est le verbe.' }]), { cls: 'big', hint: 'Pose la question « Qui est-ce qui ' + v + ' ? ». Attention : le mot juste devant le verbe n\'est pas toujours le sujet.' })],
         end: cest(lc(sj), pl) + ' ' + v + ' : le sujet est « ' + sj + ' ». Ici, « ' + pr + ' » est un pronom qui complète le verbe.',
         sum: s
       };
@@ -867,7 +870,7 @@ b.tgt{color:var(--stamp)}
     return {
       stmt: P(s),
       stmtDone: P(s.replace(shownS + ' ' + v, SJ(shownS) + ' ' + VB(v))),
-      steps: [mkChoice('Quel est le sujet du verbe « ' + v + ' » ?', shuffle(opts), { cls: 'big', hint: 'Pose la question « Qui est-ce qui ' + v + ' ' + f.c + ' ? » ou essaie « C\'est… qui ».' })],
+      steps: [mkChoice('Quel est <b>le sujet</b> du verbe « ' + v + ' » ?', shuffle(opts), { cls: 'big', hint: 'Pose la question « Qui est-ce qui ' + v + ' ' + f.c + ' ? » ou essaie « C\'est… qui ».' })],
       end: 'Le sujet est « ' + shownS + ' »' + (noun ? ' : ' + cestL(lc(sj), p === 5) + ' ' + v + ' ' + f.c + '.' : '.'),
       sum: s
     };
@@ -895,7 +898,7 @@ b.tgt{color:var(--stamp)}
     const shownS = gc ? sj : cap1(sj);
     const s = (gc ? gc + ', ' : '') + U(shownS) + ' ' + rest + '.';
     return {
-      stmt: '<p class="lead-q">Quelle est la nature du sujet souligné ?</p>' + P(s),
+      stmt: '<p class="lead-q">Quelle est <b>la nature</b> du sujet souligné ?</p>' + P(s),
       steps: [mkChoice('Le sujet « ' + shownS + ' » est…', NAT.map(x => ({ h: x.h, ok: x.k === k, fb: x.k === k ? '' : NATFB[x.k] })), { hint: 'Une majuscule au début de la phrase ne suffit pas pour faire un nom propre ! Regarde s\'il y a un déterminant.' })],
       end: '« ' + shownS + ' » est ' + NAT.find(x => x.k === k).h + '.' + (k === 'gn' && /[A-Z]/.test(sj.slice(1)) ? ' Il contient un nom propre, mais son nom noyau est un nom commun.' : ''),
       sum: s.replace(/<[^>]+>/g, '') + ' → ' + k
@@ -952,7 +955,7 @@ b.tgt{color:var(--stamp)}
     return {
       stmt: P(h.plain),
       stmtDone: markDone(h),
-      steps: [mkChoice('Quel est le sujet du verbe « ' + h.v + ' » ?', shuffle(opts), { cls: 'big', hint: askWho(h) })],
+      steps: [mkChoice('Quel est <b>le sujet</b> du verbe « ' + h.v + ' » ?', shuffle(opts), { cls: 'big', hint: askWho(h) })],
       end: (kind === 'far' ? 'Le sujet « ' + h.sj + ' » est loin du verbe' : 'Le sujet « ' + h.sj + ' » est placé après le verbe') + ' : ' + cestL(lc(h.sj), h.pl) + ' ' + h.v + '.',
       sum: h.plain
     };
@@ -1002,7 +1005,7 @@ b.tgt{color:var(--stamp)}
     const right = conj(inf, 'pres', p), forms = [right].concat(shuffle([2, 5, 3, 4].map(q => conj(inf, 'pres', q)).filter(x => x !== right)).slice(0, 2));
     const S = cap1(m[0]);
     return {
-      stmt: '<p class="lead-q">Complète avec le verbe <b>' + inf + '</b> au présent.</p>' + P(S + ' ' + GAP + ' ' + c + '.'),
+      stmt: '<p class="lead-q">Complète avec le verbe <b>' + inf + '</b> <b>au présent</b>.</p>' + P(S + ' ' + GAP + ' ' + c + '.'),
       stmtDone: P(SJ(S) + ' ' + VB(right) + ' ' + c + '.'),
       steps: [mkChoice('Quelle est la bonne forme ?', shuffle(forms.map(x => ({ h: x, ok: x === right, fb: x === right ? '' : '« ' + x + ' » va avec « ' + whoGoes(inf, 'pres', x) + ' ».' }))), { cls: 'big', hint: m[2] ? 'Remplace le sujet par un seul pronom : « ' + m[0] + ' », c\'est qui ?' : 'Combien y a-t-il de sujets ?' })],
       end: m[2] ? '« ' + S + ' », c\'est « ' + m[2] + ' » : « ' + S + ' ' + right + ' ' + c + '. »' : 'Il y a plusieurs sujets : le verbe se met au pluriel. « ' + S + ' ' + right + ' ' + c + '. »',
@@ -1020,8 +1023,8 @@ b.tgt{color:var(--stamp)}
         alts: [{ h: other, fb: '« ' + other + ' » complète le nom « ' + nn + ' » : ce n\'est pas tout le sujet.' }, { h: lastNoun(c), fb: '« ' + lastNoun(c) + ' » est après le verbe : ce n\'est pas le sujet.' }] };
     } else h = hidden(kind, true);
     const steps = [];
-    if (HARD) steps.push(mkChoice('D\'abord, quel est le sujet du verbe ?', shuffle([{ h: h.sj, ok: true }].concat(shuffle(h.alts).slice(0, 2).map(a => ({ h: a.h, ok: false, fb: a.fb })))), { cls: 'big', hint: 'Pose la question « Qui est-ce qui… ? » devant le verbe.' }));
-    steps.push(mkChoice('Quelle est la bonne forme du verbe ?', h.forms.map(x => ({ h: x, ok: x === h.v, fb: x === h.v ? '' : 'Le sujet est ' + (h.pl ? 'au pluriel' : 'au singulier') + '.' })), { cls: 'big', hint: kind === 'noy' ? 'Trouve le nom noyau du sujet.' : askWho(h) }));
+    if (HARD) steps.push(mkChoice('D\'abord, quel est <b>le sujet</b> du verbe ?', shuffle([{ h: h.sj, ok: true }].concat(shuffle(h.alts).slice(0, 2).map(a => ({ h: a.h, ok: false, fb: a.fb })))), { cls: 'big', hint: 'Pose la question « Qui est-ce qui… ? » devant le verbe.' }));
+    steps.push(mkChoice('Quelle est <b>la bonne forme</b> du verbe ?', h.forms.map(x => ({ h: x, ok: x === h.v, fb: x === h.v ? '' : 'Le sujet est ' + (h.pl ? 'au pluriel' : 'au singulier') + '.' })), { cls: 'big', hint: kind === 'noy' ? 'Trouve le nom noyau du sujet.' : askWho(h) }));
     return {
       stmt: P(h.s),
       stmtDone: markDone(h),

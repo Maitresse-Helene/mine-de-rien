@@ -468,6 +468,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -801,7 +804,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const pool = HARD ? DER : DER.filter(d => EASY_SENS.indexOf(d[1]) >= 0 && !/^(il|ir|mé)\|/.test(d[0]));
     const [d] = pick(pool), x = split(d);
     return {
-      stmt: '<p class="lead-q">Quel est le préfixe de ce mot ?</p>' + W(x.w),
+      stmt: '<p class="lead-q">Quel est <b>le préfixe</b> de ce mot ?</p>' + W(x.w),
       stmtDone: '<p class="lead-q">Le préfixe et le radical :</p>' + W(showSplit(d)),
       steps: [mkChoice('Le préfixe', shuffle(cutOpts(x).map(o => ({ h: o, ok: o === x.p, fb: o === x.p ? '' : 'Non : enlève « ' + o + ' » et regarde si ce qui reste est un vrai mot.' }))), { cls: 'big', hint: 'Cherche le mot de départ caché dans « ' + x.w + ' » : le préfixe, ce sont les lettres placées devant.' })],
       end: '« ' + x.w + ' » = ' + P(x.p) + ' + ' + x.r + '.',
@@ -811,7 +814,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemTrap(){
     const [d] = pick(DER), x = split(d), tr = shuffle(TRAPS).slice(0, 2);
     return {
-      stmt: '<p class="lead-q">Un seul de ces mots est formé avec un préfixe.</p>',
+      stmt: '<p class="lead-q">Un seul de ces mots est formé <b>avec un préfixe</b>.</p>',
       steps: [mkChoice('Quel mot a un préfixe ?', shuffle([{ h: x.w, ok: true }].concat(tr.map(t => ({ h: t, ok: false, fb: '« ' + t + ' » ne vient pas d\'un autre mot auquel on aurait ajouté des lettres devant : pas de préfixe.' })))), { cls: 'big', hint: 'Enlève les premières lettres : reste-t-il un vrai mot ?' })],
       end: '« ' + x.w + ' » = ' + P(x.p) + ' + ' + x.r + '. Dans les autres mots, ce qui reste n\'est pas un mot.',
       sum: 'préfixe : <b>' + x.w + '</b>'
@@ -824,7 +827,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const [d, k] = pick(pool), x = split(d);
     const others = shuffle(Object.keys(SENS).filter(s => s !== k && (HARD || EASY_SENS.indexOf(s) >= 0))).slice(0, 2);
     return {
-      stmt: '<p class="lead-q">Dans ce mot, que veut dire le préfixe ?</p>' + W(showSplit(d)),
+      stmt: '<p class="lead-q">Dans ce mot, <b>que veut dire</b> le préfixe ?</p>' + W(showSplit(d)),
       steps: [mkChoice('Le préfixe ' + x.p + '- veut dire…', shuffle([k].concat(others)).map(s => ({ h: SENS[s], ok: s === k, fb: s === k ? '' : 'Non : « ' + x.w + ' » ne veut pas dire cela. Pense au sens du mot entier.' })), { cls: 'big', hint: 'Explique le mot « ' + x.w + ' » avec tes mots, en partant de « ' + x.r + ' ».' })],
       end: 'Le préfixe ' + P(x.p + '-') + ' veut dire <b>' + SENS[k] + '</b> : ' + x.w + '.',
       sum: x.w + ' : <b>' + SENS[k] + '</b>'
@@ -860,7 +863,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const [w, d, bad] = pick(HARD && Math.random() < 0.6 ? CONTR_O : CONTR), x = split(d);
     const opts = [{ h: x.w, ok: true }].concat(bad.map(b => ({ h: b + x.r, ok: false, fb: 'Non : « ' + b + x.r + ' » n\'est pas le contraire de « ' + w + ' ».' })));
     return {
-      stmt: '<p class="lead-q">Quel est le contraire de ce mot ?</p>' + W(w),
+      stmt: '<p class="lead-q">Quel est <b>le contraire</b> de ce mot ?</p>' + W(w),
       stmtDone: '<p class="lead-q">Le contraire de « ' + w + ' » :</p>' + W(showSplit(d)),
       steps: [mkChoice('Le contraire', shuffle(opts), { cls: 'big', hint: 'Regarde la première lettre de « ' + w + ' » : m, b, p ? l ? r ? une voyelle ?' })],
       end: '« ' + w + ' » → <b>' + x.w + '</b>. ' + WHY_C(x.p),
@@ -945,7 +948,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemClasse(){
     const [w, r, c] = pick(CLASSE);
     return {
-      stmt: '<p class="lead-q">« ' + r + ' » est un ' + c + '. Quelle est la classe du mot dérivé ?</p>' + W(w),
+      stmt: '<p class="lead-q">« ' + r + ' » est un ' + c + '. Quelle est <b>la classe du mot dérivé</b> ?</p>' + W(w),
       steps: [mkChoice('« ' + w + ' » est…', ['verbe', 'nom', 'adjectif'].map(k => ({ h: 'un ' + k, ok: k === c, fb: k === c ? '' : 'Non : le préfixe ne change pas la classe du mot.' })), { cls: 'big', hint: 'Le préfixe change le sens du mot, mais est-ce qu\'il change sa classe ?' })],
       end: '« ' + r + ' » est un ' + c + ', donc « ' + w + ' » aussi : le préfixe ne change pas la classe grammaticale.',
       sum: w + ' : <b>' + c + '</b>'

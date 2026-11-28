@@ -571,6 +571,9 @@ b.tgt{color:var(--stamp)}
 @media (prefers-reduced-motion: reduce){.cell.lift{animation:none}}
 .cell.lift .gl small{font-size:.62em;font-weight:700;margin-left:1px}
 
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.sq b,.prompt b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 <div class="app">
 
@@ -2099,7 +2102,7 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
       const who = pron(it.p, it.a, it.id);
       return '<p class="prompt">Conjugue au présent : ' + esc(who === "j'" ? 'je' : who) + ' <span class="verb">' + esc(it.v) + '</span></p><p class="prompt-sub">Pose le verbe conjugué sur les cases jaunes, avec les lettres de ton chevalet' + (who === "j'" ? ' (on dira « j\' »)' : '') + '.</p>';
     }
-    if (R.level === 2) return '<p class="prompt">Avec ces 7 lettres, trouve le mot qui rapporte le plus de points.</p><p class="prompt-sub">C\'est un <b>verbe conjugué au présent</b>. Ici, pas de plateau : seule la valeur des lettres compte (et la prime de 50 points pour 7 lettres).</p>';
+    if (R.level === 2) return '<p class="prompt">Avec ces 7 lettres, trouve le mot qui rapporte <b>le plus de points</b>.</p><p class="prompt-sub">C\'est un <b>verbe conjugué au présent</b>. Ici, pas de plateau : seule la valeur des lettres compte (et la prime de 50 points pour 7 lettres).</p>';
     if (R.level === 3) return '<p class="prompt">Le meilleur coup est un <b>verbe conjugué au présent</b>.</p><p class="prompt-sub">Trouve-le et pose-le là où il rapporte le plus de points. Pense aux cases de couleur et aux mots en travers !</p>';
     const thr = Math.round(THR() * 100);
     return '<p class="prompt">Trouve le meilleur mot possible avec tes lettres.</p><p class="prompt-sub">Le coup est réussi si ton mot est accepté et bien compté du premier coup, et s\'il rapporte au moins ' + thr + ' % du meilleur coup.</p>' +
@@ -2118,7 +2121,7 @@ const DATA = {"L1J":[{"id":"1J0","b":"..........................................
         '<button class="key" type="button" data-key="0">0</button><button class="key ok" type="button" data-key="ok">OK</button></div>';
     }
     if (st === 'pron'){
-      return '<p class="sq">Avec quel sujet va « ' + esc(c.word.forms[0]) + ' » ?</p><div class="pchoices">' + PRON_LBL.map((p, i) => '<button class="choice' + (c.pron === i && !c.word.persons.includes(i) ? ' wrong' : '') + '" type="button" data-pron="' + i + '">' + p + '</button>').join('') + '</div>';
+      return '<p class="sq">Avec <b>quel sujet</b> va « ' + esc(c.word.forms[0]) + ' » ?</p><div class="pchoices">' + PRON_LBL.map((p, i) => '<button class="choice' + (c.pron === i && !c.word.persons.includes(i) ? ' wrong' : '') + '" type="button" data-pron="' + i + '">' + p + '</button>').join('') + '</div>';
     }
     if (st === 'acc'){
       return '<p class="sq">Écris ce verbe avec ses accents (ou sa cédille) : touche une lettre soulignée pour changer son accent.</p><div class="accw">' +

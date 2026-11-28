@@ -455,6 +455,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .piste-txt{flex-basis:100%;margin:2px 0 0;font-size:.92rem;line-height:1.4;color:var(--ink-soft)}
 .piste-txt b{color:var(--ink)}
 .prev-title{margin:0;font-family:var(--font-num);font-size:1.2rem;color:var(--ink)}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.instr b{font-weight:800;color:var(--pen)}
 </style>
 
 <div class="app">
@@ -988,7 +990,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function resetStep(){
     const L = S.L;
-    L.step = 0; L.values = []; L.input = ''; L.errors = 0; L.wrong = false; L.locked = false; L.fb = null;
+    L.step = 0; L.values = []; L.input = ''; L.errors = 0; L.early = 0; L.wrong = false; L.locked = false; L.fb = null;
   }
   function chooseDoubles(d){
     const L = S.L, it = L.items[L.i];
@@ -1030,9 +1032,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       renderLearn();
       setTimeout(advanceStep, 650);
     } else {
+      // Consigne mal lue : le résultat final (juste) tapé à la première étape. Un message, sans erreur la première fois.
+      const early = L.step === 0 && parseInt(L.input, 10) === (it.a * it.m);
+      const earlyMsg = 'Tu as tapé ' + parseInt(L.input, 10) + '. Lis bien la consigne : fais d\'abord cette étape, pas encore le résultat final.';
+      if (early && !L.early){ L.early = 1; L.fb = { kind: 'info', text: earlyMsg }; renderLearn(); return; }
       L.errors++;
       L.wrong = true;
-      L.fb = { kind: 'bad', text: pick(BAD) };
+      L.fb = { kind: 'bad', text: early ? earlyMsg : pick(BAD) };
       renderLearn();
       const box = $('activeBox');
       if (box){ void box.offsetWidth; box.classList.add('shake'); }
@@ -1041,7 +1047,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function advanceStep(){
     const L = S.L, it = L.items[L.i];
     L.step++;
-    L.errors = 0; L.wrong = false; L.locked = false; L.input = ''; L.fb = null;
+    L.errors = 0; L.early = 0; L.wrong = false; L.locked = false; L.input = ''; L.fb = null;
     if (L.step >= doublesOf(it.m)) L.sub = 'done';
     renderLearn();
   }
@@ -1356,7 +1362,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const fb = $('lfeedback'), hint = $('lhint');
     if (isSteps){
       const from = L.step === 0 ? it.a : v[L.step - 1];
-      $('linstr').innerHTML = 'Calcule le double de ' + n(fmtNum(from)) + '.';
+      $('linstr').innerHTML = 'Calcule <b>le double</b> de ' + n(fmtNum(from)) + '.';
       fb.hidden = false;
       fb.className = 'feedback' + (L.fb ? ' ' + L.fb.kind : '');
       fb.textContent = L.fb ? L.fb.text : '';

@@ -465,6 +465,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -837,7 +840,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const wrong = HARD ? shuffle(F.traps).slice(0, 2).map(t => ({ t, fb: fbTrap(t, F.head) })).concat([{ t: pick(F.idea), fb: '' }]) : [{ t: pick(F.traps) }, { t: pick(F.idea) }];
     wrong.forEach(w => { w.fb = F.traps.includes(w.t) ? fbTrap(w.t, F.head) : fbIdea(w.t, F.head); });
     return {
-      stmt: '<p class="lead-q">Quel mot est de la même famille que :</p>' + W(F.head),
+      stmt: '<p class="lead-q">Quel mot est <b>de la même famille</b> que :</p>' + W(F.head),
       steps: [mkChoice('Le mot de la même famille', shuffle([{ h: good, ok: true }].concat(wrong.map(w => ({ h: w.t, ok: false, fb: w.fb })))), { cls: 'big', hint: HINT_FAM })],
       end: '<b>' + good + '</b> est de la même famille que « ' + F.head + ' » : même radical, même idée.',
       sum: F.head + ' → <b>' + good + '</b>'
@@ -849,7 +852,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const members = shuffle(F.words.map(x => x[0]).concat(F.words.length < n ? [F.head] : [])).slice(0, n), trap = pick(F.traps);
     const opts = shuffle(members.map(m => ({ h: m, ok: false, fb: '« ' + bare(m) + ' » est bien de la même famille que « ' + bare(F.head) + ' ».' })).concat([{ h: trap, ok: true }]));
     return {
-      stmt: '<p class="lead-q">Ces mots sont presque tous de la même famille que « ' + F.head + ' ». Lequel est l\'intrus ?</p>',
+      stmt: '<p class="lead-q">Ces mots sont presque tous de la même famille que « ' + F.head + ' ». Lequel est <b>l\'intrus</b> ?</p>',
       steps: [mkChoice("L'intrus", opts, { cls: 'big', hint: 'Pour chaque mot, demande-toi : est-ce qu\'il parle de « ' + bare(F.head) + ' » ?' })],
       end: '<b>' + trap + '</b> ressemble aux autres mots, mais il ne parle pas de « ' + bare(F.head) + ' ».',
       sum: 'Famille de « ' + F.head + ' » : intrus <b>' + trap + '</b>'
@@ -866,7 +869,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const show = w => bare(w);
     const opts = shuffle([{ h: show(a), ok: true }].concat(others.map(o => ({ h: show(o), ok: false, fb: F.traps.includes(o) ? fbTrap(o, F.head) : '« ' + show(o) + ' » est de la famille, mais il ne va pas dans cette phrase : c\'est ' + NAT[(F.words.find(x => x[0] === o) || [o, 'n'])[1]] + '.' }))));
     return {
-      stmt: '<p class="lead-q">Complète avec un mot de la même famille que « ' + F.head + ' ».</p><p class="sentence">' + esc(s).replace('___', '<span class="gap">…</span>') + '</p>',
+      stmt: '<p class="lead-q">Complète avec <b>un mot de la même famille</b> que « ' + F.head + ' ».</p><p class="sentence">' + esc(s).replace('___', '<span class="gap">…</span>') + '</p>',
       stmtDone: '<p class="lead-q">La phrase complète :</p><p class="sentence">' + esc(s).replace('___', '<b class="rad">' + show(a) + '</b>') + '</p>',
       steps: [mkChoice('Quel mot ?', opts, { cls: 'big', hint: 'Lis toute la phrase. Faut-il un nom, un verbe, un adjectif ou un adverbe ?' })],
       end: 'Il faut ' + NAT[na] + ' : <b>' + show(a) + '</b>.',
@@ -898,7 +901,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemWhatNature(){
     const [k, F] = pickFam(2), w = pick(F.words);
     return {
-      stmt: '<p class="lead-q">Dans la famille du mot « ' + F.head + ' », quelle est la nature de ce mot ?</p>' + W(bare(w[0])),
+      stmt: '<p class="lead-q">Dans la famille du mot « ' + F.head + ' », quelle est <b>la nature</b> de ce mot ?</p>' + W(bare(w[0])),
       steps: [mkChoice('Ce mot est…', ['n', 'v', 'a', 'adv'].map(k2 => ({ h: NAT[k2], ok: k2 === w[1], fb: 'Essaie : « il faut … » pour un verbe, « le » ou « un » devant un nom, -ment pour un adverbe.' })), { hint: 'Un verbe : « il faut … ». Un nom : « le », « la », « un » devant. Un adverbe : souvent -ment. Un adjectif : il décrit.' })],
       end: '<b>' + bare(w[0]) + '</b> est ' + NAT[w[1]] + '.',
       sum: bare(w[0]) + ' : <b>' + NAT[w[1]] + '</b>'
@@ -916,7 +919,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     }
     const opts = shuffle([{ h: target, ok: true }].concat(others.map(o => ({ h: o, ok: false, fb: '« ' + o + ' » ne parle pas de « ' + bare(F.head) + ' ».' }))));
     return {
-      stmt: '<p class="lead-q">Dans cette phrase, quel mot est de la même famille que « ' + F.head + ' » ?</p><p class="sentence">' + esc(full) + '</p>',
+      stmt: '<p class="lead-q">Dans cette phrase, quel mot est <b>de la même famille</b> que « ' + F.head + ' » ?</p><p class="sentence">' + esc(full) + '</p>',
       stmtDone: '<p class="lead-q">Le mot de la famille :</p><p class="sentence">' + esc(full).replace(target, '<b class="rad">' + target + '</b>') + '</p>',
       steps: [mkChoice('Le mot de la famille', opts, { cls: 'big', hint: HINT_FAM })],
       end: '<b>' + target + '</b> est de la même famille que « ' + F.head + ' ».',

@@ -555,6 +555,9 @@ b.tgt{color:var(--stamp)}
 }
 /* Une colonne un peu plus large que dans les autres jeux : les lignes du texte tiennent sur une ligne dès la tablette */
 .app{max-width:40rem}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -979,11 +982,11 @@ b.tgt{color:var(--stamp)}
   const linesStep = (q, acc, need, single, hint) => ({ kind: 'lines', q, acc, need: Math.max(1, Math.min(need || 1, acc.length)), single: !!single, hint });
   const wordStep = (q, acc, hint) => ({ kind: 'word', q, acc, hint });
   function natureStep(lvl, truth){
-    if (!threeChoices(lvl)) return mkChoice('La réponse est-elle écrite dans le texte ?', [
+    if (!threeChoices(lvl)) return mkChoice('La réponse est-elle <b>écrite dans le texte</b> ?', [
       { h: 'Oui, c\'est écrit', ok: truth === 'ecrit', fb: 'Cherche bien : cette réponse n\'est écrite nulle part dans le texte.' },
       { h: 'Non, le texte ne le dit pas', ok: truth !== 'ecrit', fb: 'Si : la réponse est écrite dans le texte.' }
     ], { hint: 'Relis le texte en entier en gardant la question en tête.' });
-    return mkChoice('Peut-on répondre avec le texte ?', [
+    return mkChoice('<b>Peut-on répondre</b> avec le texte ?', [
       { h: 'C\'est écrit', ok: truth === 'ecrit', fb: truth === 'devine' ? 'Les mots de la réponse ne sont pas écrits dans le texte : cherche plutôt des indices.' : 'Ce n\'est écrit nulle part dans le texte.' },
       { h: 'Ça se devine avec des indices', ok: truth === 'devine', fb: truth === 'ecrit' ? 'Pas besoin de deviner : la réponse est écrite dans le texte.' : 'Aucun indice ne permet de le deviner : attention, il ne faut pas inventer !' },
       { h: 'On ne peut pas savoir', ok: truth === 'no', fb: truth === 'ecrit' ? 'Si, on peut savoir : la réponse est écrite dans le texte.' : 'Si : des indices du texte permettent de le deviner.' }
@@ -995,8 +998,8 @@ b.tgt{color:var(--stamp)}
     if (q.t === 'ex'){
       it.ask = esc(q.q);
       it.steps = [natureStep(lvl, 'ecrit'),
-        linesStep('À quelle ligne est la réponse ? Touche cette ligne dans le texte.', q.ln, 1, true, 'Relis le texte ligne par ligne en gardant la question en tête.'),
-        wordStep('Touche la réponse dans le texte.', findWords(t, q.ans), 'La réponse est dans la ligne que tu as trouvée.')];
+        linesStep('<b>À quelle ligne</b> est la réponse ? Touche cette ligne dans le texte.', q.ln, 1, true, 'Relis le texte ligne par ligne en gardant la question en tête.'),
+        wordStep('Touche <b>la réponse</b> dans le texte.', findWords(t, q.ans), 'La réponse est dans la ligne que tu as trouvée.')];
       it.end = 'C\'est écrit ' + lnList(q.ln) + ' : ' + q.ln.map(l => quoteLine(t, l)).join(' ') + (q.why ? '<br>' + esc(q.why) : '');
       it.sum += q.q;
     } else if (q.t === 'no'){
@@ -1007,7 +1010,7 @@ b.tgt{color:var(--stamp)}
     } else if (q.t === 'ref'){
       it.hl = findSeq(t, q.line, q.tg.w, q.tg.k).map(i => q.line + ':' + i);
       it.ask = 'Ligne ' + q.line + ', « ' + esc(q.tg.w) + ' » : de qui ou de quoi parle-t-on ?';
-      it.steps = [wordStep('Touche dans le texte le nom de la personne, de l\'animal ou de la chose.', findWords(t, q.ans).filter(k => !it.hl.includes(k)), 'Relis la phrase, et celles d\'avant : de qui ou de quoi parlent-elles ?')];
+      it.steps = [wordStep('Touche dans le texte <b>le nom</b> de la personne, de l\'animal ou de la chose.', findWords(t, q.ans).filter(k => !it.hl.includes(k)), 'Relis la phrase, et celles d\'avant : de qui ou de quoi parlent-elles ?')];
       it.end = q.why ? esc(q.why) : '« ' + esc(q.tg.w) + ' » (ligne ' + q.line + ') désigne ' + esc(q.ans[0]) + '.';
       it.sum += 'ligne ' + q.line + ', « ' + q.tg.w + ' »';
     } else if (q.t === 'inf'){
@@ -1015,7 +1018,7 @@ b.tgt{color:var(--stamp)}
       const st = { kind: 'type', q: 'Écris ta réponse en un ou quelques mots.', acc: q.acc, wrongs: q.opts.slice(1),
         copts: shuffle(q.opts.map((h, i) => ({ h: esc(h), ok: i === 0, fb: i === 0 ? '' : 'Relis les indices : ils ne font pas penser à « ' + esc(h) + ' ».' }))) };
       it.steps = [natureStep(lvl, 'devine'),
-        linesStep(q.need > 1 ? 'Touche au moins deux lignes qui t\'aident à répondre (les indices), puis valide.' : 'Touche la ou les lignes qui t\'aident à répondre (les indices), puis valide.', q.ln, q.need, false, 'Cherche les mots qui font penser à la réponse.'),
+        linesStep(q.need > 1 ? 'Touche <b>au moins deux lignes</b> qui t\'aident à répondre (les indices), puis valide.' : 'Touche <b>la ou les lignes</b> qui t\'aident à répondre (les indices), puis valide.', q.ln, q.need, false, 'Cherche les mots qui font penser à la réponse.'),
         st];
       it.end = esc(q.why) + ' <span class="muted">(Indices : ' + lnList(q.ln) + '.)</span>';
       it.sum += q.q;
@@ -1025,7 +1028,7 @@ b.tgt{color:var(--stamp)}
       const st = [{ kind: 'emo', q: 'Choisis l\'émotion dans la palette.', g: q.g, acc: q.emo,
           opts: EMOS.map(e => ({ h: emoName(e[0], q.g), k: e[0], ok: ok.has(e[0]), fb: 'Relis : est-ce vraiment ce que ressent le personnage ? Regarde ce qu\'il fait, ce qu\'il dit et ce que montre son corps.' })),
           hint: 'Regarde ce que fait le personnage, ce qu\'il dit, ce que montre son corps et ce qui lui arrive.' },
-        linesStep('Quelle ligne te le montre ? Touche-la, puis valide.', q.ln, 1, false, 'Cherche ce que fait le personnage, ce qu\'il dit ou ce que montre son corps.')];
+        linesStep('<b>Quelle ligne</b> te le montre ? Touche-la, puis valide.', q.ln, 1, false, 'Cherche ce que fait le personnage, ce qu\'il dit ou ce que montre son corps.')];
       if (q.cq) st.push(mkChoice(esc(q.cq), shuffle(q.copts.map((h, i) => ({ h: esc(h), ok: i === 0, fb: i === 0 ? '' : 'Relis bien : ce n\'est pas la bonne raison.' }))), { hint: 'Que se passe-t-il pour le personnage juste avant ?' }));
       it.steps = st;
       it.end = esc(q.why) + ' <span class="muted">(Preuve : ' + lnList(q.ln) + '.)</span>';
@@ -1033,7 +1036,7 @@ b.tgt{color:var(--stamp)}
     } else if (q.t === 'mot'){
       it.hl = findSeq(t, q.line, q.tg.w, q.tg.k).map(i => q.line + ':' + i);
       it.ask = 'Ligne ' + q.line + ' : que veut dire « ' + esc(q.tg.w) + ' » ?';
-      it.steps = [linesStep('D\'abord, quelle ligne t\'aide à comprendre ce mot ? Touche-la, puis valide.', q.ln, 1, false, 'Relis la phrase du mot, et celle d\'avant ou d\'après.'),
+      it.steps = [linesStep('<b>D\'abord, quelle ligne</b> t\'aide à comprendre ce mot ? Touche-la, puis valide.', q.ln, 1, false, 'Relis la phrase du mot, et celle d\'avant ou d\'après.'),
         mkChoice('Ici, « ' + esc(q.tg.w) + ' » veut dire…', shuffle(q.opts.map((h, i) => ({ h: esc(h), ok: i === 0, fb: i === 0 ? '' : 'Remplace le mot par « ' + esc(h) + ' » : la phrase garde-t-elle son sens ?' }))), { hint: 'Remplace le mot par chaque proposition et relis la phrase.' })];
       it.end = 'Ici, « ' + esc(q.tg.w) + ' » veut dire : ' + esc(q.opts[0]) + '. ' + esc(q.why);
       it.sum += 'mot mystère « ' + q.tg.w + ' »';
@@ -1044,7 +1047,7 @@ b.tgt{color:var(--stamp)}
         { h: 'Faux', ok: q.a === 'F', fb: q.a === 'V' ? 'Relis : le texte le dit, ou le montre.' : 'Le texte n\'en parle pas : on ne peut pas dire que c\'est faux.' },
         { h: 'On ne peut pas savoir', ok: q.a === '?', fb: 'Si : le texte permet de le savoir. Relis.' }
       ], { hint: 'Vrai : le texte le dit ou le montre. Faux : il dit le contraire. On ne peut pas savoir : il n\'en parle pas.' })];
-      if (q.a !== '?') it.steps.push(linesStep('Quelle ligne le prouve ? Touche-la, puis valide.', q.ln, 1, false, 'Cherche la ligne qui parle de la même chose que la phrase.'));
+      if (q.a !== '?') it.steps.push(linesStep('<b>Quelle ligne le prouve</b> ? Touche-la, puis valide.', q.ln, 1, false, 'Cherche la ligne qui parle de la même chose que la phrase.'));
       it.end = esc(q.why) + (q.ln.length && q.a !== '?' ? ' <span class="muted">(' + cap(lnList(q.ln)) + '.)</span>' : '');
       it.sum += '« ' + q.s + ' »';
     }

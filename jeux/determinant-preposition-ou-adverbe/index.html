@@ -524,6 +524,9 @@ b.tgt{color:var(--stamp)}
 .dt{border:2px solid #0f8a7e;border-radius:7px;padding:0 4px;color:#0b6e64;font-weight:700}
 .av{border:2px dashed #b4530a;border-radius:7px;padding:0 4px;color:#94420a;font-weight:700}
 @media (prefers-color-scheme: dark){ .pr{border-color:#ff8fb1;color:#ffb3c9} .dt{border-color:#5fd6c8;color:#8ee6db} .av{border-color:#ffad6b;color:#ffc796} }
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -984,9 +987,9 @@ b.tgt{color:var(--stamp)}
 
   /* ---------- Niveaux 1 à 3 : une nature à la fois ---------- */
   const LEADS = {
-    D: 'Touche tous les déterminants de la phrase, puis valide.',
-    P: 'Touche toutes les prépositions de la phrase, puis valide.',
-    A: 'Touche tous les adverbes de la phrase, puis valide.'
+    D: 'Touche <b>tous les déterminants</b> de la phrase, puis valide.',
+    P: 'Touche <b>toutes les prépositions</b> de la phrase, puis valide.',
+    A: 'Touche <b>tous les adverbes</b> de la phrase, puis valide.'
   };
   function itemRole(src, role){
     const s = sOf3(src), steps = [tapRole(s, role)];
@@ -1075,7 +1078,7 @@ b.tgt{color:var(--stamp)}
     const mk = t => t.replace(/\*([^*]+)\*/, '<b class="tgt">$1</b>');
     const wA = a.match(/\*([^*]+)\*/)[1], wB = b.match(/\*([^*]+)\*/)[1];
     return {
-      stmt: '<p class="lead-q">Le même petit mot (ou presque), deux natures ?</p><p class="sentence"><b>1.</b> ' + mk(a) + '</p><p class="sentence"><b>2.</b> ' + mk(b) + '</p>',
+      stmt: '<p class="lead-q">Le même petit mot (ou presque), <b>deux natures</b> ?</p><p class="sentence"><b>1.</b> ' + mk(a) + '</p><p class="sentence"><b>2.</b> ' + mk(b) + '</p>',
       steps: [natStep('Phrase 1 : « ' + wA + ' » est…', ra, wa, wA), natStep('Phrase 2 : « ' + wB + ' » est…', rb, wb, wB)],
       end: '1. ' + wa + '<br>2. ' + wb,
       sum: 'piège ' + label + ' : ' + a.replace(/\*/g, '')
@@ -1085,7 +1088,7 @@ b.tgt{color:var(--stamp)}
   /* ---------- Niveau 5 : le grand tri ---------- */
   function itemTri(src){
     const s = sOf3(src);
-    const steps = ['D', 'P', 'A'].map(r => tapRole(s, r, cap1(ROLES[r])));
+    const steps = ['D', 'P', 'A'].map(r => tapRole(s, r, '<b>' + cap1(ROLES[r]) + '</b>'));
     return {
       toks: s.toks, unit: s.unit,
       stmt: '<p class="lead-q">Le grand tri : touche d\'abord les déterminants, puis les prépositions, puis les adverbes.</p>{{S}}',

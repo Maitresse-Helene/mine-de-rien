@@ -456,6 +456,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1071,7 +1074,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return {
       stmt: '<p class="problem">Le périmètre de cette figure est ' + dec(P) + '\u00a0' + unit + '. Combien mesure le côté marqué « ? » ?</p>' + fig(polySVG(SHAPES[key], { labels, caption: 'Périmètre = ' + dec(P) + '\u00a0' + unit, alt: 'Une figure avec un côté inconnu' })),
       steps: [
-        mkNum('1. Additionne les côtés connus.', sumList(known) + ' = □ ' + unit, S, { hint: 'Additionne seulement les ' + (n - 1) + ' longueurs écrites, sans le « ? ».' }),
+        mkNum('1. Additionne <b>les côtés connus</b>.', sumList(known) + ' = □ ' + unit, S, { hint: 'Additionne seulement les ' + (n - 1) + ' longueurs écrites, sans le « ? ».' }),
         mkNum('2. Enlève ce total au périmètre.', dec(P) + ' − ' + dec(S) + ' = □ ' + unit, x, { hint: 'Cherche combien il faut ajouter à ' + dec(S) + ' pour arriver à ' + dec(P) + '.' })
       ],
       end: 'Côtés connus : ' + sumList(known) + ' = ' + dec(S) + '\u00a0' + unit + '. Côté manquant : ' + dec(P) + ' − ' + dec(S) + ' = <b>' + dec(x) + '\u00a0' + unit + '</b>.',
@@ -1856,7 +1859,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
+  const stepState = () => ({ early: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -1957,10 +1960,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (R.wrong) return;
     const v = parseFloat(R.input.replace(',', '.'));
     if (Math.abs(v - st.a) < 1e-6){ solveStep(false, fmtNum(st.a), st.okFb, '', ''); return; }
+    // Consigne mal lue : le résultat final (juste) tapé à une étape intermédiaire. Un message, sans erreur la première fois.
+    const fin = curItem().steps.slice(R.si + 1).filter(x => x.kind === 'num').pop(), lastSt = curItem().steps[curItem().steps.length - 1];
+    const early = !!fin && fin === lastSt && Math.abs(v - fin.a) < 1e-6;
+    const earlyMsg = 'Tu as tapé ' + fmtNum(v) + '. Lis bien la consigne : pour cette étape, on te demande « <b>' + st.q + '</b> », pas encore le résultat final.';
+    if (early && !R.early){ R.early = 1; R.fb = { kind: 'info', html: earlyMsg }; renderPlay(); return; }
     R.err++; R.itemErr++; R.tries++; R.wrong = true; R.shake = true;
     runFall();
-    if (R.tries >= 2) solveStep(true, fmtNum(st.a), '', 'Ce n\'est pas ' + fmtNum(v) + '.', '');
-    else { R.fb = { kind: 'bad', html: pick(BAD) + " Lis l'indice et réessaie." }; R.hint = st.hint || null; renderPlay(); }
+    if (R.tries >= 2) solveStep(true, fmtNum(st.a), '', 'Ce n\'est pas ' + fmtNum(v) + '.' + (early ? ' ' + earlyMsg : ''), '');
+    else { R.fb = { kind: 'bad', html: (early ? earlyMsg + ' ' : pick(BAD) + ' ') + "Lis l'indice et réessaie." }; R.hint = st.hint || null; renderPlay(); }
   }
   function solveStep(fixed, val, okFb, pickFb, why){
     const R = S.R, it = curItem(), last = R.si === it.steps.length - 1;
@@ -2136,7 +2144,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         '</div></div>';
     }
     const box = '<span class="abox' + (R.wrong ? ' bad' : '') + (R.wrong && R.shake ? ' shake' : '') + '" aria-label="Ta réponse">' + esc(R.input) + '<span class="caret" aria-hidden="true"></span></span>';
-    return '<div class="srow active"><span class="sq">' + st.q + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
+    const inter = curItem().steps.slice(curItem().steps.indexOf(st) + 1).some(x => x.kind === 'num');
+    return '<div class="srow active"><span class="sq">' + (inter ? '<b>' + st.q + '</b>' : st.q) + '</span><span class="sex">' + st.expr.replace('□', box) + '</span></div>';
   }
   function renderPlay(){
     const R = S.R, lv = LEVELS[R.level - 1], it = curItem();

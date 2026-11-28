@@ -475,6 +475,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1078,11 +1081,11 @@ b.tgt{color:var(--stamp)}
     const nouns = shuffle([{ h: s.noun, ok: true }, { h: s.other, ok: false, fb: '« ' + s.adjF + ' » ne dit pas comment est ' + gu(s.other) + '. Regarde le nom juste à côté de l\'adjectif.' }]);
     const marked = s.mk((k, t) => k === 'noun' ? NN(t) : (k === 'bf' || k === 'ep') ? B(t) : t);
     return {
-      stmt: '<p class="lead-q">Trouve l\'adjectif de cette phrase.</p>' + P(s.text),
+      stmt: '<p class="lead-q">Trouve <b>l\'adjectif</b> de cette phrase.</p>' + P(s.text),
       stmtDone: P(marked),
       steps: [
         mkChoice('Quel mot est un adjectif ?', shuffle(uniqBy(opts, o => o.h)), { cls: 'big', hint: HINT_ADJ }),
-        mkChoice('« ' + s.adjF + ' » donne une précision sur quel nom ?', nouns, { cls: 'big', hint: 'L\'adjectif est juste avant ou juste après le nom qu\'il précise.' })
+        mkChoice('« ' + s.adjF + ' » donne une précision sur <b>quel nom</b> ?', nouns, { cls: 'big', hint: 'L\'adjectif est juste avant ou juste après le nom qu\'il précise.' })
       ],
       end: '« ' + s.adjF + ' » est un adjectif : il précise le nom « ' + s.noun + ' ». Comment ' + (s.nounPl ? 'sont les ' + s.noun : 'est ' + defOf(s.N, false)) + ' ? ' + cap1(s.adjF) + '.',
       sum: s.text + ' → ' + s.adjF
@@ -1101,7 +1104,7 @@ b.tgt{color:var(--stamp)}
     if (HARD && Math.random() < 0.75){ const f = pick(FAM.filter(f => !/ment$/.test(f[1]))); [n, v, a] = f; fam = true; }
     else { n = pick(NW); v = pick(VW); a = pick(AW); }
     return {
-      stmt: '<p class="lead-q">Lequel de ces mots est un adjectif ?</p>',
+      stmt: '<p class="lead-q">Lequel de ces mots est <b>un adjectif</b> ?</p>',
       steps: [mkChoice('Choisis l\'adjectif :', shuffle([{ h: a, ok: true }, { h: n, ok: false, fb: '« ' + n + ' » est un nom : il a un déterminant devant lui.' }, { h: v, ok: false, fb: '« ' + v + ' » est un verbe : on peut le conjuguer.' }]), { cls: 'big', hint: HINT_ADJ })],
       end: '« ' + a + ' » est un adjectif : on peut dire « très ' + a + ' ».' + (fam ? ' Les trois mots sont de la même famille, mais « ' + n + ' » est un nom et « ' + v + ' » un verbe.' : ''),
       sum: n + ' / ' + v + ' / ' + a
@@ -1117,7 +1120,7 @@ b.tgt{color:var(--stamp)}
       const kind = pick(['def', 'ind']);
       const gs = [a].concat(others).map(x => mkGN({ N, pl, kind, ep: x }).text);
       return {
-        stmt: '<p class="lead-q">Dans un seul de ces groupes nominaux, l\'adjectif est fait avec le participe passé d\'un verbe. Lequel ?</p>',
+        stmt: '<p class="lead-q">Dans un seul de ces groupes nominaux, l\'adjectif est fait avec <b>le participe passé d\'un verbe</b>. Lequel ?</p>',
         steps: [mkChoice('Choisis le groupe nominal :', shuffle([{ h: gs[0], ok: true }, { h: gs[1], ok: false, fb: '« ' + af(others[0], N.g, pl) + ' » n\'est pas fait avec le participe passé d\'un verbe.' }, { h: gs[2], ok: false, fb: '« ' + af(others[1], N.g, pl) + ' » n\'est pas fait avec le participe passé d\'un verbe.' }]), { cls: 'big', hint: 'Le participe passé, c\'est la forme du verbe après « il a » : il a fermé, il a doré.' })],
         end: '« ' + af(a, N.g, pl) + ' » vient du verbe « ' + PARTI[a] + ' » : on dit « il a ' + a + ' ». C\'est un adjectif fait avec un participe passé.',
         sum: gs.join(' / ') + ' → participe'
@@ -1136,7 +1139,7 @@ b.tgt{color:var(--stamp)}
       const g = mkGN({ N, pl, kind: pick(['def', 'dem', 'def']), bf, ep });
       const okH = g.bfF + ' et ' + g.epF;
       return {
-        stmt: '<p class="lead-q">Ce groupe nominal contient deux adjectifs. Lesquels ?</p>' + W(g.text),
+        stmt: '<p class="lead-q">Ce groupe nominal contient <b>deux adjectifs</b>. Lesquels ?</p>' + W(g.text),
         stmtDone: W(g.r((k, t) => k === 'noun' ? NN(t) : (k === 'bf' || k === 'ep') ? B(t) : t)),
         steps: [mkChoice('Les deux adjectifs sont…', shuffle([{ h: okH, ok: true }, { h: g.bfF + ' et ' + g.word, ok: false, fb: '« ' + g.word + ' » est le nom : les adjectifs le précisent.' }, { h: g.word + ' et ' + g.epF, ok: false, fb: '« ' + g.word + ' » est le nom : les adjectifs le précisent.' }]), { cls: 'big', hint: 'Un adjectif peut être avant le nom, un autre après le nom.' })],
         end: '« ' + g.bfF + ' » est avant le nom « ' + g.word + ' », « ' + g.epF + ' » est après : ce sont deux adjectifs épithètes du même nom.',
@@ -1176,7 +1179,7 @@ b.tgt{color:var(--stamp)}
     const shown = g.r((kk, t) => (kk === 'bf' || kk === 'ep') ? parenAdj(a) : kk === 'noun' ? NN(t) : t);
     const word = g.word;
     return {
-      stmt: '<p class="lead-q">Accorde l\'adjectif entre parenthèses avec le nom.</p>' + W(shown),
+      stmt: '<p class="lead-q"><b>Accorde</b> l\'adjectif entre parenthèses avec le nom.</p>' + W(shown),
       stmtDone: W(g.r((kk, t) => (kk === 'bf' || kk === 'ep') ? B(t) : kk === 'noun' ? NN(t) : t)),
       steps: [
         mkChoice('Le nom « ' + word + ' » est…', GNB.map(x => {
@@ -1207,7 +1210,7 @@ b.tgt{color:var(--stamp)}
       const k = g + 'p';
       const ks = GNB.filter(x => x.k !== 'ms');
       return {
-        stmt: '<p class="lead-q">L\'adjectif précise les deux noms. Accorde-le.</p>' + W(shown),
+        stmt: '<p class="lead-q">L\'adjectif précise <b>les deux noms</b>. Accorde-le.</p>' + W(shown),
         stmtDone: W(gA.r((k2, x) => k2 === 'noun' ? NN(x) : x) + ' et ' + gB.r((k2, x) => k2 === 'noun' ? NN(x) : x) + ' ' + B(right)),
         steps: [
           mkChoice('L\'adjectif se met au…', ks.map(x => x.k === k ? { h: x.h, ok: true } : { h: x.h, ok: false, fb: x.k[1] === 's' ? 'L\'adjectif précise deux noms : il se met au pluriel.' : g === 'm' ? 'Avec un nom masculin et un nom féminin, l\'adjectif se met au masculin pluriel.' : 'Les deux noms sont féminins : féminin pluriel.' }), { hint: 'Deux noms ensemble : pluriel. S\'il y a un nom masculin, on met le masculin.' }),
@@ -1230,7 +1233,7 @@ b.tgt{color:var(--stamp)}
       const g = mkGN({ N, pl, kind: pick(['def', 'dem', 'def']), ep: a, cdn });
       const right = g.epF;
       return {
-        stmt: '<p class="lead-q">Accorde l\'adjectif entre parenthèses.</p>' + W(g.r((k, x) => k === 'ep' ? parenAdj(a) : x)),
+        stmt: '<p class="lead-q"><b>Accorde</b> l\'adjectif entre parenthèses.</p>' + W(g.r((k, x) => k === 'ep' ? parenAdj(a) : x)),
         stmtDone: W(g.r((k, x) => k === 'ep' ? B(x) : k === 'noun' ? NN(x) : x)),
         steps: [
           mkChoice('L\'adjectif s\'accorde avec le nom…', shuffle([{ h: g.word, ok: true }, { h: cdn.n, ok: false, fb: '« ' + cdn.n + ' » est dans le complément du nom « ' + cdn.t + ' ». L\'adjectif précise le nom qui est juste avant lui.' }]), { cls: 'big', hint: 'Qu\'est-ce qui est « ' + a + ' » ?' }),
@@ -1254,7 +1257,7 @@ b.tgt{color:var(--stamp)}
       const opts = [{ h: s.text, ok: true }].concat(acts.map(a => ({ h: subj + ' ' + (s.pl ? a[1] : a[0]) + '.', ok: false, fb: '« ' + (s.pl ? a[3] : a[2]) + ' » dit ce que fait le sujet : c\'est un verbe d\'action.' })));
       const sEst = cap1(s.g.text) + ' ' + (s.pl ? 'sont' : 'est') + ' ' + s.adjF + '.';
       return {
-        stmt: '<p class="lead-q">Dans quelle phrase le verbe est-il un verbe attributif ?</p>',
+        stmt: '<p class="lead-q"><b>Dans quelle phrase</b> le verbe est-il un verbe attributif ?</p>',
         steps: [mkChoice('Choisis la phrase :', shuffle(opts), { hint: 'Remplace le verbe par « est » ou « sont ». Le mot qui suit dit-il comment est le sujet ?' })],
         end: '« ' + s.vf + ' » est un verbe attributif : il relie le sujet « ' + s.g.text + ' » à « ' + s.adjF + ' », qui dit comment ' + (s.pl ? (N.g === 'f' ? 'elles sont' : 'ils sont') : (N.g === 'f' ? 'elle est' : 'il est')) + '.' + (s.V.inf !== 'être' ? ' On peut dire : « ' + sEst + ' »' : ''),
         sum: s.text + ' / ' + acts.map(a => a[2]).join(' / ')
@@ -1271,7 +1274,7 @@ b.tgt{color:var(--stamp)}
     if (s.cdn) opts.push({ h: s.cdn.n, ok: false, fb: '« ' + s.cdn.n + ' » est un nom, dans le complément du nom « ' + s.cdn.t + ' ».' });
     const marked = s.mk((k, t) => k === 'noun' ? NN(t) : t, VB, B);
     return {
-      stmt: '<p class="lead-q">Quel mot est l\'attribut du sujet ?</p>' + P(s.text),
+      stmt: '<p class="lead-q">Quel mot est <b>l\'attribut du sujet</b> ?</p>' + P(s.text),
       stmtDone: P(marked),
       steps: [mkChoice('L\'attribut du sujet est…', shuffle([opts[0]].concat(uniqBy(opts, o => o.h).slice(1, 4))), { cls: 'big', hint: 'Trouve le verbe attributif. L\'attribut est juste après lui : il dit comment est le sujet.' })],
       end: '« ' + s.adjF + ' » est attribut du sujet « ' + s.g.text + ' » : il est relié au sujet par le verbe attributif « ' + s.vf + ' ».',
@@ -1286,7 +1289,7 @@ b.tgt{color:var(--stamp)}
     if (good === 'passer pour') ds = ['passer'].concat(ds.slice(0, 2));
     const fb = d => d === 'avoir' ? '« avoir » tout seul veut dire posséder (avoir une épée). C\'est « avoir l\'air » qui est attributif.' : d === 'passer' ? '« passer » tout seul dit une action (passer devant la tour). C\'est « passer pour » qui est attributif.' : '« ' + d + ' » dit une action : ce n\'est pas un verbe attributif.';
     return {
-      stmt: '<p class="lead-q">Lequel de ces verbes est un verbe attributif ?</p>',
+      stmt: '<p class="lead-q">Lequel de ces verbes est <b>un verbe attributif</b> ?</p>',
       steps: [mkChoice('Le verbe attributif est…', shuffle([{ h: good, ok: true }].concat(ds.map(d => ({ h: d, ok: false, fb: fb(d) })))), { cls: 'big', hint: 'Les verbes attributifs : être, sembler, paraître, devenir, rester, avoir l\'air, passer pour, demeurer.' })],
       end: '« ' + good + ' » est un verbe attributif : il peut relier le sujet à un mot qui dit comment il est.',
       sum: good + ' / ' + ds.join(' / ')
@@ -1308,7 +1311,7 @@ b.tgt{color:var(--stamp)}
       if (attr){
         const s = sAttr({ kinds: ['p', 'a', 'o'] });
         return {
-          stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il un verbe attributif ?</p>' + P(s.mk((k, t) => t, VB)),
+          stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il <b>un verbe attributif</b> ?</p>' + P(s.mk((k, t) => t, VB)),
           stmtDone: P(s.mk((k, t) => k === 'noun' ? NN(t) : t, VB, B)),
           steps: [mkChoice('« ' + s.vf + ' » est…', [{ h: 'un verbe attributif', ok: true }, { h: 'un verbe d\'action', ok: false, fb: 'On peut dire « ' + cap1(s.g.text) + ' ' + (s.pl ? 'sont' : 'est') + ' ' + s.adjF + ' » : « ' + s.adjF + ' » dit comment est le sujet.' }], { hint: 'Remplace le verbe par « est » ou « sont ».' })],
           end: '« ' + s.vf + ' » relie le sujet à « ' + s.adjF + ' », qui dit comment est le sujet : c\'est un verbe attributif.',
@@ -1319,7 +1322,7 @@ b.tgt{color:var(--stamp)}
       const g = mkGN({ N, pl, kind: 'def' }), vf = pl ? act[3] : act[2];
       const txt = cap1(g.text) + ' ' + (pl ? act[1] : act[0]) + '.';
       return {
-        stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il un verbe attributif ?</p>' + P(cap1(g.text) + ' ' + VB(vf) + (pl ? act[1] : act[0]).slice(vf.length) + '.'),
+        stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il <b>un verbe attributif</b> ?</p>' + P(cap1(g.text) + ' ' + VB(vf) + (pl ? act[1] : act[0]).slice(vf.length) + '.'),
         steps: [mkChoice('« ' + vf + ' » est…', [{ h: 'un verbe attributif', ok: false, fb: '« ' + vf + ' » dit ce que fait le sujet. Après lui, il n\'y a pas de mot qui dit comment est le sujet.' }, { h: 'un verbe d\'action', ok: true }], { hint: 'Le verbe dit-il ce que fait le sujet, ou comment il est ?' })],
         end: '« ' + vf + ' » dit ce que fait le sujet : c\'est un verbe d\'action.',
         sum: txt + ' → non'
@@ -1331,7 +1334,7 @@ b.tgt{color:var(--stamp)}
       const sEst = cap1(s.g.text) + ' ' + (s.pl ? 'sont' : 'est') + ' ' + s.adjF;
       const action = { rester: '« ' + s.vf + ' » veut dire que le sujet ne part pas', 'passer pour': '« ' + s.vf + ' » dit une action : passer quelque part', 'avoir l\'air': '« ' + s.vf + ' » veut dire « possède »', devenir: '« ' + s.vf + ' » dit une action du sujet', demeurer: '« ' + s.vf + ' » veut dire que le sujet habite quelque part' }[s.V.inf];
       return {
-        stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il un verbe attributif ? Choisis la bonne explication.</p>' + P(s.mk((k, t) => t, VB)),
+        stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il <b>un verbe attributif</b> ? Choisis la bonne explication.</p>' + P(s.mk((k, t) => t, VB)),
         stmtDone: P(s.mk((k, t) => k === 'noun' ? NN(t) : t, VB, B)),
         steps: [mkChoice('Le verbe « ' + s.vf + ' »…', shuffle([
           { h: 'Oui : « ' + s.adjF + ' » dit comment est le sujet. On peut dire « ' + sEst + ' ».', ok: true },
@@ -1345,7 +1348,7 @@ b.tgt{color:var(--stamp)}
     const X = pick(NONATTR), N = pick(PERS), pl = plOf(N, 0.35), g = mkGN({ N, pl, kind: 'def' });
     const vf = pl ? X[1] : X[0], txt = cap1(g.text) + ' ' + vf + ' ' + X[2] + '.';
     return {
-      stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il un verbe attributif ? Choisis la bonne explication.</p>' + P(cap1(g.text) + ' ' + VB(vf) + ' ' + X[2] + '.'),
+      stmt: '<p class="lead-q">Dans cette phrase, le verbe est-il <b>un verbe attributif</b> ? Choisis la bonne explication.</p>' + P(cap1(g.text) + ' ' + VB(vf) + ' ' + X[2] + '.'),
       steps: [mkChoice('Le verbe « ' + vf + ' »…', shuffle([
         { h: 'Non : ' + whyNon(X, vf) + '.', ok: true },
         { h: 'Oui : on peut le remplacer par « ' + (pl ? 'sont' : 'est') + ' ».', ok: false, fb: X[4] === 'avoir' ? '« ' + cap1(g.text) + ' ' + (pl ? 'sont' : 'est') + ' ' + X[2] + ' » n\'a pas de sens : ici, « ' + vf + ' » veut dire « possède ».' : '« ' + cap1(g.text) + ' ' + (pl ? 'sont' : 'est') + ' ' + X[2] + ' » a du sens, mais « ' + X[2] + ' » ne dit pas comment est le sujet. Un verbe attributif relie le sujet à un mot qui dit comment il est.' },
@@ -1407,9 +1410,9 @@ b.tgt{color:var(--stamp)}
       { h: 'épithète du nom', ok: tg.fn === 'epi', fb: tg.fn === 'epi' ? '' : 'Regarde le verbe : « ' + s.vf + ' » est un verbe attributif, et « ' + tg.adjF + ' » est après lui, en dehors du groupe nominal.' },
       { h: 'attribut du sujet', ok: tg.fn === 'attr', fb: tg.fn === 'attr' ? '' : (s.where === 'gnattr' ? '« ' + tg.adjF + ' » est juste après le nom « ' + tg.noun + ' », dans le groupe nominal « ' + s.g.text + ' ».' : '« ' + tg.adjF + ' » est dans le groupe nominal, juste à côté du nom « ' + tg.noun + ' ».') }
     ], { hint: FN_HINT })];
-    if (ns.length > 1) steps.push(mkChoice('« ' + tg.adjF + ' » donne une précision sur quel nom ?', shuffle(ns.map(n => n === tg.noun ? { h: n, ok: true } : { h: n, ok: false, fb: '« ' + tg.adjF + ' » ne dit pas comment est « ' + n + ' ».' })), { cls: 'big', hint: 'Demande-toi : qui (ou qu\'est-ce qui) est « ' + tg.adjF + ' » ?' }));
+    if (ns.length > 1) steps.push(mkChoice('« ' + tg.adjF + ' » donne une précision sur <b>quel nom</b> ?', shuffle(ns.map(n => n === tg.noun ? { h: n, ok: true } : { h: n, ok: false, fb: '« ' + tg.adjF + ' » ne dit pas comment est « ' + n + ' ».' })), { cls: 'big', hint: 'Demande-toi : qui (ou qu\'est-ce qui) est « ' + tg.adjF + ' » ?' }));
     return {
-      stmt: '<p class="lead-q">Quelle est la fonction de l\'adjectif en couleur ?</p>' + P(rend(s, tg, 'bold')),
+      stmt: '<p class="lead-q">Quelle est <b>la fonction</b> de l\'adjectif en couleur ?</p>' + P(rend(s, tg, 'bold')),
       stmtDone: P(rend(s, tg, 'done')),
       steps,
       end: whyFn(s, tg),
@@ -1448,12 +1451,12 @@ b.tgt{color:var(--stamp)}
       const m = multi, both = m.gA.text + ' et ' + m.gB.text;
       const txt = (f, fa) => cap1(m.gA.r(f)) + ' et ' + m.gB.r(f) + ' ' + m.vf + ' ' + fa + '.';
       const steps = [
-        mkChoice('Quelle est la fonction de l\'adjectif ?', [{ h: 'épithète du nom', ok: false, fb: '« ' + m.vf + ' » est un verbe attributif : l\'adjectif est après lui.' }, { h: 'attribut du sujet', ok: true }], { hint: FN_HINT }),
+        mkChoice('Quelle est <b>la fonction</b> de l\'adjectif ?', [{ h: 'épithète du nom', ok: false, fb: '« ' + m.vf + ' » est un verbe attributif : l\'adjectif est après lui.' }, { h: 'attribut du sujet', ok: true }], { hint: FN_HINT }),
         mkChoice('Il s\'accorde avec…', shuffle([{ h: both, ok: true }, { h: m.gA.text, ok: false, fb: 'Le sujet, ce sont les deux : « ' + both + ' ».' }, { h: m.gB.text, ok: false, fb: 'Le sujet, ce sont les deux : « ' + both + ' ».' }]), { hint: 'Qui ' + m.vf + ' ' + m.a + ' ?' }),
         mkChoice('Écris l\'adjectif « ' + m.a + ' » correctement :', formOpts(m.a, m.g, true, f => '« ' + f + ' » ne va pas : deux sujets, ' + (m.g === 'm' ? 'dont un masculin : masculin pluriel.' : 'tous deux féminins : féminin pluriel.')), { cls: 'big', hint: 'Deux sujets : pluriel. S\'il y a un nom masculin, on met le masculin.' })
       ];
       return {
-        stmt: '<p class="lead-q">Trouve la fonction de l\'adjectif, puis accorde-le.</p>' + P(txt((k, t) => t, parenAdj(m.a))),
+        stmt: '<p class="lead-q">Trouve <b>la fonction</b> de l\'adjectif, puis accorde-le.</p>' + P(txt((k, t) => t, parenAdj(m.a))),
         stmtDone: P(txt((k, t) => k === 'noun' ? NN(t) : t, B(m.adjF)).replace(' ' + m.vf + ' ', ' ' + VB(m.vf) + ' ')),
         steps,
         end: '« ' + m.adjF + ' » est attribut du sujet « ' + both + ' » : ' + (m.g === 'm' ? (m.A.g !== m.Bn.g ? 'un nom masculin et un nom féminin, donc masculin pluriel.' : 'deux noms masculins, donc masculin pluriel.') : 'deux noms féminins, donc féminin pluriel.'),
@@ -1463,10 +1466,10 @@ b.tgt{color:var(--stamp)}
     if (pron){
       const p = pron, txt = fa => cap1(p.p) + ' ' + p.vf + ' ' + fa + '.';
       return {
-        stmt: '<p class="lead-q">Trouve la fonction de l\'adjectif, puis accorde-le.</p>' + P(txt(parenAdj(p.a))),
+        stmt: '<p class="lead-q">Trouve <b>la fonction</b> de l\'adjectif, puis accorde-le.</p>' + P(txt(parenAdj(p.a))),
         stmtDone: P(cap1(NN(p.p)) + ' ' + VB(p.vf) + ' ' + B(p.adjF) + '.'),
         steps: [
-          mkChoice('Quelle est la fonction de l\'adjectif ?', [{ h: 'épithète du nom', ok: false, fb: '« ' + p.vf + ' » est un verbe attributif : l\'adjectif est après lui.' }, { h: 'attribut du sujet', ok: true }], { hint: FN_HINT }),
+          mkChoice('Quelle est <b>la fonction</b> de l\'adjectif ?', [{ h: 'épithète du nom', ok: false, fb: '« ' + p.vf + ' » est un verbe attributif : l\'adjectif est après lui.' }, { h: 'attribut du sujet', ok: true }], { hint: FN_HINT }),
           mkChoice('Écris l\'adjectif « ' + p.a + ' » correctement :', formOpts(p.a, p.g, p.pl, f => 'Le sujet « ' + p.p + ' » est ' + GENRE(p.g, p.pl) + '.'), { cls: 'big', hint: 'L\'attribut s\'accorde avec le sujet « ' + p.p + ' » : ' + GENRE(p.g, p.pl) + '.' })
         ],
         end: '« ' + p.adjF + ' » est attribut du sujet « ' + p.p + ' » (' + GENRE(p.g, p.pl) + ') : il s\'accorde avec lui.',
@@ -1482,14 +1485,14 @@ b.tgt{color:var(--stamp)}
       if (s) { tg = target(s); if (nForms(tg.adj) >= 2) break; }
     }
     const ns = nounsOf(s);
-    const steps = [mkChoice('Quelle est la fonction de l\'adjectif ?', [
+    const steps = [mkChoice('Quelle est <b>la fonction</b> de l\'adjectif ?', [
       { h: 'épithète du nom', ok: tg.fn === 'epi', fb: tg.fn === 'epi' ? '' : '« ' + s.vf + ' » est un verbe attributif : l\'adjectif est après lui.' },
       { h: 'attribut du sujet', ok: tg.fn === 'attr', fb: tg.fn === 'attr' ? '' : 'L\'adjectif est dans le groupe nominal, juste à côté du nom « ' + tg.noun + ' ».' }
     ], { hint: FN_HINT })];
     if (ns.length > 1) steps.push(mkChoice('Il s\'accorde avec le nom…', shuffle(ns.map(n => n === tg.noun ? { h: n, ok: true } : { h: n, ok: false, fb: tg.fn === 'attr' ? 'L\'attribut s\'accorde avec le sujet : ce qui ' + s.vf + ' ' + tg.adj + ', c\'est « ' + s.g.text.replace(/ (du|de la|des|de l') .*$/, '') + ' ».' : 'L\'épithète s\'accorde avec le nom qu\'elle accompagne : celui qui est juste à côté d\'elle.' })), { cls: 'big', hint: tg.fn === 'attr' ? 'L\'attribut s\'accorde avec le nom noyau du sujet.' : 'L\'épithète s\'accorde avec le nom qu\'elle précise.' }));
     steps.push(mkChoice('Écris l\'adjectif « ' + tg.adj + ' » correctement :', formOpts(tg.adj, tg.nounG, tg.nounPl, fbForm(tg.adj, tg.nounG, tg.nounPl, tg.noun)), { cls: 'big', hint: '« ' + tg.noun + ' » est ' + GENRE(tg.nounG, tg.nounPl) + '.' }));
     return {
-      stmt: '<p class="lead-q">Trouve la fonction de l\'adjectif, puis accorde-le.</p>' + P(rend(s, tg, 'paren')),
+      stmt: '<p class="lead-q">Trouve <b>la fonction</b> de l\'adjectif, puis accorde-le.</p>' + P(rend(s, tg, 'paren')),
       stmtDone: P(rend(s, tg, 'done')),
       steps,
       end: tg.fn === 'attr' ? '« ' + tg.adjF + ' » est attribut du sujet : il s\'accorde avec « ' + tg.noun + ' » (' + GENRE(tg.nounG, tg.nounPl) + ').'

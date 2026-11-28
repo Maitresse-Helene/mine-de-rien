@@ -475,6 +475,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -852,7 +855,7 @@ b.tgt{color:var(--stamp)}
       return {
         stmt: P(s),
         stmtDone: P(s.replace(' ' + m[pl ? 1 : 0] + ' ', ' ' + VB(m[pl ? 1 : 0]) + ' ')),
-        steps: [mkChoice('Quel est le verbe conjugué ?', opts, { cls: 'big', hint: 'Il y a deux verbes : un seul change si on dit « Hier, … ». L\'autre est à l\'infinitif.' })],
+        steps: [mkChoice('Quel est <b>le verbe conjugué</b> ?', opts, { cls: 'big', hint: 'Il y a deux verbes : un seul change si on dit « Hier, … ». L\'autre est à l\'infinitif.' })],
         end: 'Le verbe conjugué est « ' + m[pl ? 1 : 0] + ' ». « ' + f.inf + ' » est à l\'infinitif.',
         sum: s + ' → ' + m[pl ? 1 : 0]
       };
@@ -868,7 +871,7 @@ b.tgt{color:var(--stamp)}
     return {
       stmt: P(s),
       stmtDone: P(s.replace(' ' + v + ' ', ' ' + VB(v) + ' ')),
-      steps: [mkChoice('Quel est le verbe conjugué ?', opts, { cls: 'big', hint: 'Change le temps de la phrase (hier, demain) : le mot qui change est le verbe.' })],
+      steps: [mkChoice('Quel est <b>le verbe conjugué</b> ?', opts, { cls: 'big', hint: 'Change le temps de la phrase (hier, demain) : le mot qui change est le verbe.' })],
       end: 'Le verbe conjugué est « ' + v + ' » : c\'est le verbe ' + f.inf + '.',
       sum: s + ' → ' + v
     };
@@ -895,7 +898,7 @@ b.tgt{color:var(--stamp)}
       s = startWith(pick(TIME[t]), sj) + ' ' + B(w) + ' ' + f.c + '.';
     }
     return {
-      stmt: '<p class="lead-q">Le verbe en gras est-il conjugué ou à l\'infinitif ?</p>' + P(s),
+      stmt: '<p class="lead-q">Le verbe en gras est-il <b>conjugué ou à l\'infinitif</b> ?</p>' + P(s),
       steps: [mkChoice('« ' + w + ' » est…', KIND2.map(x => ({ h: x.h, ok: x.k === k, fb: x.k === k ? '' : (k === 'i' ? 'Ce verbe ne change pas si on dit « hier » : il est à l\'infinitif.' : 'Ce verbe change si on dit « hier » ou « demain » : il est conjugué.') })), { hint: 'Dis la phrase au passé (hier…) : si le verbe change, il est conjugué. L\'infinitif ne change jamais.' })],
       end: '« ' + w + ' » est ' + (k === 'c' ? 'un verbe conjugué.' : 'à l\'infinitif : il se termine par -' + w.slice(-2) + ' et ne change pas.'),
       sum: s.replace(/<[^>]+>/g, '') + ' → ' + w + ' ' + k
@@ -913,7 +916,7 @@ b.tgt{color:var(--stamp)}
     if (HARD && Math.random() < 0.6) {
       const [form, inf, d1, d2] = pick(INF_IRR);
       return {
-        stmt: '<p class="lead-q">Quel est l\'infinitif de ce verbe ?</p>' + W(form),
+        stmt: '<p class="lead-q">Quel est <b>l\'infinitif</b> de ce verbe ?</p>' + W(form),
         steps: [mkChoice('« ' + form + ' », c\'est le verbe…', shuffle([{ h: inf, ok: true }, { h: d1, ok: false, fb: '« ' + form + ' » ne vient pas du verbe ' + d1 + '.' }, { h: d2, ok: false, fb: '« ' + form + ' » ne vient pas du verbe ' + d2 + '.' }]), { cls: 'big', hint: 'L\'infinitif est la forme du dictionnaire : on peut dire « il faut… » devant lui.' })],
         end: '« ' + form + ' » vient du verbe <b>' + inf + '</b>.',
         sum: form + ' → ' + inf
@@ -922,7 +925,7 @@ b.tgt{color:var(--stamp)}
     const f = pick(FR), t = pick(['pres', 'imp', 'fut']), p = pick([0, 1, 2, 3, 4, 5]), form = conj(f.inf, t, p);
     const other = shuffle([0, 1, 2, 3, 4, 5].map(q => conj(f.inf, pick(['pres', 'imp']), q))).find(x => x !== form);
     return {
-      stmt: '<p class="lead-q">Quel est l\'infinitif de ce verbe ?</p>' + W(PRON[p] === 'je' && voy(form) ? 'j\'' + form : PRON[p] + ' ' + form),
+      stmt: '<p class="lead-q">Quel est <b>l\'infinitif</b> de ce verbe ?</p>' + W(PRON[p] === 'je' && voy(form) ? 'j\'' + form : PRON[p] + ' ' + form),
       steps: [mkChoice('L\'infinitif est…', shuffle([{ h: f.inf, ok: true }, { h: pp(f.inf), ok: false, fb: '« ' + pp(f.inf) + ' » n\'est pas l\'infinitif : c\'est le participe passé (il a ' + pp(f.inf) + ').' }, { h: other, ok: false, fb: '« ' + other + ' » est une forme conjuguée : l\'infinitif ne change pas.' }]), { cls: 'big', hint: 'L\'infinitif est la forme du dictionnaire. Dis : « il faut… ».' })],
       end: 'C\'est le verbe <b>' + f.inf + '</b> : on dit « il faut ' + f.inf + ' ».',
       sum: form + ' → ' + f.inf
@@ -939,7 +942,7 @@ b.tgt{color:var(--stamp)}
     return {
       stmt: '<p class="lead-q">On a changé le temps de la phrase.</p>' + P(s) + PS('→ ' + s2),
       stmtDone: P(s.replace(' ' + v + ' ', ' ' + VB(v) + ' ')) + PS('→ ' + s2.replace(' ' + v2 + ' ', ' ' + VB(v2) + ' ')),
-      steps: [mkChoice('Dans la première phrase, quel mot a changé ?', shuffle([{ h: v, ok: true }].concat(nouns.map(n => ({ h: n, ok: false, fb: '« ' + n + ' » est resté pareil dans les deux phrases.' })))), { cls: 'big', hint: 'Compare les deux phrases mot à mot.' })],
+      steps: [mkChoice('Dans la première phrase, <b>quel mot a changé</b> ?', shuffle([{ h: v, ok: true }].concat(nouns.map(n => ({ h: n, ok: false, fb: '« ' + n + ' » est resté pareil dans les deux phrases.' })))), { cls: 'big', hint: 'Compare les deux phrases mot à mot.' })],
       end: '« ' + v + ' » est devenu « ' + v2 + ' » : c\'est le verbe conjugué.',
       sum: s + ' → ' + t
     };
@@ -954,7 +957,7 @@ b.tgt{color:var(--stamp)}
     const good = comp ? S + 'n\'' + AVOIR[p] + ' pas ' + pp(f.inf) + ' ' + f.c + '.' : S + neg(v) + ' ' + f.c + '.';
     const bad = comp ? [S + 'n\'' + AVOIR[p] + ' ' + pp(f.inf) + ' pas ' + f.c + '.', S + 'ne pas ' + AVOIR[p] + ' ' + pp(f.inf) + ' ' + f.c + '.'] : [S + 'ne pas ' + v + ' ' + f.c + '.', S + v + ' ne pas ' + f.c + '.'];
     return {
-      stmt: '<p class="lead-q">On met cette phrase à la forme négative, avec ne… pas.</p>' + P(S + v + ' ' + f.c + '.'),
+      stmt: '<p class="lead-q">On met cette phrase <b>à la forme négative</b>, avec ne… pas.</p>' + P(S + v + ' ' + f.c + '.'),
       steps: [mkChoice('Quelle phrase est bien écrite ?', shuffle([{ h: good, ok: true }].concat(bad.map(b => ({ h: b, ok: false, fb: comp ? 'À un temps composé, « ne » et « pas » entourent l\'auxiliaire.' : '« ne » se place juste avant le verbe et « pas » juste après.' })))), { hint: comp ? 'Le verbe a deux parties : « ne… pas » entoure la première, l\'auxiliaire.' : 'Le verbe se met entre « ne » et « pas ».' })],
       end: '« ' + good + ' »' + (comp ? ' : « ne… pas » entoure l\'auxiliaire « ' + AVOIR[p] + ' ».' : ' : le verbe « ' + v + ' » est entre « ne » et « pas ».'),
       sum: good
@@ -988,7 +991,7 @@ b.tgt{color:var(--stamp)}
     return {
       stmt: P(s),
       stmtDone: P(s.replace(' ' + v + ' ', ' ' + VB(v) + ' ')) + PS('→ ' + ns.replace(' ' + v + ' ', ' ' + VB(v) + ' ')),
-      steps: [mkChoice('Quel est le verbe conjugué ? Aide-toi de « ne… pas ».', shuffle([{ h: v, ok: true }].concat(others.map(n => ({ h: n, ok: false, fb: nounFb(n) })))), { cls: 'big', hint: 'Plusieurs mots ressemblent à des verbes. Essaie de mettre « ne… pas » autour de chacun.' })],
+      steps: [mkChoice('Quel est <b>le verbe conjugué</b> ? Aide-toi de « ne… pas ».', shuffle([{ h: v, ok: true }].concat(others.map(n => ({ h: n, ok: false, fb: nounFb(n) })))), { cls: 'big', hint: 'Plusieurs mots ressemblent à des verbes. Essaie de mettre « ne… pas » autour de chacun.' })],
       end: 'On peut dire « ' + ns + ' » : le verbe est « ' + v + ' ».',
       sum: s + ' → ' + v
     };
@@ -1004,7 +1007,7 @@ b.tgt{color:var(--stamp)}
     const shownS = (subj === 'je' && voy(right) ? 'J\'' : cap1(subj) + (gcMid ? ', ' + gcMid + ',' : '') + ' ');
     const s = shownS + GAP + ' ' + c + '.', full = shownS + right + ' ' + c + '.';
     return {
-      stmt: '<p class="lead-q">Complète avec le verbe <b>' + inf + '</b>' + (t === 'imp' ? ' à l\'imparfait' : t === 'fut' ? ' au futur' : ' au présent') + '.</p>' + P(s),
+      stmt: '<p class="lead-q">Complète avec le verbe <b>' + inf + '</b>' + ' <b>' + (t === 'imp' ? 'à l\'imparfait' : t === 'fut' ? 'au futur' : 'au présent') + '</b>.</p>' + P(s),
       stmtDone: P(shownS + VB(right) + ' ' + c + '.'),
       steps: [mkChoice('Quelle est la bonne forme ?', shuffle([{ h: right, ok: true }].concat(ds.map(x => ({ h: x, ok: false, fb: '« ' + x + ' » va avec « ' + whoGoes(inf, t, x) + ' ».' })))), { cls: 'big', hint: 'Trouve le sujet du verbe. Est-il au singulier ou au pluriel ? Quelle personne ?' })],
       end: why + '. « ' + full + ' »',
@@ -1042,7 +1045,7 @@ b.tgt{color:var(--stamp)}
 
   /* ---------- Niveau 5 : les temps composés ---------- */
   function pcSteps(form, aux, ppart, inf, auxInf){
-    const step1 = mkChoice('Quel est le verbe conjugué ?', shuffle([
+    const step1 = mkChoice('Quel est <b>le verbe conjugué</b> ?', shuffle([
       { h: form, ok: true },
       { h: aux, ok: false, fb: '« ' + aux + ' » n\'est que l\'auxiliaire : à un temps composé, le verbe a deux parties.' },
       { h: ppart, ok: false, fb: '« ' + ppart + ' » est le participe passé : il lui manque son auxiliaire.' }

@@ -471,6 +471,9 @@ b.tgt{color:var(--stamp)}
 .pchip.jaune{background:var(--jaune);color:var(--jaune-ink)}
 .pchip.orange{background:var(--orange);color:var(--orange-ink)}
 .bar-eyebrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -831,7 +834,7 @@ b.tgt{color:var(--stamp)}
     const s = sorted(ws), good = last ? s[2] : s[0], p = shared(ws);
     const other = last ? s[1] : s[1];
     return {
-      stmt: '<p class="lead-q">Lequel de ces mots vient ' + (last ? 'en dernier' : 'en premier') + ' dans le dictionnaire ?</p>',
+      stmt: '<p class="lead-q">Lequel de ces mots vient <b>' + (last ? 'en dernier' : 'en premier') + '</b> dans le dictionnaire ?</p>',
       steps: [mkChoice('Choisis le mot :', shuffle(ws.map(w => ({ h: w, ok: w === good, fb: w === good ? '' : 'Regarde la ' + ORD[p] + ' lettre de chaque mot' + (p ? ' (' + sameTxt(p) + ')' : '') + '.' }))), { cls: 'big', hint: p ? 'Les mots commencent pareil : compare la ' + ORD[p] + ' lettre.' : 'Compare la première lettre de chaque mot : laquelle vient ' + (last ? 'en dernier' : 'en premier') + ' dans l\'alphabet ?' })],
       end: 'Dans l\'ordre : ' + s.join(', ') + '. ' + (last ? '« ' + good + ' » vient en dernier.' : '« ' + good + ' » vient en premier : ' + pairWhy(s[0], s[1]) + '.'),
       sum: s.join(' ') + (last ? ' → dernier' : ' → premier')
@@ -854,7 +857,7 @@ b.tgt{color:var(--stamp)}
     else opts.push({ h: show(swapAt(s, pairs[2])), ok: false, fb: bad(swapAt(s, pairs[2])) });
     const hp = pairs[0];
     return {
-      stmt: '<p class="lead-q">Quelle liste est rangée dans l\'ordre alphabétique ?</p>',
+      stmt: '<p class="lead-q">Quelle liste est rangée <b>dans l\'ordre alphabétique</b> ?</p>',
       steps: [mkChoice('Choisis la bonne liste :', shuffle(opts), { hint: 'Compare les mots deux par deux, lettre par lettre, jusqu\'à trouver une lettre différente.' })],
       end: 'Le bon ordre : ' + show(s) + '. « ' + s[hp] + ' » avant « ' + s[hp + 1] + ' » : ' + pairWhy(s[hp], s[hp + 1]) + '.',
       sum: show(s)
@@ -882,7 +885,7 @@ b.tgt{color:var(--stamp)}
       const out = Math.random() < 0.5 ? pick(g.before) : pick(g.after), ins = shuffle(g.inside).slice(0, 2);
       return {
         stmt: head,
-        steps: [mkChoice('Quel mot ne se trouve pas sur cette page ?', shuffle([{ h: out, ok: true }].concat(ins.map(w => ({ h: w, ok: false, fb: '« ' + w + ' » se range bien entre « ' + g.A + ' » et « ' + g.B + ' ».' })))), { cls: 'big', hint: 'Compare chaque mot avec les deux mots-repères, lettre par lettre.' })],
+        steps: [mkChoice('Quel mot <b>ne se trouve pas</b> sur cette page ?', shuffle([{ h: out, ok: true }].concat(ins.map(w => ({ h: w, ok: false, fb: '« ' + w + ' » se range bien entre « ' + g.A + ' » et « ' + g.B + ' ».' })))), { cls: 'big', hint: 'Compare chaque mot avec les deux mots-repères, lettre par lettre.' })],
         end: '« ' + out + ' » se range ' + (cmp(out, g.A) < 0 ? 'avant « ' + g.A + ' »' : 'après « ' + g.B + ' »') + ' : ce mot n\'est pas sur cette page.',
         sum: g.A + '/' + g.B + ' sauf ' + out
       };
@@ -890,7 +893,7 @@ b.tgt{color:var(--stamp)}
     const good = pick(g.inside), bef = pick(g.before), aft = pick(g.after);
     return {
       stmt: head,
-      steps: [mkChoice('Quel mot se trouve sur cette page ?', shuffle([{ h: good, ok: true }, { h: bef, ok: false, fb: '« ' + bef + ' » se range avant « ' + g.A + ' » : ce mot est sur une page d\'avant.' }, { h: aft, ok: false, fb: '« ' + aft + ' » se range après « ' + g.B + ' » : ce mot est sur une page d\'après.' }]), { cls: 'big', hint: 'Le mot doit se ranger après le premier mot-repère et avant le second.' })],
+      steps: [mkChoice('Quel mot <b>se trouve</b> sur cette page ?', shuffle([{ h: good, ok: true }, { h: bef, ok: false, fb: '« ' + bef + ' » se range avant « ' + g.A + ' » : ce mot est sur une page d\'avant.' }, { h: aft, ok: false, fb: '« ' + aft + ' » se range après « ' + g.B + ' » : ce mot est sur une page d\'après.' }]), { cls: 'big', hint: 'Le mot doit se ranger après le premier mot-repère et avant le second.' })],
       end: '« ' + good + ' » se range entre « ' + g.A + ' » et « ' + g.B + ' » : ce mot est sur cette page.',
       sum: g.A + '/' + g.B + ' → ' + good
     };
@@ -903,7 +906,7 @@ b.tgt{color:var(--stamp)}
     const s = sorted(ws), t = rand(0, 3), w = s[t], L = s.filter((x, i) => i !== t);
     const labels = ['avant « ' + L[0] + ' »', 'entre « ' + L[0] + ' » et « ' + L[1] + ' »', 'entre « ' + L[1] + ' » et « ' + L[2] + ' »', 'après « ' + L[2] + ' »'];
     return {
-      stmt: '<p class="lead-q">Ces mots sont rangés dans l\'ordre alphabétique. Où faut-il ranger le mot en gras ?</p>' + P(L.join(' – ')) + W(B(w)),
+      stmt: '<p class="lead-q">Ces mots sont rangés dans l\'ordre alphabétique. <b>Où</b> faut-il ranger le mot en gras ?</p>' + P(L.join(' – ')) + W(B(w)),
       steps: [mkChoice('« ' + w + ' » se range…', labels.map((h, i) => ({ h, ok: i === t, fb: i === t ? '' : (i < t ? '« ' + w + ' » vient après « ' + L[i] + ' ».' : '« ' + w + ' » vient avant « ' + L[i - 1] + ' ».') })), { hint: 'Compare « ' + w + ' » avec chaque mot de la liste, lettre par lettre.' })],
       end: 'Le bon ordre : ' + s.join(' – ') + '.',
       sum: L.join(' ') + ' + ' + w
@@ -921,7 +924,7 @@ b.tgt{color:var(--stamp)}
       const fixes = a.map((x, k) => isSorted(a.filter((y, q) => q !== k)) ? k : -1).filter(k => k >= 0);
       if (fixes.length !== 1 || a[fixes[0]] !== m) continue;
       return {
-        stmt: '<p class="lead-q">Un seul mot n\'est pas à sa place dans cette liste. Lequel ?</p>' + P(a.join(' – ')),
+        stmt: '<p class="lead-q">Un seul mot <b>n\'est pas à sa place</b> dans cette liste. Lequel ?</p>' + P(a.join(' – ')),
         steps: [mkChoice('Le mot mal rangé est…', a.map(x => ({ h: x, ok: x === m, fb: x === m ? '' : 'Si on enlève « ' + x + ' », la liste n\'est toujours pas rangée.' })), { cls: 'big', hint: 'Cherche le mot qui casse l\'ordre : enlève-le, et la liste doit être bien rangée.' })],
         end: '« ' + m + ' » n\'est pas à sa place. Le bon ordre : ' + s.join(' – ') + '.',
         sum: a.join(' ')

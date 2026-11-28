@@ -557,6 +557,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .sex .wd{font-family:var(--font-body);font-size:.5em;font-weight:600;color:var(--ink);line-height:1.2}
 .sex.small .wd{font-size:.6em}
 .lesson > .evlist{flex:none}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1067,13 +1070,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     };
   }
   const STORIES = [
-    (d, n, P) => ['Une tarte est coupée en ' + d + ' parts égales. ' + P + ' en mange ' + n + '.', 'Quelle fraction de la tarte est mangée ?', 'Quelle fraction de la tarte reste-t-il ?', 'tarte'],
-    (d, n, P) => ['Un ruban est partagé en ' + d + ' morceaux de même longueur. ' + P + ' en peint ' + n + ' en vert.', 'Quelle fraction du ruban est peinte ?', 'Quelle fraction du ruban n\'est pas peinte ?', 'ruban'],
-    (d, n) => ['Un train a ' + d + ' wagons tous pareils. ' + n + ' ' + plur(n, 'wagon transporte', 'wagons transportent') + ' des voyageurs.', 'Quelle fraction du train transporte des voyageurs ?', 'Quelle fraction du train est vide ?', 'train'],
-    (d, n) => ['Un jardin est partagé en ' + d + ' parcelles égales. On plante des tomates dans ' + n + ' ' + plur(n, 'parcelle', 'parcelles') + '.', 'Quelle fraction du jardin a des tomates ?', 'Quelle fraction du jardin n\'a pas de tomates ?', 'jardin'],
-    (d, n) => ['Le trajet du train est partagé en ' + d + ' étapes de même longueur. Le train a déjà parcouru ' + n + ' ' + plur(n, 'étape', 'étapes') + '.', 'Quelle fraction du trajet a-t-il parcourue ?', 'Quelle fraction du trajet lui reste-t-il à parcourir ?', 'trajet'],
-    (d, n, P) => ['Une plaque de chocolat a ' + d + ' carrés identiques. ' + P + ' en offre ' + n + ' à ses amis.', 'Quelle fraction de la plaque est offerte ?', 'Quelle fraction de la plaque reste-t-il ?', 'chocolat'],
-    (d, n, P) => ['Un mur est fait de ' + d + ' bandes de même largeur. ' + P + ' en a déjà peint ' + n + '.', 'Quelle fraction du mur est peinte ?', 'Quelle fraction du mur reste à peindre ?', 'mur']
+    (d, n, P) => ['Une tarte est coupée en ' + d + ' parts égales. ' + P + ' en mange ' + n + '.', 'Quelle fraction de la tarte est mangée ?', 'Quelle fraction de la tarte <b>reste-t-il</b> ?', 'tarte'],
+    (d, n, P) => ['Un ruban est partagé en ' + d + ' morceaux de même longueur. ' + P + ' en peint ' + n + ' en vert.', 'Quelle fraction du ruban est peinte ?', 'Quelle fraction du ruban <b>n\'est pas</b> peinte ?', 'ruban'],
+    (d, n) => ['Un train a ' + d + ' wagons tous pareils. ' + n + ' ' + plur(n, 'wagon transporte', 'wagons transportent') + ' des voyageurs.', 'Quelle fraction du train transporte des voyageurs ?', 'Quelle fraction du train <b>est vide</b> ?', 'train'],
+    (d, n) => ['Un jardin est partagé en ' + d + ' parcelles égales. On plante des tomates dans ' + n + ' ' + plur(n, 'parcelle', 'parcelles') + '.', 'Quelle fraction du jardin a des tomates ?', 'Quelle fraction du jardin <b>n\'a pas</b> de tomates ?', 'jardin'],
+    (d, n) => ['Le trajet du train est partagé en ' + d + ' étapes de même longueur. Le train a déjà parcouru ' + n + ' ' + plur(n, 'étape', 'étapes') + '.', 'Quelle fraction du trajet a-t-il parcourue ?', 'Quelle fraction du trajet <b>lui reste-t-il</b> à parcourir ?', 'trajet'],
+    (d, n, P) => ['Une plaque de chocolat a ' + d + ' carrés identiques. ' + P + ' en offre ' + n + ' à ses amis.', 'Quelle fraction de la plaque est offerte ?', 'Quelle fraction de la plaque <b>reste-t-il</b> ?', 'chocolat'],
+    (d, n, P) => ['Un mur est fait de ' + d + ' bandes de même largeur. ' + P + ' en a déjà peint ' + n + '.', 'Quelle fraction du mur est peinte ?', 'Quelle fraction du mur <b>reste à peindre</b> ?', 'mur']
   ];
   const STORIES_BIG = [
     (u, d, n) => ['On a préparé ' + u + ' pizzas identiques, coupées chacune en ' + d + ' parts égales. Les enfants mangent ' + n + ' parts.', 'Quelle fraction de pizza ont-ils mangée ?', 'pizzas'],
@@ -1167,7 +1170,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return 'Tu as colorié ' + c + ' parts : c\'est trop. Le numérateur dit combien de parts colorier.';
     } })];
     const r = Math.random();
-    if (units === 1 && r < 0.45) steps.push(mkMulti('Quelle fraction de l\'unité n\'est pas coloriée ?', FR(BX(0), BX(1)), [d - k, d], { hint: 'Compte les parts blanches.', diag: v => v[0] === k && v[1] === d ? 'Ça, c\'est la partie coloriée. Compte les parts blanches.' : fracDiag(d - k, d)(v) }));
+    if (units === 1 && r < 0.45) steps.push(mkMulti('Quelle fraction de l\'unité <b>n\'est pas</b> coloriée ?', FR(BX(0), BX(1)), [d - k, d], { hint: 'Compte les parts blanches.', diag: v => v[0] === k && v[1] === d ? 'Ça, c\'est la partie coloriée. Compte les parts blanches.' : fracDiag(d - k, d)(v) }));
     else if (k > d && r < 0.45) steps.push(mkNum('Dans ' + FR(k, d) + ', combien y a-t-il d\'unités entières ?', '□', Math.floor(k / d), { hint: 'Une unité entière, c\'est ' + FR(d, d) + '. Combien de fois ' + d + ' parts dans ' + k + ' parts ?', diag: v => v === Math.ceil(k / d) ? 'La dernière unité n\'est pas complète : elle ne compte pas comme une unité entière.' : (v === k ? 'Ça, c\'est le nombre de parts. Une unité entière, c\'est ' + d + ' parts.' : 'Compte de ' + d + ' en ' + d + ' sans dépasser ' + k + '.') }));
     return {
       stmt: '<p class="lead-q">Colorie ' + FR(k, d) + ' de l\'unité.</p><p class="small-note">' + unitTxt(units) + ' Touche les parts pour les colorier (touche encore pour effacer).</p>',
@@ -1188,8 +1191,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const tpl = FR(k, d) + ' = ' + BX(0) + ' + ' + FR(BX(1), BX(2));
     const steps = [];
     if (guided){
-      steps.push(mkNum('Combien d\'unités entières sont coloriées ?', '□', q, { hint: 'Une unité entière, c\'est une figure toute coloriée.', diag: v => v === k ? 'Ça, c\'est le nombre de parts coloriées. Compte les figures toutes coloriées.' : (v === q + 1 ? 'La dernière figure n\'est pas toute coloriée : elle ne compte pas comme une unité entière.' : 'Compte les figures qui sont toutes coloriées.') }));
-      steps.push(mkNum('Combien de parts sont coloriées en plus ?', '□', r, { hint: 'Regarde la figure qui n\'est pas toute coloriée.', diag: v => v === d - r ? 'Compte les parts coloriées, pas les parts blanches.' : (v === k ? 'Compte seulement les parts de la figure qui n\'est pas toute coloriée.' : 'Compte les parts coloriées de la figure qui n\'est pas toute coloriée.') }));
+      steps.push(mkNum('Combien d\'<b>unités entières</b> sont coloriées ?', '□', q, { hint: 'Une unité entière, c\'est une figure toute coloriée.', diag: v => v === k ? 'Ça, c\'est le nombre de parts coloriées. Compte les figures toutes coloriées.' : (v === q + 1 ? 'La dernière figure n\'est pas toute coloriée : elle ne compte pas comme une unité entière.' : 'Compte les figures qui sont toutes coloriées.') }));
+      steps.push(mkNum('Combien de parts sont coloriées <b>en plus</b> ?', '□', r, { hint: 'Regarde la figure qui n\'est pas toute coloriée.', diag: v => v === d - r ? 'Compte les parts coloriées, pas les parts blanches.' : (v === k ? 'Compte seulement les parts de la figure qui n\'est pas toute coloriée.' : 'Compte les parts coloriées de la figure qui n\'est pas toute coloriée.') }));
     }
     steps.push(mkMulti('Écris la fraction sous la forme entier + fraction', tpl, [q, r, d], { hint: 'L\'entier : les unités entières. La fraction : les parts en plus, qui sont toujours des ' + partsName(d) + '.', diag: decDiag(k, d) }));
     return {

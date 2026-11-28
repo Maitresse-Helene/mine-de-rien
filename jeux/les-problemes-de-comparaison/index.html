@@ -615,6 +615,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .tri-count{color:var(--ink-soft);font-weight:700}
 .tri-bar .tri-ok{width:auto;flex:none;min-height:52px;padding:6px 26px;font-size:1.2rem}
 .ex-cap .tok{font-weight:700}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1031,7 +1034,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1153,7 +1156,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       a: Z => '{C' + Z + '} a {r} ans.',
       ad: (Z, W, w) => '{C' + Z + '} a {r} ans ' + w + ' {que' + W + '}.',
       af: (Z, W) => '{C' + Z + '} est {r} fois plus âgé{e' + Z + '} {que' + W + '}.',
-      most: 'Qui est le plus âgé ?', u: 'ans', uf: 'ans de plus'
+      most: 'Qui est <b>le plus</b> âgé ?', u: 'ans', uf: 'ans de plus'
     };
     const vp = c.k === 'verb' ? c.vp : 'a', pq = c.k === 'verb' ? ' ' + c.pq : '', n = c.n, dn = (/^[aeiouéèêîôh]/i.test(n) ? "d'" : 'de ') + n;
     return {
@@ -1169,7 +1172,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       a: Z => '{C' + Z + '} ' + vp + ' {r} ' + n + '.',
       ad: (Z, W, w) => '{C' + Z + '} ' + vp + ' {r} ' + n + ' ' + w + ' {que' + W + '}.',
       af: (Z, W) => '{C' + Z + '} ' + vp + ' {r} fois plus ' + dn + ' {que' + W + '}.',
-      most: c.k === 'verb' ? 'Qui ' + vp + ' le plus ' + dn + ' ?' : 'Qui a le plus ' + dn + ' ?', u: n, uf: n + ' de plus'
+      most: c.k === 'verb' ? 'Qui ' + vp + ' <b>le plus</b> ' + dn + ' ?' : 'Qui a <b>le plus</b> ' + dn + ' ?', u: n, uf: n + ' de plus'
     };
   }
   /* Les nombres de chaque sorte de problème */
@@ -1281,7 +1284,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function schemaStep2(P){
     const fb = schFb2(P);
-    return mkChoice('Quel schéma raconte ce problème ?', shuffle([
+    return mkChoice('Quel <b>schéma</b> raconte ce problème ?', shuffle([
       { h: sch2(P, 'ok'), ok: true }, { h: sch2(P, 'd1'), ok: false, fb: fb[0] }, { h: sch2(P, 'd2'), ok: false, fb: fb[1] }
     ]), { layout: 'schemas', hint: 'Qui en a le plus ? Sa barre est la plus longue. Le mot « fois » : un nombre de fois. Le « ? » se met à la place de ce que tu cherches.', okFb: 'Oui ! Le « ? » est au bon endroit.', showKw: true });
   }
@@ -1314,12 +1317,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   /* « Quel nombre répond à la question ? » : le remède de la fiche pour l'addition à trou */
   function whichStep(P, C){
     const opts = shuffle(C.three.map(v => ({ h: fmtNum(v), ok: v === P.r, fb: v === P.r ? '' : 'Ce nombre est donné dans l\'énoncé : ce n\'est pas ce que tu cherches.' })));
-    return mkChoice('Dans ton calcul, quel nombre répond à la question ?', opts, { layout: 'calcs', hint: 'Les nombres de l\'énoncé sont connus. La réponse, c\'est le nombre que tu viens de trouver.' });
+    return mkChoice('Dans ton calcul, <b>quel nombre répond à la question</b> ?', opts, { layout: 'calcs', hint: 'Les nombres de l\'énoncé sont connus. La réponse, c\'est le nombre que tu viens de trouver.' });
   }
   function calcSteps2(P, C, withWhich){
     const tail = withWhich ? [whichStep(P, C)] : [];
     const numOf = n => mkNum('Calcule.', n[0], n[1], { hint: n[2], calc: n[3] });
-    const steps = [calcStep('Quel calcul fais-tu ?', C.opts, { hint: 'Un écart : + ou −. Un nombre de fois : × ou ÷. Qui en a le plus ? La réponse sera-t-elle plus grande ou plus petite ?', showKw: true })];
+    const steps = [calcStep('Quel <b>calcul</b> fais-tu ?', C.opts, { hint: 'Un écart : + ou −. Un nombre de fois : × ou ÷. Qui en a le plus ? La réponse sera-t-elle plus grande ou plus petite ?', showKw: true })];
     if (C.nums.length > 1){
       return { steps: steps.concat([numOf(C.nums[0])], tail), branches: C.nums.map(n => [numOf(n)].concat(tail)) };
     }
@@ -1335,7 +1338,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       if (x === 'fois') return P.k !== undefined ? 'Le nombre de fois est déjà donné dans l\'énoncé.' : 'Il n\'y a pas le mot « fois » dans la question.';
       return 'Les deux quantités sont déjà dans l\'énoncé : on cherche à les comparer.';
     };
-    return mkChoice('Que cherches-tu ?', ['big', 'small', 'diff', 'fois'].map(x => ({ h: L[x], ok: x === k, fb: x === k ? '' : F(x) })), { hint: 'Qui en a le plus ? Est-ce que la question demande une quantité, un écart ou un nombre de fois ?', showKw: true });
+    return mkChoice('<b>Que cherches-tu</b> ?', ['big', 'small', 'diff', 'fois'].map(x => ({ h: L[x], ok: x === k, fb: x === k ? '' : F(x) })), { hint: 'Qui en a le plus ? Est-ce que la question demande une quantité, un écart ou un nombre de fois ?', showKw: true });
   }
   const sum2 = (P, tail) => esc(P.l) + ' : ' + tail;
 
@@ -1363,7 +1366,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.

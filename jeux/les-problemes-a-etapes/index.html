@@ -615,6 +615,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
 .tri-count{color:var(--ink-soft);font-weight:700}
 .tri-bar .tri-ok{width:auto;flex:none;min-height:52px;padding:6px 26px;font-size:1.2rem}
 .ex-cap .tok{font-weight:700}
+/* Consignes : ce qui est demandé est en gras (28 novembre) */
+.lead-q b,.sq b{font-weight:800;color:var(--pen)}
+.srow.done .sq b{color:inherit;font-weight:inherit}
 </style>
 
 <div class="app">
@@ -1031,7 +1034,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const opts = [{ h: good, ok: true }];
     if (badSense) opts.push({ h: badSense, ok: false, fb: 'Le nombre est juste, mais la phrase ne répond pas à la question posée.' });
     if (badNum) opts.push({ h: badNum, ok: false, fb: "Ce n'est pas le bon nombre : relis tes calculs." });
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), Object.assign({ hint: 'Relis la question du problème : ma phrase doit dire exactement ce qu\'on cherche, avec le bon nombre.', layout: 'phrases' }, o || {}));
   }
   /* Les questions sont fabriquées une par une : une série ne reprend jamais deux fois le même modèle */
   function takeDistinct(pool, k, used){
@@ -1372,7 +1375,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const TL_FB = 'Relis l\'histoire dans l\'ordre : qu\'est-ce qui se passe d\'abord ? Est-ce que ça augmente (+) ou ça diminue (−) ?';
   function schemaStep3(P){
     const fb = P.fam === 'bars' ? 'Relis : qui en a le plus ? Toutes les parties sont-elles dans le schéma ? Le « ? » se met là où est ce que tu cherches.' : TL_FB;
-    return mkChoice('Quel schéma raconte ce problème ?', shuffle([{ h: P.sch('ok'), ok: true }, { h: P.sch('d1'), ok: false, fb }, { h: P.sch('d2'), ok: false, fb }]), { layout: 'schemas', hint: 'Raconte-toi l\'histoire dans l\'ordre, puis vérifie chaque flèche ou chaque barre.', okFb: 'Oui ! Ce schéma raconte bien l\'histoire.' });
+    return mkChoice('Quel <b>schéma</b> raconte ce problème ?', shuffle([{ h: P.sch('ok'), ok: true }, { h: P.sch('d1'), ok: false, fb }, { h: P.sch('d2'), ok: false, fb }]), { layout: 'schemas', hint: 'Raconte-toi l\'histoire dans l\'ordre, puis vérifie chaque flèche ou chaque barre.', okFb: 'Oui ! Ce schéma raconte bien l\'histoire.' });
   }
   /* « D'abord, je cherche… », « Ensuite, je cherche… » */
   const ORD = ['D\'abord', 'Ensuite', 'Enfin'];
@@ -1383,7 +1386,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (k === 0 && P.alt && path !== 1) opts.push({ h: ucf(P.altSeeks[0]) + '.', ok: true, br: 1 });
     const uniq = [...new Set(others)].slice(0, 3 - opts.length + (P.alt && k === 0 ? 1 : 0));
     uniq.forEach(s => opts.push({ h: ucf(s) + '.', ok: false, fb: k === 0 ? 'Ce n\'est pas ce qu\'on peut chercher en premier. Raconte-toi l\'histoire : que se passe-t-il d\'abord ?' : 'Ce n\'est pas l\'étape suivante. Avec ton premier résultat, que peux-tu chercher maintenant ?' }));
-    return mkChoice(ORD[k] + ', je cherche…', shuffle(opts), { hint: k === 0 ? 'Raconte-toi l\'histoire dans l\'ordre. Qu\'est-ce qu\'on peut calculer tout de suite, avec les nombres de l\'énoncé ?' : 'Pars de ce que tu viens de trouver. Il te reste à trouver ce que demande la question.', layout: 'phrases' });
+    return mkChoice('<b>' + ORD[k] + '</b>, je cherche…', shuffle(opts), { hint: k === 0 ? 'Raconte-toi l\'histoire dans l\'ordre. Qu\'est-ce qu\'on peut calculer tout de suite, avec les nombres de l\'énoncé ?' : 'Pars de ce que tu viens de trouver. Il te reste à trouver ce que demande la question.', layout: 'phrases' });
   }
   /* Les calculs proposés pour une étape */
   function calcChoice(P, k, chain, path){
@@ -1400,7 +1403,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       else if (s.x > g) add(cx(s.x, s.op, g), fbStart);
     }
     for (const g of others){ if (opts.length >= 3) break; if (flipOp === '+' || g > s.y) add(cx(g, flipOp, s.y), 'Ce calcul ne correspond pas à l\'histoire.'); }
-    return calcStep(ORD[k] + ', je calcule :', opts, { hint: (k === 0 ? 'Regarde la première flèche ou la première barre du schéma.' : 'Pars de ton premier résultat.') + ' Ça augmente : + ; ça diminue : −.' });
+    return calcStep('<b>' + ORD[k] + '</b>, je calcule :', opts, { hint: (k === 0 ? 'Regarde la première flèche ou la première barre du schéma.' : 'Pars de ton premier résultat.') + ' Ça augmente : + ; ça diminue : −.' });
   }
   function phrase3(P){
     const inter = P.chain.length > 1 ? P.chain[P.chain.length - 2].r : P.chain[0].r;
@@ -1409,7 +1412,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     if (P.inter) opts.push({ h: P.inter, ok: false, fb: 'C\'est vrai, mais ça ne répond pas à la question : ce n\'est qu\'une étape.' });
     opts.push({ h: trap, ok: false, fb: 'Attention : ' + fmtNum(inter) + ', c\'est le résultat d\'une étape, pas la réponse au problème.' });
     if (opts.length < 3){ const o = pick(P.given.filter(v => v !== P.r && v !== inter)); if (o) opts.push({ h: txt(P.ans, Object.assign({}, P.V, { r: o })), ok: false, fb: 'Ce nombre est dans l\'énoncé : ce n\'est pas la réponse.' }); }
-    return mkChoice('Quelle phrase répond à la question ?', shuffle(opts), { hint: 'Relis la question du problème. Le premier résultat n\'est pas la réponse !', layout: 'phrases' });
+    return mkChoice('Quelle <b>phrase</b> répond à la question ?', shuffle(opts), { hint: 'Relis la question du problème. Le premier résultat n\'est pas la réponse !', layout: 'phrases' });
   }
   const calcOf = s => s.expr3 ? { x: s.x + s.y, op: '+', y: s.r - s.x - s.y } : { x: s.x, op: s.op, y: s.y };
   const chainLine = ch => ch.map(s => (s.expr3 || exS(s)) + ' = ' + fmtNum(s.r)).join(' &nbsp;puis&nbsp; ');
@@ -1443,7 +1446,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       question: V.qWhy || "Le nombre est juste, mais sa phrase parle d'autre chose que de ce qu'on cherche."
     };
     const opts = ['ok', 'unit', 'sens', 'question'].map(k => ({ h: VERIF_OPTS[k], ok: k === kind, fb: k === kind ? '' : VERIF_NOT[k] }));
-    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span>A-t-il raison ?';
+    const q = (o && o.lead ? o.lead : 'Le mousse étourdi a résolu ce problème. Il a écrit :') + '<span class="mousse">« ' + esc(moussePhrase(V, kind)) + ' »</span><b>A-t-il raison ?</b>';
     return mkChoice(q, opts, Object.assign({ layout: 'phrases', okFb: (kind === 'ok' ? 'Oui ! ' : 'Bien vu ! ') + why[kind], why: why[kind], hint: VERIF_HINT }, o || {}));
   }
   /* Le réflexe dans les jeux de problèmes : environ un problème sur quatre, tiré au hasard, finit par la vérification.
@@ -1635,7 +1638,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return it;
     }
     if (id === 4){
-      const nums = P.chain.map((s, k) => mkNum(k === 0 ? 'Premier calcul : écris le résultat.' : (k === n - 1 ? 'Dernier calcul : écris le résultat.' : 'Calcul suivant : écris le résultat.'), '□', s.r, { calc: calcOf(s), hint: 'Le calcul : ' + (s.expr3 || exS(s)) + (k === 0 && P.alt ? ' (ou ' + exS(P.alt[0]) + ')' : '') + '.', acc: k === 0 && P.alt ? [P.alt[0].r] : undefined }));
+      const nums = P.chain.map((s, k) => mkNum(k === 0 ? '<b>Premier calcul</b> : écris le résultat.' : (k === n - 1 ? '<b>Dernier calcul</b> : écris le résultat.' : '<b>Calcul suivant</b> : écris le résultat.'), '□', s.r, { calc: calcOf(s), hint: 'Le calcul : ' + (s.expr3 || exS(s)) + (k === 0 && P.alt ? ' (ou ' + exS(P.alt[0]) + ')' : '') + '.', acc: k === 0 && P.alt ? [P.alt[0].r] : undefined }));
       return { stmt: P.stmt, steps: [seekChoice(P, 0, 2), schemaStep3(P)].concat(nums, [phrase3(P)]), end: endText3(P, false), sum: sum3(P, chainLine(P.chain)) };
     }
     return { stmt: P.stmt, steps: [seekChoice(P, 0, 2), schemaStep3(P), mkNum('Trouve la réponse au problème.', '□ ' + esc(P.unit), P.r, { calc: calcOf(P.chain[n - 1]), hint: 'Les calculs : ' + P.chain.map(s => s.expr3 || exS(s)).join(', puis ') + '.' }), phrase3(P)], end: endText3(P, false), sum: sum3(P, chainLine(P.chain)) };
