@@ -765,7 +765,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Il peut prendre un parcours différent d'un jeu à l'autre. Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte, et le parcours est écrit dans le score envoyé.</li>
         <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
         <li>Une question est réussie quand elle est juste du premier coup. Une erreur donne un indice ; après deux erreurs (ou une seule quand il n'y a que deux choix), la correction s'affiche.</li>
-        <li>Les niveaux sont 5 étapes : lire la graduation et repérer un point par une fraction, écrire l'abscisse d'un point sous la forme entier + fraction (puis d'une seule fraction), encadrer une fraction par deux entiers consécutifs (et trouver un numérateur qui convient), placer soi-même une fraction en touchant la demi-droite, puis un grand mélange avec deux points à placer et des écritures comme 2 − 4/6. L'élève écrit toutes ses réponses ou touche la graduation : aucun choix n'est proposé. En parcours orange, les demi-droites commencent souvent à 2, 3, 4…, les parts vont jusqu'aux dixièmes, et il faut aussi placer des nombres comme 5 − 1/7 ou des fractions d'un autre dénominateur (2/3 sur une demi-droite graduée en sixièmes). Les demi-droites changent à chaque partie et aucun exercice du manuel n'est repris.</li>
+        <li>Les niveaux sont 5 étapes : lire la graduation et repérer un point par une fraction, écrire l'abscisse d'un point sous la forme entier + fraction (puis d'une seule fraction), encadrer une fraction par deux entiers consécutifs (et trouver un numérateur qui convient), placer soi-même une fraction en touchant la demi-droite, puis un grand mélange avec deux points à placer et des écritures comme 2 − 4/6. L'élève écrit toutes ses réponses ou touche la graduation : aucun choix n'est proposé. En parcours orange, les demi-droites commencent souvent à 2, 3, 4…, les parts vont jusqu'aux dixièmes, et il faut aussi placer des nombres comme 5 − 1/7 ou des fractions d'un autre dénominateur (2/3 sur une demi-droite graduée en sixièmes). Une fraction égale à la bonne réponse est acceptée et comptée juste, avec le message « ce sont deux fractions égales » (1/2 pour un point à 2/4 d'une demi-droite graduée en quarts). Les demi-droites changent à chaque partie et aucun exercice du manuel n'est repris.</li>
         <li>Une étape est réussie avec au moins 80 % de réussites (8 sur 10, ou 7 sur 8 aux étapes 4 et 5). Elle ouvre la suivante. Pendant le jeu, le train gagne un wagon à chaque réussite ; une erreur fait traverser une vache.</li>
         <li>Bons points : 1 à 80 %, 1 de plus à 90 % et 1 de plus pour le sans-faute, soit 3 par étape et 15 en tout.</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
@@ -823,6 +823,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const FRT = (n, d) => N(n) + '/' + N(d);
   const LT = ' &lt; ';
   const BX = i => '⟦' + i + '⟧';
+  // Fractions égales (28 novembre) : st.eq = [case du numérateur, case du dénominateur] accepte toute fraction égale à la réponse ;
+  // st.eqNo (avec st.eqMsg) : la consigne donne les nombres à écrire, une fraction égale fait relire la consigne (pas d'erreur la première fois).
+  const eqFrac = (st, v) => { const p = st.eq || st.eqNo; if (!p || !st.a) return false; const i = p[0], j = p[1]; return v[j] > 0 && v[i] >= 0 && v[i] * st.a[j] === st.a[i] * v[j] && st.a.every((x, k) => k === i || k === j || x === v[k]); };
+  const eqFb = (st, v) => { const i = st.eq[0], j = st.eq[1]; return 'Juste ! ' + FR(v[i], v[j]) + ' = ' + FR(st.a[i], st.a[j]) + ' : ce sont deux fractions égales.'; };
   const fillBoxes = (tpl, f) => String(tpl).replace(/⟦(\d+)⟧/g, (m, i) => f(+i));
   const plur = (k, s, p) => k > 1 ? p : s;
   const NAMES = ['Léa', 'Tom', 'Inès', 'Noah', 'Jade', 'Malo', 'Lina', 'Sacha', 'Zoé', 'Adam', 'Nina', 'Yanis', 'Chloé', 'Hugo', 'Maël', 'Sofia', 'Rayan', 'Manon', 'Liam', 'Lou'];
@@ -1014,7 +1018,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       html: '<p>L\'<b>unité</b>, c\'est l\'écart entre deux nombres entiers qui se suivent (de 0 à 1, de 1 à 2…).</p>' + lineBox(L_F1) +
             '<p>Ici, chaque unité est partagée en <b>3 parts égales</b> : chaque petit saut vaut ' + FR(1, 3) + '. Je compte les <b>espaces</b> entre deux nombres entiers, pas les traits.</p>' +
             '<p>Le point A est à 5 petits sauts de 0 : il est repéré par la fraction ' + FR(5, 3) + '. Ce nombre s\'appelle l\'<b>abscisse</b> du point A.</p>',
-      checks: [{ q: 'Quelle est l\'abscisse du point B ?' + lineBox({ s: 0, n: 4, U: 3, x: 0, pts: [{ i: 7, l: 'B' }] }), tpl: FR(BX(0), BX(1)), a: [7, 4], hint: 'En combien de parts une unité est-elle partagée ? Combien de petits sauts depuis 0 ?', why: 'L\'unité est partagée en 4, et B est à 7 petits sauts de 0 : ' + FR(7, 4) + '.' }]
+      checks: [{ q: 'Quelle est l\'abscisse du point B ?' + lineBox({ s: 0, n: 4, U: 3, x: 0, pts: [{ i: 7, l: 'B' }] }), tpl: FR(BX(0), BX(1)), a: [7, 4], eq: [0, 1], hint: 'En combien de parts une unité est-elle partagée ? Combien de petits sauts depuis 0 ?', why: 'L\'unité est partagée en 4, et B est à 7 petits sauts de 0 : ' + FR(7, 4) + '.' }]
     },
     {
       title: 'Deux écritures pour un point',
@@ -1059,7 +1063,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     L.pts = [{ i, l: 'A' }];
     const steps = [];
     if (guided) steps.push(mkNum('<b>En combien de parts égales</b> l\'unité est-elle partagée ?', '□', L.n, { hint: 'Regarde entre deux nombres entiers qui se suivent, et compte les espaces.', diag: v => v === L.n + 1 ? 'Compte les espaces entre deux nombres entiers, pas les traits.' : (v === lineT(L) ? 'Regarde une seule unité, entre deux nombres entiers qui se suivent.' : '') }));
-    steps.push(mkMulti('L\'abscisse du point A (une fraction)', FR(BX(0), BX(1)), [k, L.n], { hint: 'Le dénominateur : en combien de parts l\'unité est partagée. Le numérateur : combien de petits sauts depuis 0.' + startNote(L), diag: fracPtDiag(L, i) }));
+    steps.push(mkMulti('L\'abscisse du point A (une fraction)', FR(BX(0), BX(1)), [k, L.n], { eq: [0, 1], hint: 'Le dénominateur : en combien de parts l\'unité est partagée. Le numérateur : combien de petits sauts depuis 0.' + startNote(L), diag: fracPtDiag(L, i) }));
     return {
       stmt: '<p class="lead-q">Quelle fraction repère le point A ?</p>' + lineBox(L),
       steps,
@@ -1071,7 +1075,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const L = mkLine({ s: HARD ? pick([0, 2, 3]) : 0 });
     return {
       stmt: '<p class="lead-q">Sur cette demi-droite, quelle fraction de l\'unité représente un petit saut (d\'une graduation à la suivante) ?</p>' + lineBox(L),
-      steps: [mkMulti('Un petit saut', FR(BX(0), BX(1)), [1, L.n], { hint: 'Compte en combien de parts égales une unité est partagée.', diag: v => v[1] !== L.n ? denDiag(L, v[1]) : 'Un seul petit saut : le numérateur est 1.' })],
+      steps: [mkMulti('Un petit saut', FR(BX(0), BX(1)), [1, L.n], { eq: [0, 1], hint: 'Compte en combien de parts égales une unité est partagée.', diag: v => v[1] !== L.n ? denDiag(L, v[1]) : 'Un seul petit saut : le numérateur est 1.' })],
       end: 'Chaque unité est partagée en ' + L.n + ' parts égales : un petit saut vaut <b>' + FR(1, L.n) + '</b> (un ' + PART[L.n][0] + ').',
       sum: 'Un saut ' + FRT(1, L.n) + ' depuis ' + L.s
     };
@@ -1081,8 +1085,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function itemMixedPoint(both, lvl){
     const L = mkLine({ s: startFor(lvl || 2) }), i = pickTick(L, { min: L.s ? 1 : L.n + 1 }), E = valE(L, i), r = i % L.n, k = valN(L, i);
     L.pts = [{ i, l: 'B' }];
-    const steps = [mkMulti('L\'abscisse de B sous la forme <b>entier + fraction</b>', BX(0) + ' + ' + FR(BX(1), BX(2)), [E, r, L.n], { hint: 'Prends le nombre entier juste avant le point, puis compte les petits sauts qui restent.' + startNote(L), diag: mixedPtDiag(L, i) })];
-    if (both) steps.push(mkMulti('Puis sous la forme <b>d\'une seule fraction</b>', FR(BX(0), BX(1)), [k, L.n], { hint: 'Une unité, c\'est ' + FR(L.n, L.n) + '. Combien de ' + partsName(L.n) + ' dans ' + E + ' ' + plur(E, 'unité', 'unités') + ' ?', diag: singleDiag(L, i) }));
+    const steps = [mkMulti('L\'abscisse de B sous la forme <b>entier + fraction</b>', BX(0) + ' + ' + FR(BX(1), BX(2)), [E, r, L.n], { eq: [1, 2], hint: 'Prends le nombre entier juste avant le point, puis compte les petits sauts qui restent.' + startNote(L), diag: mixedPtDiag(L, i) })];
+    if (both) steps.push(mkMulti('Puis sous la forme <b>d\'une seule fraction</b>', FR(BX(0), BX(1)), [k, L.n], { eq: [0, 1], hint: 'Une unité, c\'est ' + FR(L.n, L.n) + '. Combien de ' + partsName(L.n) + ' dans ' + E + ' ' + plur(E, 'unité', 'unités') + ' ?', diag: singleDiag(L, i) }));
     return {
       stmt: '<p class="lead-q">Écris l\'abscisse du point B.</p>' + lineBox(L),
       steps,
@@ -1790,7 +1794,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1 });
+  const stepState = () => ({ eqw: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1 });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -1813,7 +1817,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const ins = Array.from(document.querySelectorAll('#lesson .lin'));
     L.vals = ins.map(x => x.value.replace(/\D/g, ''));
     if (L.vals.some(v => v === '')){ L.msg = ins.length > 1 ? 'Remplis toutes les cases.' : 'Écris ta réponse dans la case.'; renderLearn(); return; }
-    const ok = ch.a.every((x, i) => x === parseInt(L.vals[i], 10));
+    const lv = L.vals.map(v => parseInt(v, 10));
+    const ok = ch.a.every((x, i) => x === lv[i]) || (!!ch.eq && eqFrac(ch, lv));
     if (ok){ L.solved = true; L.total++; if (L.tries === 0) L.first++; L.msg = ''; renderLearn(); return; }
     L.tries++;
     if (L.tries >= 2){ L.solved = true; L.total++; L.vals = ch.a.map(String); L.msg = 'reveal'; }
@@ -1972,8 +1977,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function multiSubmit(){
     const R = S.R, st = curStep(), vals = R.inputs.map(v => parseInt(v, 10));
-    const ok = st.ok ? st.ok(vals) : st.a.every((x, i) => x === vals[i]);
-    if (ok){ solveStep(false, fillBoxes(st.tpl, i => '<span class="vbox">' + fmtNum(vals[i]) + '</span>'), st.okFb, '', ''); return; }
+    let ok = st.ok ? st.ok(vals) : st.a.every((x, i) => x === vals[i]), okFb = st.okFb;
+    if (!ok && st.eq && eqFrac(st, vals)){ ok = true; okFb = eqFb(st, vals); }
+    if (ok){ solveStep(false, fillBoxes(st.tpl, i => '<span class="vbox">' + fmtNum(vals[i]) + '</span>'), okFb, '', ''); return; }
+    if (st.eqNo && eqFrac(st, vals)){
+      const m = st.eqMsg || 'Ta fraction est bien égale, mais lis bien la consigne.';
+      R.bad = st.eqNo.slice(); R.cur = R.bad[0];
+      if (!R.eqw){ R.eqw = 1; R.wrong = true; info(m); return; }
+      failStep(m); return;
+    }
     R.bad = st.a ? st.a.map((x, i) => x !== vals[i] ? i : -1).filter(i => i >= 0) : vals.map((_, i) => i);
     if (R.bad.length) R.cur = R.bad[0];
     failStep(st.diag ? st.diag(vals) : '');

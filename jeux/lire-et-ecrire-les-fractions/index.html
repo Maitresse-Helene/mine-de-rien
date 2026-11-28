@@ -765,7 +765,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Il peut prendre un parcours différent d'un jeu à l'autre. Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte, et le parcours est écrit dans le score envoyé.</li>
         <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
         <li>Une question est réussie quand elle est juste du premier coup. Une erreur donne un indice ; après deux erreurs (ou une seule quand il n'y a que deux choix), la correction s'affiche.</li>
-        <li>Les niveaux sont 5 étapes : lire et écrire une fraction (en lettres, en chiffres, petits problèmes), écrire la fraction coloriée, colorier soi-même une fraction (parts à toucher), décomposer une fraction en « entier + fraction », puis les deux sens mélangés. L'élève écrit ses réponses ou touche les parts ; pour lire une fraction, il compose la lecture avec deux listes fixes de mots (les nombres, les noms des parts). Le seul choix proposé est « plus petite, égale ou plus grande que 1 ». En parcours orange, les figures sont aussi faites de triangles, les unités sont plus nombreuses, parfois en trop, et les nombres plus grands. Les fractions changent à chaque partie et aucun exercice du manuel n'est repris.</li>
+        <li>Les niveaux sont 5 étapes : lire et écrire une fraction (en lettres, en chiffres, petits problèmes), écrire la fraction coloriée, colorier soi-même une fraction (parts à toucher), décomposer une fraction en « entier + fraction », puis les deux sens mélangés. L'élève écrit ses réponses ou touche les parts ; pour lire une fraction, il compose la lecture avec deux listes fixes de mots (les nombres, les noms des parts). Le seul choix proposé est « plus petite, égale ou plus grande que 1 ». En parcours orange, les figures sont aussi faites de triangles, les unités sont plus nombreuses, parfois en trop, et les nombres plus grands. Une fraction égale à la bonne réponse est acceptée et comptée juste, avec le message « ce sont deux fractions égales » (1/2 pour 4/8 d'un ruban, 2 + 1/2 pour 2 + 2/4) ; quand la consigne donne les nombres à écrire (écrire en chiffres une fraction lue, la fraction dont le numérateur et le dénominateur sont donnés, la fraction égale à 1 de dénominateur donné), une fraction égale fait relire la consigne : pas d'erreur la première fois, l'erreur compte s'il recommence. Les fractions changent à chaque partie et aucun exercice du manuel n'est repris.</li>
         <li>Une étape est réussie avec au moins 80 % de réussites (8 sur 10, ou 7 sur 8 aux étapes 3, 4 et 5). Elle ouvre la suivante. Pendant le jeu, le train gagne un wagon à chaque réussite ; une erreur fait traverser une vache.</li>
         <li>Bons points : 1 à 80 %, 1 de plus à 90 % et 1 de plus pour le sans-faute, soit 3 par étape et 15 en tout.</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
@@ -823,6 +823,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const FRT = (n, d) => N(n) + '/' + N(d);
   const LT = ' &lt; ';
   const BX = i => '⟦' + i + '⟧';
+  // Fractions égales (28 novembre) : st.eq = [case du numérateur, case du dénominateur] accepte toute fraction égale à la réponse ;
+  // st.eqNo (avec st.eqMsg) : la consigne donne les nombres à écrire, une fraction égale fait relire la consigne (pas d'erreur la première fois).
+  const eqFrac = (st, v) => { const p = st.eq || st.eqNo; if (!p || !st.a) return false; const i = p[0], j = p[1]; return v[j] > 0 && v[i] >= 0 && v[i] * st.a[j] === st.a[i] * v[j] && st.a.every((x, k) => k === i || k === j || x === v[k]); };
+  const eqFb = (st, v) => { const i = st.eq[0], j = st.eq[1]; return 'Juste ! ' + FR(v[i], v[j]) + ' = ' + FR(st.a[i], st.a[j]) + ' : ce sont deux fractions égales.'; };
   const fillBoxes = (tpl, f) => String(tpl).replace(/⟦(\d+)⟧/g, (m, i) => f(+i));
   const plur = (k, s, p) => k > 1 ? p : s;
   const NAMES = ['Léa', 'Tom', 'Inès', 'Noah', 'Jade', 'Malo', 'Lina', 'Sacha', 'Zoé', 'Adam', 'Nina', 'Yanis', 'Chloé', 'Hugo', 'Maël', 'Sofia', 'Rayan', 'Manon', 'Liam', 'Lou'];
@@ -989,7 +993,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       title: 'Une fraction',
       html: '<p>On partage une unité en <b>parts égales</b>. Une fraction dit combien de ces parts on prend.</p>' +
             '<div class="lrow"><div class="figbox mini">' + figUnits({ sh: 'disk', n: 6, units: 1 }, [0, 1, 2, 3, 4]) + '</div><p class="calc">' + FR(5, 6) + '</p><ul class="evlist"><li>en haut, le <b>numérateur</b> : 5 parts sont prises ;</li><li>en bas, le <b>dénominateur</b> : l\'unité est partagée en 6 parts.</li></ul></div>',
-      checks: [{ q: 'Une tarte est coupée en 8 parts égales. On en mange 3. Quelle fraction de la tarte est mangée ?', tpl: FR(BX(0), BX(1)), a: [3, 8], hint: 'En haut, les parts mangées ; en bas, les parts de toute la tarte.', why: '3 parts sur 8 : ' + FR(3, 8) + ', trois huitièmes.' }]
+      checks: [{ q: 'Une tarte est coupée en 8 parts égales. On en mange 3. Quelle fraction de la tarte est mangée ?', tpl: FR(BX(0), BX(1)), a: [3, 8], eq: [0, 1], hint: 'En haut, les parts mangées ; en bas, les parts de toute la tarte.', why: '3 parts sur 8 : ' + FR(3, 8) + ', trois huitièmes.' }]
     },
     {
       title: 'Lire une fraction',
@@ -1058,6 +1062,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     return {
       stmt: '<p class="lead-q">Écris cette fraction en chiffres :</p><p class="wordbig">' + readFr(n, d) + '</p>',
       steps: [mkMulti('La fraction', FR(BX(0), BX(1)), [n, d], {
+        eqNo: [0, 1], eqMsg: 'Ta fraction est bien égale à celle que tu lis, mais lis bien la consigne : écris en chiffres <b>la fraction que tu lis</b>, avec ses propres nombres.',
         hint: 'Le premier mot va en haut : c\'est le numérateur. Le nom des parts dit en combien de parts l\'unité est partagée : c\'est le dénominateur, en bas.',
         diag: v => {
           if (v[0] === d && v[1] === n) return 'Tu as écrit la fraction à l\'envers : le nombre de parts prises va en haut.';
@@ -1089,14 +1094,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       const d = pick([3, 4, 5, 6, 8]), u = ri(2, 3), n = ri(d + 1, u * d - 1), S0 = pick(STORIES_BIG)(u, d, n);
       return {
         stmt: '<p class="problem">' + S0[0] + '</p>',
-        steps: [mkMulti(S0[1], FR(BX(0), BX(1)), [n, d], { hint: 'Chaque objet est une unité, partagée en ' + d + ' parts. Le numérateur compte toutes les parts prises.', diag: fracDiag(n, d, { units: u, story: true }) })],
+        steps: [mkMulti(S0[1], FR(BX(0), BX(1)), [n, d], { eq: [0, 1], hint: 'Chaque objet est une unité, partagée en ' + d + ' parts. Le numérateur compte toutes les parts prises.', diag: fracDiag(n, d, { units: u, story: true }) })],
         end: 'Chaque unité est partagée en ' + d + ' parts, et on en prend ' + n + ' en tout : ' + FR(n, d) + '. C\'est plus que 1, car ' + n + ' est plus grand que ' + d + '.',
         sum: 'Problème ' + S0[2] + ' ' + FRT(n, d)
       };
     }
     const d = pick(HARD ? [5, 6, 7, 8, 9, 10, 12] : [4, 5, 6, 8, 10]), n = ri(1, d - 1), S0 = pick(STORIES)(d, n, P), two = Math.random() < 0.5;
-    const steps = [mkMulti(S0[1], FR(BX(0), BX(1)), [n, d], { hint: 'En haut, les parts dont on parle ; en bas, le nombre de parts égales en tout.', diag: fracDiag(n, d, { white: d - n, story: true }) })];
-    if (two) steps.push(mkMulti(S0[2], FR(BX(0), BX(1)), [d - n, d], { hint: 'Il y a ' + d + ' parts en tout, et ' + n + ' sont déjà comptées.', diag: v => v[0] === n && v[1] === d ? 'Ça, c\'est la fraction de la première question. Combien de parts restent ?' : fracDiag(d - n, d, { story: true })(v) }));
+    const steps = [mkMulti(S0[1], FR(BX(0), BX(1)), [n, d], { eq: [0, 1], hint: 'En haut, les parts dont on parle ; en bas, le nombre de parts égales en tout.', diag: fracDiag(n, d, { white: d - n, story: true }) })];
+    if (two) steps.push(mkMulti(S0[2], FR(BX(0), BX(1)), [d - n, d], { eq: [0, 1], hint: 'Il y a ' + d + ' parts en tout, et ' + n + ' sont déjà comptées.', diag: v => v[0] === n && v[1] === d ? 'Ça, c\'est la fraction de la première question. Combien de parts restent ?' : fracDiag(d - n, d, { story: true })(v) }));
     return {
       stmt: '<p class="problem">' + S0[0] + '</p>',
       steps,
@@ -1110,7 +1115,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       const d = pick([3, 5, 6, 7, 8, 9, 10, 12]);
       return {
         stmt: '<p class="lead-q">Écris la fraction <b>égale à 1</b> dont le dénominateur est ' + d + '.</p>',
-        steps: [mkMulti('La fraction', FR(BX(0), BX(1)), [d, d], { hint: 'Une fraction égale à 1, c\'est une unité entière : on prend toutes ses parts.', diag: x => x[1] !== d ? 'Le dénominateur est donné dans la consigne.' : 'Pour faire une unité entière, il faut prendre toutes les parts : le numérateur est égal au dénominateur.' })],
+        steps: [mkMulti('La fraction', FR(BX(0), BX(1)), [d, d], { eqNo: [0, 1], eqMsg: 'Ta fraction est bien égale à 1, mais lis bien la consigne : <b>le dénominateur est donné</b>.', hint: 'Une fraction égale à 1, c\'est une unité entière : on prend toutes ses parts.', diag: x => x[1] !== d ? 'Le dénominateur est donné dans la consigne.' : 'Pour faire une unité entière, il faut prendre toutes les parts : le numérateur est égal au dénominateur.' })],
         end: FR(d, d) + ' = 1 : on prend les ' + d + ' parts de l\'unité.',
         sum: 'Fraction égale à 1 sur ' + d
       };
@@ -1119,7 +1124,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const txt = v === 'nd' ? 'Écris la fraction dont le numérateur est <b>' + n + '</b> et le dénominateur est <b>' + d + '</b>.' : 'L\'unité est partagée en <b>' + d + '</b> parts égales, et on en prend <b>' + n + '</b>. Écris la fraction.';
     return {
       stmt: '<p class="lead-q">' + txt + '</p>',
-      steps: [mkMulti('La fraction', FR(BX(0), BX(1)), [n, d], { hint: 'Le numérateur va en haut, le dénominateur en bas.', diag: fracDiag(n, d, { story: true }) })],
+      steps: [mkMulti('La fraction', FR(BX(0), BX(1)), [n, d], v === 'nd' ? { eqNo: [0, 1], eqMsg: 'Ta fraction est bien égale, mais lis bien la consigne : <b>le numérateur et le dénominateur sont donnés</b>.', hint: 'Le numérateur va en haut, le dénominateur en bas.', diag: fracDiag(n, d, { story: true }) } : { eq: [0, 1], hint: 'Le numérateur va en haut, le dénominateur en bas.', diag: fracDiag(n, d, { story: true }) })],
       end: 'La fraction est ' + FR(n, d) + ' : le numérateur ' + n + ' en haut, le dénominateur ' + d + ' en bas.',
       sum: 'Définir ' + v + ' ' + FRT(n, d)
     };
@@ -1136,7 +1141,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       units = Math.ceil(k / d) + (Math.random() < (HARD ? 0.35 : 0.15) ? 1 : 0);
     }
     const fig = { sh, n: d, units }, on = HARD && Math.random() < 0.5 ? scatterParts(fig, k) : firstParts(k);
-    const steps = [mkMulti('La fraction coloriée', FR(BX(0), BX(1)), [k, d], { hint: HINT_FIG, diag: fracDiag(k, d, { units, white: units * d - k }) })];
+    const steps = [mkMulti('La fraction coloriée', FR(BX(0), BX(1)), [k, d], { eq: [0, 1], hint: HINT_FIG, diag: fracDiag(k, d, { units, white: units * d - k }) })];
     if (Math.random() < 0.45) steps.push(mkChoice('Cette fraction est…', cmpOpts(k, d), { hint: 'Compare le numérateur et le dénominateur.' }));
     const q = Math.floor(k / d);
     return {
@@ -1155,7 +1160,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return {
         stmt: '<p class="lead-q">Colorie une fraction <b>égale à 1</b>.</p><p class="small-note">' + unitTxt(2) + ' Touche les parts pour les colorier (touche encore pour effacer).</p>',
         steps: [mkColor('Colorie les parts', fig, d, { ok: parts => parts.length === d, hint: 'Une fraction égale à 1, c\'est une unité entière.', diag: c => c < d ? 'Une fraction égale à 1, c\'est toutes les parts d\'une unité : il en manque.' : 'Une fraction égale à 1, c\'est une seule unité entière : tu en as colorié trop.' }),
-                mkMulti('Écris la fraction que tu as coloriée', FR(BX(0), BX(1)), [d, d], { hint: HINT_FIG, diag: fracDiag(d, d, { units: 2 }) })],
+                mkMulti('Écris la fraction que tu as coloriée', FR(BX(0), BX(1)), [d, d], { eq: [0, 1], hint: HINT_FIG, diag: fracDiag(d, d, { units: 2 }) })],
         end: 'Une unité entière, c\'est ' + d + ' parts sur ' + d + ' : ' + FR(d, d) + ' = 1.',
         sum: 'Colorier 1 ' + sh + ' ' + d
       };
@@ -1170,7 +1175,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       return 'Tu as colorié ' + c + ' parts : c\'est trop. Le numérateur dit combien de parts colorier.';
     } })];
     const r = Math.random();
-    if (units === 1 && r < 0.45) steps.push(mkMulti('Quelle fraction de l\'unité <b>n\'est pas</b> coloriée ?', FR(BX(0), BX(1)), [d - k, d], { hint: 'Compte les parts blanches.', diag: v => v[0] === k && v[1] === d ? 'Ça, c\'est la partie coloriée. Compte les parts blanches.' : fracDiag(d - k, d)(v) }));
+    if (units === 1 && r < 0.45) steps.push(mkMulti('Quelle fraction de l\'unité <b>n\'est pas</b> coloriée ?', FR(BX(0), BX(1)), [d - k, d], { eq: [0, 1], hint: 'Compte les parts blanches.', diag: v => v[0] === k && v[1] === d ? 'Ça, c\'est la partie coloriée. Compte les parts blanches.' : fracDiag(d - k, d)(v) }));
     else if (k > d && r < 0.45) steps.push(mkNum('Dans ' + FR(k, d) + ', combien y a-t-il d\'unités entières ?', '□', Math.floor(k / d), { hint: 'Une unité entière, c\'est ' + FR(d, d) + '. Combien de fois ' + d + ' parts dans ' + k + ' parts ?', diag: v => v === Math.ceil(k / d) ? 'La dernière unité n\'est pas complète : elle ne compte pas comme une unité entière.' : (v === k ? 'Ça, c\'est le nombre de parts. Une unité entière, c\'est ' + d + ' parts.' : 'Compte de ' + d + ' en ' + d + ' sans dépasser ' + k + '.') }));
     return {
       stmt: '<p class="lead-q">Colorie ' + FR(k, d) + ' de l\'unité.</p><p class="small-note">' + unitTxt(units) + ' Touche les parts pour les colorier (touche encore pour effacer).</p>',
@@ -1194,7 +1199,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       steps.push(mkNum('Combien d\'<b>unités entières</b> sont coloriées ?', '□', q, { hint: 'Une unité entière, c\'est une figure toute coloriée.', diag: v => v === k ? 'Ça, c\'est le nombre de parts coloriées. Compte les figures toutes coloriées.' : (v === q + 1 ? 'La dernière figure n\'est pas toute coloriée : elle ne compte pas comme une unité entière.' : 'Compte les figures qui sont toutes coloriées.') }));
       steps.push(mkNum('Combien de parts sont coloriées <b>en plus</b> ?', '□', r, { hint: 'Regarde la figure qui n\'est pas toute coloriée.', diag: v => v === d - r ? 'Compte les parts coloriées, pas les parts blanches.' : (v === k ? 'Compte seulement les parts de la figure qui n\'est pas toute coloriée.' : 'Compte les parts coloriées de la figure qui n\'est pas toute coloriée.') }));
     }
-    steps.push(mkMulti('Écris la fraction sous la forme entier + fraction', tpl, [q, r, d], { hint: 'L\'entier : les unités entières. La fraction : les parts en plus, qui sont toujours des ' + partsName(d) + '.', diag: decDiag(k, d) }));
+    steps.push(mkMulti('Écris la fraction sous la forme entier + fraction', tpl, [q, r, d], { eq: [1, 2], hint: 'L\'entier : les unités entières. La fraction : les parts en plus, qui sont toujours des ' + partsName(d) + '.', diag: decDiag(k, d) }));
     return {
       stmt: '<p class="lead-q">' + unitTxt(2) + ' La partie coloriée représente ' + FR(k, d) + '.</p><div class="figbox">' + figUnits(fig, firstParts(k)) + '</div>',
       steps,
@@ -1206,7 +1211,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const p = decPick(), k = p[0], d = p[1];
     return {
       stmt: '<p class="lead-q">Décompose la fraction ' + FR(k, d) + ' : écris-la sous la forme d\'un entier et d\'une fraction plus petite que 1.</p>',
-      steps: [mkMulti('Entier + fraction', FR(k, d) + ' = ' + BX(0) + ' + ' + FR(BX(1), BX(2)), [Math.floor(k / d), k % d, d], { hint: decHint(d), diag: decDiag(k, d) })],
+      steps: [mkMulti('Entier + fraction', FR(k, d) + ' = ' + BX(0) + ' + ' + FR(BX(1), BX(2)), [Math.floor(k / d), k % d, d], { eq: [1, 2], hint: decHint(d), diag: decDiag(k, d) })],
       end: decEnd(k, d),
       sum: 'Décomposer ' + FRT(k, d)
     };
@@ -1239,7 +1244,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const p = recPick(), e = p[0], a = p[1], d = p[2];
     return {
       stmt: '<p class="lead-q">Écris sous la forme d\'une seule fraction.</p>',
-      steps: [mkMulti('Une seule fraction', e + ' + ' + FR(a, d) + ' = ' + FR(BX(0), BX(1)), [e * d + a, d], { hint: 'Une unité, c\'est ' + FR(d, d) + '. Combien de ' + partsName(d) + ' dans ' + e + ' ' + plur(e, 'unité', 'unités') + ' ?', diag: recDiag(e, a, d) })],
+      steps: [mkMulti('Une seule fraction', e + ' + ' + FR(a, d) + ' = ' + FR(BX(0), BX(1)), [e * d + a, d], { eq: [0, 1], hint: 'Une unité, c\'est ' + FR(d, d) + '. Combien de ' + partsName(d) + ' dans ' + e + ' ' + plur(e, 'unité', 'unités') + ' ?', diag: recDiag(e, a, d) })],
       end: recEnd(e, a, d),
       sum: 'Recomposer ' + e + '+' + FRT(a, d)
     };
@@ -1248,7 +1253,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const p = recPick(), e = p[0], a = p[1], d = p[2];
     return {
       stmt: '<p class="lead-q">Écris ce nombre sous la forme d\'une seule fraction :</p><p class="wordbig">' + words(e) + ' ' + plur(e, 'unité', 'unités') + ' et ' + readFr(a, d) + '</p>',
-      steps: [mkMulti('Une seule fraction', FR(BX(0), BX(1)), [e * d + a, d], { hint: 'Écris d\'abord ' + e + ' + ' + FRT('…', d) + ', puis transforme les unités en ' + partsName(d) + '.', diag: recDiag(e, a, d) })],
+      steps: [mkMulti('Une seule fraction', FR(BX(0), BX(1)), [e * d + a, d], { eq: [0, 1], hint: 'Écris d\'abord ' + e + ' + ' + FRT('…', d) + ', puis transforme les unités en ' + partsName(d) + '.', diag: recDiag(e, a, d) })],
       end: words(e) + ' ' + plur(e, 'unité', 'unités') + ' et ' + readFr(a, d) + ', c\'est ' + e + ' + ' + FR(a, d) + '. ' + recEnd(e, a, d),
       sum: 'Recomposer en lettres ' + e + '+' + FRT(a, d)
     };
@@ -1860,7 +1865,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1 });
+  const stepState = () => ({ eqw: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1 });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -1883,7 +1888,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const ins = Array.from(document.querySelectorAll('#lesson .lin'));
     L.vals = ins.map(x => x.value.replace(/\D/g, ''));
     if (L.vals.some(v => v === '')){ L.msg = ins.length > 1 ? 'Remplis toutes les cases.' : 'Écris ta réponse dans la case.'; renderLearn(); return; }
-    const ok = ch.a.every((x, i) => x === parseInt(L.vals[i], 10));
+    const lv = L.vals.map(v => parseInt(v, 10));
+    const ok = ch.a.every((x, i) => x === lv[i]) || (!!ch.eq && eqFrac(ch, lv));
     if (ok){ L.solved = true; L.total++; if (L.tries === 0) L.first++; L.msg = ''; renderLearn(); return; }
     L.tries++;
     if (L.tries >= 2){ L.solved = true; L.total++; L.vals = ch.a.map(String); L.msg = 'reveal'; }
@@ -2042,8 +2048,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   }
   function multiSubmit(){
     const R = S.R, st = curStep(), vals = R.inputs.map(v => parseInt(v, 10));
-    const ok = st.ok ? st.ok(vals) : st.a.every((x, i) => x === vals[i]);
-    if (ok){ solveStep(false, fillBoxes(st.tpl, i => '<span class="vbox">' + fmtNum(vals[i]) + '</span>'), st.okFb, '', ''); return; }
+    let ok = st.ok ? st.ok(vals) : st.a.every((x, i) => x === vals[i]), okFb = st.okFb;
+    if (!ok && st.eq && eqFrac(st, vals)){ ok = true; okFb = eqFb(st, vals); }
+    if (ok){ solveStep(false, fillBoxes(st.tpl, i => '<span class="vbox">' + fmtNum(vals[i]) + '</span>'), okFb, '', ''); return; }
+    if (st.eqNo && eqFrac(st, vals)){
+      const m = st.eqMsg || 'Ta fraction est bien égale, mais lis bien la consigne.';
+      R.bad = st.eqNo.slice(); R.cur = R.bad[0];
+      if (!R.eqw){ R.eqw = 1; R.wrong = true; info(m); return; }
+      failStep(m); return;
+    }
     R.bad = st.a ? st.a.map((x, i) => x !== vals[i] ? i : -1).filter(i => i >= 0) : vals.map((_, i) => i);
     if (R.bad.length) R.cur = R.bad[0];
     failStep(st.diag ? st.diag(vals) : '');

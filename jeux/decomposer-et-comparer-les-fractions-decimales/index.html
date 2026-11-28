@@ -797,7 +797,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
         <li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Il peut prendre un parcours différent d'un jeu à l'autre. Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte, et le parcours est écrit dans le score envoyé.</li>
         <li>Après chaque partie, l'élève peut envoyer son score dans votre formulaire Google (prénom, jeu, niveau, score). Il doit appuyer sur « Envoyer » dans le formulaire qui s'ouvre.</li>
         <li>Une question est réussie quand elle est juste du premier coup. Une erreur donne un indice ; après deux erreurs (ou une seule quand il n'y a que deux choix), la correction s'affiche.</li>
-        <li>Les niveaux sont 5 étapes : écrire une fraction décimale sous la forme entier + fraction (et l'inverse), la décomposer en entier + dixièmes + centièmes (et la recomposer, avec les trous), comparer deux fractions après les avoir mises au même dénominateur et ranger des fractions et des entiers en les touchant dans l'ordre, encadrer par deux nombres entiers qui se suivent, puis intercaler une fraction entre deux autres, avec tout mélangé. L'élève écrit ses réponses au pavé ou touche les nombres dans l'ordre ; seul le signe &lt;, = ou &gt; se choisit, après avoir mis les fractions au même dénominateur. En parcours orange, il y a aussi des millièmes, des dénominateurs à écrire soi-même, des encadrements entre deux dixièmes et des fractions à intercaler entre deux centièmes qui se suivent. Les nombres changent à chaque partie et aucun exercice du manuel n'est repris.</li>
+        <li>Les niveaux sont 5 étapes : écrire une fraction décimale sous la forme entier + fraction (et l'inverse), la décomposer en entier + dixièmes + centièmes (et la recomposer, avec les trous), comparer deux fractions après les avoir mises au même dénominateur et ranger des fractions et des entiers en les touchant dans l'ordre, encadrer par deux nombres entiers qui se suivent, puis intercaler une fraction entre deux autres, avec tout mélangé. L'élève écrit ses réponses au pavé ou touche les nombres dans l'ordre ; seul le signe &lt;, = ou &gt; se choisit, après avoir mis les fractions au même dénominateur. En parcours orange, il y a aussi des millièmes, des dénominateurs à écrire soi-même, des encadrements entre deux dixièmes et des fractions à intercaler entre deux centièmes qui se suivent. Quand l'élève écrit lui-même le dénominateur d'une fraction, une fraction égale à la bonne réponse est acceptée et comptée juste, avec le message « ce sont deux fractions égales ». Les nombres changent à chaque partie et aucun exercice du manuel n'est repris.</li>
         <li>Une étape est réussie avec au moins 80 % de réussites (8 sur 10, ou 7 sur 8 aux étapes 3, 4 et 5). Elle ouvre la suivante. Pendant le jeu, le train gagne un wagon à chaque réussite ; une erreur fait traverser une vache.</li>
         <li>Bons points : 1 à 80 %, 1 de plus à 90 % et 1 de plus pour le sans-faute, soit 3 par étape et 15 en tout.</li>
         <li>Ce code ne vaut que pour ce jeu. Le prénom doit être écrit comme l'élève l'a saisi ; majuscules et accents ne comptent pas.</li>
@@ -859,6 +859,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const FRT = (n, d) => N(n) + '/' + N(d);
   const LT = ' &lt; ';
   const BX = i => '⟦' + i + '⟧';
+  // Fractions égales (28 novembre) : st.eq = [case du numérateur, case du dénominateur] accepte toute fraction égale à la réponse ;
+  // st.eqNo (avec st.eqMsg) : la consigne donne les nombres à écrire, une fraction égale fait relire la consigne (pas d'erreur la première fois).
+  const eqFrac = (st, v) => { const p = st.eq || st.eqNo; if (!p || !st.a) return false; const i = p[0], j = p[1]; return v[j] > 0 && v[i] >= 0 && v[i] * st.a[j] === st.a[i] * v[j] && st.a.every((x, k) => k === i || k === j || x === v[k]); };
+  const eqFb = (st, v) => { const i = st.eq[0], j = st.eq[1]; return 'Juste ! ' + FR(v[i], v[j]) + ' = ' + FR(st.a[i], st.a[j]) + ' : ce sont deux fractions égales.'; };
   const fillBoxes = (tpl, f) => String(tpl).replace(/⟦(\d+)⟧/g, (m, i) => f(+i));
   const plur = (k, s, p) => k > 1 ? p : s;
   const NAMES = ['Léa', 'Tom', 'Inès', 'Noah', 'Jade', 'Malo', 'Lina', 'Sacha', 'Zoé', 'Adam', 'Nina', 'Yanis', 'Chloé', 'Hugo', 'Maël', 'Sofia', 'Rayan', 'Manon', 'Liam', 'Lou'];
@@ -1062,7 +1066,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const steps = [];
     if (guided) steps.push(mkNum('Combien d\'<b>unités entières</b> dans ' + FR(k, d) + ' ?', '□', E, { hint: '1 unité = ' + FR(d, d) + '.', diag: v => v === Math.floor(k / 10) && d !== 10 ? 'Une unité, c\'est ' + fmtNum(d) + ' ' + DW10[d] + ', pas 10.' : 'Combien de fois ' + fmtNum(d) + ' dans ' + fmtNum(k) + ' ?' }));
     const hard = HARD && !guided;
-    steps.push(mkMulti('Entier + fraction', FR(k, d) + ' = ' + BX(0) + ' + ' + (hard ? FR(BX(1), BX(2)) : FR(BX(1), d)), hard ? [E, r, d] : [E, r], { hint: 'Enlève toutes les unités entières (' + FRT(d, d) + ' chacune) : le reste est plus petit que 1.', diag: efDiag(k, d, E, r) }));
+    steps.push(mkMulti('Entier + fraction', FR(k, d) + ' = ' + BX(0) + ' + ' + (hard ? FR(BX(1), BX(2)) : FR(BX(1), d)), hard ? [E, r, d] : [E, r], { eq: hard ? [1, 2] : null, hint: 'Enlève toutes les unités entières (' + FRT(d, d) + ' chacune) : le reste est plus petit que 1.', diag: efDiag(k, d, E, r) }));
     return {
       stmt: '<p class="lead-q">Écris cette fraction sous la forme entier + fraction.</p><p class="big-fr">' + FR(k, d) + '</p>',
       steps,
@@ -1837,7 +1841,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   };
   const GOOD = ['Bravo !', 'Exact !', 'Super !', 'Bien joué !', 'Parfait !', "Oui, c'est ça !"];
   const BAD = ["Ce n'est pas ça.", 'Pas encore.', 'Oups, pas tout à fait.'];
-  const stepState = () => ({ tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1, pk: [], cw: [] });
+  const stepState = () => ({ eqw: 0, tries: 0, picked: [], input: '', wrong: false, locked: false, revealed: false, fb: null, hint: null, shake: false, inputs: [], cur: 0, bad: [], sel: [], parts: [], tick: -1, pk: [], cw: [] });
   const itemState = () => Object.assign({ si: 0, vals: [], itemErr: 0, itemDone: false, showKw: false }, stepState());
 
   /* ---------- Étape 1 : déroulé ---------- */
@@ -2029,8 +2033,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     const R = S.R, st = curStep();
     if (st.dec && R.inputs.some(v => decPlaces(v) > 3)){ info('Trois chiffres au plus après la virgule.'); return; }
     const vals = R.inputs.map(v => st.dec ? parseM(v) : parseInt(v, 10));
-    const ok = st.ok ? st.ok(vals) : st.a.every((x, i) => x === vals[i]);
-    if (ok){ solveStep(false, fillBoxes(st.tpl, i => '<span class="vbox">' + fmtV(st, vals[i]) + '</span>'), st.okFb, '', ''); return; }
+    let ok = st.ok ? st.ok(vals) : st.a.every((x, i) => x === vals[i]), okFb = st.okFb;
+    if (!ok && st.eq && eqFrac(st, vals)){ ok = true; okFb = eqFb(st, vals); }
+    if (ok){ solveStep(false, fillBoxes(st.tpl, i => '<span class="vbox">' + fmtV(st, vals[i]) + '</span>'), okFb, '', ''); return; }
+    if (st.eqNo && eqFrac(st, vals)){
+      const m = st.eqMsg || 'Ta fraction est bien égale, mais lis bien la consigne.';
+      R.bad = st.eqNo.slice(); R.cur = R.bad[0];
+      if (!R.eqw){ R.eqw = 1; R.wrong = true; info(m); return; }
+      failStep(m); return;
+    }
     R.bad = st.a ? st.a.map((x, i) => x !== vals[i] ? i : -1).filter(i => i >= 0) : vals.map((_, i) => i);
     if (R.bad.length) R.cur = R.bad[0];
     failStep(st.diag ? st.diag(vals) : '');

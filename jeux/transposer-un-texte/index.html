@@ -564,7 +564,7 @@ span.tok.has-gap{padding:0;margin:0}
     <h1 class="title" id="learnEndTitle">Bien joué !</h1>
     <p class="lead" id="learnScore"></p>
     <div class="fiche lesson">
-      <h2>À retenir</h2><div class="groups"><div class="grow"><span class="gbadge">1</span><span>Je trouve les verbes conjugués qui vont changer (pas les verbes à l'infinitif ; pas les verbes qui ont un autre sujet, si seul le sujet change).</span></div><div class="grow"><span class="gbadge">2</span><span>Je trouve les autres mots qui changent : les pronoms sujets, mon, ton, son, me, te, se, et les mots qui s'accordent avec le sujet.</span></div><div class="grow"><span class="gbadge">3</span><span>J'écris chaque mot transformé. Au passé composé avec être : qu'est-ce qui est + participe ? Si c'est déjà écrit, j'accorde.</span></div></div>
+      <h2>À retenir</h2><div class="groups"><div class="grow"><span class="gbadge">1</span><span>Je trouve les verbes conjugués qui vont changer (pas les verbes à l'infinitif ; pas les verbes qui ont un autre sujet, si seul le sujet change).</span></div><div class="grow"><span class="gbadge">2</span><span>Je trouve les autres mots qui changent : les pronoms sujets, mon, ton, son, me, te, se, les mots qui s'accordent avec le sujet, et ce que chacun a pour lui (je poste ma lettre → vous postez vos lettres). Ce qui est le même pour tous reste au singulier (votre maîtresse). Avec le vous de politesse, on parle à une seule personne : vous postez votre lettre.</span></div><div class="grow"><span class="gbadge">3</span><span>J'écris chaque mot transformé. Au passé composé avec être : qu'est-ce qui est + participe ? Si c'est déjà écrit, j'accorde.</span></div></div>
     </div>
     <div class="stack push-bottom">
       <button class="btn-primary" id="toGameBtn" type="button">Passer au jeu</button>
@@ -686,7 +686,7 @@ span.tok.has-gap{padding:0;margin:0}
       <p class="check-result" id="checkResult" hidden></p>
     </form>
     <div class="fiche">
-      <ul class="howto"><li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte.</li><li>Comme pour le sommet 5 du « Présent des trois groupes » : rien n'est surligné et le nouveau texte n'est pas écrit d'avance. L'élève touche d'abord les verbes conjugués qui vont changer, puis les autres mots qui changent (pronoms sujets repris, mon, ton, son, me, te, se, accords, mots du sujet au pluriel), puis il écrit lui-même chaque mot transformé, en entier. Les pièges (verbes à l'infinitif, verbes qui ont un autre sujet, mots qui ne changent pas) ont leur propre message.</li><li>Chaque repérage et chaque mot écrit compte pour une question (environ 8 à 14 par partie) : une question est réussie quand elle est juste du premier coup. Une erreur donne un indice et un deuxième essai ; après deux erreurs, la réponse est montrée.</li><li>Jaune : un seul changement à la fois. Orange : des textes plus longs, plusieurs changements à la fois (le moment et le sujet), des pluriels en -aux et -eaux, et parfois le retour au singulier.</li><li>Les sommets : 1. changer de personne ; 2. du singulier au pluriel ; 3. autrefois ou demain (imparfait, futur) ; 4. hier : le passé composé (accords avec être, méthode des moines copistes) ; 5. un récit au passé (jaune : imparfait et passé composé ; orange : imparfait et passé simple). Un sommet est atteint avec au moins 80 % de réussites du premier coup. Bons points : jusqu'à 3 par sommet.</li></ul>
+      <ul class="howto"><li>Au début du jeu, l'élève choisit son parcours : <b>jaune</b> (les bases) ou <b>orange</b> (plus difficile). Chaque parcours a sa propre progression ; tous les bons points vont sur la même carte.</li><li>Comme pour le sommet 5 du « Présent des trois groupes » : rien n'est surligné et le nouveau texte n'est pas écrit d'avance. L'élève touche d'abord les verbes conjugués qui vont changer, puis les autres mots qui changent (pronoms sujets repris, mon, ton, son, me, te, se, accords, mots du sujet au pluriel, et le nom de ce que chacun a pour lui : « je poste ma lettre » → « vous postez vos lettres »), puis il écrit lui-même chaque mot transformé, en entier. Quand le sujet devient « vous », la consigne dit qui c'est : plusieurs personnes (« Ici, « vous », ce sont Léo et Inès ») ou un vous de politesse (« on parle à la directrice » : tout reste au singulier, vous postez votre lettre). Ce qui est le même pour tous (la maîtresse, le chien de la maison) reste au singulier, avec un message qui l'explique. Les pièges (verbes à l'infinitif, verbes qui ont un autre sujet, mots qui ne changent pas) ont leur propre message.</li><li>Chaque repérage et chaque mot écrit compte pour une question (environ 8 à 14 par partie) : une question est réussie quand elle est juste du premier coup. Une erreur donne un indice et un deuxième essai ; après deux erreurs, la réponse est montrée.</li><li>Jaune : un seul changement à la fois. Orange : des textes plus longs, plusieurs changements à la fois (le moment et le sujet), des pluriels en -aux et -eaux, et parfois le retour au singulier.</li><li>Les sommets : 1. changer de personne ; 2. du singulier au pluriel ; 3. autrefois ou demain (imparfait, futur) ; 4. hier : le passé composé (accords avec être, méthode des moines copistes) ; 5. un récit au passé (jaune : imparfait et passé composé ; orange : imparfait et passé simple). Un sommet est atteint avec au moins 80 % de réussites du premier coup. Bons points : jusqu'à 3 par sommet.</li></ul>
     </div>
     <div class="fiche stack">
       <h2 class="prev-title">Aperçu des sommets</h2>
@@ -938,14 +938,17 @@ span.tok.has-gap{padding:0;margin:0}
   //  @S sujet (groupe ou pronom), @P pronom du sujet, @T mot de temps,
   //  {v:inf} verbe du sujet ({v:inf|d} décor, {v:inf|a} action), {v:se laver} pronominal,
   //  {o:inf|3s} ou {o:inf|3p} verbe d'un autre sujet, {i:inf} infinitif, {a:adj} adjectif accordé, $son $sa $ses possessifs.
+  //  $son[sac/sacs] : un objet à chacun (avec plusieurs possesseurs, nos/vos/leurs + nom au pluriel) ;
+  //  $sa{maîtresse} : le même pour tous (leur maîtresse, nom au singulier).
+  //  Sujet « vous » de politesse : sj.pol (une seule personne : accords au singulier) ; sj.who : qui est « vous ».
   //  « mot » : un mot simple ; ponctuation collée.
   // o = { sj: sujet {w (groupe), p, g, pl? , ws (pluriel du groupe)}, t: temps (ou { d:temps, a:temps }), time: { présent:'Aujourd'hui', ... } }
   function renderTpl(src, o){
     const toks = [];
-    const sj = o.sj, p = sj.p, g = sj.g || 'm', pl = p >= 3;
+    const sj = o.sj, p = sj.p, g = sj.g || 'm', pl = p >= 3 && !sj.pol;
     const tOf = role => typeof o.t === 'string' ? o.t : (o.t[role || 'd'] || o.t.d);
     const push = (t, r, extra) => { const k = Object.assign({ t, r, sp: true }, extra || {}); toks.push(k); return k; };
-    const re = /@S|@P|@T|\{(v|o|i|a):([^}]+)\}|\$(son|sa|ses)\b|[A-Za-zÀ-ÿœŒ'’-]+|[0-9]+|[.,!?;:«»]/g;
+    const re = /@S|@P|@T|\{(v|o|i|a):([^}]+)\}|\$(son|sa|ses)\b(?:\[([^\]\/]+)\/([^\]]+)\]|\{([^}]+)\})?|[A-Za-zÀ-ÿœŒ'’-]+|[0-9]+|[.,!?;:«»]/g;
     let m, atStart = true;
     while ((m = re.exec(src))){
       const tok = m[0];
@@ -967,20 +970,35 @@ span.tok.has-gap{padding:0;margin:0}
         const flag = m[1] === 'v' ? (spec[2] || '') : '';
         const cod = /^[mf][sp]$/.test(flag) ? { g: flag[0], pl: flag[1] === 'p' } : null;
         const noAcc = flag === 'nc';
+        const vpl = m[1] === 'v' && sj.pol ? false : undefined; // vous de politesse : participe au singulier
         if (pron){
           const rf = REFL[vp];
           const first = conj(inf, t, vp, { g: vg, pron: true, noAcc });
           const el = /^[mts]e$/.test(rf) && startsVowel(first);
           push(el ? rf[0] + "'" : rf, 'refl', { el });
         }
-        const form = conj(inf, t, vp, { g: vg, pron, cod, noAcc });
+        const form = conj(inf, t, vp, { g: vg, pron, cod, noAcc, pl: vpl });
         const words = o.split ? form.split(' ') : [form];
         const r0 = m[1] === 'v' ? 'v' : 'vo';
-        words.forEach((w, k) => push(w, words.length > 1 ? (k === 0 ? 'aux' : 'pp') : r0, { inf, tn: t, vp, vg, role, verb: true, main: m[1] === 'v', part: words.length > 1 ? k : -1, pron, form, cod, noAcc }));
+        words.forEach((w, k) => push(w, words.length > 1 ? (k === 0 ? 'aux' : 'pp') : r0, { inf, tn: t, vp, vg, vpl, role, verb: true, main: m[1] === 'v', part: words.length > 1 ? k : -1, pron, form, cod, noAcc }));
         atStart = false; continue;
       }
       if (m[1] === 'i'){ push(m[2], 'i', { inf: m[2] }); atStart = false; continue; }
       if (m[1] === 'a'){ push(adjForm(m[2], g, pl), 'adj', { adj: m[2] }); atStart = false; continue; }
+      if (m[3] && m[4]){ // un objet à chacun
+        const row = pl ? 'ses' : m[3], w = POSS[row][p];
+        const [npl, gf] = m[5].split('/'), fem = m[3] === 'sa' || gf === 'f'; // $son[épée/épées/f] : nom féminin
+        push(atStart ? capFirst(w) : w, 'poss', { poss: row, possBase: m[3], indiv: true, fem });
+        push(pl ? npl : m[4], 'n', { noun: true, indiv: true, nsg: m[4], npl, fem });
+        atStart = false; continue;
+      }
+      if (m[3] && m[6]){ // le même pour tous
+        const w = POSS[m[3]][p];
+        const [nm, gf] = m[6].split('/'), fem = m[3] === 'sa' || gf === 'f';
+        push(atStart ? capFirst(w) : w, 'poss', { poss: m[3], shared: true, fem });
+        push(nm, 'n', { noun: true, shared: true, fem });
+        atStart = false; continue;
+      }
       if (m[3]){ const w = POSS[m[3]][p]; push(atStart ? capFirst(w) : w, 'poss', { poss: m[3] }); atStart = false; continue; }
       if (/^[.,!?;:»]$/.test(tok)){ push(/[!?;:»]/.test(tok) ? '\u202F' + tok : tok, 'p', { sp: false }); if (/[.!?]/.test(tok)) atStart = true; continue; }
       if (tok === '«'){ push(tok, 'p'); continue; }
@@ -1300,6 +1318,10 @@ span.tok.has-gap{padding:0;margin:0}
   }
   // Une question de transposition à partir d'un texte (gabarit) : du temps et du sujet A vers le temps et le sujet B.
   // opts : { tpl, from: {sj, t}, to: {sj, t}, time, split (questions séparées), q (consigne), title, otherWords (repérage des autres mots), noTapIfOne }
+  const plSj = sj => sj.p >= 3 && !sj.pol;
+  // genre d'un nom possédé, d'après le possessif du gabarit ($son / $sa)
+  const femAt = (toks, i) => !!(toks[i] && toks[i].fem) || (!!toks[i - 1] && !!toks[i - 1].fem);
+  const unUne = f => f ? 'une' : 'un';
   function transposeUnit(opts){
     const src = renderTpl(opts.tpl, { sj: opts.from.sj, t: opts.from.t, time: opts.time });
     const tgt = renderTpl(opts.tpl, { sj: opts.to.sj, t: opts.to.t, time: opts.time });
@@ -1345,20 +1367,27 @@ span.tok.has-gap{padding:0;margin:0}
         if (och.includes(idx)) return;
         if (auto.includes(idx)) return;
         if (k.r === 'poss') fbB[idx] = '« ' + esc(k.t) + ' » ne change pas ici.';
+        else if (k.noun && k.shared && (plSj(opts.to.sj) || plSj(opts.from.sj))) fbB[idx] = '« ' + esc(k.t) + ' » ne change pas : ' + (femAt(src, idx) ? 'c\'est la même pour tous, il n\'y en a qu\'une.' : 'c\'est le même pour tous, il n\'y en a qu\'un.');
+        else if (k.noun && k.indiv && (opts.to.sj.pol || opts.from.sj.pol)) fbB[idx] = '« ' + esc(k.t) + ' » ne change pas : avec le vous de politesse, on parle à une seule personne, qui n\'en a qu\'' + unUne(femAt(src, idx)) + '.';
         else if (k.verb) fbB[idx] = '« ' + esc(k.t) + ' » est un verbe : tu l\'as déjà touché, ou il ne change pas. Cherche les autres mots.';
         else if (k.r === 'i') fbB[idx] = '« ' + esc(k.t) + ' » est un verbe à l\'infinitif : il ne change pas.';
         else fbB[idx] = '« ' + esc(k.t) + ' » ne change pas.';
       });
       let blue = false;
       auto.forEach(idx => { if (src[idx].subj && !tapOnly.includes(idx)){ u.marks['text' + idx] = 'is-subj'; blue = true; } });
-      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant <strong>les autres mots qui changent</strong>' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.', mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
+      stB = { k: 'tap', mode: 'set', q: 'Touche maintenant <strong>les autres mots qui changent</strong>' + (blue ? ' (le sujet en bleu est déjà donné)' : '') + ', puis valide.', want: och, fb: fbB, other: k => '« ' + esc(k.t) + ' » ne change pas.', hint: 'Cherche les mots qui dépendent du sujet : les pronoms je, tu, il…, les petits mots mon, ton, son, me, te, se, et les mots qui s\'accordent avec le sujet.' + (src.some(k => k.indiv) ? ' Et ce que chacun a pour lui : avec plusieurs personnes, il y en a plusieurs.' : ''), mark: 'is-subj', btn: 'Valider les mots', miss: n => n === 1 ? 'Il te manque encore 1 mot qui change.' : 'Il te manque encore ' + n + ' mots qui changent.' };
       steps.push(stB);
     }
     const writes = changed.filter(k => gapOf[k] !== undefined).map(k => {
       const s = src[k], tk = tgt[k];
       if (s.verb){
-        const o = { gap: gapOf[k], subj: tk.main ? subjTxt : 'ce sujet', g: tk.vg, pron: tk.pron };
+        const o = { gap: gapOf[k], subj: tk.main ? subjTxt : 'ce sujet', g: tk.vg, pron: tk.pron, pl: tk.vpl };
         const st = stepTypeForm(s.inf, tk.tn, tk.vp, o);
+        if (tk.vpl === false && (tk.r === 'pp' || / /.test(tk.t))){
+          const full = conj(s.inf, tk.tn, tk.vp, { g: tk.vg, pron: tk.pron, pl: true });
+          const pl2 = tk.r === 'pp' ? full.split(' ').slice(1).join(' ') : full;
+          if (norm(pl2) !== norm(tk.t)) st.errs.unshift({ m: [pl2], fb: 'Avec le vous de politesse, on parle à une seule personne : le participe passé reste au singulier.' });
+        }
         st.q = 'Écris « ' + esc(s.t) + ' » ' + AU[tk.tn] + (opts.to.sj !== opts.from.sj && tk.main ? ' avec le sujet « ' + esc(subjTxt) + ' »' : '') + '.';
         st.acc = [tk.t];
         st.show = esc(tk.t);
@@ -1368,21 +1397,34 @@ span.tok.has-gap{padding:0;margin:0}
       const why = s.r === 'poss' ? '« ' + esc(s.t) + ' » change avec le sujet : le sujet est maintenant « ' + esc(subjTxt) + ' ».' :
         s.r === 'refl' ? '« ' + esc(s.t) + ' » désigne la même personne que le sujet. Le sujet est maintenant « ' + esc(subjTxt) + ' ».' :
         s.r === 'adj' ? '« ' + esc(s.t) + ' » s\'accorde avec le sujet. Le sujet est maintenant « ' + esc(subjTxt) + ' ».' :
-        s.subj ? 'C\'est un mot du sujet : ' + (opts.to.sj.p >= 3 ? 'il passe au pluriel.' : 'il passe au singulier.') : '';
-      const acc = [tk.t], errs = [{ m: [s.t], fb: 'C\'est le mot de départ : il doit changer.' }];
+        s.subj ? 'C\'est un mot du sujet : ' + (opts.to.sj.p >= 3 ? 'il passe au pluriel.' : 'il passe au singulier.') :
+        s.noun ? (plSj(opts.to.sj) ? '« ' + esc(s.t) + ' » : chacun a ' + (femAt(src, k) ? 'la sienne' : 'le sien') + ', il y en a plusieurs. Le nom passe au pluriel.' : opts.to.sj.pol ? 'Avec le vous de politesse, on parle à une seule personne : elle n\'en a qu\'' + unUne(femAt(src, k)) + '. Le nom passe au singulier.' : 'Le sujet est maintenant une seule personne : elle n\'en a qu\'' + unUne(femAt(src, k)) + '. Le nom passe au singulier.') : '';
+      const acc = [tk.t], errs = [{ m: [s.t], fb: s.noun ? why : 'C\'est le mot de départ : il doit changer.' }];
       const add = (m, fb) => { m = m.filter(x => x && !acc.some(a => norm(a) === norm(x))); if (m.length) errs.push({ m, fb }); };
       if (s.r === 'adj'){
-        const pl = opts.to.sj.p >= 3, spec = s.adj;
+        const pl = plSj(opts.to.sj), spec = s.adj;
+        if (opts.to.sj.pol) add([adjForm(spec, opts.to.sj.g === 'f' ? 'f' : 'm', true), adjForm(spec, opts.to.sj.g === 'f' ? 'm' : 'f', true)], 'Avec le vous de politesse, on parle à une seule personne : l\'adjectif reste au singulier.');
         if (opts.to.sj.g === 'x') [adjForm(spec, 'f', pl), adjForm(spec, 'm', pl)].forEach(x => { if (!acc.includes(x)) acc.push(x); });
         else add([adjForm(spec, opts.to.sj.g === 'f' ? 'm' : 'f', pl)], 'Regarde le sujet, « ' + esc(subjTxt) + ' » : ' + (opts.to.sj.g === 'f' ? 'c\'est un féminin.' : 'c\'est un masculin.'));
         add([adjForm(spec, opts.to.sj.g === 'f' ? 'f' : 'm', !pl)], pl ? 'Le sujet est au pluriel : l\'adjectif aussi.' : 'Le sujet est au singulier : l\'adjectif aussi.');
       }
-      if (s.r === 'poss'){
+      if (s.r === 'poss' && (tk.indiv || tk.shared)){
+        const nk = tgt[k + 1] ? tgt[k + 1].t : 'objet', p = opts.to.sj.p;
+        const f = !!tk.fem;
+        if (tk.indiv && tk.poss === 'ses' && !/^(mes|tes|ses)$/i.test(tk.t)) add(Array.from(new Set([POSS.son[p], POSS.sa[p]])), 'Chacun a ' + (f ? 'la sienne' : 'le sien') + ' : il y a plusieurs ' + esc(nk) + ', donc « ' + esc(tk.t) + ' ».');
+        if (opts.to.sj.pol) add([POSS.ses[p]], 'Avec le vous de politesse, on parle à une seule personne : « ' + esc(tk.t) + ' ».');
+        if (tk.shared && plSj(opts.to.sj)) add([POSS.ses[p]], '« ' + esc(nk) + ' » : ' + (f ? 'c\'est la même pour tous, il n\'y en a qu\'une' : 'c\'est le même pour tous, il n\'y en a qu\'un') + '. Donc « ' + esc(tk.t) + ' », sans s.');
+        add(Array.from(new Set(POSS.son.concat(POSS.sa, POSS.ses))).filter(x => x !== tk.t), 'Regarde le sujet : c\'est maintenant « ' + esc(subjTxt) + ' ».');
+      } else if (s.r === 'poss'){
         if (tk.t === 'leur') add(['leurs'], '« ' + esc(s.t) + ' » : une seule chose pour chacun, donc « leur », sans s.');
         if (tk.t === 'leurs') add(['leur'], '« ' + esc(s.t) + ' » : plusieurs choses, donc « leurs », avec un s.');
         add(POSS[s.poss].filter(x => x !== tk.t), 'Regarde le sujet : c\'est maintenant « ' + esc(subjTxt) + ' ».');
       }
       if (s.r === 'refl') add(REFL.filter(x => x !== tk.t), 'Regarde le sujet : c\'est maintenant « ' + esc(subjTxt) + ' ».');
+      if (s.noun && tk.npl && tk.t === tk.npl){
+        if (/aux$/.test(tk.t) && /al$/.test(tk.nsg)) add([tk.nsg + 's'], 'Les noms en -al font leur pluriel en -aux : un cheval, des chevaux.');
+        else if (/x$/.test(tk.t)) add([tk.nsg + 's'], 'Ce nom prend un x au pluriel : un chapeau, des chapeaux.');
+      }
       if (s.subj && !s.pro){
         const w = tk.t;
         if (/aux$/.test(w) && /al$/i.test(s.t)) add([s.t + 's'], 'Les noms en -al font leur pluriel en -aux : un cheval, des chevaux.');
@@ -1424,16 +1466,19 @@ span.tok.has-gap{padding:0;margin:0}
             '<table class="pstable"><tr><th>sujet</th><th>pronom</th><th>un objet</th><th>plusieurs</th></tr>' +
             '<tr><td>je</td><td>me</td><td>mon, ma</td><td>mes</td></tr><tr><td>tu</td><td>te</td><td>ton, ta</td><td>tes</td></tr><tr><td>il, elle</td><td>se</td><td>son, sa</td><td>ses</td></tr>' +
             '<tr><td>nous</td><td>nous</td><td>notre</td><td>nos</td></tr><tr><td>vous</td><td>vous</td><td>votre</td><td>vos</td></tr><tr><td>ils, elles</td><td>se</td><td>leur</td><td>leurs</td></tr></table>' +
-            '<p class="ex">Je <b>me</b> lève et je prends <b>mon</b> sac. → Nous <b>nous</b> levons et nous prenons <b>notre</b> sac.</p>',
+            '<p class="ex">Je <b>me</b> lève et je prends <b>mon</b> sac. → Nous <b>nous</b> levons et nous prenons <b>nos sacs</b>.</p>' +
+            '<p><b>Ce que chacun a pour lui</b> (son sac, sa lettre) : avec plusieurs personnes, il y en a plusieurs. Le nom passe au <b>pluriel</b> lui aussi. <b>Ce qui est le même pour tous</b> (la maîtresse, le chien de la maison) reste au singulier.</p>' +
+            '<p class="ex">Je poste <b>ma lettre</b> à <b>ma</b> maîtresse. → Vous postez <b>vos lettres</b> à <b>votre</b> maîtresse. (« vous », ce sont Léo et Inès : chacun sa lettre, mais une seule maîtresse.)</p>' +
+            '<p><b>Le vous de politesse</b> : on parle à <b>une seule personne</b>. Le verbe change (vous postez), mais le reste est au singulier : vous postez <b>votre lettre</b>, vous êtes <b>content</b> (ou <b>contente</b>).</p>',
       checks: [
-        { type: true, q: '« Tu ranges tes affaires. » Avec « vous » à la place de « tu », écris <strong>le mot qui remplace « tes »</strong>.', acc: ['vos'], errs: [{ m: ['votre'], fb: 'Il y a plusieurs affaires : « vos ».' }, { m: ['leurs', 'nos'], fb: 'Le sujet est « vous ».' }, { m: ['tes'], fb: 'C\'est le mot de départ : il doit changer.' }], why: 'tu → vous, tes → <b>vos</b>.', hint: 'Regarde le tableau.' }
+        { type: true, q: '« Je range mon cartable. » Avec « vous » à la place de « je » (ici, « vous », ce sont Lina et Sarah), écris <strong>les deux mots qui remplacent « mon cartable »</strong>.', acc: ['vos cartables'], errs: [{ m: ['votre cartable'], fb: 'Lina et Sarah ont chacune leur cartable : il y en a plusieurs.' }, { m: ['vos cartable'], fb: 'Il y a plusieurs cartables : le nom passe au pluriel lui aussi.' }, { m: ['votre cartables'], fb: 'Plusieurs cartables : « vos ».' }, { m: ['nos cartables', 'leurs cartables', 'tes cartables'], fb: 'Le sujet est « vous ».' }, { m: ['mon cartable'], fb: 'Ce sont les mots de départ : ils doivent changer.' }], why: 'je → vous (Lina et Sarah), mon cartable → <b>vos cartables</b> : chacune a le sien.', hint: 'Regarde le tableau, puis demande-toi : Lina et Sarah ont-elles un cartable chacune ?' }
       ]
     },
     {
       title: 'Du singulier au pluriel',
       html: '<p>Quand le sujet passe au pluriel, toute la <b>chaîne des accords</b> change : le déterminant, le nom, l\'adjectif qui s\'accorde avec le sujet, le pronom, le verbe.</p>' +
-            '<p class="ex">Le petit chat est content. Il joue avec <b>sa</b> balle. → Les petit<b>s</b> chat<b>s</b> sont content<b>s</b>. Il<b>s</b> jouent avec <b>leur</b> balle.</p>' +
-            '<ul><li>son, sa → <b>leur</b> (un objet pour chacun) ; ses → <b>leurs</b>.</li><li>Noms en -eau : un oiseau, des oiseau<b>x</b>. Noms en -al : un cheval, des chev<b>aux</b>.</li></ul>',
+            '<p class="ex">Le petit chat est content. Il joue avec <b>sa</b> balle. → Les petit<b>s</b> chat<b>s</b> sont content<b>s</b>. Il<b>s</b> jouent avec <b>leurs</b> balle<b>s</b>.</p>' +
+            '<ul><li>Chacun a le sien : son, sa → <b>leurs</b>, et le nom passe au pluriel (leurs balles). Le même pour tous : <b>leur</b>, au singulier (leur maîtresse). ses → <b>leurs</b>.</li><li>Noms en -eau : un oiseau, des oiseau<b>x</b>. Noms en -al : un cheval, des chev<b>aux</b>.</li></ul>',
       checks: [
         { type: true, q: '« Le cheval est content. » <strong>Au pluriel</strong>, écris le mot qui remplace « cheval ».', acc: ['chevaux'], errs: [{ m: ['chevals'], fb: 'Les noms en -al font leur pluriel en -aux.' }, { m: ['cheval'], fb: 'Au pluriel, le nom change.' }], why: 'un cheval, des <b>chevaux</b>.', hint: 'Les noms en -al font -aux.' }
       ]
@@ -1459,7 +1504,7 @@ span.tok.has-gap{padding:0;margin:0}
     }
   ];
   const LEVELS = [
-    { id: 1, name: 'Changer de personne', desc: 'Réécris un texte avec un autre sujet : je, tu, nous, vous…' },
+    { id: 1, name: 'Changer de personne', desc: 'Réécris un texte avec un autre sujet : je, tu, nous, vous (à plusieurs ou de politesse)…' },
     { id: 2, name: 'Du singulier au pluriel', desc: 'Mets le sujet au pluriel (en orange, parfois au singulier) : les verbes et les accords changent.' },
     { id: 3, name: 'Autrefois ou demain ?', desc: 'Réécris un texte à l\'imparfait ou au futur (en orange, avec un autre sujet en plus).' },
     { id: 4, name: 'Hier : le passé composé', desc: 'Réécris un texte au passé composé, avec les accords du participe passé.' },
@@ -1473,26 +1518,26 @@ span.tok.has-gap{padding:0;margin:0}
   const HINT_T = 'Quand on change le moment, tous les verbes conjugués changent, même ceux qui ont un autre sujet. Un verbe à l\'infinitif ne change jamais.';
   /* Textes au présent (sommets 1 et 3), écrits pour le jeu */
   const TX_J = [
-    '@S {v:préparer} $son sac. @P {v:mettre} $ses bottes, @P {v:prendre} $son parapluie et @P {v:partir} à l\'école.',
+    '@S {v:préparer} $son[sac/sacs]. @P {v:mettre} $ses bottes, @P {v:prendre} $son[parapluie/parapluies] et @P {v:partir} à l\'école.',
     '@S {v:se lever} tôt. @P {v:se laver}, @P {v:ouvrir} les volets et @P {v:regarder} le jardin.',
-    '@S {v:être} {a:content}. @P {v:avoir} un nouveau vélo et @P {v:faire} le tour du quartier avec $sa voisine.',
-    '@S {v:aimer} les animaux. @P {v:nourrir} $son chat, @P {v:brosser} $son chien et @P {v:changer} l\'eau des poissons.',
-    '@S {v:aller} à la piscine avec $sa cousine. @P {v:nager} vite et @P {v:plonger} du grand plongeoir. @P {v:être} {a:fier/fière}.',
-    '@S {v:finir} $ses devoirs. Ensuite, @P {v:jouer} aux cartes avec $son frère et @P {v:gagner} la partie.',
-    '@S {v:se brosser} les dents. Puis @P {v:mettre} $son pyjama et @P {v:lire} une histoire dans $son lit.',
+    '@S {v:être} {a:content}. @P {v:avoir} un nouveau vélo et @P {v:faire} le tour du quartier avec $sa{voisine}.',
+    '@S {v:aimer} les animaux. @P {v:nourrir} $son{chat}, @P {v:brosser} $son{chien} et @P {v:changer} l\'eau des poissons.',
+    '@S {v:aller} à la piscine avec $sa{cousine}. @P {v:nager} vite et @P {v:plonger} du grand plongeoir. @P {v:être} {a:fier/fière}.',
+    '@S {v:finir} $ses devoirs. Ensuite, @P {v:jouer} aux cartes avec $son{frère} et @P {v:gagner} la partie.',
+    '@S {v:se brosser} les dents. Puis @P {v:mettre} $son[pyjama/pyjamas] et @P {v:lire} une histoire dans $son[lit/lits].',
     '@S {v:arroser} $ses plantes. Le soleil {o:briller|3s} et @P {v:être} {a:heureux/heureuse/heureux/heureuses}. @P {v:cueillir} une tomate bien rouge.',
-    '@S {v:ranger} $sa chambre. @P {v:plier} $ses habits et @P {v:vouloir} {i:retrouver} $ses jouets facilement.',
-    '@S {v:dessiner} un château. @P {v:colorier} les tours en bleu et @P {v:montrer} $son dessin à $sa maîtresse.'
+    '@S {v:ranger} $son[placard/placards]. @P {v:plier} $ses habits et @P {v:vouloir} {i:retrouver} $ses jouets facilement.',
+    '@S {v:dessiner} un château. @P {v:colorier} les tours en bleu et @P {v:montrer} $son[dessin/dessins] à $sa{maîtresse}.'
   ];
   const TX_O = [
-    '@S {v:se réveiller} en retard. @P {v:s\'habiller} vite, @P {v:prendre} $son cartable et @P {v:courir} jusqu\'à l\'arrêt. Le bus {o:attendre|3s} encore : @P {v:être} {a:soulagé}.',
-    '@S {v:vouloir} {i:faire} un gâteau. @P {v:sortir} la farine, @P {v:casser} les œufs et @P {v:mélanger} tout dans $son saladier. Ensuite, @P {v:allumer} le four.',
-    '@S {v:être} {a:fatigué} après le match. @P {v:boire} un grand verre d\'eau, puis @P {v:se reposer} sur $son lit. $ses parents {o:préparer|3p} le dîner.',
-    '@S {v:recevoir} une lettre de $sa tante. @P {v:lire} la lettre, puis @P {v:répondre} tout de suite. Les nouvelles {o:être|3p|f} bonnes et @P {v:se sentir} {a:heureux/heureuse/heureux/heureuses}.',
-    '@S {v:connaître} bien la forêt. @P {v:suivre} le sentier, @P {v:cueillir} des mûres et @P {v:revenir} avec $son panier plein. $sa grand-mère {o:faire|3s|f} de la confiture.',
-    '@S {v:apprendre} une poésie. @P {v:répéter} chaque vers, @P {v:fermer} les yeux et @P {v:pouvoir} enfin {i:réciter} la poésie. $son professeur {o:sourire|3s|m}.',
-    '@S {v:voir} un écureuil dans le parc. @P {v:s\'approcher} doucement, mais l\'écureuil {o:grimper|3s} dans un arbre. @P {v:être} {a:déçu} et @P {v:rentrer} chez $sa tante.',
-    '@S {v:s\'occuper} du jardin. @P {v:planter} des salades, @P {v:arracher} les mauvaises herbes et @P {v:se salir} les mains. $son chien {o:creuser|3s|m} un trou à côté.'
+    '@S {v:se réveiller} en retard. @P {v:s\'habiller} vite, @P {v:prendre} $son[cartable/cartables] et @P {v:courir} jusqu\'à l\'arrêt. Le bus {o:attendre|3s} encore : @P {v:être} {a:soulagé}.',
+    '@S {v:vouloir} {i:faire} un gâteau. @P {v:mettre} $son[tablier/tabliers], @P {v:casser} les œufs et @P {v:mélanger} tout dans un grand saladier. Ensuite, @P {v:allumer} le four.',
+    '@S {v:être} {a:fatigué} après le match. @P {v:boire} un grand verre d\'eau, puis @P {v:se reposer} sur $son[lit/lits]. $ses parents {o:préparer|3p} le dîner.',
+    '@S {v:recevoir} une lettre de $sa{tante}. @P {v:lire} la lettre, puis @P {v:répondre} tout de suite. Les nouvelles {o:être|3p|f} bonnes et @P {v:se sentir} {a:heureux/heureuse/heureux/heureuses}.',
+    '@S {v:connaître} bien la forêt. @P {v:suivre} le sentier, @P {v:cueillir} des mûres et @P {v:revenir} avec $son[panier/paniers]. $sa{grand-mère} {o:faire|3s|f} de la confiture.',
+    '@S {v:apprendre} une poésie. @P {v:répéter} chaque vers, @P {v:fermer} les yeux et @P {v:pouvoir} enfin {i:réciter} la poésie. $son{professeur} {o:sourire|3s|m}.',
+    '@S {v:voir} un écureuil dans le parc. @P {v:s\'approcher} doucement, mais l\'écureuil {o:grimper|3s} dans un arbre. @P {v:être} {a:déçu} et @P {v:rentrer} chez $sa{tante}.',
+    '@S {v:s\'occuper} du jardin. @P {v:planter} des salades, @P {v:arracher} les mauvaises herbes et @P {v:se salir} les mains. $son{chien} {o:creuser|3s|m} un trou à côté.'
   ];
   /* Sujets groupes du nom : singulier et pluriel (sommet 2) */
   const SP = {
@@ -1508,22 +1553,22 @@ span.tok.has-gap{padding:0;margin:0}
   const NB_J = [
     { t: '@S {v:jouer} dans le jardin. @P {v:courir} après les papillons et @P {v:être} {a:content}.', s: ['chat', 'chien', 'chaton', 'cheval'] },
     { t: '@S {v:dormir} au soleil. Soudain, @P {v:entendre} un bruit et @P {v:se cacher} sous la haie.', s: ['chat', 'chaton', 'chien', 'oiseau', 'animal'] },
-    { t: '@S {v:avoir} faim. @P {v:chercher} $sa nourriture et @P {v:manger} tout $son repas.', s: ['chat', 'chien', 'chaton', 'cheval', 'oiseau', 'chameau', 'animal'] },
+    { t: '@S {v:avoir} faim. @P {v:chercher} de la nourriture et @P {v:manger} tout le repas.', s: ['chat', 'chien', 'chaton', 'cheval', 'oiseau', 'chameau', 'animal'] },
     { t: '@S {v:arriver} près de la rivière. @P {v:boire} un peu d\'eau et @P {v:se reposer} à l\'ombre.', s: ['cheval', 'chameau', 'chien', 'animal'] },
-    { t: '@S {v:préparer} $son sac. @P {v:mettre} $sa veste et @P {v:partir} à l\'école.', s: ['garcon', 'fillette', 'cousin', 'cousine', 'eleve'] },
+    { t: '@S {v:préparer} $son[sac/sacs]. @P {v:mettre} $sa[veste/vestes] et @P {v:partir} à l\'école.', s: ['garcon', 'fillette', 'cousin', 'cousine', 'eleve'] },
     { t: '@S {v:se lever} tôt. @P {v:être} {a:pressé}, car @P {v:avoir} beaucoup de travail.', s: ['voisin', 'voisine', 'boulanger', 'fermiere'] },
-    { t: '@S {v:aimer} les fleurs. @P {v:planter} des tulipes et @P {v:arroser} $son jardin chaque soir.', s: ['voisin', 'voisine', 'fermiere', 'cousin', 'cousine'] },
+    { t: '@S {v:aimer} les fleurs. @P {v:planter} des tulipes et @P {v:arroser} $son[jardin/jardins] chaque soir.', s: ['voisin', 'voisine', 'fermiere', 'cousin', 'cousine'] },
     { t: '@S {v:finir} $ses devoirs. Ensuite, @P {v:aller} au parc et @P {v:faire} du vélo.', s: ['garcon', 'fillette', 'cousin', 'cousine', 'eleve'] },
     { t: '@S {v:entrer} dans le château. @P {v:monter} l\'escalier et @P {v:découvrir} une salle immense.', s: ['princesse', 'chevalier', 'garcon', 'fillette'] },
-    { t: '@S {v:ouvrir} $sa boutique de bonne heure. @P {v:vendre} des fruits et @P {v:saluer} chaque client. @P {v:être} {a:gentil/gentille}.', s: ['boulanger', 'fermiere', 'voisin', 'voisine'] }
+    { t: '@S {v:ouvrir} $sa[boutique/boutiques] de bonne heure. @P {v:vendre} des fruits et @P {v:saluer} chaque client. @P {v:être} {a:gentil/gentille}.', s: ['boulanger', 'fermiere', 'voisin', 'voisine'] }
   ];
   const NB_O = [
-    { t: '@S {v:se réveiller} à l\'aube. @P {v:quitter} $son nid, @P {v:voler} au-dessus du lac et @P {v:attraper} un insecte. @P {v:être} {a:rapide}.', s: ['oiseau', 'moineau'] },
+    { t: '@S {v:se réveiller} à l\'aube. @P {v:quitter} l\'arbre, @P {v:voler} au-dessus du lac et @P {v:attraper} un insecte. @P {v:être} {a:rapide}.', s: ['oiseau', 'moineau'] },
     { t: '@S {v:traverser} le désert. @P {v:marcher} des heures sous le soleil, @P {v:porter} de lourds sacs et @P {v:boire} très peu. Le soir, @P {v:s\'arrêter} près d\'une oasis.', s: ['chameau'] },
-    { t: '@S {v:sortir} de $son écurie. @P {v:galoper} dans le pré, @P {v:sauter} la barrière et @P {v:revenir} {a:essoufflé}.', s: ['cheval'] },
-    { t: '@S {v:partir} à l\'aventure. @P {v:prendre} $son épée, @P {v:monter} sur $son cheval et @P {v:traverser} la forêt. @P {v:être} {a:courageux/courageuse/courageux/courageuses}.', s: ['chevalier', 'princesse'] },
+    { t: '@S {v:sortir} de l\'écurie. @P {v:galoper} dans le pré, @P {v:sauter} la barrière et @P {v:revenir} {a:essoufflé}.', s: ['cheval'] },
+    { t: '@S {v:partir} à l\'aventure. @P {v:prendre} $son[épée/épées/f], @P {v:monter} sur $son[cheval/chevaux] et @P {v:traverser} la forêt. @P {v:être} {a:courageux/courageuse/courageux/courageuses}.', s: ['chevalier', 'princesse'] },
     { t: '@S {v:recevoir} des amis. @P {v:mettre} la table, @P {v:préparer} un repas et @P {v:se sentir} {a:heureux/heureuse/heureux/heureuses} de les {i:voir}.', s: ['voisin', 'voisine', 'cousin', 'cousine'] },
-    { t: '@S {v:écrire} une lettre à $sa grand-mère. @P {v:mettre} un timbre et @P {v:courir} à la poste, car @P {v:vouloir} {i:envoyer} la lettre aujourd\'hui.', s: ['garcon', 'fillette', 'eleve', 'cousin', 'cousine'] }
+    { t: '@S {v:écrire} une lettre à $sa{maîtresse}. @P {v:mettre} un timbre et @P {v:courir} à la poste, car @P {v:vouloir} {i:envoyer} la lettre aujourd\'hui.', s: ['garcon', 'fillette', 'eleve'] }
   ];
   /* Textes à mettre au passé composé (sommet 4) */
   const PC_J = [
@@ -1532,33 +1577,33 @@ span.tok.has-gap{padding:0;margin:0}
     '@T, @S {v:arriver} à la ferme. @P {v:donner} du foin aux chèvres et @P {v:ramasser} les œufs.',
     '@T, @S {v:monter} au grenier. @P {v:ouvrir} un vieux coffre, puis @P {v:descendre} en courant.',
     '@T, @S {v:sortir} sous la pluie. @P {v:tomber} dans une flaque, puis @P {v:revenir} à la maison.',
-    '@T, @S {v:venir} chez $sa grand-mère. @P {v:manger} une tarte et @P {v:jouer} aux dames.',
+    '@T, @S {v:venir} chez $sa{grand-mère}. @P {v:manger} une tarte et @P {v:jouer} aux dames.',
     '@T, @S {v:entrer} dans la boulangerie. @P {v:choisir} un gâteau et @P {v:repartir} aussitôt.',
-    '@T, @S {v:finir} $son travail. Ensuite, @P {v:aller} au stade et @P {v:courir} une heure.'
+    '@T, @S {v:finir} $ses devoirs. Ensuite, @P {v:aller} au stade et @P {v:courir} une heure.'
   ];
   const PC_O = [
     '@T, @S {v:partir} en randonnée avec $ses amis. @P {v:marcher} longtemps, @P {v:arriver} au sommet et @P {v:voir} tout le pays. Le soleil {o:briller|3s} et le vent {o:souffler|3s}.',
-    '@T, @S {v:aller} au marché. @P {v:acheter} des fruits, @P {v:prendre} du fromage et @P {v:revenir} avec $son panier plein.',
+    '@T, @S {v:aller} au marché. @P {v:acheter} des fruits, @P {v:prendre} du fromage et @P {v:revenir} avec $son[panier/paniers].',
     '@T, @S {v:descendre} à la cave. @P {v:chercher} la lampe, @P {v:entendre} un bruit et @P {v:remonter} en vitesse.',
     '@T, @S {v:rester} à la maison. @P {v:lire} un roman, @P {v:écrire} une lettre et @P {v:peindre} un paysage.',
     '@T, @S {v:venir} à l\'école à vélo. @P {v:tomber} dans le virage, mais @P {v:repartir} aussitôt et @P {v:arriver} à l\'heure.',
     '@T, @S {v:sortir} dans la cour. @P {v:jouer} au loup, @P {v:courir} partout, puis @P {v:rentrer} en classe {a:essoufflé}.',
-    '@T, @S {v:monter} dans le train. @P {v:voyager} trois heures, @P {v:descendre} à Lyon et @P {v:retrouver} $sa cousine.',
+    '@T, @S {v:monter} dans le train. @P {v:voyager} trois heures, @P {v:descendre} à Lyon et @P {v:retrouver} $sa{cousine}.',
     '@T, @S {v:entrer} au musée. @P {v:découvrir} des statues et @P {v:pouvoir} {i:admirer} des tableaux anciens. Le guide {o:répondre|3s} à toutes les questions.'
   ];
   /* Récits (sommet 5) : imparfait et passé composé en jaune, imparfait et passé simple en orange */
   const REC_J = [
     '@T, @S {v:partir|a} en promenade. Il {o:faire|3s|m|d} beau et les oiseaux {o:chanter|3p|m|d}. @P {v:marcher|a} jusqu\'à l\'étang. Là, @P {v:observer|a} les canards et @P {v:donner|a} du pain aux cygnes. Puis @P {v:rentrer|a} pour le goûter.',
     '@T, @S {v:aller|a} à la fête du village. La musique {o:jouer|3s|f|d} et les enfants {o:danser|3p|m|d}. @P {v:gagner|a} une peluche, @P {v:monter|a} sur le manège et @P {v:manger|a} une barbe à papa. Le soir, @P {v:rentrer|a} {a:fatigué}.',
-    '@T, @S {v:arriver|a} chez le vétérinaire avec $son chien. Le chien {o:trembler|3s|m|d} un peu. Le vétérinaire {o:examiner|3s|m|a} sa patte et {o:dire|3s|m|a} que tout {o:aller|3s|m|d} bien. Alors, @P {v:caresser|a} $son chien et @P {v:repartir|a} {a:rassuré}.',
+    '@T, @S {v:arriver|a} chez le vétérinaire avec $son{chien}. Le chien {o:trembler|3s|m|d} un peu. Le vétérinaire {o:examiner|3s|m|a} sa patte et {o:dire|3s|m|a} que tout {o:aller|3s|m|d} bien. Alors, @P {v:caresser|a} $son{chien} et @P {v:repartir|a} {a:rassuré}.',
     '@T, @S {v:visiter|a} un musée. Les salles {o:être|3p|f|d} immenses et le guide {o:parler|3s|m|d} doucement. @P {v:admirer|a} des tableaux, @P {v:dessiner|a} une statue et @P {v:rester|a} longtemps devant les dinosaures. @P {v:sortir|a} à midi.',
     '@T, @S {v:sortir|a} dans la neige. Il {o:faire|3s|m|d} très froid et les arbres {o:être|3p|m|d} tout blancs. @P {v:construire|a} un bonhomme de neige et @P {v:tomber|a} dans la poudreuse. Ensuite, @P {v:rentrer|a} et @P {v:boire|a} un chocolat chaud.',
     '@T, @S {v:entrer|a} dans la boulangerie. La boutique {o:sentir|3s|f|d} bon le pain chaud et la boulangère {o:sourire|3s|f|d}. @P {v:choisir|a} une baguette, @P {v:prendre|a} deux croissants et @P {v:dire|a} merci. Puis @P {v:repartir|a} vers la maison.'
   ];
   const REC_O = [
     '@T, @S {v:se promener|d} dans la vieille ville. Les rues {o:être|3p|f|d} calmes. Soudain, @P {v:apercevoir|a} une petite porte. @P {v:pousser|a} la porte et @P {v:découvrir|a} un jardin secret. Des roses {o:grimper|3p|f|d} sur les murs. @P {v:cueillir|a} une rose et @P {v:repartir|a} sans bruit.',
-    '@T, @S {v:être|d} à la montagne. La neige {o:briller|3s|f|d} au soleil. @P {v:mettre|a} $ses skis et @P {v:descendre|a} la piste. Au milieu de la pente, @P {v:tomber|a}, mais @P {v:se relever|a} vite et @P {v:repartir|a} plus prudemment. Le soir, @P {v:raconter|a} $sa chute à toute la famille.',
-    '@T, @S {v:lire|d} un livre sous un arbre. Le vent {o:agiter|3s|m|d} les feuilles et les oiseaux {o:chanter|3p|m|d}. Tout à coup, une pomme {o:tomber|3s|f|a} sur le livre. @P {v:sursauter|a}, puis @P {v:éclater|a} de rire. @P {v:croquer|a} la pomme et @P {v:continuer|a} $sa lecture.',
+    '@T, @S {v:être|d} à la montagne. La neige {o:briller|3s|f|d} au soleil. @P {v:mettre|a} $ses skis et @P {v:descendre|a} la piste. Au milieu de la pente, @P {v:tomber|a}, mais @P {v:se relever|a} vite et @P {v:repartir|a} plus prudemment. Le soir, @P {v:raconter|a} l\'aventure à toute la famille.',
+    '@T, @S {v:lire|d} un livre sous un arbre. Le vent {o:agiter|3s|m|d} les feuilles et les oiseaux {o:chanter|3p|m|d}. Tout à coup, une pomme {o:tomber|3s|f|a} sur le livre. @P {v:sursauter|a}, puis @P {v:éclater|a} de rire. @P {v:croquer|a} la pomme et @P {v:reprendre|a} le livre.',
     '@T, @S {v:chercher|d} le chat de la voisine depuis une heure. La nuit {o:tomber|3s|f|d}. Enfin, @P {v:entendre|a} un miaulement. @P {v:lever|a} la tête et @P {v:voir|a} le chat sur le toit. @P {v:aller|a} {i:chercher} une échelle et @P {v:faire|a} {i:descendre} le chat. La voisine {o:être|3s|f|d} si heureuse !',
     '@T, @S {v:attendre|d} $ses amis devant le cinéma. Il {o:faire|3s|m|d} froid et le film {o:commencer|3s|m|d} bientôt. Enfin, $ses amis {o:arriver|3p|m|a}. @P {v:entrer|a} dans la salle et @P {v:s\'installer|a} au premier rang. Le film {o:être|3s|m|a} formidable. Après le film, @P {v:raconter|a} les meilleures scènes.',
     '@T, @S {v:faire|d} du bateau sur le lac. L\'eau {o:être|3s|f|d} calme. Soudain, le vent {o:souffler|3s|m|a} très fort et le bateau {o:pencher|3s|m|a}. @P {v:tenir|a} la barre et @P {v:réussir|a} à {i:revenir} au port. Sur le quai, $ses parents {o:applaudir|3p|m|a}. @P {v:être|a} {a:fier/fière}.'
@@ -1568,7 +1613,23 @@ span.tok.has-gap{padding:0;margin:0}
   const TIME_RJ = { 'présent': 'aujourd\'hui', 'imparfait': 'hier' };
   const TIME_RO = { 'présent': 'aujourd\'hui', 'imparfait': 'ce\u00a0jour-là' }; // une seule case pour « ce jour-là »
   // Le nouveau sujet garde le genre de l'ancien quand on ne le connaît pas (je, tu, nous, vous) : elles → vous (féminin).
-  const keepG = (sj, sj2) => sj2.g === 'x' && sj.g !== 'x' ? Object.assign({}, sj2, { g: sj.g }) : sj2;
+  // Pas quand l'ancien sujet est « vous » à plusieurs (Léo et Inès) : « je » peut être un garçon ou une fille.
+  // Avec le vous de politesse (une seule personne), le genre est gardé : vous êtes contente → je suis contente.
+  const keepG = (sj, sj2) => sj2.g === 'x' && sj.g !== 'x' && !(sj.who && !sj.pol) ? Object.assign({}, sj2, { g: sj.g }) : sj2;
+  // « vous » : plusieurs personnes (nommées) ou vous de politesse (une seule personne). La consigne dit toujours lequel.
+  const VOUS_PL = [{ who: 'Léo et Inès', g: 'm' }, { who: 'Inès et Zoé', g: 'f' }, { who: 'Tom et Hugo', g: 'm' }, { who: 'Lina et Sarah', g: 'f' }, { who: 'Nina et Paul', g: 'm' }, { who: 'Jade et Lou', g: 'f' }];
+  const VOUS_POL = [{ who: 'la directrice', g: 'f' }, { who: 'le directeur', g: 'm' }, { who: 'la pharmacienne', g: 'f' }, { who: 'le gardien du stade', g: 'm' }, { who: 'la bibliothécaire', g: 'f' }, { who: 'le docteur', g: 'm' }];
+  function withVous(sj){
+    if (!sj || sj.w !== 'vous' || sj.who) return sj;
+    const pol = Math.random() < 0.45, v = pick(pol ? VOUS_POL : VOUS_PL);
+    return Object.assign({}, sj, { g: v.g, who: v.who, pol });
+  }
+  function vousNote(a, b){
+    const v = [a, b].find(x => x && x.who);
+    if (!v) return '';
+    return v.pol ? ' Ici, « vous » est un vous de politesse : on parle à ' + v.who + '.' : ' Ici, « vous », ce sont ' + v.who + '.';
+  }
+  const vousKey = sj => sj.who ? (sj.pol ? 'P' : 'V') + sj.g : '';
   const otherPro = (sj, ok) => keepG(sj, pick(SUBJ_PRO.filter(x => x.p !== sj.p && (!ok || ok(x)))));
   const nWords = x => (x.w || pronOf(x)).split(' ').length;
   function otherSubj(sj, pool){
@@ -1581,10 +1642,10 @@ span.tok.has-gap{padding:0;margin:0}
     const pool = HARD ? TX_O : TX_J;
     return tryMake(() => {
       const ti = Math.floor(Math.random() * pool.length);
-      const sj = pick(SUBJ_PRO), sj2 = otherPro(sj);
+      const sj = withVous(pick(SUBJ_PRO)), sj2 = withVous(otherPro(sj));
       const u = transposeUnit({ tpl: pool[ti], from: { sj, t: 'présent' }, to: { sj: sj2, t: 'présent' }, tapPro: true, split: true,
-        q: 'Réécris le texte <strong>avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »</strong>.', hintA: HINT_P });
-      u.key = 'd1|' + (HARD ? 'o' : 'j') + ti + '|' + sj.w + '>' + sj2.w;
+        q: 'Réécris le texte <strong>avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »</strong>.' + vousNote(sj, sj2), hintA: HINT_P });
+      u.key = 'd1|' + (HARD ? 'o' : 'j') + ti + '|' + sj.w + vousKey(sj) + '>' + sj2.w + vousKey(sj2);
       return u;
     }, u => mainChange(u) && u.och.length > 0);
   }
@@ -1612,12 +1673,12 @@ span.tok.has-gap{padding:0;margin:0}
     return tryMake(() => {
       const ti = Math.floor(Math.random() * pool.length);
       const t = pick(['imparfait', 'futur']);
-      const sj = HARD ? pick(SUBJ_PRO) : pick(SUBJ_ALL());
-      const sj2 = HARD ? otherPro(sj) : sj;
+      const sj = withVous(HARD ? pick(SUBJ_PRO) : pick(SUBJ_ALL()));
+      const sj2 = HARD ? withVous(otherPro(sj)) : sj;
       const u = transposeUnit({ tpl: '@T, ' + pool[ti], from: { sj, t: 'présent' }, to: { sj: sj2, t }, time: TIME_A, tapPro: true, split: true,
-        q: 'Réécris le texte <strong>en commençant par « ' + capFirst(TIME_A[t]) + ' »' + (HARD ? ', avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »' : '') + '</strong>.', hintA: HARD ? HINT_P + ' Et comme le moment change aussi, les verbes qui ont un autre sujet changent quand même.' : HINT_T });
+        q: 'Réécris le texte <strong>en commençant par « ' + capFirst(TIME_A[t]) + ' »' + (HARD ? ', avec « ' + sj2.w + ' » à la place de « ' + sj.w + ' »' : '') + '</strong>.' + (sj2 !== sj ? vousNote(sj, sj2) : ''), hintA: HARD ? HINT_P + ' Et comme le moment change aussi, les verbes qui ont un autre sujet changent quand même.' : HINT_T });
       pastHints(u, t);
-      u.key = 'd3|' + (HARD ? 'o' : 'j') + ti + '|' + t + '|' + (sj.w || sj.p) + '>' + (sj2.w || sj2.p);
+      u.key = 'd3|' + (HARD ? 'o' : 'j') + ti + '|' + t + '|' + (sj.w || sj.p) + vousKey(sj) + '>' + (sj2.w || sj2.p) + vousKey(sj2);
       return u;
     }, u => changesAll(u));
   }

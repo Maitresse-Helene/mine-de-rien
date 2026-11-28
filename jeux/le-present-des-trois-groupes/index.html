@@ -325,6 +325,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .tokens .orig-label,.sentence .orig-label{color:var(--ink-soft);line-height:1.4}
 .instr b{display:block;color:var(--ink);font-weight:700}
 .instr .step{display:block;margin-top:2px}
+.instr .who{display:block;margin-top:2px;color:var(--ink);font-weight:500}
 /* Consignes : ce qui est demandé est mis en valeur (28 novembre) */
 .instr strong,.check-q strong,.lead-q strong{font-weight:800;color:var(--pen)}
 .nw{color:var(--pen);font-weight:600}
@@ -977,22 +978,22 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
      Les autres mots ne changent pas. « pieges » : ce que dit le jeu si l'élève touche ces mots-là. */
   const TRANSPO_O = [
     { title: 'Le bateau', instr: 'Réécris le texte avec « Ils » à la place de « Il ».',
-      t: "[Il>Ils] {part>partir|5} tôt le matin. [Il>Ils] {jette>jeter|5} l'ancre près de l'île. [Il>Ils] {plonge>plonger|5} et [il>ils] {découvre>découvrir|5} des poissons qui brillent comme des bijoux. [Il>Ils] {prend>prendre|5} des photos. Le soir, [il>ils] {rentre>rentrer|5} au port et [il>ils] {appelle>appeler|5} (sa>leur|poss) famille.",
-      pieges: { brillent: "« brillent » est bien un verbe conjugué, mais son sujet est « qui » (les poissons) : il ne change pas." } },
+      t: "[Il>Ils] {part>partir|5} tôt le matin. [Il>Ils] {jette>jeter|5} l'ancre près de l'île. [Il>Ils] {plonge>plonger|5} et [il>ils] {découvre>découvrir|5} des poissons qui brillent comme des bijoux. [Il>Ils] {prend>prendre|5} des photos. Le soir, [il>ils] {rentre>rentrer|5} au port et [il>ils] {attache>attacher|5} (son>leur|poss) bateau.",
+      pieges: { bateau: "« bateau » ne change pas : ils sont tous sur le même bateau, il n'y en a qu'un.", brillent: "« brillent » est bien un verbe conjugué, mais son sujet est « qui » (les poissons) : il ne change pas." } },
     { title: 'Le pique-nique', instr: 'Réécris le texte au présent.',
       t: "Le dimanche, nous {mangions>manger|3} au bord du lac. Papa {ouvrait>ouvrir|2|Papa} le panier et nous {buvions>boire|3} du jus de pomme. Mes cousins {lançaient>lancer|5|Mes cousins} des cailloux pour les faire ricocher. Moi, je {peignais>peindre|0} le paysage. Le soir, nous {rangions>ranger|3} tout et nous {rentrions>rentrer|3} fatigués.",
       pieges: { faire: "« faire » est un verbe à l'infinitif : il ne change pas.", ricocher: "« ricocher » est un verbe à l'infinitif : il ne change pas.", 'fatigués': "« fatigués » ne change pas : on change seulement le temps, pas le sujet." } },
-    { title: 'Les apprentis pâtissiers', instr: 'Réécris le texte avec « vous » à la place de « tu ».',
+    { title: 'Les apprentis pâtissiers', instr: 'Réécris le texte avec « vous » à la place de « tu ».', who: 'Ici, « vous », ce sont deux apprentis.',
       t: "[Tu>Vous] {commences>commencer|4} par (te>vous|pron) laver les mains. [Tu>Vous] {pèses>peser|4} la farine et [tu>vous] {casses>casser|4} les œufs. [Tu>Vous] {mélanges>mélanger|4} sans (t'>vous|pron)arrêter. [Tu>Vous] {dois>devoir|4} attendre que le four chauffe. Puis [tu>vous] {mets>mettre|4} le gâteau au four et [tu>vous] {nettoies>nettoyer|4} la table.",
       pieges: { laver: "« laver » est un verbe à l'infinitif : il ne change pas.", 'arrêter': "« arrêter » est un verbe à l'infinitif : il ne change pas.", attendre: "« attendre » est un verbe à l'infinitif : il ne change pas.", chauffe: "« chauffe » est bien un verbe conjugué, mais son sujet est « le four » : il ne change pas." } },
     { title: 'La lettre', instr: 'Réécris le texte avec « nous » à la place de « je ».',
       t: "[Je>Nous] {reçois>recevoir|3} une lettre de (ma>notre|poss) correspondante. [Je>Nous] {lis>lire|3} chaque mot et [je>nous] {ris>rire|3} beaucoup. [Je>Nous] {connais>connaître|3} bien sa famille. [Je>Nous] {réponds>répondre|3} tout de suite et [j'>nous]{envoie>envoyer|3} des dessins. [Je>Nous] {mange>manger|3} ensuite un goûter.",
-      pieges: { sa: "« sa famille », c'est la famille de la correspondante : « sa » ne change pas." } },
+      pieges: { sa: "« sa famille », c'est la famille de la correspondante : « sa » ne change pas.", correspondante: "« correspondante » ne change pas : c'est la même pour tous, il n'y en a qu'une." } },
     { title: 'Le voyage en train', instr: 'Réécris le texte avec « nous » à la place de « je ».',
-      t: "[Je>Nous] {voyage>voyager|3} en train pour la première fois. [Je>Nous] {place>placer|3} (ma>notre|poss) valise en haut. [Je>Nous] {mange>manger|3} un sandwich et [je>nous] {bois>boire|3} de l'eau. Puis [j'>nous]{appelle>appeler|3} (mon>notre|poss) père. [Je>Nous] {reçois>recevoir|3} sa réponse et [je>nous] {ris>rire|3}.",
-      pieges: { sa: "« sa réponse », c'est la réponse du père : « sa » ne change pas." } },
+      t: "[Je>Nous] {voyage>voyager|3} en train pour la première fois. [Je>Nous] {place>placer|3} (ma>nos|poss) (valise>valises|nomf) en haut. [Je>Nous] {mange>manger|3} un sandwich et [je>nous] {bois>boire|3} de l'eau. Puis [j'>nous]{appelle>appeler|3} (mon>notre|poss) père. [Je>Nous] {reçois>recevoir|3} sa réponse et [je>nous] {ris>rire|3}.",
+      pieges: { sa: "« sa réponse », c'est la réponse du père : « sa » ne change pas.", 'père': "« père » ne change pas : c'est le même pour tous, il n'y en a qu'un." } },
     { title: 'Les pompiers', instr: 'Réécris le texte avec « Les pompiers » à la place de « Le pompier ».',
-      t: "[Le>Les] [pompier>pompiers] {reçoit>recevoir|5} un appel. [Il>Ils] {court>courir|5} vers le camion et [il>ils] {met>mettre|5} (son>leur|poss) casque. [Il>Ils] {éteint>éteindre|5} le feu qui menace la grange et [il>ils] {ouvre>ouvrir|5} les fenêtres. [Il>Ils] {jette>jeter|5} un dernier coup d'œil, puis [il>ils] {rentre>rentrer|5} à la caserne, (épuisé>épuisés|acc).",
+      t: "[Le>Les] [pompier>pompiers] {reçoit>recevoir|5} un appel. [Il>Ils] {court>courir|5} vers le camion et [il>ils] {met>mettre|5} (son>leurs|poss) (casque>casques|nom). [Il>Ils] {éteint>éteindre|5} le feu qui menace la grange et [il>ils] {ouvre>ouvrir|5} les fenêtres. [Il>Ils] {jette>jeter|5} un dernier coup d'œil, puis [il>ils] {rentre>rentrer|5} à la caserne, (épuisé>épuisés|acc).",
       pieges: { menace: "« menace » est bien un verbe conjugué, mais son sujet est « qui » (le feu) : il ne change pas." } }
   ];
   const TEXTS = [
@@ -1030,10 +1031,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   ];
   const TRANSPO = [
     { title: 'À la piscine', instr: 'Réécris le texte avec « nous » à la place de « je ».',
-      t: "Le dimanche, [je>nous] {vais>aller|3} nager à la piscine. [Je>Nous] {prends>prendre|3} (mon>notre|poss) sac et [je>nous] {pars>partir|3} à vélo. Dans l'eau, [je>nous] {fais>faire|3} des longueurs. [Je>Nous] {choisis>choisir|3} toujours le plongeoir le plus haut. [Je>Nous] {rentre>rentrer|3} (fatigué>fatigués|acc) mais (content>contents|acc).",
+      t: "Le dimanche, [je>nous] {vais>aller|3} nager à la piscine. [Je>Nous] {prends>prendre|3} (mon>nos|poss) (sac>sacs|nom) et [je>nous] {pars>partir|3} à vélo. Dans l'eau, [je>nous] {fais>faire|3} des longueurs. [Je>Nous] {choisis>choisir|3} toujours le plongeoir le plus haut. [Je>Nous] {rentre>rentrer|3} (fatigué>fatigués|acc) mais (content>contents|acc).",
       pieges: { nager: "« nager » est un verbe à l'infinitif : il ne change pas." } },
     { title: 'Au fournil', instr: 'Réécris le texte avec « Les boulangers » à la place de « Le boulanger ».',
-      t: "[Le>Les] [boulanger>boulangers] {arrive>arriver|5} à quatre heures du matin. [Il>Ils] {met>mettre|5} (son>leur|poss) tablier, [il>ils] {prend>prendre|5} la farine et [il>ils] {pétrit>pétrir|5} la pâte. [Il>Ils] {remplit>remplir|5} les étagères de pains dorés. Puis [il>ils] {dit>dire|5} bonjour aux premiers clients.",
+      t: "[Le>Les] [boulanger>boulangers] {arrive>arriver|5} à quatre heures du matin. [Il>Ils] {met>mettre|5} (son>leurs|poss) (tablier>tabliers|nom), [il>ils] {prend>prendre|5} la farine et [il>ils] {pétrit>pétrir|5} la pâte. [Il>Ils] {remplit>remplir|5} les étagères de pains dorés. Puis [il>ils] {dit>dire|5} bonjour aux premiers clients.",
       pieges: { 'dorés': "« dorés » parle des pains, pas du boulanger : il ne change pas." } },
     { title: 'À la ferme', instr: 'Réécris le texte au présent.',
       t: "Chaque été, je {passais>passer|0} mes vacances à la ferme. Le matin, je {nourrissais>nourrir|0} les poules et je {partais>partir|0} chercher le lait encore chaud. Mon oncle {faisait>faire|2|Mon oncle} les foins avec ses voisins. Le soir, nous {dormions>dormir|3} dans la grange et nous {entendions>entendre|3} les chouettes.",
@@ -1041,7 +1042,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     { title: 'Au théâtre', instr: 'Réécris le texte au présent.',
       t: "Jeudi, les élèves {iront>aller|5|les élèves} au théâtre. Ils {prendront>prendre|5} le métro avec leur maîtresse. Pendant la pièce, ils {rougiront>rougir|5} de plaisir et ils {applaudiront>applaudir|5} les comédiens. Après, nous {écrirons>écrire|3} un article pour le journal de l'école. Tu {pourras>pouvoir|1} le lire !",
       pieges: { lire: "« lire » est un verbe à l'infinitif : il ne change pas." } },
-    { title: 'La recette des crêpes', instr: 'Réécris la recette avec « vous » à la place de « tu ».',
+    { title: 'La recette des crêpes', instr: 'Réécris la recette avec « vous » à la place de « tu ».', who: 'Ici, « vous » est un vous de politesse : la recette parle à une seule personne.', pol: true,
       t: "Pour faire des crêpes, [tu>vous] {prends>prendre|4} un saladier. [Tu>Vous] {mets>mettre|4} la farine et [tu>vous] {ajoutes>ajouter|4} les œufs. [Tu>Vous] {mélanges>mélanger|4} doucement avec (ton>votre|poss) fouet. [Tu>Vous] {remplis>remplir|4} une louche de pâte et [tu>vous] {fais>faire|4} cuire la crêpe. [Tu>Vous] {peux>pouvoir|4} la garnir de sucre !",
       pieges: { faire: "« faire » est un verbe à l'infinitif : il ne change pas.", cuire: "« cuire » est un verbe à l'infinitif : il ne change pas.", garnir: "« garnir » est un verbe à l'infinitif : il ne change pas." } },
     { title: 'Le bus', instr: 'Réécris le texte avec « Elles » à la place de « Elle ».',
@@ -1203,11 +1204,12 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     const gaps = [];
     toks.forEach((tk, i) => {
       if (tk.role === 'verbe') gaps.push({ tok: i, kind: 'verbe', orig: tk.w, inf: tk.inf, p: tk.p, subj: tk.subj, answer: tk.nw });
-      if (tk.role === 'mot') gaps.push({ tok: i, kind: 'mot', orig: tk.w, k: tk.k, subj: tk.subj, answer: tk.nw, next: toks[i + 1] ? toks[i + 1].nw : '' });
+      if (tk.role === 'mot') gaps.push({ tok: i, kind: 'mot', orig: tk.w, k: tk.k, subj: tk.subj, answer: tk.nw, next: toks[i + 1] ? toks[i + 1].nw : '', nextCh: !!(toks[i + 1] && toks[i + 1].role === 'mot'), nextF: !!(toks[i + 1] && toks[i + 1].k === 'nomf') });
     });
     const chV = [], chO = [];
     toks.forEach((tk, i) => { if (tk.role === 'verbe') chV.push(i); else if (tk.role) chO.push(i); });
-    return { title: x.title, instr: x.instr, toks, gaps, chV, chO, pieges: x.pieges || {} };
+    if (x.pol) gaps.forEach(g => { g.pol = true; });
+    return { title: x.title, instr: x.instr, who: x.who || '', toks, gaps, chV, chO, pieges: x.pieges || {} };
   }
   function parseSpot(str){
     const toks = [], subj = [];
@@ -1551,7 +1553,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   }
   function tpRule(u, R){
     if (R.tp === 'A') return 'Pour trouver un verbe conjugué, encadre-le avec « ne … pas ». Un verbe à l\'infinitif ne change jamais' + (u.chO.length ? ', ni un verbe qui a un autre sujet.' : '.');
-    return 'Les mots qui changent sont les mots du sujet, et les mots qui désignent le sujet ou qui s\'accordent avec lui : mon, ton, son, me, te, se…, et les adjectifs.';
+    return 'Les mots qui changent sont les mots du sujet, et les mots qui désignent le sujet ou qui s\'accordent avec lui : mon, ton, son, me, te, se…, et les adjectifs. Et ce que chacun a pour lui : avec plusieurs personnes, il y en a plusieurs (nos sacs).';
   }
   function tpValidate(){
     const R = S.R, u = curUnit();
@@ -1627,7 +1629,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
                 notre: 'à nous', nos: 'à nous', votre: 'à vous', vos: 'à vous', leur: 'à eux ou à elles', leurs: 'à eux ou à elles' };
   function wordHint(g){
     const s = g.subj ? norm(g.subj) : '';
-    if (g.k === 'poss') return '« ' + esc(g.orig) + ' » veut dire « ' + OWN[norm(g.orig)] + ' ». Dans le nouveau texte, cela veut dire « ' + OWN[norm(g.answer)] + ' ». Le mot qui suit (« ' + esc(g.next) + ' ») ne change pas.';
+    if (g.k === 'poss') return '« ' + esc(g.orig) + ' » veut dire « ' + OWN[norm(g.orig)] + ' ». Dans le nouveau texte, cela veut dire « ' + OWN[norm(g.answer)] + ' ». ' + (g.nextCh ? 'Chacun a ' + (g.nextF ? 'la sienne' : 'le sien') + ' : il y en a plusieurs, le nom qui suit passe au pluriel.' : 'Le mot qui suit (« ' + esc(g.next) + ' ») ne change pas : ' + (g.pol ? 'avec le vous de politesse, on parle à une seule personne.' : 'c\'est le même pour tous.'));
+    if (g.k === 'nom' || g.k === 'nomf') return '« ' + esc(g.orig) + ' » : chacun a ' + (g.k === 'nomf' ? 'la sienne' : 'le sien') + ', il y en a plusieurs. Le nom passe au pluriel.';
     if (g.k === 'pron') return '« ' + esc(g.orig) + ' » désigne la même personne que le sujet. Le sujet est maintenant « ' + esc(s) + ' ».';
     if (g.k === 'acc') return '« ' + esc(g.orig) + ' » s\'accorde avec le sujet. Le sujet est maintenant « ' + esc(s) + ' » : il est au pluriel.';
     return 'Regarde le sujet du nouveau texte : « ' + esc(s) + ' ».';
@@ -1681,7 +1684,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
     const step = R.tp === 'A' ? 'D\'abord, touche <strong>tous les verbes conjugués qui vont changer</strong>, puis valide.'
       : R.tp === 'B' ? 'Ensuite, touche <strong>les autres mots qui vont changer</strong>, puis valide.'
       : (u.chO.length ? 'Enfin, <strong>écris chaque mot qui change</strong>.' : 'Enfin, <strong>écris chaque verbe qui change</strong>.');
-    $('instr').innerHTML = '<b>' + esc(u.instr) + '</b><span class="step">' + step + '</span>';
+    $('instr').innerHTML = '<b>' + esc(u.instr) + '</b>' + (u.who ? '<span class="who">' + esc(u.who) + '</span>' : '') + '<span class="step">' + step + '</span>';
     $('textTitle').hidden = false;
     $('textTitle').textContent = u.title;
     const leg = $('spotLegend');
