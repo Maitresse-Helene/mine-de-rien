@@ -140,9 +140,6 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
   text-decoration:underline;text-underline-offset:3px;
 }
 .push-bottom{margin-top:auto}
-.send-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--sheet);border:1.5px dashed var(--pen)}
-.send-btn{text-decoration:none}
-.send-btn svg{width:22px;height:22px;flex:none}
 .send-note{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
 .stack{display:flex;flex-direction:column;gap:10px}
 
@@ -622,7 +619,6 @@ span.tok.has-gap{padding:0;margin:0}
       <h2 class="text-title" style="margin-bottom:10px">Le détail</h2>
       <ul class="det" id="resDetail"></ul>
     </div>
-    <div id="sendBox" hidden style="display:none"><a id="sendLink" href="#" hidden></a></div>
 
     <div class="stack push-bottom">
       <button class="btn-primary" id="nextLevelBtn" type="button" hidden>Sommet suivant</button>
@@ -699,9 +695,6 @@ span.tok.has-gap{padding:0;margin:0}
   const LEARN_KEY = 'imparfait-futur-montagne-lecon-faite';
   const GAME_NAME = 'L\'imparfait et le futur (montagne)';
   const $ = id => document.getElementById(id);
-  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSde3BnaU_vGD6JeeCqP3mgcxNhnm5z15fbf38R3D-ihhwOscQ/viewform';
-  const FORM_IDS = ['1488044105', '165270319', '1824034822', '454882096']; // Prénom, Jeu, Niveau, Score
-  const formLink = vals => FORM_URL + '?usp=pp_url' + FORM_IDS.map((id, i) => '&entry.' + id + '=' + encodeURIComponent(vals[i] || '')).join('');
   const nErr = n => n + (n > 1 ? ' erreurs' : ' erreur');
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -3036,9 +3029,6 @@ span.tok.has-gap{padding:0;margin:0}
     $('resNeed').textContent = r.need + '/' + r.total;
     $('resDetail').innerHTML = r.results.map(x =>
       '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? '' : ' <span class="tries">· à revoir</span>') + '</span></li>').join('');
-    $('sendBox').hidden = true;
-    if (prof) $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Sommet ' + lv.id + ' (' + sommetOf(lv.id).alt + ') : ' + lv.name,
-      r.ok + '/' + r.total + ' réussites du premier coup ; ' + nErr(r.err) + (r.ok >= r.need ? ' ; sommet atteint' : ' ; sommet pas encore atteint') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '')]);
 
     const nb = $('nextLevelBtn');
     const canNext = r.id < 5 && prof && unlocked(prof, r.id + 1);

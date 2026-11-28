@@ -144,9 +144,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   text-decoration:underline;text-underline-offset:3px;
 }
 .push-bottom{margin-top:auto}
-.send-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--sheet);border:1.5px dashed var(--pen)}
-.send-btn{text-decoration:none}
-.send-btn svg{width:22px;height:22px;flex:none}
 .send-note{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
 .stack{display:flex;flex-direction:column;gap:10px}
 
@@ -718,13 +715,6 @@ b.tgt{color:var(--stamp)}
       <h2 class="det-title">Le détail</h2>
       <ul class="det" id="resDetail"></ul>
     </div>
-    <div class="send-box" id="sendBox">
-      <a class="btn-secondary send-btn" id="sendLink" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M4 7.5l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Envoyer mon score à la maîtresse
-      </a>
-      <p class="send-note">Un formulaire s'ouvre avec ton score déjà écrit. Appuie sur « Envoyer » pour que ta maîtresse le reçoive.</p>
-    </div>
 
     <div class="stack push-bottom">
       <button class="btn-primary" id="nextLevelBtn" type="button" hidden>Niveau suivant</button>
@@ -951,9 +941,6 @@ const CFG = {"tense":"adjectifs","au":"","persons":[],"compound":false,"aux3":nu
   const LEARN_KEY = 'tirelettres-adjectifs-lecon-faite';
   const GAME_NAME = 'Tirelettres : les adjectifs';
   const $ = id => document.getElementById(id);
-  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSde3BnaU_vGD6JeeCqP3mgcxNhnm5z15fbf38R3D-ihhwOscQ/viewform';
-  const FORM_IDS = ['1488044105', '165270319', '1824034822', '454882096']; // Prénom, Jeu, Niveau, Score
-  const formLink = vals => FORM_URL + '?usp=pp_url' + FORM_IDS.map((id, i) => '&entry.' + id + '=' + encodeURIComponent(vals[i] || '')).join('');
   const nErr = n => n + (n > 1 ? ' erreurs' : ' erreur');
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -2435,9 +2422,6 @@ const CFG = {"tense":"adjectifs","au":"","persons":[],"compound":false,"aux3":nu
     rp.hidden = !r.party;
     if (r.party) rp.innerHTML = 'Ton total de la partie : <b>' + r.my + ' points</b>. Le total des meilleurs coups : <b>' + r.bestPts + ' points</b> (tu as fait ' + (r.bestPts ? Math.round(100 * r.my / r.bestPts) : 0) + ' %).';
     $('resDetail').innerHTML = r.results.map(x => '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + '</span></li>').join('');
-    $('sendBox').hidden = !prof;
-    if (prof) $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Niveau ' + lv.id + ' : ' + lv.name,
-      r.ok + '/' + r.total + (r.party ? ' coups réussis (' + r.my + ' points sur ' + r.bestPts + ')' : ' réussites du premier coup') + ' ; ' + nErr(r.err) + (r.ok >= r.need ? ' ; niveau réussi' : ' ; niveau pas encore réussi') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '')]);
     const nbtn = $('nextLevelBtn');
     const canNext = r.id < 5 && prof && unlocked(prof, r.id + 1);
     nbtn.hidden = !canNext;

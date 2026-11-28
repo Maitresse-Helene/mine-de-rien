@@ -152,9 +152,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   text-decoration:underline;text-underline-offset:3px;
 }
 .push-bottom{margin-top:auto}
-.send-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--sheet);border:1.5px dashed var(--pen)}
-.send-btn{text-decoration:none}
-.send-btn svg{width:22px;height:22px;flex:none}
 .send-note{margin:0;font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
 .stack{display:flex;flex-direction:column;gap:10px}
 
@@ -783,13 +780,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
       <h2 class="det-title">Le détail</h2>
       <ul class="det" id="resDetail"></ul>
     </div>
-    <div class="send-box" id="sendBox">
-      <a class="btn-secondary send-btn" id="sendLink" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M4 7.5l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Envoyer mon score à la maîtresse
-      </a>
-      <p class="send-note">Un formulaire s'ouvre avec ton score déjà écrit. Appuie sur « Envoyer » pour que ta maîtresse le reçoive.</p>
-    </div>
 
     <div class="stack push-bottom">
       <button class="btn-primary" id="nextLevelBtn" type="button" hidden>Île suivante</button>
@@ -879,9 +869,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   const LEARN_KEY = 'resultat-possible-lecon-faite';
   const GAME_NAME = "Mon résultat est-il possible ?";
   const $ = id => document.getElementById(id);
-  const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSde3BnaU_vGD6JeeCqP3mgcxNhnm5z15fbf38R3D-ihhwOscQ/viewform';
-  const FORM_IDS = ['1488044105', '165270319', '1824034822', '454882096']; // Prénom, Jeu, Niveau, Score
-  const formLink = vals => FORM_URL + '?usp=pp_url' + FORM_IDS.map((id, i) => '&entry.' + id + '=' + encodeURIComponent(vals[i] || '')).join('');
   const nErr = n => n + (n > 1 ? ' erreurs' : ' erreur');
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -2759,9 +2746,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
   function setSendLink(){
     const r = S.res, prof = profile(), lv = LEVELS[r.id - 1];
     if (!prof) return;
-    $('sendLink').href = formLink([prof.name, GAME_NAME + ' · parcours ' + curParc(), 'Île ' + lv.id + ' (' + ileOf(lv.id).short + ') : ' + lv.name,
-      r.ok + '/' + r.total + ' démarches justes du premier coup ; ' + (r.calcN ? r.calcN + (r.calcN > 1 ? ' calculs' : ' calcul') + ' à revoir ; ' : '') + nErr(r.err) + (r.ok >= r.need ? ' ; île validée' : ' ; île pas encore validée') + (r.gained > 0 ? ' ; +' + r.gained + (r.gained > 1 ? ' bons points' : ' bon point') : '') +
-      (r.ok >= r.need ? (r.solved ? ' ; énigme résolue, trésor trouvé' : ' ; énigme pas encore résolue') : '') + (r.verifN ? ' ; ' + r.verifN + (r.verifN > 1 ? ' vérifications' : ' vérification') + ' à revoir' : '') + revSend(r)]);
   }
   function renderEnigma(){
     const r = S.res, E = r.enigme, valid = r.ok >= r.need;
@@ -2845,7 +2829,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--pen);outline-of
     $('resDetail').innerHTML = r.results.map(x =>
       '<li><span class="' + (x.ok ? 'ok' : 'ko') + '">' + (x.ok ? TICK : CROSS) + '</span><span>' + x.html + (x.ok ? (x.calc ? ' <span class="tries">· démarche juste, calcul à revoir</span>' : '') : ' <span class="tries">· à revoir</span>') + (x.verif ? ' <span class="tries">· vérification à revoir</span>' : '') + '</span></li>').join('');
     renderRevBox(r);
-    $('sendBox').hidden = !prof;
     setSendLink();
 
     const nbtn = $('nextLevelBtn');
