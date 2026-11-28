@@ -256,7 +256,57 @@ with sync_playwright() as pw:
     m4.fill("#ens-login", "helene"); m4.fill("#ens-input", "autremdp7"); m4.click("#ens-gate button[type=submit]")
     ok(attendre(m4, "() => !document.getElementById('ens-gate')"), "le nouveau mot de passe marche")
 
-    toutes = [("appareil 1", e1), ("appareil 2", e2), ("enseignante", e3), ("6e", e4), ("enseignante 2", e5)]
+    print("10. Statistiques d'utilisation : anonymes, sans la maîtresse")
+    VIDEO = next(j["slug"] for j in jeux if j.get("video"))
+    def stats(pg, depuis=""):
+        return pg.evaluate("""async depuis => { const a = JSON.parse(localStorage.getItem('crayonnade-ens-appareil'));
+            const r = await fetch('/api/ens/usages' + (depuis ? '?depuis=' + depuis : ''), {headers: {Authorization: 'Bearer ' + a.jeton}});
+            return await r.json(); }""", depuis)
+    def compte(s, quoi, ev):
+        return sum(int(r["n"]) for r in s.get("totaux", []) if r["quoi"] == quoi and r["evenement"] == ev)
+    s0 = stats(m4)
+    ok(compte(s0, "je-me-teste", "ouvert") == 0, "la maîtresse connectée (onglet) dans « Je me teste » n'a pas été comptée")
+    ok((s0.get("comptes", {}).get(STO, {}).get("eleves", 0)) >= 1, "les élèves avec un compte qui ont gagné des bons points sont comptés : " + str(s0.get("comptes", {}).get(STO)))
+    # un élève sans compte, sur un appareil neuf : un jeu (1 bon point) et une vidéo regardée
+    c7, e7p, e7 = appareil(browser)
+    e7p.goto(BASE + "index.html")
+    e7p.evaluate("""sto => { localStorage.setItem('cm1cm2-code-classe', 'TEST'); localStorage.setItem('crayonnade-sans-compte', '1');
+        localStorage.setItem(sto, JSON.stringify({current: 'zoe', profiles: {zoe: {name: 'Zoé', points: []}}})); }""", STO)
+    e7p.goto(BASE + "jeux/la-division/index.html"); e7p.wait_for_load_state("networkidle")
+    gagner_point(e7p, 4)
+    e7p.goto(BASE + "jeux/" + VIDEO + "/index.html"); e7p.wait_for_load_state("load"); e7p.wait_for_timeout(500)
+    e7p.evaluate("() => { const v = document.querySelector('video'); v.dispatchEvent(new Event('play')); v.dispatchEvent(new Event('ended')); }")
+    e7p.wait_for_timeout(2500)
+    # l'appareil de la maîtresse (« Rester connectée »), sa connexion terminée : il reste de côté
+    m4.evaluate("() => { const a = JSON.parse(localStorage.getItem('crayonnade-ens-appareil')); localStorage.setItem('crayonnade-ens-appareil-test', JSON.stringify(a)); a.fin = 0; localStorage.setItem('crayonnade-ens-appareil', JSON.stringify(a)); sessionStorage.clear(); localStorage.setItem('cm1cm2-code-classe', 'TEST'); localStorage.setItem('crayonnade-sans-compte', '1'); }")
+    m4.goto(BASE + "jeux/la-division/index.html"); m4.wait_for_load_state("networkidle")
+    garde = m4.evaluate("() => !document.documentElement.classList.contains('cmp-maitresse') && localStorage.getItem('crayonnade-stats-non') === '1'")
+    m4.evaluate("""sto => { const st = JSON.parse(localStorage.getItem(sto) || '{"profiles":{}}'); if (!st.profiles.moi) st.profiles.moi = {name: 'Moi', points: []};
+        st.current = 'moi'; localStorage.setItem(sto, JSON.stringify(st)); }""", STO)
+    gagner_point(m4, 5)
+    m4.goto(BASE + "jeux/" + VIDEO + "/index.html"); m4.wait_for_load_state("load"); m4.wait_for_timeout(500)
+    m4.evaluate("() => { const v = document.querySelector('video'); v.dispatchEvent(new Event('play')); v.dispatchEvent(new Event('ended')); }")
+    m4.wait_for_timeout(2500)
+    m4.evaluate("() => localStorage.setItem('crayonnade-ens-appareil', localStorage.getItem('crayonnade-ens-appareil-test'))")
+    s1 = stats(m4)
+    ecarts = {(q, ev): compte(s1, q, ev) - compte(s0, q, ev) for q, ev in [("la-division", "ouvert"), ("la-division", "bon-point"),
+              (VIDEO, "video-lancee"), (VIDEO, "video-finie"), ("appli", "appareil-du-jour"), ("appli", "appareil")]}
+    ok(garde and all(v == 1 for v in ecarts.values()), f"un élève compté une fois, l'appareil de la maîtresse pas du tout (de côté={garde}) : {ecarts}")
+    hier = (dt.datetime.now(ZoneInfo("Europe/Paris")) - dt.timedelta(days=1)).strftime("%Y-%m-%d")
+    s2 = stats(m4, hier)
+    ok(compte(s2, "la-division", "bon-point") == compte(s1, "la-division", "bon-point") and s2.get("depuis") == hier, "les chiffres depuis hier")
+    m4.goto(BASE + "enseignante/les-plus-utilises/index.html"); m4.wait_for_load_state("networkidle")
+    ok(attendre(m4, "() => !document.getElementById('resultats').hidden && document.querySelector('#classeJeux .rang b')"), "la page « Jeux et vidéos les plus utilisés » s'affiche")
+    premier = m4.inner_text("#classeJeux .rang b") if m4.locator("#classeJeux .rang b").count() else ""
+    ok(premier == JEU["titre"] and m4.inner_text("#tPoints").strip() != "0" and "ne compte pas" in m4.inner_text("#etatAppareil"),
+       f"en tête des jeux : « {premier} », bons points : {m4.inner_text('#tPoints')}, {m4.inner_text('#etatAppareil')}")
+    m4.click('.periodes [data-jours="0"]'); m4.wait_for_timeout(800)
+    ok("Comptage commencé" in m4.inner_text("#debutComptage") and m4.locator("#graphe .col").count() >= 1, "« Depuis le début » : " + m4.inner_text("#debutComptage"))
+    m4.click("#graphe .col"); 
+    ok(m4.locator("#graphe .bulle").is_visible(), "toucher une barre montre son chiffre : " + (m4.inner_text("#graphe .bulle") if m4.locator("#graphe .bulle").count() else "?"))
+    c7.close()
+
+    toutes = [("appareil 1", e1), ("appareil 2", e2), ("enseignante", e3), ("6e", e4), ("enseignante 2", e5), ("élève sans compte", e7)]
     ok(not any(e for _, e in toutes), "aucune erreur JavaScript " + str([(n, e[:2]) for n, e in toutes if e]))
     browser.close()
 

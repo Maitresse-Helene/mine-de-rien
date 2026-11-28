@@ -9,7 +9,8 @@
    « Verrouiller » / « Se déconnecter » referme tout de suite.
    ENS_CODES : empreintes de l'ancien code (jamais le code en clair). Elles servent à la première connexion et, sans
    serveur (pas de connexion, tests), à ouvrir les outils qui travaillent seulement sur l'appareil.
-   window.ENS : appels au serveur avec la session enseignante (pages « Comptes des élèves », « Mon Espace enseignante »). */
+   window.ENS : appels au serveur avec la session enseignante (pages « Comptes des élèves », « Mon Espace enseignante »,
+   « Jeux et vidéos les plus utilisés »). */
 window.ENS_CODES = ["1qpuhkkjl3o"];
 
 (function () {
@@ -79,7 +80,12 @@ window.ENS_CODES = ["1qpuhkkjl3o"];
     garderJeton: function (j) { if (j) { sEcrire(JETON, j); ecrire({ h: "serveur", t: Date.now() }); } else oublier(); },
     api: function (methode, chemin, corps) { return api(methode, chemin, corps, jeton()); },
     init: function (jetonInit, nouveau, rester) { return api("POST", "ens/init", { nouveau: nouveau, rester: !!rester }, jetonInit); },
-    deconnecter: function () { verrouiller(); }
+    /* « Me déconnecter de cet appareil » (un appareil qui n'est pas le sien) : il compte de nouveau dans les statistiques
+       d'utilisation (commun.js, section 8). Une connexion arrivée à son terme, elle, laisse l'appareil de côté. */
+    deconnecter: function () {
+      if (appareil()) { try { localStorage.removeItem("crayonnade-stats-non"); } catch (e) {} }
+      verrouiller();
+    }
   };
   function verrouiller() {
     var j = jeton();

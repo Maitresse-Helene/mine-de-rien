@@ -19,8 +19,8 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
   une connexion la première fois).
 - `enseignante/<slug>/index.html` : les outils de l'enseignante, liés depuis l'« Espace enseignante » du portail, hors
   liste des jeux, protégés par la connexion de l'enseignante (`commun/enseignante.js` + `.css`, sans code de la classe) :
-  « Vérifier une carte de bons points » (artefact intégré), « Ajouter des bons points » et « Code APC d'une heure »
-  (pages écrites ici, pas d'artefact).
+  « Vérifier une carte de bons points » (artefact intégré), « Ajouter des bons points », « Code APC d'une heure » et
+  « Jeux et vidéos les plus utilisés » (pages écrites ici, pas d'artefact).
 - `commun/domaines.js` : noms des domaines, généré par `integrer_portail.py` pour les outils.
 - `commun/commun.js` + `commun/commun.css` : la porte « Code de la classe », le laissez-passer
   portail → jeux, et le bouton « ← Tous les jeux ». Chaque page les charge (`../../commun/...` pour les jeux).
@@ -115,6 +115,20 @@ de 4 chiffres. Ses bons points sont gardés en ligne et le suivent sur tous les 
   reçoit alors du serveur les profils de tous les élèves (`/api/ens/eleves-du-jeu`), que son propre écran enseignant
   affiche (bilans de « Je me teste », cartes) ; ils sont retirés de l'appareil ensuite (`crayonnade-ens-injectes`).
   Plus tard (vente) : un compte par enseignant(e) et par classe, à construire.
+
+## Les statistiques d'utilisation (28/11/2026)
+
+`enseignante/les-plus-utilises/` (« Jeux et vidéos les plus utilisés ») : classement des jeux et des vidéos sur 7 jours,
+30 jours ou depuis le début, et appareils jour par jour. Compteurs anonymes (table D1 `usages` : jour, quoi, evenement, n ;
+jamais de login ni de prénom ; l'adresse IP n'est gardée que brouillée, dans `essais`, pour limiter les envois) envoyés par `commun.js` section 8 à `POST /api/usage` (par paquets,
+file d'attente `crayonnade-stats-attente`) : `ouvert` (jeu ou vidéo, une fois par minute et par onglet), `bon-point`
+(le nombre de bons points du stockage du jeu augmente, hors points `enseignante`), `video-lancee`, `video-finie` (90 %),
+et pour `appli` : `appareil-du-jour` (une fois par jour et par appareil) et `appareil` (première fois). Le serveur
+n'accepte que les slugs de `jeux.js`. `GET /api/ens/usages?depuis=AAAA-MM-JJ` ajoute, d'après `donnees`, le nombre de
+comptes qui ont gagné des bons points dans chaque jeu pendant la période. Rien n'est compté pour la maîtresse :
+ni connectée (C.maitresse), ni sur un appareil où elle a coché « Rester connectée » (clé `crayonnade-stats-non`, posée
+par commun.js dès que `crayonnade-ens-appareil` existe, retirée seulement par « Me déconnecter de cet appareil »).
+Testé par `tester_comptes.py` (étape 10).
 
 ## Mettre à jour le portail
 

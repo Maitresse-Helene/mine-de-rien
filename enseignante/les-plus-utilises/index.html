@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jeux et vidéos les plus utilisés</title>
+<link rel="stylesheet" href="../../commun/polices/polices.css">
+<style>
+/* Outil de l'enseignante : les jeux et les vidéos les plus utilisés (compteurs anonymes du serveur, table usages,
+   et bons points des comptes élèves). Page écrite ici (pas d'artefact). */
+:root{
+  --paper:#f6f7fd; --sheet:#ffffff; --ink:#1a2358; --ink-soft:#5a628f; --rule:#e4e8f7; --rule-strong:#cad1ef;
+  --pen:#2b45c8; --bar:#2b45c8; --track:#eceef6; --key-edge:#ccd3f0; --key-shadow:#b5bee6; --ok:#1f8a4c; --warn:#b02a50;
+  --font-num:"Baloo 2","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --font-body:"Lexend",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#16201d; --sheet:#1f2c28; --ink:#edf3ee; --ink-soft:#a2b3ab; --rule:#1c2925; --rule-strong:#283a35;
+    --pen:#97abff; --bar:#8094f2; --track:#2a3833; --key-edge:#3a4d46; --key-shadow:#0e1513; --ok:#6fd89a; --warn:#ff8fb1; color-scheme:dark; }
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5;
+  background-image:linear-gradient(to bottom,var(--rule-strong) 1px,transparent 1px),linear-gradient(to right,var(--rule-strong) 1px,transparent 1px),linear-gradient(to bottom,var(--rule) 1px,transparent 1px);
+  background-size:100% 32px,32px 100%,100% 8px;
+}
+.wrap{max-width:820px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 96px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{margin:0;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+h1{margin:0;font-family:var(--font-num);font-weight:800;font-size:clamp(1.6rem,5vw,2.1rem);line-height:1.2}
+h2{margin:0;font-family:var(--font-num);font-weight:800;font-size:1.3rem;line-height:1.25}
+.lead,.aide{margin:0;color:var(--ink-soft)}
+.aide{font-size:.9rem}
+.fiche{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:18px;box-shadow:0 4px 0 var(--key-shadow);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+input[type=text],input[type=password]{font:600 1.05rem var(--font-body);color:var(--ink);background:var(--sheet);border:2px solid var(--key-edge);border-radius:12px;padding:7px 11px;outline:none}
+input:focus{border-color:var(--pen);box-shadow:0 0 0 3px rgba(43,69,200,.2)}
+.ligne{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.btn{border:0;border-radius:999px;background:var(--pen);color:var(--sheet);font:800 1.05rem var(--font-num);padding:9px 20px;cursor:pointer;box-shadow:0 3px 0 var(--key-shadow)}
+.petit{border:1.5px solid var(--key-edge);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 .88rem var(--font-body);cursor:pointer}
+.msg{margin:0;font-weight:600;min-height:1.2em}
+.msg.ok{color:var(--ok)} .msg.ko{color:var(--warn)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+
+/* La période */
+.periodes{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.periodes button{border:1.5px solid var(--key-edge);background:var(--sheet);color:var(--ink);border-radius:999px;padding:8px 16px;font:700 1rem var(--font-num);cursor:pointer;box-shadow:0 2px 0 var(--key-shadow)}
+.periodes button[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:var(--sheet)}
+.periodes .petit{margin-left:auto}
+
+/* Les chiffres clés */
+.tuiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tuile{background:var(--sheet);border:1.5px solid var(--key-edge);border-radius:16px;box-shadow:0 3px 0 var(--key-shadow);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tuile b{font-family:var(--font-num);font-weight:800;font-size:2rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.tuile span{font-size:.86rem;color:var(--ink-soft);line-height:1.35}
+.tuile .titre{font-weight:700;color:var(--ink)}
+
+/* Appareils jour par jour */
+.graphe{position:relative;display:flex;align-items:flex-end;gap:2px;height:150px;padding-top:22px;border-bottom:1.5px solid var(--rule-strong)}
+.col{position:relative;flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;-webkit-tap-highlight-color:transparent}
+.col .b{display:block;width:min(100%,28px);background:var(--bar);border-radius:4px 4px 0 0;min-height:0}
+.col.vide .b{background:transparent}
+.col .v{position:absolute;left:50%;transform:translateX(-50%);font:700 .8rem var(--font-num);color:var(--ink);white-space:nowrap;pointer-events:none}
+.col:hover .b,.col.actif .b{filter:brightness(1.15)}
+.axe{display:flex;gap:2px;margin-top:4px}
+.axe span{flex:1 1 0;min-width:0;text-align:center;font-size:.72rem;color:var(--ink-soft);white-space:nowrap;overflow:visible}
+.bulle{position:absolute;z-index:3;pointer-events:none;background:var(--ink);color:var(--paper);font:600 .82rem/1.3 var(--font-body);padding:6px 9px;border-radius:9px;white-space:nowrap;transform:translate(-50%,-100%);box-shadow:0 3px 10px rgba(0,0,0,.18)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:5px 6px;border-bottom:1px solid var(--rule-strong);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:700;color:var(--ink-soft)}
+details summary{cursor:pointer;color:var(--pen);font-weight:600;font-size:.92rem}
+.defile{overflow-x:auto}
+
+/* Les classements */
+.classement{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.rang{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1.5px dashed var(--key-edge)}
+.rang:first-child{border-top:0}
+.num{flex:none;width:2.1em;height:2.1em;border-radius:999px;background:var(--track);display:flex;align-items:center;justify-content:center;font:800 .95rem var(--font-num);color:var(--ink-soft)}
+.rang:nth-child(-n+3) .num{background:var(--pen);color:var(--sheet)}
+.corps{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
+.corps b{font-family:var(--font-num);font-weight:800;font-size:1.05rem;line-height:1.25}
+.dom{font-size:.78rem;color:var(--ink-soft);font-weight:600}
+.jauge{height:8px;background:var(--track);border-radius:4px;overflow:hidden}
+.jauge span{display:block;height:100%;background:var(--bar);border-radius:0 4px 4px 0}
+.chiffres{font-size:.88rem;color:var(--ink)}
+.chiffres .doux{color:var(--ink-soft)}
+.pas{margin:0;font-size:.9rem;color:var(--ink-soft)}
+.etat{font-weight:600}
+.etat.ok{color:var(--ok)}
+.lire{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="../../commun/commun.css"><script src="../../commun/commun.js"></script>
+<link rel="stylesheet" href="../../commun/enseignante.css"><script src="../../commun/enseignante.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../../index.html"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Espace enseignante · Crayonnade</p>
+    <h1>Jeux et vidéos les plus utilisés</h1>
+  </header>
+  <p class="lead">Ce que les élèves ouvrent le plus. Les chiffres sont anonymes : ni login, ni prénom. Vos propres passages ne comptent pas.</p>
+
+  <!-- Connexion au serveur (si la porte s'est ouverte sans connexion) -->
+  <section class="fiche" id="connexion" hidden>
+    <h2>Se connecter</h2>
+    <p class="aide">Les chiffres sont sur internet : connectez-vous avec votre identifiant et votre mot de passe.</p>
+    <form class="ligne" id="formConnexion" novalidate>
+      <input id="loginEns" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Identifiant">
+      <input id="codeEns" type="password" autocomplete="current-password" placeholder="Mot de passe">
+      <button class="btn" type="submit">Entrer</button>
+    </form>
+    <p class="msg ko" id="msgConnexion" role="alert"></p>
+  </section>
+
+  <div id="contenu" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="periodes" role="group" aria-label="Période">
+      <button type="button" data-jours="7" aria-pressed="true">7 jours</button>
+      <button type="button" data-jours="30" aria-pressed="false">30 jours</button>
+      <button type="button" data-jours="0" aria-pressed="false">Depuis le début</button>
+      <button class="petit" type="button" id="actualiser">Actualiser</button>
+    </div>
+    <p class="msg" id="msg" role="status"></p>
+
+    <div id="resultats" hidden style="display:flex;flex-direction:column;gap:16px">
+      <section class="tuiles" aria-label="Les chiffres de la période">
+        <div class="tuile"><span class="titre">Jeux ouverts</span><b id="tJeux">0</b><span id="sJeux">fois</span></div>
+        <div class="tuile"><span class="titre">Bons points gagnés</span><b id="tPoints">0</b><span>avec ou sans compte</span></div>
+        <div class="tuile"><span class="titre">Vidéos lancées</span><b id="tVideos">0</b><span id="sVideos">dont 0 regardées jusqu'au bout</span></div>
+        <div class="tuile"><span class="titre">Élèves avec un compte</span><b id="tEleves">0</b><span>ont gagné des bons points</span></div>
+      </section>
+
+      <section class="fiche">
+        <h2 id="titreGraphe">Appareils qui ont ouvert l'appli, jour par jour</h2>
+        <p class="aide" id="sousGraphe"></p>
+        <div>
+          <div class="graphe" id="graphe" role="img"></div>
+          <div class="axe" id="axe" aria-hidden="true"></div>
+        </div>
+        <details>
+          <summary>Voir les chiffres jour par jour</summary>
+          <div class="defile"><table id="tableJours"></table></div>
+        </details>
+      </section>
+
+      <section class="fiche">
+        <h2>Les jeux</h2>
+        <ol class="classement" id="classeJeux"></ol>
+        <details id="pasJeux" hidden><summary></summary><p class="pas"></p></details>
+      </section>
+
+      <section class="fiche">
+        <h2>Les vidéos</h2>
+        <ol class="classement" id="classeVideos"></ol>
+        <details id="pasVideos" hidden><summary></summary><p class="pas"></p></details>
+      </section>
+
+      <section class="fiche">
+        <h2>Comment lire ces chiffres</h2>
+        <ul class="lire">
+          <li><b>Jeux ouverts</b> : chaque fois qu'un jeu est ouvert (une page rechargée dans la minute ne compte qu'une fois).</li>
+          <li><b>Bons points gagnés</b> : tous les bons points gagnés dans le jeu, par les élèves avec ou sans compte (pas ceux que vous ajoutez).</li>
+          <li><b>Élèves avec un compte</b> : les comptes qui ont gagné au moins un bon point pendant la période. C'est le seul chiffre qui compte des élèves différents ; les comptes existent depuis le 14 novembre.</li>
+          <li><b>Appareils</b> : chaque tablette, ordinateur ou téléphone compte une fois par jour, même si plusieurs élèves jouent dessus.</li>
+          <li><b>Vos passages</b> ne comptent pas : ni quand vous êtes connectée, ni sur vos appareils où « Rester connectée » est coché. Sur iPhone, l'icône Crayonnade de l'écran d'accueil et Safari sont deux appareils à part : si vous jouez depuis l'un des deux sans y être connectée, ouvrez-y une fois votre Espace enseignante.</li>
+        </ul>
+        <p class="aide" id="debutComptage"></p>
+        <p class="aide"><span class="etat" id="etatAppareil"></span> <button class="petit" type="button" id="mettreDeCote" hidden>Ne plus compter cet appareil</button></p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="../../jeux.js"></script>
+<script src="../../commun/domaines.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const TOUS = window.JEUX || [];
+  const DOMAINES = window.DOMAINES || {};
+  const ENS = window.ENS;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const nb = n => Number(n || 0).toLocaleString('fr-FR');
+  const pluriel = (n, un, plusieurs) => nb(n) + ' ' + (n > 1 ? plusieurs : un);
+  let jours = 7, donnees = null;
+
+  function msg(texte, ok){ const m = $('msg'); m.textContent = texte || ''; m.className = 'msg' + (texte ? (ok ? ' ok' : ' ko') : ''); }
+
+  /* ---------- Dates (« AAAA-MM-JJ ») ---------- */
+  const z = n => (n < 10 ? '0' : '') + n;
+  function aujourdhui(){ const d = new Date(); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
+  function decaler(j, n){ const d = new Date(j + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function jourCourt(j){ return new Date(j + 'T12:00:00Z').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', timeZone: 'UTC' }); }
+  function jourLong(j){ return new Date(j + 'T12:00:00Z').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }); }
+  function dateCourte(t){ return new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }); }
+
+  /* ---------- Connexion au serveur ---------- */
+  function sessionPerdue(){ ENS.oublier(); $('contenu').hidden = true; $('connexion').hidden = false; $('msgConnexion').textContent = 'Session terminée : reconnectez-vous.'; }
+  function demarrer(){
+    if (ENS.jeton()) { $('connexion').hidden = true; $('contenu').hidden = false; charger(); }
+    else { $('connexion').hidden = false; $('contenu').hidden = true; }
+    etatAppareil();
+  }
+  $('formConnexion').addEventListener('submit', e => {
+    e.preventDefault();
+    $('msgConnexion').textContent = '';
+    ENS.verifier($('loginEns').value, $('codeEns').value, false).then(r => {
+      $('codeEns').value = '';
+      if (r.jeton && !r.init) { ENS.garder(r, false); demarrer(); return; }
+      $('msgConnexion').textContent = r.init ? 'Choisissez d\'abord votre mot de passe dans « Mon Espace enseignante ».'
+        : r.horsService ? 'Pas de connexion au serveur. Réessayez dans un moment.' : (r.message || 'Identifiant ou mot de passe incorrect.');
+    });
+  });
+
+  /* ---------- Cet appareil compte-t-il ? (commun.js, section 8) ---------- */
+  function etatAppareil(){
+    let deCote = false;
+    try { deCote = !!localStorage.getItem('crayonnade-stats-non'); } catch (e) {}
+    $('etatAppareil').textContent = deCote ? '✓ Cet appareil ne compte pas dans ces chiffres.' : 'Cet appareil compte quand vous n\'êtes pas connectée (« Rester connectée » n\'y est pas coché). S\'il est à vous :';
+    $('etatAppareil').className = 'etat' + (deCote ? ' ok' : '');
+    $('mettreDeCote').hidden = deCote;
+  }
+  $('mettreDeCote').addEventListener('click', () => { try { localStorage.setItem('crayonnade-stats-non', '1'); } catch (e) {} etatAppareil(); });
+
+  /* ---------- Lecture des chiffres ---------- */
+  function charger(){
+    const depuis = jours ? decaler(aujourdhui(), 1 - jours) : '';
+    msg('Chargement…', true);
+    return ENS.api('GET', 'ens/usages' + (depuis ? '?depuis=' + depuis : '')).then(d => {
+      if (d._statut === 401) { sessionPerdue(); return; }
+      if (d._statut !== 200) { msg(d.message || 'Impossible de lire les chiffres.'); return; }
+      donnees = d; msg(''); afficher();
+    }, () => msg('Pas de connexion au serveur.'));
+  }
+  document.querySelector('.periodes').addEventListener('click', e => {
+    const b = e.target.closest('button[data-jours]');
+    if (!b) return;
+    jours = +b.dataset.jours;
+    document.querySelectorAll('.periodes [data-jours]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    charger();
+  });
+  $('actualiser').addEventListener('click', charger);
+
+  function afficher(){
+    const d = donnees, compteur = {};   // compteur[quoi][evenement] = n
+    (d.totaux || []).forEach(r => { (compteur[r.quoi] = compteur[r.quoi] || {})[r.evenement] = +r.n || 0; });
+    const val = (q, e) => (compteur[q] && compteur[q][e]) || 0;
+    const comptes = d.comptes || {};
+    const jeux = TOUS.filter(j => !j.video), videos = TOUS.filter(j => j.video);
+    $('resultats').hidden = false;
+
+    /* Les chiffres clés */
+    const somme = (liste, e) => liste.reduce((s, j) => s + val(j.slug, e), 0);
+    $('tJeux').textContent = nb(somme(jeux, 'ouvert'));
+    $('tPoints').textContent = nb(somme(jeux, 'bon-point'));
+    $('tVideos').textContent = nb(somme(videos, 'video-lancee'));
+    const finies = somme(videos, 'video-finie');
+    $('sVideos').textContent = 'dont ' + nb(finies) + (finies > 1 ? ' regardées' : ' regardée') + ' jusqu\'au bout';
+    $('tEleves').textContent = nb(d.elevesActifs || 0);
+
+    /* Le début du comptage */
+    $('debutComptage').textContent = d.premierJour
+      ? 'Comptage commencé le ' + jourLong(d.premierJour) + '. ' + pluriel(d.appareils || 0, 'appareil différent a', 'appareils différents ont') + ' ouvert l\'appli depuis.'
+      : 'Le comptage commence aujourd\'hui : les premiers chiffres arrivent dès que les élèves jouent. Les élèves avec un compte, eux, sont comptés depuis le 14 novembre.';
+
+    graphe();
+    classement($('classeJeux'), $('pasJeux'), jeux, j => {
+      const c = comptes[j.stockage] || {};
+      return { tri: [val(j.slug, 'ouvert'), c.eleves || 0, val(j.slug, 'bon-point'), c.points || 0],
+        parts: [val(j.slug, 'ouvert') ? 'ouvert ' + nb(val(j.slug, 'ouvert')) + ' fois' : '',
+          val(j.slug, 'bon-point') ? pluriel(val(j.slug, 'bon-point'), 'bon point gagné', 'bons points gagnés') : '',
+          c.eleves ? pluriel(c.eleves, 'élève avec un compte', 'élèves avec un compte') : ''],
+        doux: c.dernier ? 'dernier bon point (compte) le ' + dateCourte(c.dernier) : '' };
+    }, 'jeu', 'jeux');
+    classement($('classeVideos'), $('pasVideos'), videos, j => ({
+      tri: [val(j.slug, 'video-lancee'), val(j.slug, 'video-finie'), val(j.slug, 'ouvert')],
+      parts: [val(j.slug, 'video-lancee') ? 'lancée ' + nb(val(j.slug, 'video-lancee')) + ' fois' : '',
+        val(j.slug, 'video-finie') ? 'regardée jusqu\'au bout ' + nb(val(j.slug, 'video-finie')) + ' fois' : '',
+        !val(j.slug, 'video-lancee') && val(j.slug, 'ouvert') ? 'ouverte ' + nb(val(j.slug, 'ouvert')) + ' fois sans être lancée' : ''],
+      doux: '' }), 'vidéo', 'vidéos');
+  }
+
+  /* Un classement : du plus utilisé au moins utilisé ; ceux qui n'ont servi à rien pendant la période sont repliés. */
+  function classement(ol, pas, liste, mesure, un, plusieurs){
+    const lignes = liste.map(j => Object.assign({ j }, mesure(j)));
+    const actifs = lignes.filter(l => l.tri.some(x => x > 0)), vides = lignes.filter(l => !l.tri.some(x => x > 0));
+    actifs.sort((a, b) => { for (let i = 0; i < a.tri.length; i++) if (b.tri[i] !== a.tri[i]) return b.tri[i] - a.tri[i]; return a.j.titre.localeCompare(b.j.titre, 'fr'); });
+    /* La jauge suit la première mesure qui a servi (ouvertures, ou élèves avec un compte au tout début du comptage). */
+    let k = 0; while (k < (actifs[0] ? actifs[0].tri.length : 0) && !actifs.some(l => l.tri[k] > 0)) k++;
+    const max = Math.max(1, ...actifs.map(l => l.tri[k] || 0));
+    let rang = 0, prec = null;
+    ol.innerHTML = actifs.length ? actifs.map((l, i) => {
+      const cle = l.tri.join('|'); if (cle !== prec) rang = i + 1; prec = cle;
+      const dom = (l.j.video ? 'Je comprends · ' : '') + (DOMAINES[l.j.domaine] || l.j.domaine);
+      const parts = l.parts.filter(Boolean);
+      return '<li class="rang"><span class="num">' + rang + '</span><div class="corps"><b>' + esc(l.j.titre) + '</b>' +
+        '<span class="dom">' + esc(dom) + '</span>' +
+        '<div class="jauge" aria-hidden="true"><span style="width:' + Math.max(2, Math.round(100 * (l.tri[k] || 0) / max)) + '%"></span></div>' +
+        '<span class="chiffres">' + esc(parts.join(' · ')) + (l.doux ? (parts.length ? ' · ' : '') + '<span class="doux">' + esc(l.doux) + '</span>' : '') + '</span></div></li>';
+    }).join('') : '<li class="pas">Aucun' + (un === 'vidéo' ? 'e ' : ' ') + un + ' utilisé' + (un === 'vidéo' ? 'e' : '') + ' pendant cette période (le comptage vient peut-être de commencer).</li>';
+    pas.hidden = !vides.length;
+    if (vides.length) {
+      pas.querySelector('summary').textContent = (un === 'vidéo' ? (vides.length > 1 ? 'Pas encore regardées' : 'Pas encore regardée') : (vides.length > 1 ? 'Pas encore ouverts' : 'Pas encore ouvert')) +
+        ' pendant cette période : ' + pluriel(vides.length, un, plusieurs);
+      pas.querySelector('.pas').textContent = vides.map(l => l.j.titre).sort((a, b) => a.localeCompare(b, 'fr')).join(' · ');
+    }
+  }
+
+  /* Les appareils jour par jour (au-delà de 62 jours : semaine par semaine), avec le tableau des chiffres. */
+  function graphe(){
+    const d = donnees, fin = d.aujourdhui || aujourdhui();
+    /* Pas de barres avant le début du comptage */
+    let debut = d.premierJour ? (d.depuis && d.depuis > d.premierJour ? d.depuis : d.premierJour) : fin;
+    const parJour = {};
+    (d.parJour || []).forEach(r => { (parJour[r.jour] = parJour[r.jour] || {})[r.evenement] = (+r.n || 0); });
+    const liste = [];
+    for (let j = debut; j <= fin && liste.length < 800; j = decaler(j, 1)) liste.push(j);
+    const v = (j, e) => (parJour[j] && parJour[j][e]) || 0;
+    let barres;
+    const semaines = liste.length > 62;
+    if (semaines) {
+      const parSem = new Map();
+      liste.forEach(j => { const dd = new Date(j + 'T12:00:00Z'), lundi = decaler(j, -((dd.getUTCDay() + 6) % 7));
+        const s = parSem.get(lundi) || { j: lundi, n: 0 }; s.n += v(j, 'appareil-du-jour'); parSem.set(lundi, s); });
+      barres = [...parSem.values()].map(s => ({ cle: s.j, n: s.n, etiquette: new Date(s.j + 'T12:00:00Z').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', timeZone: 'UTC' }),
+        bulle: 'Semaine du ' + jourLong(s.j) + ' : ' + pluriel(s.n, 'appareil-jour', 'appareils-jours') }));
+    } else {
+      barres = liste.map(j => ({ cle: j, n: v(j, 'appareil-du-jour'), etiquette: jourCourt(j), bulle: jourLong(j) + ' : ' + pluriel(v(j, 'appareil-du-jour'), 'appareil', 'appareils') }));
+    }
+    $('titreGraphe').textContent = semaines ? 'Appareils qui ont ouvert l\'appli, semaine par semaine' : 'Appareils qui ont ouvert l\'appli, jour par jour';
+    const actifs = liste.filter(j => v(j, 'appareil-du-jour') > 0);
+    const moyenne = actifs.length ? actifs.reduce((s, j) => s + v(j, 'appareil-du-jour'), 0) / actifs.length : 0;
+    $('sousGraphe').textContent = actifs.length
+      ? 'En moyenne ' + nb(Math.round(moyenne * 10) / 10) + ' appareil' + (moyenne >= 2 ? 's' : '') + ' par jour, les jours où l\'appli a servi.' + (semaines ? ' Une semaine additionne ses jours : un appareil compte une fois par jour.' : '')
+      : 'Pas encore d\'appareil compté pendant cette période.';
+    const max = Math.max(1, ...barres.map(b => b.n)), iMax = barres.findIndex(b => b.n === max && b.n > 0), dernier = barres.length - 1;
+    const pas = Math.max(1, Math.ceil(barres.length / 10));
+    $('graphe').setAttribute('aria-label', $('titreGraphe').textContent + ' (les chiffres sont dans le tableau en dessous)');
+    $('graphe').innerHTML = barres.map((b, i) => {
+      const h = b.n ? Math.max(3, Math.round(100 * b.n / max)) : 0, etiquette = (i === iMax || (i === dernier && b.n)) && b.n;
+      return '<div class="col' + (b.n ? '' : ' vide') + '" data-bulle="' + esc(b.bulle) + '"><span class="b" style="height:' + h + '%"></span>' +
+        (etiquette ? '<span class="v" style="bottom:calc(' + h + '% + 3px)">' + nb(b.n) + '</span>' : '') + '</div>';
+    }).join('');
+    $('axe').innerHTML = barres.map((b, i) => '<span>' + ((i % pas === 0 || i === dernier) && (i === dernier || dernier - i >= pas) ? esc(b.etiquette) : '') + '</span>').join('');
+    /* Le tableau */
+    const lignes = liste.slice().reverse().filter(j => parJour[j]);
+    $('tableJours').innerHTML = '<thead><tr><th>Jour</th><th>Appareils</th><th>Jeux ouverts</th><th>Bons points</th><th>Vidéos lancées</th></tr></thead><tbody>' +
+      (lignes.length ? lignes.map(j => '<tr><td>' + esc(jourLong(j)) + '</td><td>' + nb(v(j, 'appareil-du-jour')) + '</td><td>' + nb(v(j, 'ouvert')) +
+        '</td><td>' + nb(v(j, 'bon-point')) + '</td><td>' + nb(v(j, 'video-lancee')) + '</td></tr>').join('')
+        : '<tr><td colspan="5">Pas encore de chiffres pour cette période.</td></tr>') + '</tbody>';
+  }
+
+  /* La bulle des barres (au survol, ou en touchant la barre sur téléphone) */
+  const bulle = document.createElement('div'); bulle.className = 'bulle'; bulle.hidden = true; bulle.setAttribute('role', 'tooltip');
+  function montrer(col){
+    const g = $('graphe');
+    g.querySelectorAll('.col.actif').forEach(c => c.classList.remove('actif'));
+    if (!col) { bulle.hidden = true; return; }
+    col.classList.add('actif');
+    if (bulle.parentNode !== g) g.appendChild(bulle);
+    bulle.textContent = col.dataset.bulle; bulle.hidden = false;
+    const gr = g.getBoundingClientRect(), cr = col.getBoundingClientRect(), b = col.querySelector('.b').getBoundingClientRect();
+    const larg = bulle.offsetWidth, x = Math.min(Math.max(cr.left + cr.width / 2 - gr.left, larg / 2), gr.width - larg / 2);
+    bulle.style.left = x + 'px'; bulle.style.top = (b.top - gr.top - 6) + 'px';
+  }
+  $('graphe').addEventListener('pointerover', e => { const c = e.target.closest('.col'); if (c) montrer(c); });
+  $('graphe').addEventListener('pointerleave', () => montrer(null));
+  $('graphe').addEventListener('click', e => montrer(e.target.closest('.col')));
+
+  /* La page démarre quand la porte de la maîtresse est ouverte. */
+  if (!document.getElementById('ens-gate')) demarrer();
+  else {
+    $('connexion').hidden = true;
+    const obs = new MutationObserver(() => { if (!document.getElementById('ens-gate')) { obs.disconnect(); demarrer(); } });
+    obs.observe(document.body, { childList: true });
+  }
+})();
+</script>
+</body>
+</html>

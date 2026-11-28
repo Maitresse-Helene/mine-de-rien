@@ -1,6 +1,6 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-28-114355';
+const VERSION = '2026-11-28-131315';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
@@ -28,6 +28,7 @@ const FICHIERS = [
   "enseignante/code-apc/index.html",
   "enseignante/comptes-des-eleves/index.html",
   "enseignante/index.html",
+  "enseignante/les-plus-utilises/index.html",
   "enseignante/manifest.webmanifest",
   "enseignante/verifier-une-carte-de-bons-points/index.html",
   "icones/apple-touch-icon.png",

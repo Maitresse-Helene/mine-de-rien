@@ -8,6 +8,10 @@
    La toute première fois, l'ancien code de la maîtresse (empreintes ENS_CODES de commun/enseignante.js) permet
    de choisir le nouveau.
 
+   Statistiques d'utilisation (table usages) : des compteurs anonymes par jour, par jeu ou vidéo et par événement, sans
+   aucun login ni prénom ni adresse. Ils sont lus par la page « Jeux et vidéos les plus utilisés » de l'Espace enseignante.
+   Les appareils de la maîtresse n'envoient rien (commun/commun.js, section 8).
+
    La base se crée toute seule (tables ci-dessous) au premier appel. */
 
 const MINUTE = 60000, HEURE = 60 * MINUTE;
@@ -30,8 +34,12 @@ const TABLES = [
   `CREATE TABLE IF NOT EXISTS sessions (jeton TEXT PRIMARY KEY, login TEXT NOT NULL, cree INTEGER NOT NULL, fin INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS essais (cle TEXT PRIMARY KEY, n INTEGER NOT NULL, depuis INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS reglages (cle TEXT PRIMARY KEY, valeur TEXT NOT NULL)`,
-  `CREATE TABLE IF NOT EXISTS enseignants (login TEXT PRIMARY KEY, affiche TEXT NOT NULL, mdp TEXT NOT NULL, cree INTEGER NOT NULL)`
+  `CREATE TABLE IF NOT EXISTS enseignants (login TEXT PRIMARY KEY, affiche TEXT NOT NULL, mdp TEXT NOT NULL, cree INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS usages (jour TEXT NOT NULL, quoi TEXT NOT NULL, evenement TEXT NOT NULL, n INTEGER NOT NULL,
+     PRIMARY KEY (jour, quoi, evenement))`
 ];
+/* Les événements comptés, avec le nombre maximum par envoi. « appli » : l'appli entière (appareils) ; sinon un jeu ou une vidéo. */
+const EVENEMENTS = { "ouvert": 1, "bon-point": 15, "video-lancee": 1, "video-finie": 1, "appareil-du-jour": 1, "appareil": 1 };
 let basePrete = false;
 async function preparer(db) {
   if (basePrete) return;
@@ -150,6 +158,16 @@ async function codeClasseValide(env, request, code) {
   while ((m = re.exec(bloc))) if (m[3] === h && jour >= m[1] && jour < m[2]) return true;
   return false;
 }
+/* Les jeux et vidéos de l'appli (jeux.js) : seuls eux peuvent être comptés. */
+async function slugsConnus(env, request) {
+  const texte = await fichier(env, request, "/jeux.js");
+  return new Set((texte.match(/"slug":\s*"[^"]+"/g) || []).map(x => x.replace(/^"slug":\s*"|"$/g, "")));
+}
+/* Minuit (heure de Paris) du jour « AAAA-MM-JJ », en millisecondes. */
+function minuitParis(jour) {
+  const t = Date.parse(jour + "T00:00:00Z");
+  return Number.isFinite(t) ? t - paris(new Date(t)).minutes * MINUTE : 0;
+}
 async function ancienCodeMaitresse(env, request, code) {
   const texte = await fichier(env, request, "/commun/enseignante.js");
   const bloc = (/window\.ENS_CODES\s*=\s*\[([^\]]*)\]/.exec(texte) || [])[1] || "";
@@ -162,11 +180,11 @@ async function bloque(db, cle, max, fenetre) {
   const r = await db.prepare("SELECT n, depuis FROM essais WHERE cle = ?").bind(cle).first();
   return !!(r && Date.now() - r.depuis < fenetre && r.n >= max);
 }
-async function echec(db, cle, fenetre) {
+async function echec(db, cle, fenetre, combien = 1) {
   const t = Date.now();
-  await db.prepare(`INSERT INTO essais (cle, n, depuis) VALUES (?1, 1, ?2) ON CONFLICT(cle) DO UPDATE SET
-      n = CASE WHEN ?2 - essais.depuis > ?3 THEN 1 ELSE essais.n + 1 END,
-      depuis = CASE WHEN ?2 - essais.depuis > ?3 THEN ?2 ELSE essais.depuis END`).bind(cle, t, fenetre).run();
+  await db.prepare(`INSERT INTO essais (cle, n, depuis) VALUES (?1, ?4, ?2) ON CONFLICT(cle) DO UPDATE SET
+      n = CASE WHEN ?2 - essais.depuis > ?3 THEN ?4 ELSE essais.n + ?4 END,
+      depuis = CASE WHEN ?2 - essais.depuis > ?3 THEN ?2 ELSE essais.depuis END`).bind(cle, t, fenetre, combien).run();
 }
 const reussite = (db, cle) => db.prepare("DELETE FROM essais WHERE cle = ?").bind(cle).run();
 
@@ -252,6 +270,32 @@ export async function onRequest({ request, env }) {
 
   try {
     await preparer(db);
+
+    /* ===== Statistiques d'utilisation (anonymes) ===== */
+    if (chemin === "usage" && methode === "POST") {
+      const liste = Array.isArray(corps.evenements) ? corps.evenements.slice(0, 50) : [];
+      if (!liste.length) return json({ ok: true, n: 0 });
+      const cleIp = "us:" + (await sha256("usage|" + ip)).slice(0, 20); // l'adresse n'est gardée que brouillée, pour limiter les envois
+      if (await bloque(db, cleIp, 3000, HEURE)) return json({ ok: true, n: 0 }); // trop d'envois : ignorés
+      const slugs = await slugsConnus(env, request), auj = paris().date, min = paris(new Date(Date.now() - 7 * 24 * HEURE)).date;
+      const lots = new Map();
+      for (const e of liste) {
+        if (!e || typeof e !== "object" || !Object.prototype.hasOwnProperty.call(EVENEMENTS, e.evenement)) continue;
+        const appli = e.evenement === "appareil-du-jour" || e.evenement === "appareil";
+        if (appli ? e.quoi !== "appli" : !slugs.has(String(e.quoi))) continue;
+        const n = Math.min(Math.max(Math.floor(+e.n || 1), 1), EVENEMENTS[e.evenement]);
+        const jour = /^\d{4}-\d{2}-\d{2}$/.test(String(e.jour || "")) && e.jour >= min && e.jour <= auj ? e.jour : auj;
+        const k = jour + "|" + e.quoi + "|" + e.evenement;
+        lots.set(k, (lots.get(k) || 0) + n);
+      }
+      if (lots.size) {
+        await db.batch([...lots].map(([k, n]) => { const [jour, quoi, evenement] = k.split("|");
+          return db.prepare(`INSERT INTO usages (jour, quoi, evenement, n) VALUES (?, ?, ?, ?)
+              ON CONFLICT(jour, quoi, evenement) DO UPDATE SET n = usages.n + excluded.n`).bind(jour, quoi, evenement, n); }));
+        await echec(db, cleIp, HEURE, liste.length);
+      }
+      return json({ ok: true, n: lots.size });
+    }
 
     /* ===== Élèves ===== */
     if (chemin === "connexion" && methode === "POST") {
@@ -415,6 +459,31 @@ export async function onRequest({ request, env }) {
         if (creneau === undefined) return erreur(400, "creneau", "Créneau incorrect.");
         if (!await creerCompte(db, l, corps.code, creneau)) return erreur(409, "pris", "Ce login existe déjà.");
         return json({ ok: true, login: l.login });
+      }
+
+      /* Les statistiques d'utilisation depuis le jour « depuis » (tout, sans « depuis ») : les compteurs anonymes, et,
+         d'après les comptes élèves, combien d'élèves ont gagné des bons points dans chaque jeu pendant la période. */
+      if (chemin === "ens/usages" && methode === "GET") {
+        const d0 = url.searchParams.get("depuis") || "";
+        const depuis = /^\d{4}-\d{2}-\d{2}$/.test(d0) ? d0 : "0000-00-00", debutMs = depuis === "0000-00-00" ? 0 : minuitParis(depuis);
+        const totaux = (await db.prepare("SELECT quoi, evenement, SUM(n) AS n FROM usages WHERE jour >= ? GROUP BY quoi, evenement")
+          .bind(depuis).all()).results || [];
+        const parJour = (await db.prepare("SELECT jour, evenement, SUM(n) AS n FROM usages WHERE jour >= ? GROUP BY jour, evenement")
+          .bind(depuis).all()).results || [];
+        const premier = await db.prepare("SELECT MIN(jour) AS jour FROM usages").first();
+        const appareils = await db.prepare("SELECT SUM(n) AS n FROM usages WHERE quoi = 'appli' AND evenement = 'appareil'").first();
+        const donnees = (await db.prepare("SELECT login, jeu, profil FROM donnees").all()).results || [];
+        const comptes = {}, actifs = new Set();
+        for (const d of donnees) {
+          let p = null; try { p = JSON.parse(d.profil); } catch (e) {}
+          const pts = (p && Array.isArray(p.points) ? p.points : []).filter(x => x && !x.enseignante && +x.at >= debutMs);
+          if (!pts.length) continue;
+          const s = comptes[d.jeu] || (comptes[d.jeu] = { eleves: 0, points: 0, dernier: 0 });
+          s.eleves++; s.points += pts.length; actifs.add(d.login);
+          for (const x of pts) if (+x.at > s.dernier) s.dernier = +x.at;
+        }
+        return json({ aujourdhui: paris().date, depuis: depuis === "0000-00-00" ? null : depuis, premierJour: premier && premier.jour || null,
+          appareils: appareils && appareils.n || 0, totaux, parJour, comptes, elevesActifs: actifs.size });
       }
 
       /* Tous les élèves pour un jeu : l'écran « Espace enseignante » du jeu les affiche (bilans, cartes). */

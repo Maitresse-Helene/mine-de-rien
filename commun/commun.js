@@ -8,7 +8,8 @@
    4. Les liens vers les autres pages de l'appli s'ouvrent dans la même fenêtre
       (indispensable une fois l'appli installée sur une tablette).
    0. (ci-dessous) L'ancienne adresse renvoie vers la nouvelle.
-   1c et 5. Les comptes élèves (login inventé + code secret) et la synchronisation des bons points. */
+   1c et 5. Les comptes élèves (login inventé + code secret) et la synchronisation des bons points.
+   8. Les statistiques d'utilisation, anonymes (rien n'est compté pour la maîtresse ni sur ses appareils). */
 
 /* 0. Ancienne adresse mine-de-rien.pages.dev : on part sur https://crayonnade.pages.dev, même page.
       Pas hors ligne (la nouvelle adresse ne serait pas encore gardée sur l'appareil).
@@ -674,4 +675,104 @@ window.CMP = (function () {
     prevoir();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", lancer); else lancer();
+})();
+
+/* 8. Les statistiques d'utilisation (Espace enseignante → « Jeux et vidéos les plus utilisés ») : des compteurs anonymes
+      envoyés au serveur (/api/usage), jamais de login ni de prénom : un jeu ou une vidéo ouvert, les bons points gagnés,
+      une vidéo lancée, regardée jusqu'au bout, et une fois par jour « cet appareil a ouvert l'appli ».
+      Rien n'est compté pour la maîtresse : ni quand elle est connectée (C.maitresse), ni sur ses appareils. Un appareil où
+      elle a coché « Rester connectée » est mis de côté pour de bon (crayonnade-stats-non), jusqu'à « Me déconnecter de
+      cet appareil » (commun/enseignante.js). Les envois attendent dans crayonnade-stats-attente (hors ligne, page qui se
+      ferme) et partent par paquets. */
+(function () {
+  var C = window.CMP;
+  if (!C || window.CMG_DEMENAGE || location.protocol === "file:") return;
+  var NON = "crayonnade-stats-non", ATTENTE = "crayonnade-stats-attente";
+  function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function ecrire(k, v) { try { if (v === null) localStorage.removeItem(k); else C.setItem.call(localStorage, k, v); } catch (e) {} }
+  try { var ap = JSON.parse(lire("crayonnade-ens-appareil") || "null"); if (ap && ap.jeton) ecrire(NON, "1"); } catch (e) {}
+  if (C.maitresse || lire(NON) || window.CMG_HORS_CRENEAU || /\/enseignante\//.test(location.pathname)) return;
+
+  var m = /\/jeux\/([^\/]+)\//.exec(location.pathname), SLUG = m ? decodeURIComponent(m[1]) : "";
+  var JEU = window.CMG_JEU && window.CMG_JEU.stockage ? window.CMG_JEU : null;
+  function jour() { var d = new Date(), z = function (n) { return (n < 10 ? "0" : "") + n; }; return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()); }
+  function attente() { try { var l = JSON.parse(lire(ATTENTE) || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+  var minuteur = null;
+  function noter(quoi, evenement, n) {
+    var l = attente();
+    l.push({ quoi: quoi, evenement: evenement, n: n || 1, jour: jour() });
+    ecrire(ATTENTE, JSON.stringify(l.slice(-300)));
+    if (minuteur) clearTimeout(minuteur);
+    minuteur = setTimeout(function () { minuteur = null; envoyer(false); }, 1500);
+  }
+  function envoyer(vite) {
+    var l = attente();
+    if (!l.length || navigator.onLine === false) return;
+    var lot = l.slice(0, 50);
+    ecrire(ATTENTE, l.length > 50 ? JSON.stringify(l.slice(50)) : null);
+    function remettre() { ecrire(ATTENTE, JSON.stringify(lot.concat(attente()).slice(-300))); }
+    try {
+      fetch("/api/usage", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ evenements: lot }),
+        credentials: "same-origin", cache: "no-store", keepalive: !!vite }).then(function (r) {
+        if (r.status === 500 || r.status === 502 || r.status === 504) remettre();
+        else if (!vite && l.length > 50) envoyer(false);
+      }, remettre);
+    } catch (e) { remettre(); }
+  }
+  window.addEventListener("pagehide", function () { if (minuteur) { clearTimeout(minuteur); minuteur = null; } envoyer(true); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden && minuteur) { clearTimeout(minuteur); minuteur = null; envoyer(true); } });
+  window.addEventListener("online", function () { envoyer(false); });
+
+  /* Les bons points : le jeu réécrit son stockage ; on compare le nombre de bons points de chaque profil avant et après
+     (les bons points ajoutés par la maîtresse ne comptent pas, ni ceux qui arrivent du serveur : écrits sans passer ici). */
+  if (JEU) {
+    var nombres = function (txt) {
+      var r = {};
+      try {
+        var p = JSON.parse(txt).profiles;
+        if (p && typeof p === "object") for (var k in p) {
+          var pts = p[k] && p[k].points;
+          if (Array.isArray(pts)) r[k] = pts.filter(function (x) { return x && !x.enseignante; }).length;
+        }
+      } catch (e) {}
+      return r;
+    };
+    var setItemAvant = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k, v) {
+      var suivi = this === window.localStorage && k === JEU.stockage, avant = null;
+      if (suivi) { try { avant = localStorage.getItem(k); } catch (e) {} }
+      setItemAvant.apply(this, arguments);
+      if (!suivi) return;
+      var a = nombres(avant), b = nombres(String(v)), plus = 0;
+      for (var p in b) if (b[p] > (a[p] || 0)) plus += b[p] - (a[p] || 0);
+      if (plus > 0 && plus <= 15) noter(SLUG || JEU.stockage, "bon-point", plus);
+    };
+  }
+
+  /* L'ouverture est comptée une fois la porte du code de la classe passée (une seule fois si la page se recharge). */
+  function ouvert() {
+    var j = jour();
+    if (lire("crayonnade-stats-jour") !== j) { ecrire("crayonnade-stats-jour", j); noter("appli", "appareil-du-jour"); }
+    if (!lire("crayonnade-stats-appareil")) { ecrire("crayonnade-stats-appareil", j); noter("appli", "appareil"); }
+    if (SLUG) {
+      var cle = "crayonnade-stats-ouvert:" + SLUG, avant = 0;
+      try { avant = +sessionStorage.getItem(cle) || 0; sessionStorage.setItem(cle, String(Date.now())); } catch (e) {}
+      if (Date.now() - avant > 60000) noter(SLUG, "ouvert");
+    }
+    var v = SLUG && !JEU ? document.querySelector("video") : null;
+    if (v) {
+      var lance = false, fini = false;
+      var fin = function () { if (lance && !fini) { fini = true; noter(SLUG, "video-finie"); } };
+      v.addEventListener("play", function () { if (!lance) { lance = true; noter(SLUG, "video-lancee"); } });
+      v.addEventListener("ended", fin);
+      v.addEventListener("timeupdate", function () { if (v.duration > 0 && v.currentTime >= v.duration * 0.9) fin(); });
+    }
+    setTimeout(function () { if (!minuteur) envoyer(false); }, 3000);
+  }
+  function quandPorteOuverte() {
+    if (!document.getElementById("cmg-gate")) { ouvert(); return; }
+    var o = new MutationObserver(function () { if (!document.getElementById("cmg-gate")) { o.disconnect(); ouvert(); } });
+    o.observe(document.documentElement, { childList: true, subtree: true });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", quandPorteOuverte); else quandPorteOuverte();
 })();
