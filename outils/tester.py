@@ -287,6 +287,40 @@ with sync_playwright() as p:
         pg.close()
     ok(not pbs, f"{len(jeux) - len(pbs)} / {len(jeux)} jeux affichent les bons points ajoutés" + ("" if not pbs else " ; problèmes : " + "; ".join(pbs[:5])))
 
+    print("4f. Les cartes « Le savais-tu ? »")
+    def objet_js(f, nom):
+        t = (COPIE / "commun" / "cartes" / f).read_text(encoding="utf8")
+        return json.loads(re.search(r"window\." + nom + r" = (\{.*\});", t, re.S).group(1))
+    CJ, CD = objet_js("jeux-cartes.js", "CARTES_JEUX"), objet_js("donnees.js", "CARTES_DONNEES")
+    ids = {c["id"] for c in CD["cartes"]}
+    sans = [j["slug"] for j in jeux if j.get("stockage") and j["slug"] not in CJ]
+    inconnues = [s for s, v in CJ.items() if v["carte"] not in ids]
+    doubles = [v["carte"] for v in CJ.values() if [w["carte"] for w in CJ.values()].count(v["carte"]) > 1]
+    ok(not sans and not inconnues and not doubles,
+       f"chaque jeu à bons points a sa carte ({len(CJ)} jeux, {len(ids)} cartes)" + (f" ; sans carte : {sans[:5]}" if sans else "") +
+       (f" ; carte inconnue : {inconnues[:5]}" if inconnues else "") + (f" ; carte donnée deux fois : {sorted(set(doubles))[:5]}" if doubles else ""))
+    errs = []
+    pg = ctx.new_page()
+    pg.on("pageerror", lambda e, errs=errs: errs.append(str(e)))
+    j1 = next(j for j in jeux if CJ.get(j["slug"], {}).get("type") == "niveaux")
+    pg.goto(BASE + "jeux/" + j1["slug"] + "/index.html"); pg.wait_for_load_state("networkidle")
+    lien = pg.locator("#allgames a.cc-lien-album").count()
+    pg.evaluate("""([key]) => { const st = { current: 'zoe essai', profiles: { 'zoe essai': { name: 'Zoé Essai', points: [] } } };
+      localStorage.setItem(key, JSON.stringify(st)); st.profiles['zoe essai'].points.push({ at: 1, level: 1, parc: 'jaune', score: '8/10' });
+      localStorage.setItem(key, JSON.stringify(st)); }""", [j1["stockage"]])
+    try:
+        pg.wait_for_selector("#cc-gagne", timeout=5000); fenetre = True
+    except Exception:
+        fenetre = False
+    ok(lien == 1 and fenetre and not errs, f"{j1['slug']} : lien « Mes cartes »={lien}, fenêtre « Nouvelle carte ! » au niveau 1={fenetre}, erreurs={errs[:2]}")
+    pg.evaluate("() => localStorage.setItem('crayonnade-cartes-joueur', JSON.stringify({ cle: 'zoe essai', nom: 'Zoé Essai' }))")
+    pg.goto(BASE + "cartes/index.html"); pg.wait_for_load_state("networkidle")
+    gagnees = pg.locator(".al-case .cc-carte").count()
+    ok(gagnees == 1 and pg.locator(".al-serie").count() == len(CD["series"]) and not errs,
+       f"l'album « Mes cartes » s'affiche : {gagnees} carte gagnée, erreurs={errs[:2]}")
+    pg.evaluate("([key]) => { localStorage.removeItem(key); localStorage.removeItem('crayonnade-cartes-joueur'); }", [j1["stockage"]])
+    pg.close()
+
     print("5. Ressources")
     ok(not external, "aucune requête vers l'extérieur" + ("" if not external else " : " + ", ".join(sorted(set(external))[:5])))
     ok(not failed, "aucune ressource manquante" + ("" if not failed else " : " + ", ".join(sorted(set(failed))[:5])))

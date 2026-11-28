@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mes cartes « Le savais-tu ? »</title>
+<meta name="theme-color" content="#2b45c8">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icones/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Crayonnade">
+<link rel="stylesheet" href="../commun/polices/polices.css">
+<link rel="stylesheet" href="../commun/cartes/cartes.css">
+<style>
+/* L'album « Mes cartes » : les cartes « Le savais-tu ? » gagnées par le joueur dans tous les jeux, rangées par série,
+   ses écailles de dragon et son titre. Les cartes pas encore gagnées montrent le jeu où les gagner. */
+:root{color-scheme:light;--encre:#1a2358;--bleu:#2b45c8;--papier:#fbf6ea;--doux:#5a628f}
+*{box-sizing:border-box}
+html{background:var(--papier)}
+body{margin:0;min-height:100vh;font:16px/1.45 "Lexend",system-ui,sans-serif;color:var(--encre);background:var(--papier);background-image:radial-gradient(rgba(26,35,88,.05) 1px,rgba(26,35,88,0) 1.4px);background-size:9px 9px;padding-bottom:env(safe-area-inset-bottom,0px)}
+.al{max-width:1040px;margin:0 auto;padding:14px 14px 48px}
+.al-tete{text-align:center;padding:10px 0 4px}
+.al-sur{margin:0;font-family:"Playwrite FR Moderne",cursive;font-size:.95rem;color:#8a6212}
+.al-tete h1{margin:4px 0 0;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:clamp(1.7rem,5.4vw,2.6rem);line-height:1.05}
+.al-joueur{margin:8px 0 0;font-size:1rem;color:var(--doux)}
+.al-joueur b{color:var(--encre)}
+.al-lien{border:0;background:none;padding:4px 6px;margin-left:4px;font:600 .95rem "Lexend",system-ui,sans-serif;color:var(--bleu);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.al-lien:focus-visible,.al-bouton:focus-visible,.al-mystere:focus-visible,.al-choix button:focus-visible{outline:3px solid var(--bleu);outline-offset:3px}
+.al-dragon{display:grid;grid-template-columns:auto 1fr;gap:14px 18px;align-items:center;margin:16px auto 0;max-width:680px;padding:16px 18px;border-radius:20px;background:#fff;box-shadow:0 0 0 1.5px #e7cf8a,0 4px 0 #e7cf8a,0 14px 30px rgba(26,35,88,.08)}
+.al-ecailles{display:flex;flex-direction:column;align-items:center;justify-content:center;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7d1,#f3d77e 55%,#d9a91f);box-shadow:inset 0 -4px 0 rgba(138,98,18,.25),0 0 0 3px #fff,0 0 0 5px #e7cf8a}
+.al-ecailles b{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:2.1rem;line-height:1;color:#5c3f06}
+.al-ecailles span{font-size:.72rem;font-weight:600;color:#7a5608;text-transform:uppercase;letter-spacing:.04em}
+.al-titre{margin:0;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.45rem;line-height:1.1}
+.al-oeuf{margin:2px 0 0;font-size:.92rem;color:var(--doux)}
+.al-barre{position:relative;height:14px;margin:10px 0 6px;border-radius:999px;background:#f1ead6;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(138,98,18,.2)}
+.al-barre i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:linear-gradient(90deg,#38b26a,#8fd65a)}
+.al-prochain{margin:0;font-size:.92rem;color:var(--doux)}
+.al-compte{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0;font-size:.92rem}
+.al-puce{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.82rem;font-weight:600;box-shadow:inset 0 0 0 1px rgba(26,35,88,.15)}
+.al-regles{max-width:680px;margin:12px auto 0;border-radius:16px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1.5px #e3dcc6}
+.al-regles summary{cursor:pointer;padding:12px 16px;font-weight:700;color:var(--bleu);list-style-position:inside}
+.al-regles summary:focus-visible{outline:3px solid var(--bleu);outline-offset:2px;border-radius:16px}
+.al-regles div{padding:0 18px 12px;font-size:.95rem}
+.al-regles p{margin:0 0 8px}
+.al-regles table{border-collapse:collapse;margin:4px 0 10px;font-size:.9rem}
+.al-regles th,.al-regles td{padding:4px 10px;border-bottom:1px solid #e3dcc6;text-align:left}
+.al-vide{max-width:620px;margin:18px auto 0;padding:14px 18px;border-radius:16px;background:#eef1fd;text-align:center;font-weight:500}
+.al-serie{margin-top:28px}
+.al-bande{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 18px;border-radius:14px;background-image:linear-gradient(180deg,var(--g));color:var(--txt);box-shadow:0 3px 0 rgba(26,35,88,.15)}
+.al-bande h2{margin:0;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.3rem;line-height:1.1}
+.al-bande span{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:1.05rem}
+.al-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:18px 12px;justify-items:center;margin-top:14px}
+.al-case{display:flex;flex-direction:column;align-items:center;gap:6px;width:168px}
+.al-case .cc-carte{--k:.5}
+.al-legende{margin:0;max-width:166px;font-size:.78rem;line-height:1.3;color:var(--doux);text-align:center}
+.al-mystere{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;width:160px;height:224px;padding:34px 12px 12px;border-radius:12px;background:var(--light);box-shadow:inset 0 0 0 2px rgba(26,35,88,.12);border:3px dashed var(--accent);color:var(--encre);text-decoration:none;text-align:center;opacity:.92}
+a.al-mystere:hover{opacity:1;transform:translateY(-2px)}
+.al-mystere .al-q{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:3.2rem;line-height:1;color:var(--accent);opacity:.75}
+.al-mystere .al-n{position:absolute;top:8px;right:12px;font-family:"Baloo 2",sans-serif;font-weight:700;font-size:.95rem;color:var(--accent)}
+.al-mystere .al-ou{font-size:.74rem;color:var(--doux)}
+.al-mystere .al-jeu{font-size:.86rem;font-weight:700;line-height:1.25}
+.al-mystere .al-jouer{margin-top:6px;padding:5px 12px;border-radius:999px;background:#fff;font-size:.8rem;font-weight:700;color:var(--bleu);box-shadow:inset 0 0 0 1.5px #c9d1f0}
+.al-choix{max-width:520px;margin:20px auto 0;padding:18px;border-radius:20px;background:#fff;box-shadow:0 0 0 1.5px #c9d1f0,0 4px 0 #c9d1f0;text-align:center}
+.al-choix h2{margin:0 0 10px;font-family:"Baloo 2",sans-serif;font-size:1.5rem}
+.al-choix div{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.al-choix button{min-height:46px;padding:8px 16px;border-radius:999px;border:1.5px solid #c9d1f0;background:#fff;font:700 1rem "Lexend",system-ui,sans-serif;color:var(--bleu);cursor:pointer}
+#zoom{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(16,22,58,.74);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);overflow:auto}
+#zoom[hidden]{display:none}
+#zoom .al-boite{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:440px;margin:auto;text-align:center;color:#fff}
+#zoom .al-info{margin:0;font-size:.98rem;line-height:1.4;color:#e8ecff}
+#zoom .al-info b{color:#ffe08a}
+#zoom .al-aide{margin:0;font-size:.85rem;color:#c9d1f0}
+.al-boutons{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.al-bouton{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 18px;border-radius:999px;border:0;font:700 1rem/1.1 "Lexend",system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.al-plein{background:#ffd95a;color:var(--encre);box-shadow:0 3px 0 #c9971f}
+.al-vide-b{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+@media (max-width:420px){.al-dragon{grid-template-columns:1fr;justify-items:center;text-align:center}.al-dragon>.al-texte{width:100%}.al-compte{justify-content:center}.al-grille{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 8px}.al-case{width:auto}}
+@media (prefers-reduced-motion:reduce){a.al-mystere:hover{transform:none}}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="../commun/commun.css"><script src="../commun/commun.js"></script>
+<nav id="allgames" aria-label="Retour à la page des jeux"><a href="../index.html"><span aria-hidden="true">←</span> Tous les jeux</a></nav>
+<main class="al">
+  <header class="al-tete">
+    <p class="al-sur">Crayonnade</p>
+    <h1>Mes cartes <span style="white-space:nowrap">« Le savais-tu ? »</span></h1>
+    <p class="al-joueur" id="joueur"></p>
+  </header>
+  <div id="contenu"></div>
+</main>
+<div id="zoom" hidden role="dialog" aria-modal="true" aria-label="La carte en grand"></div>
+<script src="../jeux.js"></script>
+<script src="../commun/cartes/jeux-cartes.js"></script>
+<script src="../commun/cartes/donnees.js"></script>
+<script src="../commun/cartes/cartes.js"></script>
+<script>
+(function () {
+  "use strict";
+  var K = window.CARTES, D = window.CARTES_DONNEES, CJ = window.CARTES_JEUX || {}, C = window.CMP;
+  var I = K.index(D), JEUX = {}, PAR_CARTE = {};
+  (window.JEUX || []).forEach(function (j) { JEUX[j.slug] = j; });
+  for (var sl in CJ) PAR_CARTE[CJ[sl].carte] = sl;
+  var NB_CARTES = Object.keys(CJ).length;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function lire(k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function ecrire(k, v) { var f = (C && C.setItem) || Storage.prototype.setItem; try { f.call(localStorage, k, JSON.stringify(v)); } catch (e) {} }
+  function titreJeu(slug) { return JEUX[slug] ? JEUX[slug].titre : slug; }
+  function lienJeu(slug) { return "../jeux/" + encodeURIComponent(slug) + "/index.html"; }
+
+  /* ---------- Revenir au jeu d'où l'on vient ---------- */
+  try {
+    var r = document.referrer ? new URL(document.referrer) : null;
+    if (r && r.origin === location.origin && /\/jeux\/[^\/]+\//.test(r.pathname)) {
+      var a = document.createElement("a");
+      a.href = r.pathname; a.innerHTML = "Revenir au jeu";
+      a.style.marginLeft = "8px";
+      $("allgames").appendChild(a);
+    }
+  } catch (e) {}
+
+  /* ---------- Le joueur ---------- */
+  function joueursDeLAppareil() {
+    var inj = C && C.maitresse ? {} : (lire("crayonnade-ens-injectes") || {}), m = {};
+    for (var slug in CJ) {
+      var st = lire(CJ[slug].stockage), ecartes = inj[CJ[slug].stockage] || [];
+      if (!st || !st.profiles || typeof st.profiles !== "object") continue;
+      for (var k in st.profiles) {
+        if (ecartes.indexOf(k) >= 0) continue;
+        var p = st.profiles[k], c = K.norme(k);
+        if (!c || !p || typeof p !== "object") continue;
+        if (!m[c]) m[c] = { cle: c, nom: String(p.name || k).slice(0, 30), pts: 0 };
+        m[c].pts += Array.isArray(p.points) ? p.points.length : 0;
+      }
+    }
+    return Object.keys(m).map(function (c) { return m[c]; }).sort(function (a, b) { return b.pts - a.pts || a.nom.localeCompare(b.nom, "fr"); });
+  }
+  var choixForce = false;
+  function joueur() {
+    if (C && C.session && window.CMG_ACCES_COMPTE) return { cle: K.norme(C.session.login), nom: C.session.affiche, compte: true };
+    var liste = joueursDeLAppareil(), memo = lire("crayonnade-cartes-joueur");
+    if (choixForce) return { liste: liste };
+    if (memo && memo.cle) for (var i = 0; i < liste.length; i++) if (liste[i].cle === K.norme(memo.cle)) return liste[i];
+    if (liste.length === 1) return liste[0];
+    if (!liste.length) return { cle: "", nom: "", vide: true };
+    return { liste: liste };
+  }
+
+  /* ---------- L'album ---------- */
+  var J = null, NIV = {};
+  function rendre() {
+    J = joueur();
+    var liste = joueursDeLAppareil();
+    if (J.liste) {
+      $("joueur").textContent = "";
+      $("contenu").innerHTML = '<div class="al-choix"><h2>Qui es-tu ?</h2><div>' + J.liste.map(function (j, i) {
+        return '<button type="button" data-i="' + i + '">' + esc(j.nom) + "</button>";
+      }).join("") + "</div></div>";
+      $("contenu").querySelectorAll("[data-i]").forEach(function (b) {
+        b.addEventListener("click", function () { var j = J.liste[+b.getAttribute("data-i")]; ecrire("crayonnade-cartes-joueur", { cle: j.cle, nom: j.nom }); choixForce = false; rendre(); });
+      });
+      return;
+    }
+    NIV = J.vide ? {} : K.niveauxDuJoueur(J.cle);
+    if (J.vide) $("joueur").textContent = "";
+    else $("joueur").innerHTML = "Les cartes de <b>" + esc(J.nom) + "</b>" +
+      (!J.compte && liste.length > 1 ? ' <button type="button" class="al-lien" id="changer">Changer</button>' : "");
+    var ch = $("changer");
+    if (ch) ch.addEventListener("click", function () { choixForce = true; rendre(); });
+
+    var e = K.totalEcailles(NIV), dr = K.dragon(e), gagnees = 0, parR = {};
+    for (var s in NIV) if (NIV[s] > 0) { gagnees++; parR[NIV[s]] = (parR[NIV[s]] || 0) + 1; }
+    var html = "";
+    if (!J.vide) {
+      var bas = dr.rang === 3 ? dr.prochain - 20 : dr.prochain - [20, 30, 50][dr.rang];
+      var pc = dr.prochain > bas ? Math.max(0, Math.min(100, Math.round((e - bas) / (dr.prochain - bas) * 100))) : 0;
+      var puces = [1, 2, 3, 4, 5, 6].filter(function (n) { return parR[n]; }).map(function (n) {
+        var r = K.RARETES[n], fond = { bronze: "#f2c29a", argent: "#e6e9ef", or: "#fbe7a1", platine: "#eef3f9", diamant: "#dff4ff", mythique: "linear-gradient(120deg,#ffd1e8,#fff0b3,#c8f5da,#cfeeff,#e3d6ff)" }[r];
+        return '<span class="al-puce" style="background:' + fond + '">' + parR[n] + " " + K.NOMS[r].toLowerCase() + "</span>";
+      }).join("");
+      html += '<section class="al-dragon" aria-label="Mes écailles de dragon"><div class="al-ecailles"><b>' + e + "</b><span>écaille" + (e > 1 ? "s" : "") + "</span></div>" +
+        '<div class="al-texte">' + (e > 0
+          ? '<p class="al-titre">' + esc(dr.titre) + "</p>" + (dr.oeuf ? '<p class="al-oeuf">Un nouvel œuf est apparu : le dragon ' + esc(dr.oeuf) + " !</p>" : "") +
+            '<div class="al-barre" role="img" aria-label="' + pc + ' % du chemin"><i style="width:' + pc + '%"></i></div>' +
+            '<p class="al-prochain">Encore <b>' + (dr.prochain - e) + "</b> écaille" + (dr.prochain - e > 1 ? "s" : "") + " pour devenir " + esc(dr.titreProchain) + ".</p>"
+          : '<p class="al-titre">Pas encore de carte</p><p class="al-prochain">Réussis le niveau 1 d\'un jeu, ou bats ton record dans un jeu de calcul mental : ta première carte arrive, et avec elle ton œuf de dragon !</p>') +
+        "</div>" +
+        '<p class="al-compte"><span><b>' + gagnees + "</b> carte" + (gagnees > 1 ? "s" : "") + " sur " + NB_CARTES + "</span>" + puces + "</p></section>";
+    } else {
+      html += '<p class="al-vide">Joue à un jeu pour gagner ta première carte : réussis le niveau 1, ou bats ton record dans un jeu de calcul mental !</p>';
+    }
+    html += '<details class="al-regles"><summary>Comment gagner les cartes ?</summary><div>' +
+      "<p>Chaque jeu a sa carte. Elle se gagne en <b>bronze</b> quand tu réussis le niveau 1, puis elle monte d'un cran à chaque niveau réussi : <b>argent</b>, <b>or</b>, <b>platine</b>, <b>diamant</b>. Elle devient <b>mythique</b> quand tu as réussi les 5 niveaux sans faute.</p>" +
+      "<p>Dans les jeux de calcul mental, elle monte d'un cran à chaque nouveau record : bronze au premier, diamant au cinquième, mythique au dixième.</p>" +
+      "<p>Chaque carte vaut des écailles de dragon :</p><table><tr><th>Bronze</th><th>Argent</th><th>Or</th><th>Platine</th><th>Diamant</th><th>Mythique</th></tr><tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>7</td></tr></table>" +
+      "<p>Quand la carte monte, sa nouvelle valeur remplace l'ancienne. Avec tes écailles, ton dragon grandit : <b>Apprenti</b> dès la première carte, <b>Chevalier</b> à 20 écailles, <b>Maître</b> à 50, <b>Grand maître</b> à 100. Ensuite, un nouvel œuf arrive : le dragon bleu (de 100 à 200 écailles), puis le rouge, le doré… On ne perd jamais ses écailles.</p>" +
+      "<p>Touche une carte pour la voir en grand, puis touche-la encore pour la retourner et lire son secret.</p></div></details>";
+    D.series.forEach(function (s) {
+      var cases = "", nb = 0;
+      for (var n = 1; n <= 10; n++) {
+        var id = s.cle + "-" + (n < 10 ? "0" : "") + n, c = I.cartes[id];
+        if (!c) continue;
+        var slug = PAR_CARTE[id], niv = slug ? NIV[slug] || 0 : 0;
+        if (niv > 0) {
+          nb++;
+          cases += '<div class="al-case">' + K.htmlCarte(c, s, niv, { k: 0.5, fixe: true, label: c.nom + ", carte " + K.NOMS[K.RARETES[niv]] + ". Touche pour la voir en grand." }) +
+            '<p class="al-legende">' + esc(titreJeu(slug)) + "</p></div>";
+        } else if (slug) {
+          cases += '<div class="al-case"><a class="al-mystere" href="' + lienJeu(slug) + '" style="--light:' + s.light + ";--accent:" + s.accent + '">' +
+            '<span class="al-n">n° ' + n + '</span><span class="al-q" aria-hidden="true">?</span><span class="al-ou">À gagner dans</span><span class="al-jeu">' + esc(titreJeu(slug)) + '</span><span class="al-jouer">Jouer</span></a></div>';
+        } else {
+          cases += '<div class="al-case"><div class="al-mystere" style="--light:' + s.light + ";--accent:" + s.accent + ';opacity:.6"><span class="al-n">n° ' + n + '</span><span class="al-q" aria-hidden="true">?</span><span class="al-ou">Carte à venir</span><span class="al-jeu">avec un prochain jeu</span></div></div>';
+        }
+      }
+      html += '<section class="al-serie" id="serie-' + s.cle + '"><div class="al-bande" style="--g:' + s.g + ";--txt:" + s.txt + '"><h2>' + esc(s.titre) + "</h2><span>" + nb + " / 10</span></div>" +
+        '<div class="al-grille">' + cases + "</div></section>";
+    });
+    $("contenu").innerHTML = html;
+    $("contenu").querySelectorAll(".al-case .cc-carte").forEach(function (el) {
+      el.querySelector(".cc-btn").addEventListener("click", function () { zoom(el.getAttribute("data-carte")); });
+    });
+  }
+
+  /* ---------- Une carte en grand ---------- */
+  var avantZoom = null;
+  function zoom(id) {
+    var c = I.cartes[id], s = c && I.series[c.serie], slug = PAR_CARTE[id], niv = slug ? NIV[slug] || 0 : 0;
+    if (!c || !niv) return;
+    var regle = CJ[slug], r = K.RARETES[niv], suite;
+    if (niv === 6) suite = "C'est le plus haut niveau : bravo !";
+    else if (regle.type === "records") {
+      if (niv < 5) suite = "Bats ton record pour la faire passer en <b>" + K.NOMS[K.RARETES[niv + 1]].toLowerCase() + "</b>.";
+      else {
+        var st = lire(regle.stockage), p = null;
+        if (st && st.profiles) for (var k in st.profiles) if (K.norme(k) === J.cle) p = st.profiles[k];
+        var n = p && Array.isArray(p.points) ? p.points.filter(function (x) { return x && !x.enseignante; }).length : 5;
+        suite = "Encore <b>" + Math.max(1, 10 - n) + "</b> record" + (10 - n > 1 ? "s" : "") + " pour la rendre <b>mythique</b>.";
+      }
+    } else suite = niv < 5 ? "Réussis le niveau " + (niv + 1) + " pour la faire passer en <b>" + K.NOMS[K.RARETES[niv + 1]].toLowerCase() + "</b>."
+      : "Réussis les 5 niveaux sans faute pour la rendre <b>mythique</b>.";
+    var kz = Math.max(0.6, Math.min(1.25, (window.innerWidth - 32) / 320, (window.innerHeight - 210) / 448));
+    var z = $("zoom");
+    z.innerHTML = '<div class="al-boite"><p class="al-info">Carte <b>' + K.NOMS[r].toLowerCase() + "</b>, gagnée dans « " + esc(titreJeu(slug)) + " ».<br>" + suite + "</p>" +
+      K.htmlCarte(c, s, niv, { k: kz }) + '<p class="al-aide">Touche la carte pour la retourner.</p>' +
+      '<div class="al-boutons"><a class="al-bouton al-vide-b" href="' + lienJeu(slug) + '">Jouer à « ' + esc(titreJeu(slug)) + ' »</a><button type="button" class="al-bouton al-plein" data-fermer>Fermer</button></div></div>';
+    avantZoom = document.activeElement;
+    z.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    K.retournable(z.querySelector(".cc-carte"));
+    z.querySelector("[data-fermer]").addEventListener("click", fermerZoom);
+    try { z.querySelector(".cc-btn").focus({ preventScroll: true }); } catch (e) {}
+  }
+  function fermerZoom() {
+    var z = $("zoom");
+    if (z.hidden) return;
+    z.hidden = true; z.innerHTML = "";
+    document.documentElement.style.overflow = "";
+    try { if (avantZoom && avantZoom.focus) avantZoom.focus({ preventScroll: true }); } catch (e) {}
+  }
+  $("zoom").addEventListener("click", function (e) { if (e.target === this) fermerZoom(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermerZoom(); });
+
+  rendre();
+  /* Une carte demandée (depuis la fenêtre « Nouvelle carte ! » d'un jeu) */
+  var demande = new URLSearchParams(location.search).get("carte");
+  if (demande && I.cartes[demande]) {
+    var serie = document.getElementById("serie-" + I.cartes[demande].serie);
+    if (serie) serie.scrollIntoView({ block: "start" });
+    zoom(demande);
+  }
+  /* Élève connecté : ses bons points arrivent du serveur juste après l'ouverture de la page ; l'album suit. */
+  var signature = function () { var t = ""; try { for (var s in CJ) t += (localStorage.getItem(CJ[s].stockage) || "").length + ","; t += (localStorage.getItem("crayonnade-session") || "").length; } catch (e) {} return t; };
+  var derniere = signature(), tours = 0;
+  var suivi = setInterval(function () {
+    if (++tours > 12) clearInterval(suivi);
+    var s = signature();
+    if (s !== derniere && $("zoom").hidden) { derniere = s; rendre(); }
+  }, 1500);
+  window.addEventListener("pageshow", function (e) { if (e.persisted) rendre(); });
+})();
+</script>
+</body>
+</html>

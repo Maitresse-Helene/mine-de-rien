@@ -22,6 +22,7 @@ L'enseignante ne code pas : réponds-lui en français simple, sans jargon.
   « Vérifier une carte de bons points » (artefact intégré), « Ajouter des bons points », « Code APC d'une heure » et
   « Jeux et vidéos les plus utilisés » (pages écrites ici, pas d'artefact).
 - `commun/domaines.js` : noms des domaines, généré par `integrer_portail.py` pour les outils.
+- `cartes/index.html` + `commun/cartes/` : l'album « Mes cartes » et les cartes « Le savais-tu ? » (voir plus bas).
 - `commun/commun.js` + `commun/commun.css` : la porte « Code de la classe », le laissez-passer
   portail → jeux, et le bouton « ← Tous les jeux ». Chaque page les charge (`../../commun/...` pour les jeux).
 - `commun/polices/` : Baloo 2, Lexend, Playwrite FR Moderne en local (pas de Google Fonts).
@@ -129,6 +130,29 @@ comptes qui ont gagné des bons points dans chaque jeu pendant la période. Rien
 ni connectée (C.maitresse), ni sur un appareil où elle a coché « Rester connectée » (clé `crayonnade-stats-non`, posée
 par commun.js dès que `crayonnade-ens-appareil` existe, retirée seulement par « Me déconnecter de cet appareil »).
 Testé par `tester_comptes.py` (étape 10).
+
+## Les cartes « Le savais-tu ? » (28/11/2026)
+
+Chaque jeu à bons points a sa carte (un personnage, un animal ou un fait étonnant), dessinée dans le canevas
+« Cartes « Le savais-tu ? » – les 8 séries » (https://claude.ai/artifact/8ahzPXFuCo6VDrsLtN3F1T) : 80 cartes en 8 séries
+de 10, dont 2 libres (François Ier, Napoléon) pour les prochains jeux.
+- `commun/cartes/donnees.js` (le contenu des cartes) et `commun/cartes/jeux-cartes.js` (la carte de chaque jeu : `carte`,
+  `type`, `stockage`) sont fabriqués par `webapp.py` de la sauvegarde « sauvegarde-cartes-savais-tu-… .zip » (avec `gen.py`,
+  `serie_*.py`, `attribution.py`) : `python3 webapp.py <dépôt>`. Ne pas les modifier à la main.
+- `commun/cartes/cartes.js` + `cartes.css` (+ `img/` : coins, mascotte, sceau, sons) : le niveau de la carte se lit dans
+  les bons points du jeu, rien n'est changé dans les jeux. Type `niveaux` : bronze au niveau 1, un cran par niveau réussi
+  (argent, or, platine, diamant), mythique quand les 5 niveaux ont un score sans faute (`10/10`). Type `records` (calcul
+  mental) : un cran par bon point (nouveau record), mythique au 10e. Les points `enseignante` ne comptent pas. Écailles :
+  bronze 1, argent 2, or 3, platine 4, diamant 5, mythique 7 ; dragon vert : Apprenti (1re carte), Chevalier 20,
+  Maître 50, Grand maître 100 ; puis bleu, rouge, doré… par tranche de 100.
+- `commun.js` section 9 : dans un jeu, charge `jeux-cartes.js` et `cartes.js` ; la fenêtre « Nouvelle carte ! » s'ouvre
+  quand une écriture du jeu fait monter la carte du joueur (les données qui arrivent du serveur passent par `C.setItem`
+  et ne l'ouvrent pas). Lien « Mes cartes » dans la barre des jeux (après « ← Tous les jeux ») et en bas à gauche du portail.
+- `cartes/index.html` : l'album « Mes cartes ». Élève connecté : son login ; sinon « Qui es-tu ? » parmi les prénoms
+  trouvés dans les jeux de l'appareil (choix gardé dans `crayonnade-cartes-joueur`). Écailles, titre du dragon, cartes
+  gagnées (touchées : en grand, retournables) et cartes à gagner avec le lien de leur jeu.
+- Nouveau jeu : lui donner une carte (la prochaine carte libre, ou une nouvelle série) dans `attribution.py`, la dessiner
+  dans le canevas, relancer `webapp.py`, puis `mettre_a_jour_sw.py`. `tester.py` (étape 4f) signale un jeu sans carte.
 
 ## Mettre à jour le portail
 

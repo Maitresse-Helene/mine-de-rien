@@ -776,3 +776,45 @@ window.CMP = (function () {
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", quandPorteOuverte); else quandPorteOuverte();
 })();
+
+/* 9. Les cartes « Le savais-tu ? » (28/11/2026) : dans un jeu qui a sa carte (commun/cartes/jeux-cartes.js), la fenêtre
+      « Nouvelle carte ! » s'ouvre quand la carte du joueur monte de niveau (commun/cartes/cartes.js, qui lit les bons
+      points du jeu). Un lien « Mes cartes » mène à l'album (cartes/index.html) : dans la barre des jeux, et en bas à
+      gauche du portail. Rien sur les pages de l'Espace enseignante ni sur l'album lui-même (il charge tout seul). */
+(function () {
+  if (window.CMG_DEMENAGE || /\/enseignante\//.test(location.pathname) || /\/cartes\/(index\.html)?$/.test(location.pathname)) return;
+  var s = document.currentScript, base = s && s.src ? s.src.replace(/[^\/]*$/, "") : "";
+  if (!base) return;
+  var JEU = window.CMG_JEU && window.CMG_JEU.stockage ? window.CMG_JEU : null;
+  var tete = document.head || document.documentElement;
+  var l = document.createElement("link");
+  l.rel = "stylesheet"; l.href = base + "cartes/cartes.css";
+  tete.appendChild(l);
+  if (JEU) ["cartes/jeux-cartes.js", "cartes/cartes.js"].forEach(function (f) {
+    var e = document.createElement("script");
+    e.src = base + f; e.async = false;
+    tete.appendChild(e);
+  });
+  var ICONE = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="12" height="16" rx="2.5" transform="rotate(-10 9 13)" fill="#f2c29a" stroke="#8a6212" stroke-width="1.5"/><rect x="9" y="3" width="12" height="16" rx="2.5" fill="#fff1b8" stroke="#8a6212" stroke-width="1.5"/><path d="M15 7.2l1.1 2.3 2.5.3-1.8 1.7.5 2.5-2.3-1.2-2.3 1.2.5-2.5-1.8-1.7 2.5-.3z" fill="#e0a80c"/></svg>';
+  function lien() {
+    if (document.querySelector(".cc-lien-album, #cc-portail")) return;
+    var album = new URL("../cartes/index.html", base).href, nav = document.getElementById("allgames");
+    if (JEU && nav) {
+      var a = document.createElement("a");
+      a.className = "cc-lien-album"; a.href = album;
+      a.setAttribute("aria-label", "Mes cartes « Le savais-tu ? »");
+      a.innerHTML = ICONE + '<span class="cc-mot">Mes cartes</span>';
+      var premier = nav.querySelector("a");
+      nav.insertBefore(a, premier ? premier.nextSibling : nav.firstChild);
+    } else if (!JEU && !nav && document.querySelector("#view, a.game, .subjects")) {
+      var p = document.createElement("a");
+      p.id = "cc-portail"; p.href = album;
+      p.innerHTML = ICONE + "Mes cartes";
+      var place = document.createElement("div"); /* pour que le bouton ne cache pas le bas de la page */
+      place.style.height = "64px"; place.setAttribute("aria-hidden", "true");
+      document.body.appendChild(place);
+      document.body.appendChild(p);
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", lien); else lien();
+})();

@@ -1,9 +1,23 @@
 /* Crayonnade : le service worker, qui garde l'appli sur l'appareil pour jouer hors ligne.
    Fichier généré par outils/mettre_a_jour_sw.py : ne pas modifier à la main. */
-const VERSION = '2026-11-28-132511';
+const VERSION = '2026-11-28-174451';
 const CACHE = 'jeux-cm1cm2-' + VERSION;
 const FICHIERS = [
   "./",
+  "cartes/index.html",
+  "commun/cartes/cartes.css",
+  "commun/cartes/cartes.js",
+  "commun/cartes/donnees.js",
+  "commun/cartes/img/brille.m4a",
+  "commun/cartes/img/coin-argent.svg",
+  "commun/cartes/img/coin-bronze.svg",
+  "commun/cartes/img/coin-diamant.svg",
+  "commun/cartes/img/coin-or.svg",
+  "commun/cartes/img/coin-platine.svg",
+  "commun/cartes/img/mascotte.svg",
+  "commun/cartes/img/retourne.m4a",
+  "commun/cartes/img/sceau.svg",
+  "commun/cartes/jeux-cartes.js",
   "commun/commun.css",
   "commun/commun.js",
   "commun/domaines.js",
